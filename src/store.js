@@ -1,6 +1,6 @@
 const STORAGE_KEY = 'sde-prep-v1';
 
-function getState() {
+export function getState() {
   try {
     return JSON.parse(localStorage.getItem(STORAGE_KEY)) || createDefault();
   } catch { return createDefault(); }
@@ -10,7 +10,7 @@ function createDefault() {
   return { completed: {}, notes: {}, todos: [], streakDates: [], dailyGoal: 5 };
 }
 
-function save(state) {
+export function save(state) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
   window.dispatchEvent(new CustomEvent('store-changed'));
 }
