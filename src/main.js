@@ -1,12 +1,13 @@
 import { roadmaps as rawRoadmaps } from './data.js';
 import { dsaRoadmap } from './dsa-data.js';
+import { resumeRoadmap } from './resume-data.js';
 import { addSubjectsToCSCore } from './restructure.js';
 import * as store from './store.js';
 import { syncProgress, setFirebaseConfig, hasFirebaseConfig } from './sync.js';
 import './style.css';
 
-// Restructure data: add subject groups + DSA
-const roadmaps = addSubjectsToCSCore([...rawRoadmaps, dsaRoadmap]);
+// Restructure data: add subject groups + DSA + Resume Mastery
+const roadmaps = addSubjectsToCSCore([...rawRoadmaps, dsaRoadmap, resumeRoadmap]);
 
 let currentView = 'dashboard';
 let currentRoadmap = null;
