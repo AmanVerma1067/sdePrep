@@ -225,27 +225,32 @@ function renderRoadmapView() {
   if (!rm) return '';
   const stats = getRoadmapStats(rm);
 
-  // Filter phases/topics based on searchQuery
   const phasesHtml = rm.phases.map(phase => {
-    const filtered = searchQuery
-      ? phase.topics.filter(t => t.name.toLowerCase().includes(searchQuery.toLowerCase()))
-      : phase.topics;
-      
-    if (searchQuery && !filtered.length) return '';
-    
     return `
       <div class="checklist-phase-group">
         <div class="checklist-phase-header">${phase.title}</div>
-        ${filtered.map(t => {
+        ${phase.topics.map(t => {
           const tid = topicId(rm.id, phase.title, t.name);
           const checked = store.isCompleted(tid);
           return `
-            <div class="checklist-topic-row ${checked ? 'completed' : ''}" data-hash="${t.hash}" data-tid="${tid}">
-              <label class="custom-checkbox" onclick="event.stopPropagation()">
-                <input type="checkbox" class="topic-cb" data-tid="${tid}" ${checked ? 'checked' : ''}>
-                <span class="checkmark"></span>
-              </label>
-              <span class="checklist-topic-name">${t.name}</span>
+            <div class="checklist-topic-row ${checked ? 'completed' : ''}" data-tid="${tid}">
+              <div class="checklist-topic-main">
+                <label class="custom-checkbox" onclick="event.stopPropagation()">
+                  <input type="checkbox" class="topic-cb" data-tid="${tid}" ${checked ? 'checked' : ''}>
+                  <span class="checkmark"></span>
+                </label>
+                <span class="checklist-topic-name">${t.name}</span>
+                <div class="checklist-topic-arrow">
+                  <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                </div>
+              </div>
+              <div class="checklist-topic-details" onclick="event.stopPropagation()">
+                <button class="checklist-jump-btn" data-hash="${t.hash}">
+                  <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                  Scroll Notes to Section
+                </button>
+                <textarea class="checklist-note-input" data-tid="${tid}" placeholder="Add your notes...">${store.getNote(tid)}</textarea>
+              </div>
             </div>
           `;
         }).join('')}
@@ -266,17 +271,17 @@ function renderRoadmapView() {
       </div>
     </div>
 
-    <div class="roadmap-split-pane">
+    <!-- Responsive Mobile Tabs Selector -->
+    <div class="roadmap-mobile-tabs">
+      <button class="mobile-tab-btn active" data-target="notes">Study Notes</button>
+      <button class="mobile-tab-btn" data-target="checklist">Checklist</button>
+    </div>
+
+    <div class="roadmap-split-pane show-notes">
       <div class="notes-pane">
         <iframe src="${rm.url}" id="notesFrame" title="${rm.title} Notes"></iframe>
       </div>
       <div class="checklist-pane">
-        <div class="checklist-pane-header">
-          <div class="checklist-search-box">
-            <svg class="checklist-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-            <input type="text" placeholder="Search sections..." id="checklistSearchInput" value="${searchQuery}" class="checklist-search-input">
-          </div>
-        </div>
         <div class="checklist-scroll">
           ${phasesHtml || '<div class="empty-msg" style="text-align:center; padding: 20px;">No sections found.</div>'}
         </div>
@@ -605,11 +610,39 @@ function attachEvents() {
     });
   });
 
-  // Checklist topic click triggers scroll inside iframe
+  // Mobile tabs switching event handlers
+  document.querySelectorAll('.mobile-tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.mobile-tab-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const pane = document.querySelector('.roadmap-split-pane');
+      if (pane) {
+        if (btn.dataset.target === 'notes') {
+          pane.classList.remove('show-checklist');
+          pane.classList.add('show-notes');
+        } else {
+          pane.classList.remove('show-notes');
+          pane.classList.add('show-checklist');
+        }
+      }
+    });
+  });
+
+  // Accordion toggle expand/collapse for checklist topic rows
   document.querySelectorAll('.checklist-topic-row').forEach(row => {
     row.addEventListener('click', (e) => {
-      if (e.target.tagName.toLowerCase() === 'input' || e.target.classList.contains('checkmark')) return;
-      const hash = row.dataset.hash;
+      if (e.target.closest('.custom-checkbox') || e.target.closest('.checklist-jump-btn') || e.target.closest('.checklist-note-input')) {
+        return;
+      }
+      row.classList.toggle('expanded');
+    });
+  });
+
+  // Scroll iframe to target section (and switch tabs to notes on mobile)
+  document.querySelectorAll('.checklist-jump-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const hash = btn.dataset.hash;
       const frame = document.getElementById('notesFrame');
       if (frame && frame.contentWindow) {
         try {
@@ -618,6 +651,19 @@ function attachEvents() {
           frame.src = frame.src.split('#')[0] + hash;
         }
       }
+      
+      const notesTab = document.querySelector('.mobile-tab-btn[data-target="notes"]');
+      if (notesTab && !notesTab.classList.contains('active')) {
+        notesTab.click();
+      }
+    });
+  });
+
+  // Save notes to localStorage & sync when content is altered
+  document.querySelectorAll('.checklist-note-input').forEach(textarea => {
+    textarea.addEventListener('change', () => {
+      store.setNote(textarea.dataset.tid, textarea.value);
+      if (hasFirebaseConfig()) syncProgress(store.getState());
     });
   });
 
@@ -644,16 +690,6 @@ function attachEvents() {
       navigateTo('roadmap', card.dataset.roadmap);
     });
   });
-
-  // Search input for checklist pane
-  const checklistSearchInput = document.getElementById('checklistSearchInput');
-  if (checklistSearchInput) {
-    checklistSearchInput.addEventListener('input', (e) => {
-      searchQuery = e.target.value;
-      renderApp();
-      document.getElementById('checklistSearchInput')?.focus();
-    });
-  }
 
   // Tasks (Todos) functionality
   const todoInput = document.getElementById('todoInput');

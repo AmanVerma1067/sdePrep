@@ -296,18 +296,20 @@ h1, h2, h3, h4 { font-family: var(--font-head); font-weight: 700; letter-spacing
 }
 .checklist-topic-row {
   display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 10px 12px;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0;
+  padding: 0;
   background: rgba(255, 255, 255, 0.01);
   border: 1px solid var(--border);
   border-radius: 8px;
   margin-bottom: 8px;
   cursor: pointer;
   transition: all 0.15s;
+  overflow: hidden;
 }
 .checklist-topic-row:hover {
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(255, 255, 255, 0.03);
   border-color: var(--accent);
 }
 .checklist-topic-row.completed {
@@ -317,12 +319,74 @@ h1, h2, h3, h4 { font-family: var(--font-head); font-weight: 700; letter-spacing
   text-decoration: line-through;
   color: var(--text-muted);
 }
+.checklist-topic-main {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  width: 100%;
+}
 .checklist-topic-name {
   font-size: 13px;
   font-weight: 500;
   color: var(--text);
   flex: 1;
   line-height: 1.4;
+}
+.checklist-topic-arrow {
+  color: var(--text-muted);
+  transition: transform 0.2s;
+  display: flex;
+  align-items: center;
+}
+.checklist-topic-row.expanded .checklist-topic-arrow {
+  transform: rotate(180deg);
+}
+.checklist-topic-details {
+  display: none;
+  padding: 0 12px 12px 12px;
+  flex-direction: column;
+  gap: 8px;
+  border-top: 1px dashed var(--border);
+  background: rgba(0, 0, 0, 0.15);
+  margin-top: 4px;
+}
+.checklist-topic-row.expanded .checklist-topic-details {
+  display: flex;
+}
+.checklist-jump-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  align-self: flex-start;
+  padding: 4px 10px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--accent);
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.checklist-jump-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+.checklist-note-input {
+  width: 100%;
+  height: 60px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--text);
+  font-family: inherit;
+  font-size: 11px;
+  padding: 6px;
+  resize: vertical;
+  outline: none;
+}
+.checklist-note-input:focus {
+  border-color: var(--accent);
 }
 .checklist-phase-header {
   font-family: var(--font-head);
@@ -337,33 +401,6 @@ h1, h2, h3, h4 { font-family: var(--font-head); font-weight: 700; letter-spacing
 }
 .checklist-phase-header:first-of-type {
   margin-top: 0;
-}
-.checklist-search-box {
-  position: relative;
-  margin-bottom: 12px;
-}
-.checklist-search-input {
-  width: 100%;
-  padding: 8px 12px 8px 32px;
-  background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  color: var(--text);
-  font-size: 12.5px;
-  outline: none;
-  transition: border-color 0.15s;
-}
-.checklist-search-input:focus {
-  border-color: var(--accent);
-}
-.checklist-search-icon {
-  position: absolute;
-  left: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 14px;
-  height: 14px;
-  color: var(--text-muted);
 }
 
 /* ── Resume View Styles ── */
@@ -563,15 +600,57 @@ h1, h2, h3, h4 { font-family: var(--font-head); font-weight: 700; letter-spacing
   content: "🎓";
 }
 
+/* ── Responsive Roadmap Mobile View ── */
+.roadmap-mobile-tabs {
+  display: none;
+}
+
 @media (max-width: 1000px) {
+  .roadmap-mobile-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+    background: var(--surface);
+    padding: 4px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+  }
+  .mobile-tab-btn {
+    flex: 1;
+    padding: 8px 12px;
+    border: none;
+    background: transparent;
+    color: var(--text-muted);
+    font-size: 13px;
+    font-weight: 600;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.15s;
+    outline: none;
+  }
+  .mobile-tab-btn.active {
+    background: var(--surface-elevated);
+    color: var(--accent);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  }
   .roadmap-split-pane {
-    grid-template-columns: 1fr;
-    height: auto;
+    display: flex !important;
+    flex-direction: column;
+    height: calc(100vh - 210px);
   }
-  .notes-pane {
-    height: 60vh;
+  .roadmap-split-pane.show-notes .notes-pane {
+    display: block;
+    height: 100%;
   }
-  .checklist-pane {
-    height: 40vh;
+  .roadmap-split-pane.show-notes .checklist-pane {
+    display: none;
+  }
+  .roadmap-split-pane.show-checklist .notes-pane {
+    display: none;
+  }
+  .roadmap-split-pane.show-checklist .checklist-pane {
+    display: block;
+    height: 100%;
   }
 }
+
