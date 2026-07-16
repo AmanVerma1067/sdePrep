@@ -1,20 +1,15 @@
-import { roadmaps as rawRoadmaps } from './data.js';
-import { dsaRoadmap } from './dsa-data.js';
-import { resumeRoadmap } from './resume-data.js';
-import { addSubjectsToCSCore } from './restructure.js';
+import { roadmaps } from './roadmap-data.js';
+import { resumeData } from './resume-data.js';
 import * as store from './store.js';
-import { syncProgress, setFirebaseConfig, hasFirebaseConfig } from './sync.js';
+import { syncProgress, setFirebaseConfig, hasFirebaseConfig, pullProgress } from './sync.js';
 import './style.css';
-
-// Restructure data: add subject groups + DSA + Resume Mastery
-const roadmaps = addSubjectsToCSCore([...rawRoadmaps, dsaRoadmap, resumeRoadmap]);
 
 let currentView = 'dashboard';
 let currentRoadmap = null;
 let previousView = null;
 let previousRoadmap = null;
 let searchQuery = '';
-let expandedTopics = new Set();
+let targetHashOnLoad = null;
 
 function topicId(rmId, phase, topicName) {
   return `${rmId}::${phase}::${topicName}`;
@@ -48,6 +43,11 @@ function navigateTo(view, roadmap) {
   renderApp();
 }
 
+function navigateToWithHash(view, roadmap, hash) {
+  targetHashOnLoad = hash;
+  navigateTo(view, roadmap);
+}
+
 function goBack() {
   if (previousView) {
     currentView = previousView;
@@ -71,8 +71,22 @@ function renderApp() {
       ${currentView === 'roadmap' ? renderRoadmapView() : ''}
       ${currentView === 'todos' ? renderTodosView() : ''}
       ${currentView === 'tips' ? renderTipsView() : ''}
+      ${currentView === 'resume' ? renderResumeView() : ''}
     </main>
   `;
+
+  // Dynamic layout adjustment for roadmap view (wide screen split pane)
+  const mainContent = document.querySelector('.main-content');
+  if (mainContent) {
+    if (currentView === 'roadmap') {
+      mainContent.style.maxWidth = '100%';
+      mainContent.style.padding = '20px 30px 40px';
+    } else {
+      mainContent.style.maxWidth = '';
+      mainContent.style.padding = '';
+    }
+  }
+
   attachEvents();
 }
 
@@ -87,6 +101,10 @@ function renderSidebar() {
       <button class="nav-btn ${currentView === 'dashboard' ? 'active' : ''}" data-view="dashboard">
         <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
         Overview
+      </button>
+      <button class="nav-btn ${currentView === 'resume' ? 'active' : ''}" data-view="resume">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        My Resume
       </button>
       <button class="nav-btn ${currentView === 'tips' ? 'active' : ''}" data-view="tips">
         <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
@@ -206,99 +224,64 @@ function renderRoadmapView() {
   const rm = roadmaps.find(r => r.id === currentRoadmap);
   if (!rm) return '';
   const stats = getRoadmapStats(rm);
-  const subjects = rm.subjects || [{ name: rm.title, phases: rm.phases }];
+
+  // Filter phases/topics based on searchQuery
+  const phasesHtml = rm.phases.map(phase => {
+    const filtered = searchQuery
+      ? phase.topics.filter(t => t.name.toLowerCase().includes(searchQuery.toLowerCase()))
+      : phase.topics;
+      
+    if (searchQuery && !filtered.length) return '';
+    
+    return `
+      <div class="checklist-phase-group">
+        <div class="checklist-phase-header">${phase.title}</div>
+        ${filtered.map(t => {
+          const tid = topicId(rm.id, phase.title, t.name);
+          const checked = store.isCompleted(tid);
+          return `
+            <div class="checklist-topic-row ${checked ? 'completed' : ''}" data-hash="${t.hash}" data-tid="${tid}">
+              <label class="custom-checkbox" onclick="event.stopPropagation()">
+                <input type="checkbox" class="topic-cb" data-tid="${tid}" ${checked ? 'checked' : ''}>
+                <span class="checkmark"></span>
+              </label>
+              <span class="checklist-topic-name">${t.name}</span>
+            </div>
+          `;
+        }).join('')}
+      </div>
+    `;
+  }).join('');
 
   return `
-  <div class="fade-in">
-    ${renderBackButton()}
-    <div class="page-header roadmap-header">
-      <div class="header-content">
-        <h1>${rm.icon} ${rm.title}</h1>
-        <p class="page-sub">${stats.done} / ${stats.total} topics mastered</p>
-      </div>
-      <div class="header-progress">
-        <div class="hp-val" style="color:${rm.accent}">${stats.pct}%</div>
+  <div class="fade-in" style="height: 100%; display: flex; flex-direction: column;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+      ${renderBackButton()}
+      <div style="display: flex; align-items: center; gap: 15px;">
+        <span style="font-size: 24px;">${rm.icon}</span>
+        <h1 style="margin: 0; font-size: 24px; font-family: var(--font-head);">${rm.title}</h1>
+        <span style="font-family: var(--font-mono); font-size: 13px; background: rgba(255, 255, 255, 0.05); padding: 4px 8px; border-radius: 6px; border: 1px solid var(--border);">
+          ${stats.done}/${stats.total} Mastered (${stats.pct}%)
+        </span>
       </div>
     </div>
 
-    <div class="search-box">
-      <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-      <input type="text" placeholder="Search topics..." id="searchInput" value="${searchQuery}" class="search-input">
-    </div>
-
-    ${subjects.map(subject => {
-      let subjectTotal = 0, subjectDone = 0;
-      subject.phases.forEach(p => p.topics.forEach(t => {
-        subjectTotal++;
-        if (store.isCompleted(topicId(rm.id, p.title, t.name))) subjectDone++;
-      }));
-      const subPct = subjectTotal ? Math.round(subjectDone / subjectTotal * 100) : 0;
-      
-      const phasesHtml = subject.phases.map(phase => {
-        const filtered = searchQuery ? phase.topics.filter(t => t.name.toLowerCase().includes(searchQuery.toLowerCase()) || (t.desc && t.desc.toLowerCase().includes(searchQuery.toLowerCase()))) : phase.topics;
-        if (searchQuery && !filtered.length) return '';
-        const phaseDone = filtered.filter(t => store.isCompleted(topicId(rm.id, phase.title, t.name))).length;
-        
-        return `
-        <div class="phase-block">
-          <div class="phase-header">
-            <h3 class="phase-title">${phase.title}</h3>
-            <span class="phase-meta">${phaseDone}/${filtered.length}</span>
-          </div>
-          <div class="topic-list">
-            ${filtered.map(t => renderTopicCard(rm.id, phase.title, t)).join('')}
-          </div>
-        </div>`;
-      }).join('');
-      
-      if (searchQuery && !phasesHtml.replace(/\s/g,'')) return '';
-
-      return `
-      <div class="subject-group">
-        <div class="subject-header">
-          <h2 class="subject-name">${subject.name}</h2>
-          <div class="subject-progress">
-            <span class="subject-pct">${subjectDone}/${subjectTotal}</span>
-            <div class="subject-bar-wrap"><div class="subject-bar" style="width:${subPct}%;background:${rm.accent}"></div></div>
+    <div class="roadmap-split-pane">
+      <div class="notes-pane">
+        <iframe src="${rm.url}" id="notesFrame" title="${rm.title} Notes"></iframe>
+      </div>
+      <div class="checklist-pane">
+        <div class="checklist-pane-header">
+          <div class="checklist-search-box">
+            <svg class="checklist-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" placeholder="Search sections..." id="checklistSearchInput" value="${searchQuery}" class="checklist-search-input">
           </div>
         </div>
-        <div class="phases-list">${phasesHtml}</div>
-      </div>`;
-    }).join('')}
-  </div>`;
-}
-
-function renderTopicCard(rmId, phaseTitle, t) {
-  const tid = topicId(rmId, phaseTitle, t.name);
-  const checked = store.isCompleted(tid);
-  const isExpanded = expandedTopics.has(tid);
-  
-  return `
-  <div class="topic-card ${checked ? 'completed' : ''} ${isExpanded ? 'expanded' : ''}">
-    <div class="topic-card-head" data-expand="${tid}">
-      <label class="custom-checkbox" onclick="event.stopPropagation()">
-        <input type="checkbox" class="topic-cb" data-tid="${tid}" ${checked ? 'checked' : ''}>
-        <span class="checkmark"></span>
-      </label>
-      <span class="topic-name">${t.name}</span>
-      <div class="topic-chevron">
-        <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        <div class="checklist-scroll">
+          ${phasesHtml || '<div class="empty-msg" style="text-align:center; padding: 20px;">No sections found.</div>'}
+        </div>
       </div>
     </div>
-    ${isExpanded ? `
-    <div class="topic-card-body">
-      ${t.desc ? `<p class="topic-desc">${t.desc}</p>` : ''}
-      ${t.links && t.links.length ? `
-      <div class="topic-links">
-        ${t.links.map(l => {
-          const isYT = l.url && l.url.includes('youtube.com');
-          return `<a href="${l.url}" target="_blank" rel="noopener noreferrer" class="resource-link ${isYT ? 'yt' : 'doc'}">${l.text}</a>`;
-        }).join('')}
-      </div>` : ''}
-      <div class="topic-notes">
-        <textarea class="note-input" data-tid="${tid}" placeholder="Your notes...">${store.getNote(tid)}</textarea>
-      </div>
-    </div>` : ''}
   </div>`;
 }
 
@@ -434,6 +417,163 @@ function renderTipsView() {
   </div>`;
 }
 
+function renderResumeView() {
+  return `
+  <div class="fade-in resume-container">
+    ${renderBackButton()}
+    <div class="resume-header">
+      <h1 class="resume-title">${resumeData.name}</h1>
+      <p class="resume-subtitle">Backend & Systems Developer · Interactive Deep Dives</p>
+    </div>
+
+    <!-- Technical Skills -->
+    <div class="resume-section-card">
+      <h2 class="resume-section-title">Technical Skills</h2>
+      <div class="resume-skills-grid">
+        <div class="resume-skill-cat">
+          <h4>Languages</h4>
+          <div class="resume-skills-list">
+            ${resumeData.skills.languages.map(s => `<span class="resume-skill-pill">${s}</span>`).join('')}
+          </div>
+        </div>
+        <div class="resume-skill-cat">
+          <h4>Backend & APIs</h4>
+          <div class="resume-skills-list">
+            ${resumeData.skills.backend.map(s => `<span class="resume-skill-pill">${s}</span>`).join('')}
+          </div>
+        </div>
+        <div class="resume-skill-cat">
+          <h4>Frontend & Mobile</h4>
+          <div class="resume-skills-list">
+            ${resumeData.skills.frontendMobile.map(s => `<span class="resume-skill-pill">${s}</span>`).join('')}
+          </div>
+        </div>
+        <div class="resume-skill-cat">
+          <h4>AI & ML Stack</h4>
+          <div class="resume-skills-list">
+            ${resumeData.skills.aiml.map(s => `<span class="resume-skill-pill">${s}</span>`).join('')}
+          </div>
+        </div>
+        <div class="resume-skill-cat">
+          <h4>Databases & Cloud</h4>
+          <div class="resume-skills-list">
+            ${resumeData.skills.dbCloudTools.map(s => `<span class="resume-skill-pill">${s}</span>`).join('')}
+          </div>
+        </div>
+        <div class="resume-skill-cat">
+          <h4>Core Computer Science</h4>
+          <div class="resume-skills-list">
+            ${resumeData.skills.coreCS.map(s => `<span class="resume-skill-pill">${s}</span>`).join('')}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Experience -->
+    <div class="resume-section-card">
+      <h2 class="resume-section-title">Work Experience</h2>
+      ${resumeData.experience.map(exp => `
+        <div class="resume-experience-item">
+          <div class="resume-exp-dot"></div>
+          <div class="resume-exp-header">
+            <div>
+              <div class="resume-exp-company">${exp.company}</div>
+              <div class="resume-exp-role">${exp.role}</div>
+            </div>
+            <div class="resume-exp-period">${exp.period}</div>
+          </div>
+          <ul class="resume-points">
+            ${exp.points.map(pt => `<li>${pt}</li>`).join('')}
+          </ul>
+          <button class="resume-action-btn" data-jump-roadmap="packspec" data-jump-hash="#overview">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+            Review Packspec Architecture Interview Notes
+          </button>
+        </div>
+      `).join('')}
+    </div>
+
+    <!-- Projects -->
+    <div class="resume-section-card">
+      <h2 class="resume-section-title">Academic & Technical Projects</h2>
+      <div class="resume-projects-grid">
+        <!-- Chessify AI -->
+        <div class="resume-project-card">
+          <div class="resume-proj-header">
+            <div class="resume-proj-title">Chessify AI</div>
+            <span class="resume-proj-tech">Next.js, Node, Socket.io, Flask, Python</span>
+          </div>
+          <ul class="resume-points">
+            <li>Developed a multiplayer chess platform with real-time room-based board synchronization and spectator mode supporting 100+ concurrent players.</li>
+            <li>Built a custom minimax game engine with alpha-beta pruning (depth 3) and integrated Python Flask-based Stockfish ELO 1800 engine as a fallback.</li>
+          </ul>
+          <div style="display: flex; gap: 10px; margin-top: 10px;">
+            <button class="resume-action-btn" data-jump-roadmap="flask-fastapi" data-jump-hash="#chessify">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+              Chessify Flask/Minimax Notes
+            </button>
+            <button class="resume-action-btn" data-jump-roadmap="react-nextjs" data-jump-hash="#repo-overview">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+              Next.js Frontend Notes
+            </button>
+          </div>
+        </div>
+
+        <!-- StudySync -->
+        <div class="resume-project-card">
+          <div class="resume-proj-header">
+            <div class="resume-proj-title">StudySync</div>
+            <span class="resume-proj-tech">Flutter, Express.js, MongoDB, JWT</span>
+          </div>
+          <ul class="resume-points">
+            <li>Built a cross-platform academic timetable application utilizing offline-first local caching and seamless server synchronization.</li>
+            <li>Created an authenticated admin panel for centralized timetable updates, serving sub-second updates to active student devices.</li>
+          </ul>
+          <button class="resume-action-btn" data-jump-roadmap="node-express" data-jump-hash="#study-overview">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+            StudySync Express/MongoDB Notes
+          </button>
+        </div>
+
+        <!-- SahYatri -->
+        <div class="resume-project-card">
+          <div class="resume-proj-header">
+            <div class="resume-proj-title">SahYatri</div>
+            <span class="resume-proj-tech">React.js, FastAPI, YOLOv5n, PostgreSQL, Raspberry Pi 4</span>
+          </div>
+          <ul class="resume-points">
+            <li>Deployed a passenger count detection pipeline inside public transit using a Raspberry Pi camera module, achieving 90%+ occupancy accuracy.</li>
+            <li>Managed time-series data using PostgreSQL pooling to record transit history, streaming live occupancy analytics to an operator dashboard.</li>
+          </ul>
+          <div style="display: flex; gap: 10px; margin-top: 10px;">
+            <button class="resume-action-btn" data-jump-roadmap="aiml-stack" data-jump-hash="#sy-overview">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+              SahYatri YOLOv5n Notes
+            </button>
+            <button class="resume-action-btn" data-jump-roadmap="databases-cloud" data-jump-hash="#sahyatri-choice">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+              SahYatri PostgreSQL Notes
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Achievements -->
+    <div class="resume-section-card">
+      <h2 class="resume-section-title">Achievements & Core Competencies</h2>
+      <ul class="resume-achievements-list">
+        <li><strong>1st Place - BitBox 5.0 (SahYatri):</strong> Developed real-time hardware-software solution for transit analytics.</li>
+        <li><strong>Finalist - Innovate 3.0 (Drive-Sure):</strong> Created smart system for vehicle health monitoring.</li>
+        <li class="lc"><strong>LeetCode Knight (Rating: 2036):</strong> Solved 1000+ problems, active 250+ days consecutive algorithmic coding streak.</li>
+        <li class="agent"><strong>PDF Query Engine:</strong> Built a multi-agent retrieval system (LangChain, CrewAI) to synthesize answers from complex documents.</li>
+        <li class="bootcamp"><strong>Bootcamps:</strong> Completed Udemy courses in Data Science, Machine Learning, Deep Learning, NLP, and Generative AI.</li>
+        <li class="bootcamp"><strong>Academic:</strong> Received JIIT Letter of Appreciation for academic performance in core engineering subjects.</li>
+      </ul>
+    </div>
+  </div>`;
+}
+
 function attachEvents() {
   document.querySelectorAll('[data-view]').forEach(el => {
     el.addEventListener('click', () => {
@@ -446,6 +586,16 @@ function attachEvents() {
 
   document.getElementById('backBtn')?.addEventListener('click', goBack);
 
+  // Jump from resume directly to deep dive notes and auto-scroll
+  document.querySelectorAll('[data-jump-roadmap]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const rmId = btn.dataset.jumpRoadmap;
+      const hash = btn.dataset.jumpHash;
+      navigateToWithHash('roadmap', rmId, hash);
+    });
+  });
+
+  // Checklist topic checkbox toggle
   document.querySelectorAll('.topic-cb').forEach(cb => {
     cb.addEventListener('change', () => {
       store.toggleComplete(cb.dataset.tid);
@@ -455,32 +605,57 @@ function attachEvents() {
     });
   });
 
-  document.querySelectorAll('.topic-card-head').forEach(head => {
-    head.addEventListener('click', (e) => {
+  // Checklist topic click triggers scroll inside iframe
+  document.querySelectorAll('.checklist-topic-row').forEach(row => {
+    row.addEventListener('click', (e) => {
       if (e.target.tagName.toLowerCase() === 'input' || e.target.classList.contains('checkmark')) return;
-      const tid = head.dataset.expand;
-      if (expandedTopics.has(tid)) expandedTopics.delete(tid);
-      else expandedTopics.add(tid);
-      renderApp();
+      const hash = row.dataset.hash;
+      const frame = document.getElementById('notesFrame');
+      if (frame && frame.contentWindow) {
+        try {
+          frame.contentWindow.location.hash = hash;
+        } catch (err) {
+          frame.src = frame.src.split('#')[0] + hash;
+        }
+      }
     });
   });
 
-  document.querySelectorAll('.note-input').forEach(input => {
-    input.addEventListener('change', () => {
-      store.setNote(input.dataset.tid, input.value);
-      if (hasFirebaseConfig()) syncProgress(store.getState());
-    });
-  });
-
-  const searchInput = document.getElementById('searchInput');
-  if (searchInput) {
-    searchInput.addEventListener('input', (e) => {
-      searchQuery = e.target.value;
-      renderApp();
-      document.getElementById('searchInput')?.focus();
+  // Setup iframe load listener for auto-scrolling on deep dive transition
+  const frame = document.getElementById('notesFrame');
+  if (frame) {
+    frame.addEventListener('load', () => {
+      if (targetHashOnLoad) {
+        setTimeout(() => {
+          try {
+            frame.contentWindow.location.hash = targetHashOnLoad;
+          } catch (e) {
+            frame.src = frame.src.split('#')[0] + targetHashOnLoad;
+          }
+          targetHashOnLoad = null;
+        }, 150);
+      }
     });
   }
 
+  // Dashboard roadmap cards click
+  document.querySelectorAll('.rm-card').forEach(card => {
+    card.addEventListener('click', () => {
+      navigateTo('roadmap', card.dataset.roadmap);
+    });
+  });
+
+  // Search input for checklist pane
+  const checklistSearchInput = document.getElementById('checklistSearchInput');
+  if (checklistSearchInput) {
+    checklistSearchInput.addEventListener('input', (e) => {
+      searchQuery = e.target.value;
+      renderApp();
+      document.getElementById('checklistSearchInput')?.focus();
+    });
+  }
+
+  // Tasks (Todos) functionality
   const todoInput = document.getElementById('todoInput');
   if (todoInput) {
     todoInput.addEventListener('keydown', e => {
@@ -493,10 +668,19 @@ function attachEvents() {
   }
 
   document.querySelectorAll('.todo-cb').forEach(cb => {
-    cb.addEventListener('change', () => { store.toggleTodo(Number(cb.dataset.todo)); if (hasFirebaseConfig()) syncProgress(store.getState()); renderApp(); });
+    cb.addEventListener('change', () => { 
+      store.toggleTodo(Number(cb.dataset.todo)); 
+      if (hasFirebaseConfig()) syncProgress(store.getState()); 
+      renderApp(); 
+    });
   });
+
   document.querySelectorAll('.todo-del').forEach(btn => {
-    btn.addEventListener('click', () => { store.deleteTodo(Number(btn.dataset.del)); if (hasFirebaseConfig()) syncProgress(store.getState()); renderApp(); });
+    btn.addEventListener('click', () => { 
+      store.deleteTodo(Number(btn.dataset.del)); 
+      if (hasFirebaseConfig()) syncProgress(store.getState()); 
+      renderApp(); 
+    });
   });
 
   document.getElementById('mobileToggle')?.addEventListener('click', () => {
@@ -523,10 +707,8 @@ function attachEvents() {
 }
 
 if (hasFirebaseConfig()) {
-  import('./sync.js').then(({ pullProgress }) => {
-    pullProgress().then(data => {
-      if (data) { store.save(data); renderApp(); }
-    });
+  pullProgress().then(data => {
+    if (data) { store.save(data); renderApp(); }
   });
 }
 

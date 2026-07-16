@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>React.js &amp; Next.js — Interview Notes</title>
+<style>
+  :root{
+    --bg:#0a0e14;
+    --bg-panel:#101620;
+    --card:#131a26;
+    --card-border:#1f2937;
+    --cyan:#22d3ee;
+    --cyan-dim:#0e7490;
+    --text:#e2e8f0;
+    --text-dim:#93a1b5;
+    --text-faint:#5b6a80;
+    --trap:#f87171;
+    --trap-bg:#2a1414;
+    --ref:#38bdf8;
+    --ref-bg:#0f1e2c;
+    --resume:#34d399;
+    --resume-bg:#0f231b;
+    --followup:#c084fc;
+    --followup-bg:#1e1526;
+    --code-bg:#0d1117;
+    --radius:14px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--bg);
+    background-image:
+      radial-gradient(circle at 15% 0%, rgba(34,211,238,0.07), transparent 40%),
+      radial-gradient(circle at 85% 20%, rgba(192,132,252,0.05), transparent 35%);
+    color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.55;
+    padding-bottom:60px;
+  }
+  a{color:var(--cyan);text-decoration:none;}
+  a:hover{text-decoration:underline;}
+
+  /* ---------- Sticky nav ---------- */
+  .topbar{
+    position:sticky;top:0;z-index:50;
+    background:rgba(10,14,20,0.92);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--card-border);
+    padding:12px 16px;
+  }
+  .topbar-inner{
+    max-width:900px;margin:0 auto;
+    display:flex;align-items:center;gap:10px;
+  }
+  .topbar-title{
+    font-size:13px;font-weight:700;color:var(--cyan);
+    letter-spacing:0.03em;white-space:nowrap;
+    display:flex;align-items:center;gap:6px;
+  }
+  .topbar-title .dot{width:7px;height:7px;border-radius:50%;background:var(--cyan);box-shadow:0 0 8px var(--cyan);}
+  select.jumpnav{
+    flex:1;
+    background:var(--card);
+    color:var(--text);
+    border:1px solid var(--card-border);
+    border-radius:9px;
+    padding:9px 10px;
+    font-size:14px;
+    appearance:none;
+    -webkit-appearance:none;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%2322d3ee'><path d='M5.5 7.5l4.5 4.5 4.5-4.5z'/></svg>");
+    background-repeat:no-repeat;
+    background-position:right 10px center;
+    background-size:16px;
+    padding-right:32px;
+  }
+  select.jumpnav:focus{outline:2px solid var(--cyan-dim);}
+
+  /* ---------- Layout ---------- */
+  .wrap{max-width:900px;margin:0 auto;padding:0 16px;}
+  .hero{padding:28px 4px 10px;}
+  .hero h1{font-size:22px;margin:0 0 6px;color:#fff;}
+  .hero p{color:var(--text-dim);font-size:14px;margin:0;}
+  .hero .badges{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;}
+  .badge{
+    font-size:11px;font-weight:600;color:var(--cyan);
+    border:1px solid var(--cyan-dim);background:rgba(34,211,238,0.06);
+    padding:4px 9px;border-radius:99px;
+  }
+
+  section{margin-top:34px;scroll-margin-top:70px;}
+  .section-head{display:flex;align-items:baseline;gap:10px;margin-bottom:14px;}
+  .section-head h2{
+    font-size:19px;margin:0;color:#fff;
+    padding-left:10px;border-left:3px solid var(--cyan);
+  }
+  .section-head .count{font-size:11px;color:var(--text-faint);}
+
+  .card{
+    background:var(--card);
+    border:1px solid var(--card-border);
+    border-radius:var(--radius);
+    padding:16px 16px 18px;
+    margin-bottom:14px;
+  }
+  .card h3{
+    font-size:15px;margin:0 0 8px;color:var(--cyan);
+    scroll-margin-top:70px;
+  }
+  .card h3 .sub{color:var(--text-faint);font-weight:400;font-size:12px;}
+  .card p{margin:6px 0;color:var(--text);font-size:14px;}
+  .card p.dim{color:var(--text-dim);}
+  .card ul, .card ol{margin:6px 0;padding-left:20px;font-size:14px;}
+  .card li{margin:4px 0;}
+  .card code.inline{
+    background:rgba(34,211,238,0.08);
+    color:var(--cyan);
+    padding:1px 6px;border-radius:5px;
+    font-size:12.5px;font-family:"SF Mono",Consolas,Monaco,monospace;
+  }
+
+  /* ---------- Code blocks ---------- */
+  pre{
+    background:var(--code-bg);
+    border:1px solid var(--card-border);
+    border-radius:10px;
+    padding:12px 14px;
+    overflow-x:auto;
+    font-size:12.5px;
+    margin:10px 0;
+    -webkit-overflow-scrolling:touch;
+  }
+  pre code{
+    font-family:"SF Mono",Consolas,Monaco,monospace;
+    color:#c9d6e3;
+    white-space:pre;
+    line-height:1.5;
+  }
+  .code-label{
+    font-size:10.5px;color:var(--text-faint);
+    text-transform:uppercase;letter-spacing:0.05em;
+    margin:14px 0 -2px;font-weight:700;
+  }
+  .kw{color:#c084fc;} .str{color:#a5d6a7;} .cm{color:#5b6a80;font-style:italic;} .fn{color:#38bdf8;} .tag{color:#22d3ee;}
+
+  /* ---------- Tables ---------- */
+  .tblwrap{overflow-x:auto;margin:10px 0;border-radius:10px;border:1px solid var(--card-border);}
+  table{width:100%;border-collapse:collapse;font-size:13px;min-width:480px;}
+  th{
+    background:rgba(34,211,238,0.06);
+    color:var(--cyan);
+    text-align:left;
+    padding:9px 12px;
+    font-size:11.5px;
+    text-transform:uppercase;
+    letter-spacing:0.03em;
+    border-bottom:1px solid var(--card-border);
+    white-space:nowrap;
+  }
+  td{
+    padding:10px 12px;
+    border-bottom:1px solid var(--card-border);
+    color:var(--text-dim);
+    vertical-align:top;
+  }
+  tr:last-child td{border-bottom:none;}
+  td.hl{color:var(--text);font-weight:600;}
+
+  /* ---------- Callouts ---------- */
+  .callout{
+    border-radius:10px;
+    padding:12px 14px;
+    margin:12px 0;
+    font-size:13.5px;
+    border-left:3px solid;
+  }
+  .callout .co-label{
+    font-size:10.5px;font-weight:800;text-transform:uppercase;
+    letter-spacing:0.05em;margin-bottom:5px;display:flex;align-items:center;gap:6px;
+  }
+  .callout.trap{background:var(--trap-bg);border-color:var(--trap);}
+  .callout.trap .co-label{color:var(--trap);}
+  .callout.ref{background:var(--ref-bg);border-color:var(--ref);}
+  .callout.ref .co-label{color:var(--ref);}
+  .callout.resume{background:var(--resume-bg);border-color:var(--resume);}
+  .callout.resume .co-label{color:var(--resume);}
+  .callout.followup{background:var(--followup-bg);border-color:var(--followup);}
+  .callout.followup .co-label{color:var(--followup);}
+  .callout p{margin:4px 0;color:var(--text);}
+
+  /* ---------- Deep dive specific ---------- */
+  .repo-banner{
+    display:flex;flex-direction:column;gap:6px;
+    background:linear-gradient(135deg, rgba(34,211,238,0.08), rgba(192,132,252,0.05));
+    border:1px solid var(--cyan-dim);
+    border-radius:var(--radius);
+    padding:16px;margin-bottom:16px;
+  }
+  .repo-banner .rtitle{font-size:15px;font-weight:700;color:#fff;}
+  .repo-banner .rmeta{font-size:12px;color:var(--text-dim);}
+  .repo-banner a.rlink{font-size:12.5px;font-weight:600;}
+  .filetree{
+    font-family:"SF Mono",Consolas,Monaco,monospace;
+    font-size:11.5px;color:var(--text-dim);
+    background:var(--code-bg);border:1px solid var(--card-border);
+    border-radius:10px;padding:12px 14px;margin:10px 0;
+    line-height:1.6;overflow-x:auto;white-space:pre;
+  }
+  .filetree .fd{color:var(--cyan);}
+
+  hr.divider{border:none;border-top:1px solid var(--card-border);margin:24px 0;}
+
+  footer{
+    max-width:900px;margin:40px auto 0;padding:16px;
+    text-align:center;color:var(--text-faint);font-size:12px;
+  }
+
+  @media (min-width:640px){
+    .hero h1{font-size:26px;}
+    table{font-size:13.5px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-inner">
+    <span class="topbar-title"><span class="dot"></span>NOTES</span>
+    <select class="jumpnav" onchange="if(this.value) window.location.hash = this.value;">
+      <option value="">Jump to section…</option>
+      <optgroup label="React Fundamentals">
+        <option value="#jsx">JSX</option>
+        <option value="#components-props-state">Components · Props vs State</option>
+        <option value="#hooks">Hooks (useState/useEffect/useContext/useMemo/useCallback)</option>
+        <option value="#custom-hooks">Custom Hooks</option>
+        <option value="#vdom">Virtual DOM &amp; Reconciliation / Keys</option>
+        <option value="#controlled">Controlled vs Uncontrolled</option>
+        <option value="#lifting-state">Lifting State Up</option>
+        <option value="#context-vs-redux">Context API vs Redux/Zustand</option>
+      </optgroup>
+      <optgroup label="Next.js Fundamentals">
+        <option value="#rendering">SSR vs SSG vs ISR vs CSR</option>
+        <option value="#app-vs-pages">App Router vs Pages Router</option>
+        <option value="#routing">Routing</option>
+        <option value="#api-routes">API Routes</option>
+        <option value="#middleware">Middleware</option>
+        <option value="#data-fetching">Data Fetching Patterns</option>
+        <option value="#optimization">Image &amp; Font Optimization</option>
+      </optgroup>
+      <optgroup label="Comparisons">
+        <option value="#react-vs-next">React vs Next.js</option>
+        <option value="#effect-vs-layouteffect">useEffect vs useLayoutEffect</option>
+        <option value="#memo-comparison">memo vs useMemo vs useCallback</option>
+      </optgroup>
+      <optgroup label="Repo Deep-Dive: Chessify">
+        <option value="#repo-overview">Architecture Overview</option>
+        <option value="#repo-state">Live Board State &amp; Socket Sync</option>
+        <option value="#repo-events">Socket Event Handling</option>
+        <option value="#repo-render">Board Rendering &amp; Re-renders</option>
+        <option value="#repo-authority">Optimistic vs Authoritative Moves</option>
+        <option value="#repo-router-quirk">App Router + Pages API Quirk</option>
+      </optgroup>
+    </select>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <div class="hero">
+    <h1>React.js &amp; Next.js — Interview Notes</h1>
+    <p>Concept refreshers weighted toward what actually gets asked in OAs and interviews, plus a real deep-dive into <strong>Chessify-WebApp</strong> (Next.js + Socket.IO real-time multiplayer chess).</p>
+    <div class="badges">
+      <span class="badge">React 18</span>
+      <span class="badge">Next.js 13 App Router</span>
+      <span class="badge">Socket.IO</span>
+      <span class="badge">Interview-focused</span>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <section id="react-fundamentals-head">
+    <div class="section-head"><h2>React Fundamentals</h2></div>
+  </section>
+
+  <section id="jsx">
+    <div class="card">
+      <h3 id="jsx-h">JSX</h3>
+      <p>JSX is syntactic sugar over <code class="inline">React.createElement(type, props, ...children)</code>. It's not HTML — it's an expression that compiles to plain JS function calls, which is why you can drop <code class="inline">{expressions}</code> anywhere and why a component must return a <em>single</em> root (or a Fragment).</p>
+      <div class="code-label">Compiles to</div>
+      <pre><code><span class="kw">const</span> el = &lt;h1 className=<span class="str">"title"</span>&gt;Hi <span class="tag">{name}</span>&lt;/h1&gt;
+
+<span class="cm">// becomes</span>
+<span class="kw">const</span> el = React.createElement(<span class="str">"h1"</span>, { className: <span class="str">"title"</span> }, <span class="str">"Hi "</span>, name)</code></pre>
+      <div class="callout ref">
+        <div class="co-label">📌 Likely to be asked</div>
+        <p>"Why can't a component return two sibling elements without a wrapper?" → Because JSX compiles to one <code class="inline">createElement</code> call; a Fragment (<code class="inline">&lt;&gt;...&lt;/&gt;</code>) is the free wrapper that doesn't add a DOM node.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="components-props-state">
+    <div class="card">
+      <h3 id="components-h">Components · Props vs State</h3>
+      <p class="dim">A component is a function that takes <strong>props</strong> (input, owned by the parent, read-only) and returns JSX. <strong>State</strong> is data owned and mutated by the component itself, and changing it triggers a re-render.</p>
+      <div class="tblwrap">
+        <table>
+          <tr><th></th><th>Props</th><th>State</th></tr>
+          <tr><td class="hl">Owned by</td><td>Parent, passed down</td><td>The component itself</td></tr>
+          <tr><td class="hl">Mutable?</td><td>No — read-only inside the child</td><td>Yes, via setter (never mutate directly)</td></tr>
+          <tr><td class="hl">Triggers re-render?</td><td>When parent re-renders with new values</td><td>When the setter is called with a new value</td></tr>
+          <tr><td class="hl">Analogy</td><td>Function arguments</td><td>Local variables with a re-render side effect</td></tr>
+        </table>
+      </div>
+      <div class="callout trap">
+        <div class="co-label">⚠️ Interview trap</div>
+        <p>"Can a child modify its own props?" No — but it can call a callback passed down as a prop (e.g. <code class="inline">onChange</code>) so the <em>parent</em> updates its state and passes new props down. This is the core of unidirectional data flow.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="hooks">
+    <div class="card">
+      <h3 id="hooks-h">Hooks</h3>
+      <p class="dim">All hooks follow the <strong>Rules of Hooks</strong>: call only at the top level (never in loops/conditions/nested functions) and only from React function components or other hooks. This is because React tracks hooks by <em>call order</em> across renders, not by name.</p>
+
+      <div class="code-label">useState</div>
+      <pre><code><span class="kw">const</span> [count, setCount] = useState(0)
+<span class="cm">// functional update avoids stale closures when new value depends on old</span>
+setCount(prev =&gt; prev + 1)</code></pre>
+
+      <div class="code-label">useEffect</div>
+      <pre><code>useEffect(() =&gt; {
+  <span class="kw">const</span> id = setInterval(() =&gt; setTick(t =&gt; t + 1), 1000)
+  <span class="kw">return</span> () =&gt; clearInterval(id) <span class="cm">// cleanup — runs before next effect + on unmount</span>
+}, [dep]) <span class="cm">// [] = mount only · omitted = every render · [dep] = when dep changes</span></code></pre>
+
+      <div class="code-label">useContext</div>
+      <pre><code><span class="kw">const</span> theme = useContext(ThemeContext) <span class="cm">// subscribes to nearest Provider above</span></code></pre>
+
+      <div class="code-label">useMemo vs useCallback</div>
+      <pre><code><span class="kw">const</span> sorted = useMemo(() =&gt; expensiveSort(list), [list]) <span class="cm">// memoizes a VALUE</span>
+<span class="kw">const</span> handleClick = useCallback(() =&gt; doThing(id), [id])  <span class="cm">// memoizes a FUNCTION reference</span></code></pre>
+
+      <div class="callout trap">
+        <div class="co-label">⚠️ Interview trap</div>
+        <p>useMemo/useCallback are <strong>not free</strong> — they cost a comparison + cache slot every render. Only reach for them when (a) the computation is genuinely expensive, or (b) you need referential stability to avoid breaking <code class="inline">React.memo</code> on a child or re-triggering a <code class="inline">useEffect</code> dependency.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="custom-hooks">
+    <div class="card">
+      <h3 id="custom-hooks-h">Custom Hooks</h3>
+      <p>A custom hook is just a function starting with <code class="inline">use</code> that calls other hooks internally — it's a way to extract and share stateful logic (not state itself; each caller gets its own independent state).</p>
+      <pre><code><span class="kw">function</span> <span class="fn">useMediaQuery</span>(query) {
+  <span class="kw">const</span> [matches, setMatches] = useState(<span class="kw">false</span>)
+  useEffect(() =&gt; {
+    <span class="kw">const</span> mql = window.matchMedia(query)
+    <span class="kw">const</span> onChange = () =&gt; setMatches(mql.matches)
+    onChange()
+    mql.addEventListener(<span class="str">"change"</span>, onChange)
+    <span class="kw">return</span> () =&gt; mql.removeEventListener(<span class="str">"change"</span>, onChange)
+  }, [query])
+  <span class="kw">return</span> matches
+}</code></pre>
+      <div class="callout ref">
+        <div class="co-label">📌 Likely to be asked</div>
+        <p>"Do two components using the same custom hook share state?" No — every call to the hook creates its own isolated state via its own <code class="inline">useState</code> call. Only the <em>logic</em> is shared, not the data.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="vdom">
+    <div class="card">
+      <h3 id="vdom-h">Virtual DOM &amp; Reconciliation, Keys</h3>
+      <p>React keeps a lightweight JS object tree (the virtual DOM). On state change it builds a new tree, <strong>diffs</strong> it against the previous one (reconciliation), and patches only the real DOM nodes that changed — because real DOM writes are expensive, JS object diffing is cheap.</p>
+      <p class="dim">Diffing heuristics: different element types → tear down and rebuild the whole subtree; same type → keep the DOM node and update only changed attributes; lists → matched by <code class="inline">key</code>, not by position.</p>
+      <div class="callout trap">
+        <div class="co-label">⚠️ Interview trap</div>
+        <p>Using array <strong>index as key</strong> works fine for static lists but breaks badly when items are reordered/inserted/removed — React matches by key, so it will reuse the wrong DOM node's local state (e.g. an input's typed value ends up on the wrong row). Always use a stable, unique ID.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="controlled">
+    <div class="card">
+      <h3 id="controlled-h">Controlled vs Uncontrolled Components</h3>
+      <div class="tblwrap">
+        <table>
+          <tr><th></th><th>Controlled</th><th>Uncontrolled</th></tr>
+          <tr><td class="hl">Source of truth</td><td>React state (<code class="inline">value</code> + <code class="inline">onChange</code>)</td><td>The DOM itself</td></tr>
+          <tr><td class="hl">Read value via</td><td>State variable</td><td><code class="inline">ref.current.value</code></td></tr>
+          <tr><td class="hl">Use when</td><td>You need validation, conditional disabling, or to sync with other UI on every keystroke</td><td>Simple forms, file inputs, integrating non-React widgets</td></tr>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section id="lifting-state">
+    <div class="card">
+      <h3 id="lifting-h">Lifting State Up</h3>
+      <p>When two sibling components need to share/sync data, move the state to their nearest common parent and pass it down as props (plus a callback to mutate it). It's the vanilla-React answer to "how do siblings communicate" before reaching for Context or a state library.</p>
+      <div class="callout followup">
+        <div class="co-label">🎯 Common follow-up</div>
+        <p>"What if the components are far apart in the tree?" → Lifting state all the way up causes prop drilling; that's the segue into Context API or a state library.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="context-vs-redux">
+    <div class="card">
+      <h3 id="context-h">Context API vs Redux / Zustand</h3>
+      <div class="tblwrap">
+        <table>
+          <tr><th></th><th>Context API</th><th>Redux</th><th>Zustand</th></tr>
+          <tr><td class="hl">Type</td><td>Built into React</td><td>External library, strict unidirectional flow</td><td>External, minimal boilerplate</td></tr>
+          <tr><td class="hl">Boilerplate</td><td>Low</td><td>High (actions/reducers/store) — less with Redux Toolkit</td><td>Very low</td></tr>
+          <tr><td class="hl">Re-render behavior</td><td>Any consumer re-renders on <em>any</em> value change unless split/memoized</td><td>Components subscribe to selected slices via <code class="inline">useSelector</code> — fine-grained</td><td>Selector-based subscriptions — fine-grained</td></tr>
+          <tr><td class="hl">Devtools/middleware</td><td>None built in</td><td>Rich (time-travel debugging, middleware)</td><td>Minimal, plugin-based</td></tr>
+          <tr><td class="hl">Best for</td><td>Low-frequency global data: theme, auth, locale</td><td>Large apps, complex/async state, team conventions</td><td>Small-to-mid apps wanting Redux-like global store without ceremony</td></tr>
+        </table>
+      </div>
+      <div class="callout trap">
+        <div class="co-label">⚠️ Interview trap</div>
+        <p>Context is <strong>not a performance optimization</strong> or a state manager — it's a dependency-injection mechanism. Every component consuming a context re-renders on any change to that context's value, which is why high-frequency state (e.g. live board position, mouse coordinates) in Context can get expensive without splitting contexts or memoizing consumers.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section id="nextjs-fundamentals-head">
+    <div class="section-head"><h2>Next.js Fundamentals</h2></div>
+  </section>
+
+  <section id="rendering">
+    <div class="card">
+      <h3 id="rendering-h">SSR vs SSG vs ISR vs CSR</h3>
+      <div class="tblwrap">
+        <table>
+          <tr><th></th><th>When HTML is built</th><th>Data freshness</th><th>Good for</th></tr>
+          <tr><td class="hl">CSR</td><td>In the browser, after JS loads</td><td>Always fresh (client fetch)</td><td>Dashboards, highly interactive/authenticated pages</td></tr>
+          <tr><td class="hl">SSR</td><td>Per request, on the server</td><td>Always fresh</td><td>SEO-sensitive pages with per-user/per-request data</td></tr>
+          <tr><td class="hl">SSG</td><td>At build time</td><td>Fixed until next build</td><td>Marketing pages, docs, blogs</td></tr>
+          <tr><td class="hl">ISR</td><td>At build time, then regenerated in the background on a timer/on-demand</td><td>Eventually fresh (stale-while-revalidate)</td><td>Product pages, content that changes but not every request</td></tr>
+        </table>
+      </div>
+      <div class="callout ref">
+        <div class="co-label">📌 Likely to be asked</div>
+        <p>"How does ISR actually work?" → The first request after the revalidate window serves the (now stale) cached page while Next.js regenerates it in the background; the <em>next</em> request gets the fresh version. No request ever blocks on regeneration.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="app-vs-pages">
+    <div class="card">
+      <h3 id="app-h">App Router vs Pages Router</h3>
+      <div class="tblwrap">
+        <table>
+          <tr><th></th><th>App Router (<code class="inline">app/</code>)</th><th>Pages Router (<code class="inline">pages/</code>)</th></tr>
+          <tr><td class="hl">Default rendering</td><td>Server Components by default</td><td>Client components only</td></tr>
+          <tr><td class="hl">Data fetching</td><td><code class="inline">async</code> Server Components, <code class="inline">fetch()</code> with caching options</td><td><code class="inline">getServerSideProps</code> / <code class="inline">getStaticProps</code></td></tr>
+          <tr><td class="hl">Layouts</td><td>Nested <code class="inline">layout.tsx</code> that persist across navigations</td><td>Manual, via <code class="inline">_app.tsx</code></td></tr>
+          <tr><td class="hl">Loading/error UI</td><td>File conventions: <code class="inline">loading.tsx</code>, <code class="inline">error.tsx</code></td><td>Manual state handling</td></tr>
+          <tr><td class="hl">API routes</td><td><code class="inline">route.ts</code> Route Handlers</td><td><code class="inline">pages/api/*.ts</code></td></tr>
+          <tr><td class="hl">Client interactivity</td><td>Opt-in via <code class="inline">"use client"</code></td><td>Everything is a client component</td></tr>
+        </table>
+      </div>
+      <div class="callout trap">
+        <div class="co-label">⚠️ Interview trap</div>
+        <p>"Server Components" ≠ SSR. SSR is about <em>when HTML is rendered</em> (per request vs build time); Server Components are about <em>where a component's code ever runs</em> (only on the server — its JS bundle is never shipped to the client at all). You can have SSR with only Client Components (Pages Router did this for years).</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="routing">
+    <div class="card">
+      <h3 id="routing-h">Routing</h3>
+      <p>Both routers are <strong>file-system based</strong>: a folder/file path maps directly to a URL. Dynamic segments use brackets.</p>
+      <div class="filetree">app/
+├── page.tsx              <span class="cm">→ /</span>
+├── about/page.tsx        <span class="cm">→ /about</span>
+├── blog/[slug]/page.tsx  <span class="cm">→ /blog/:slug  (params.slug)</span>
+└── game/[gameId]/page.tsx<span class="cm">→ /game/:gameId (params.gameId)</span></div>
+      <p class="dim">Other conventions: <code class="inline">[...slug]</code> catch-all, <code class="inline">[[...slug]]</code> optional catch-all, <code class="inline">(group)</code> route groups that don't affect the URL.</p>
+    </div>
+  </section>
+
+  <section id="api-routes">
+    <div class="card">
+      <h3 id="api-h">API Routes</h3>
+      <p>Backend endpoints colocated with your frontend code — no separate server needed for simple use cases.</p>
+      <div class="code-label">App Router — app/api/hello/route.ts</div>
+      <pre><code><span class="kw">export async function</span> <span class="fn">GET</span>(request: Request) {
+  <span class="kw">return</span> Response.json({ message: <span class="str">"hi"</span> })
+}
+<span class="kw">export async function</span> <span class="fn">POST</span>(request: Request) {
+  <span class="kw">const</span> body = <span class="kw">await</span> request.json()
+  <span class="kw">return</span> Response.json({ received: body })
+}</code></pre>
+      <p class="dim">In the Pages Router these are a single default-exported handler keyed off <code class="inline">req.method</code> instead of separate named exports (see the repo deep-dive below — this project actually uses the older style inside an App Router app).</p>
+    </div>
+  </section>
+
+  <section id="middleware">
+    <div class="card">
+      <h3 id="middleware-h">Middleware</h3>
+      <p>Code in <code class="inline">middleware.ts</code> at the project root that runs <strong>before</strong> a request completes, at the edge — used for auth gating, redirects, A/B routing, header rewriting. It runs on every matched request and can't touch the DOM or do heavy computation (it's a lightweight Edge runtime, not Node).</p>
+      <pre><code><span class="kw">export function</span> <span class="fn">middleware</span>(request: NextRequest) {
+  <span class="kw">const</span> token = request.cookies.get(<span class="str">"session"</span>)
+  <span class="kw">if</span> (!token) <span class="kw">return</span> NextResponse.redirect(<span class="kw">new</span> URL(<span class="str">"/login"</span>, request.url))
+  <span class="kw">return</span> NextResponse.next()
+}
+<span class="kw">export const</span> config = { matcher: [<span class="str">"/dashboard/:path*"</span>] }</code></pre>
+    </div>
+  </section>
+
+  <section id="data-fetching">
+    <div class="card">
+      <h3 id="data-fetching-h">Data Fetching Patterns</h3>
+      <ul>
+        <li><strong>Server Components:</strong> just <code class="inline">await fetch()</code> directly in an async component — no <code class="inline">useEffect</code>/loading state needed for initial data.</li>
+        <li><strong>Caching:</strong> <code class="inline">fetch(url, { cache: 'force-cache' })</code> (default, SSG-like) vs <code class="inline">{ cache: 'no-store' }</code> (SSR-like) vs <code class="inline">{ next: { revalidate: 60 } }</code> (ISR-like).</li>
+        <li><strong>Client Components:</strong> still use <code class="inline">useEffect</code> + fetch, or a library like SWR/React Query for caching, revalidation, and request dedup.</li>
+        <li><strong>Parallel vs waterfall:</strong> kick off independent <code class="inline">fetch()</code> calls without awaiting each one sequentially, then <code class="inline">Promise.all</code> — a classic perf follow-up question.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="optimization">
+    <div class="card">
+      <h3 id="optimization-h">Image &amp; Font Optimization</h3>
+      <p><code class="inline">next/image</code> auto-generates responsive <code class="inline">srcset</code>s, lazy-loads offscreen images, serves modern formats (WebP/AVIF), and prevents layout shift by reserving space via required <code class="inline">width</code>/<code class="inline">height</code> (or <code class="inline">fill</code>).</p>
+      <p><code class="inline">next/font</code> self-hosts Google/local fonts at build time (no runtime request to Google), inlines <code class="inline">font-display</code> config, and avoids the render-blocking external font request entirely — directly improves CLS/LCP.</p>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section id="comparisons-head">
+    <div class="section-head"><h2>Common Interview Comparisons</h2></div>
+  </section>
+
+  <section id="react-vs-next">
+    <div class="card">
+      <h3 id="rvn-h">React vs Next.js</h3>
+      <div class="tblwrap">
+        <table>
+          <tr><th></th><th>React</th><th>Next.js</th></tr>
+          <tr><td class="hl">What it is</td><td>A UI library for building components</td><td>A framework built on React that adds routing, rendering strategies, bundling, and backend capabilities</td></tr>
+          <tr><td class="hl">Routing</td><td>None built in (needs React Router)</td><td>File-system routing built in</td></tr>
+          <tr><td class="hl">Rendering</td><td>CSR only, out of the box</td><td>SSR/SSG/ISR/CSR, chosen per route</td></tr>
+          <tr><td class="hl">Backend</td><td>None</td><td>API routes / Route Handlers included</td></tr>
+          <tr><td class="hl">SEO</td><td>Weak by default (empty HTML shell)</td><td>Strong — server-rendered HTML on first load</td></tr>
+        </table>
+      </div>
+      <p class="dim">One-liner for interviews: Next.js is <em>to React</em> what a full framework is <em>to a library</em> — React answers "how do I build UI," Next.js answers "how do I ship a full app around that UI."</p>
+    </div>
+  </section>
+
+  <section id="effect-vs-layouteffect">
+    <div class="card">
+      <h3 id="evle-h">useEffect vs useLayoutEffect</h3>
+      <div class="tblwrap">
+        <table>
+          <tr><th></th><th>useEffect</th><th>useLayoutEffect</th></tr>
+          <tr><td class="hl">Timing</td><td>Asynchronously, after the browser paints</td><td>Synchronously, after DOM mutations but before the browser paints</td></tr>
+          <tr><td class="hl">Blocks paint?</td><td>No</td><td>Yes</td></tr>
+          <tr><td class="hl">Use when</td><td>Almost always — data fetching, subscriptions, logging</td><td>You must measure/mutate the DOM before the user sees a flicker (e.g. reading layout to reposition a tooltip)</td></tr>
+        </table>
+      </div>
+      <div class="callout ref">
+        <div class="co-label">📌 Likely to be asked</div>
+        <p>"What breaks if you use useEffect for a DOM measurement that repositions an element?" → A visible flash: the browser paints the wrong position first, then your effect fires and snaps it — useLayoutEffect avoids that flash by running before paint.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="memo-comparison">
+    <div class="card">
+      <h3 id="memo-h">memo vs useMemo vs useCallback</h3>
+      <div class="tblwrap">
+        <table>
+          <tr><th></th><th>React.memo</th><th>useMemo</th><th>useCallback</th></tr>
+          <tr><td class="hl">What it wraps</td><td>A component</td><td>A computed value</td><td>A function</td></tr>
+          <tr><td class="hl">Prevents</td><td>Re-render of the component if props are shallow-equal</td><td>Re-computation of an expensive value if deps unchanged</td><td>Re-creation of a function reference if deps unchanged</td></tr>
+          <tr><td class="hl">Typical pairing</td><td>Wraps a child that receives a callback</td><td>Feeds a value into JSX or another hook's deps</td><td>Feeds a stable function into a <code class="inline">memo</code>'d child's props or an effect's deps</td></tr>
+        </table>
+      </div>
+      <div class="callout trap">
+        <div class="co-label">⚠️ Interview trap</div>
+        <p><code class="inline">React.memo</code> on a component is wasted if you pass it an inline arrow function or object literal as a prop — a new reference is created every parent render, so the shallow-equality check always fails. That's exactly why <code class="inline">useCallback</code>/<code class="inline">useMemo</code> exist: to stabilize what you hand to a memoized child.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section id="repo-deepdive-head">
+    <div class="section-head"><h2>Repo Deep-Dive: Chessify-WebApp</h2></div>
+  </section>
+
+  <section id="repo-overview">
+    <div class="repo-banner">
+      <div class="rtitle">♟️ Chessify-WebApp</div>
+      <div class="rmeta">Next.js 13 (App Router) frontend · Node.js + Socket.IO real-time PvP server · Flask + Stockfish AI backend</div>
+      <a class="rlink" href="https://github.com/AmanVerma1067/Chessify-WebApp" target="_blank" rel="noopener">github.com/AmanVerma1067/Chessify-WebApp →</a>
+    </div>
+    <div class="card">
+      <h3 id="repo-overview-h">Architecture at a glance</h3>
+      <div class="filetree">Frontend/                        <span class="cm"># Next.js app</span>
+├── app/
+│   ├── page.tsx                <span class="cm"># mode select</span>
+│   └── game/[gameId]/page.tsx  <span class="cm"># dynamic PvP room route</span>
+├── components/
+│   ├── chess-game.tsx          <span class="cm"># root layout component</span>
+│   ├── game-context.tsx        <span class="cm">→ Context provider: ALL game state + socket wiring</span>
+│   ├── chessboard.tsx          <span class="cm">→ parses FEN, renders 64 squares</span>
+│   └── chess-piece.tsx         <span class="cm">→ draggable piece</span>
+├── lib/pvpSocket.ts            <span class="cm">→ socket.io-client singleton</span>
+└── pages/api/chess.ts          <span class="cm">→ Pages Router API route (proxies AI move requests)</span>
+
+Chess-PvP/server.js              <span class="cm"># Node + Socket.IO: room-based move validation</span></div>
+      <p class="dim">One <code class="inline">GameProvider</code> context holds the entire game (board, timers, chat, PvP roles) and exposes it via <code class="inline">useGame()</code> to every component in the tree — a textbook "Context as a mini state manager" setup.</p>
+    </div>
+  </section>
+
+  <section id="repo-state">
+    <div class="card">
+      <h3 id="repo-state-h">Live board state &amp; socket sync <span class="sub">components/game-context.tsx</span></h3>
+      <p>The provider tracks both AI-mode and PvP-mode state in the same context, and wires up Socket.IO listeners inside a <code class="inline">useEffect</code> gated on <code class="inline">gameType === "pvp"</code> — a clean example of conditionally running effects based on a mode flag, with cleanup on unmount via the socket connection lifecycle.</p>
+      <pre><code><span class="kw">const</span> [game, setGame] = useState(<span class="kw">new</span> Chess())
+<span class="kw">const</span> [fen, setFen] = useState(game.fen())
+<span class="kw">const</span> [history, setHistory] = useState&lt;Move[]&gt;([])
+<span class="cm">// ...12+ more useState calls for timers, selection, chat, PvP roles, etc.</span>
+
+<span class="cm">// PvP socket setup</span>
+useEffect(() =&gt; {
+  <span class="kw">if</span> (gameType !== <span class="str">"pvp"</span> || !gameId) <span class="kw">return</span>
+
+  pvpSocket.connect()
+  pvpSocket.emit(<span class="str">"join-room"</span>, gameId)
+
+  pvpSocket.on(<span class="str">"role"</span>, (role: string) =&gt; {
+    <span class="kw">if</span> (role === <span class="str">"white"</span>) { setAssignedColor(<span class="str">"w"</span>); setBoardFlipped(<span class="kw">false</span>) }
+    <span class="kw">else if</span> (role === <span class="str">"black"</span>) { setAssignedColor(<span class="str">"b"</span>); setBoardFlipped(<span class="kw">true</span>) }
+    <span class="kw">else</span> setAssignedColor(<span class="str">"spectator"</span>)
+  })
+
+  pvpSocket.on(<span class="str">"sync-board"</span>, (fenStr: string) =&gt; {
+    setGame(<span class="kw">new</span> Chess(fenStr))
+    setFen(fenStr)
+  })
+  <span class="cm">// ...more listeners: opponent-joined, opponent-move, move-confirmed, chat, spectator-count</span>
+}, [gameType, gameId])</code></pre>
+
+      <div class="callout resume">
+        <div class="co-label">💼 Resume tie-in</div>
+        <p>"I built a <code class="inline">GameProvider</code> around React Context to centralize board state, timers, and PvP socket state behind a single <code class="inline">useGame()</code> hook, so components like the board and move history never touch Socket.IO directly — they just read reactive state. On join, the client emits <code class="inline">join-room</code> and the server replies with a role and a <code class="inline">sync-board</code> FEN so late joiners and spectators get the current position instead of an empty board."</p>
+      </div>
+
+      <div class="callout followup">
+        <div class="co-label">🎯 Common follow-up</div>
+        <p><strong>"Why 15+ separate <code class="inline">useState</code> calls instead of one <code class="inline">useReducer</code>?"</strong> Honest answer: it grew incrementally and most of the state is genuinely independent (a timer tick doesn't need to know about chat messages). The real tradeoff to name in an interview: separate <code class="inline">useState</code>s mean more re-render triggers scattered across the file and no single place to see all valid state transitions; a reducer would centralize the PvP event → state-transition logic (role assigned, board synced, move confirmed) into one switch statement, which is easier to reason about and test in isolation.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="repo-events">
+    <div class="card">
+      <h3 id="repo-events-h">Socket event handling <span class="sub">components/game-context.tsx</span></h3>
+      <p>The <code class="inline">opponent-move</code> handler is a good example of a <strong>functional state update</strong> used specifically to avoid a stale closure over <code class="inline">game</code> — the socket callback was registered once inside the effect, so it can't rely on the <code class="inline">game</code> variable from that render being current by the time the event fires later.</p>
+      <pre><code>pvpSocket.on(<span class="str">"opponent-move"</span>, ({ from, to, promotion }) =&gt; {
+  setGame((prev) =&gt; {
+    <span class="kw">const</span> newGame = <span class="kw">new</span> Chess(prev.fen())   <span class="cm">// fresh instance from latest state</span>
+    <span class="kw">const</span> move = newGame.move({ from, to, promotion })
+    <span class="kw">if</span> (move) {
+      setFen(newGame.fen())
+      setHistory((h) =&gt; [...h, move])
+      setCurrentMove((c) =&gt; c + 1)
+      setLastMove({ from, to })
+    }
+    <span class="kw">return</span> newGame
+  })
+})</code></pre>
+      <div class="callout resume">
+        <div class="co-label">💼 Resume tie-in</div>
+        <p>"Because the socket listener is registered inside a <code class="inline">useEffect</code> that only runs once per game session, I used the functional form of <code class="inline">setGame(prev =&gt; ...)</code> everywhere a handler needed the current board — that sidesteps the stale-closure bug where the listener would otherwise keep referencing whatever <code class="inline">game</code> was at mount time."</p>
+      </div>
+      <div class="callout trap">
+        <div class="co-label">⚠️ Flag in your own code</div>
+        <p><code class="inline">chess.js</code>'s <code class="inline">Chess</code> instance is <strong>mutable</strong> — calling <code class="inline">.move()</code> mutates it in place. That's exactly why the code always does <code class="inline">new Chess(prev.fen())</code> instead of calling <code class="inline">.move()</code> on the existing instance: React compares state by reference, so mutating <code class="inline">game</code> directly and calling <code class="inline">setGame(game)</code> would be a no-op — same reference, no re-render. Be ready to explain this if asked "why re-instantiate the whole Chess object on every move instead of mutating it?"</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="repo-render">
+    <div class="card">
+      <h3 id="repo-render-h">Board rendering &amp; re-renders <span class="sub">components/chessboard.tsx</span></h3>
+      <p>On every <code class="inline">fen</code> change, an effect re-parses the FEN string into an 8×8 array, and the component then rebuilds all 64 <code class="inline">&lt;Square&gt;</code> / <code class="inline">&lt;ChessPiece&gt;</code> elements from scratch — none of the child components are wrapped in <code class="inline">React.memo</code>.</p>
+      <pre><code>useEffect(() =&gt; {
+  <span class="kw">const</span> fenBoard = fen.split(<span class="str">" "</span>)[0]
+  <span class="kw">const</span> rows = fenBoard.split(<span class="str">"/"</span>)
+  <span class="kw">const</span> newBoard = rows.map(<span class="fn">parseRow</span>) <span class="cm">// full 2D array rebuilt every fen change</span>
+  setBoard(newBoard)
+}, [fen])
+
+<span class="cm">// renderBoard() then maps over all 64 squares unconditionally —</span>
+<span class="cm">// no memoization on &lt;Square&gt; or &lt;ChessPiece&gt;</span></code></pre>
+      <div class="callout followup">
+        <div class="co-label">🎯 Common follow-up</div>
+        <p><strong>"How would you optimize re-renders here?"</strong> Solid answer path:</p>
+        <ul>
+          <li>Wrap <code class="inline">Square</code> and <code class="inline">ChessPiece</code> in <code class="inline">React.memo</code> so only the ~2 squares involved in a move actually re-render, instead of all 64.</li>
+          <li>That requires each square's props (<code class="inline">isLastMove</code>, <code class="inline">isLegalMove</code>, etc.) to be primitives or stable references — currently fine since they're booleans/strings, so <code class="inline">memo</code>'s shallow comparison would actually work here.</li>
+          <li>The parsed <code class="inline">board</code> array itself could be derived with <code class="inline">useMemo(() =&gt; parseFen(fen), [fen])</code> instead of <code class="inline">useState</code> + <code class="inline">useEffect</code> — it's a pure derivation from <code class="inline">fen</code>, not real state, so this removes an unnecessary render pass (state update → re-render → commit).</li>
+        </ul>
+      </div>
+      <div class="callout trap">
+        <div class="co-label">⚠️ Flag in your own code</div>
+        <p>This is a strong "why did you structure it this way" target: deriving <code class="inline">board</code> via <code class="inline">useState</code>+<code class="inline">useEffect</code> instead of <code class="inline">useMemo</code> is a common real-world anti-pattern — it's state that mirrors other state, which means an extra render cycle every single move. Good to proactively acknowledge if asked to walk through the component.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="repo-authority">
+    <div class="card">
+      <h3 id="repo-authority-h">Optimistic vs authoritative moves <span class="sub">makeMove() branching logic</span></h3>
+      <pre><code><span class="kw">const</span> <span class="fn">makeMove</span> = (from, to, promotion?) =&gt; {
+  <span class="kw">if</span> (gameType === <span class="str">"pvp"</span>) {
+    <span class="cm">// no local board mutation — just ask the server</span>
+    pvpSocket.emit(<span class="str">"move"</span>, { roomId: gameId, from, to, promotion })
+    <span class="kw">return true</span>
+  }
+  <span class="cm">// AI mode: apply the move locally immediately</span>
+  <span class="kw">const</span> newGame = <span class="kw">new</span> Chess(game.fen())
+  <span class="kw">const</span> move = newGame.move({ from, to, promotion })
+  <span class="kw">if</span> (move) { setGame(newGame); setFen(newGame.fen()); <span class="cm">/* ... */</span> }
+}</code></pre>
+      <div class="callout resume">
+        <div class="co-label">💼 Resume tie-in</div>
+        <p>"In PvP mode the client never applies a move locally — it emits <code class="inline">move</code> to the server and waits for <code class="inline">move-confirmed</code> or <code class="inline">opponent-move</code> before the board updates. The Node server re-validates every move with <code class="inline">chess.js</code>, so the client is never the source of truth — this closes off client-side move spoofing, which matters in a real-time PvP game with spectators watching a shared state."</p>
+      </div>
+      <div class="callout followup">
+        <div class="co-label">🎯 Common follow-up</div>
+        <p><strong>"Why not apply the move optimistically on the client, then reconcile if the server rejects it?"</strong> Because chess moves are validated deterministically and near-instantly server-side over a low-latency socket, the UX cost of the round-trip is small, and it fully removes an entire class of desync bugs (rolling back an illegal move that already rendered). Trade-off worth naming: for a slower or higher-latency backend, this non-optimistic approach would feel laggy, and you'd want optimistic UI + reconciliation instead.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="repo-router-quirk">
+    <div class="card">
+      <h3 id="repo-router-quirk-h">App Router + Pages API route, side by side</h3>
+      <p>The app uses the App Router (<code class="inline">app/page.tsx</code>, <code class="inline">app/game/[gameId]/page.tsx</code>) for pages, but the AI-move proxy endpoint is a legacy Pages Router handler at <code class="inline">pages/api/chess.ts</code> — Next.js supports both conventions coexisting in one project.</p>
+      <pre><code><span class="cm">// pages/api/chess.ts — Pages Router style, works alongside app/</span>
+<span class="kw">export default async function</span> <span class="fn">handler</span>(req: NextApiRequest, res: NextApiResponse) {
+  <span class="kw">const</span> { fen, depth } = req.body
+  <span class="kw">const</span> apiRes = <span class="kw">await</span> fetch(<span class="str">"https://chess-api.com/v1"</span>, {
+    method: <span class="str">"POST"</span>,
+    headers: { <span class="str">"Authorization"</span>: <span class="fn">`Bearer ${</span>process.env.CHESS_API_KEY<span class="fn">}`</span> },
+    body: JSON.stringify({ fen, depth, maxThinkingTime: 100 }),
+  })
+  res.status(apiRes.status).json(<span class="kw">await</span> apiRes.json())
+}</code></pre>
+      <div class="callout followup">
+        <div class="co-label">🎯 Common follow-up</div>
+        <p><strong>"Why is there a <code class="inline">pages/api</code> route in an App Router project — was that intentional?"</strong> Be upfront: it's most likely leftover from scaffolding/an earlier migration rather than a deliberate choice, since App Router's own <code class="inline">app/api/chess/route.ts</code> Route Handler convention does the same job. It's a fine opportunity to show you know the two aren't meant to coexist as a long-term pattern — you'd migrate it to a Route Handler for consistency, and it also matters for env vars: this route keeps <code class="inline">CHESS_API_KEY</code> server-side either way, but consolidating on one router convention avoids confusion about which caching/runtime rules apply to which API surface.</p>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <div class="card" style="text-align:center;">
+    <p class="dim" style="margin:0;font-size:12.5px;">That's the full set — good luck. Skim the callout colors before a live interview: <span style="color:var(--trap);">red = trap</span>, <span style="color:var(--ref);">blue = likely to be asked</span>, <span style="color:var(--resume);">green = how to phrase it on resume/behavioral</span>, <span style="color:var(--followup);">purple = technical follow-up to expect</span>.</p>
+  </div>
+
+</div>
+
+<footer>
+  React &amp; Next.js interview notes · Repo deep-dive sourced from <a href="https://github.com/AmanVerma1067/Chessify-WebApp" target="_blank" rel="noopener">AmanVerma1067/Chessify-WebApp</a>
+</footer>
+
+</body>
+</html>

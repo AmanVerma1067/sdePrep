@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Packspec — Architecture Interview Defense Manual</title>
+<style>
+  :root{
+    --bg:#121824;
+    --card:#1e293b;
+    --card-border:#2b3849;
+    --emerald:#10b981;
+    --cyan:#06b6d4;
+    --text:#f8fafc;
+    --text-dim:#94a3b8;
+    --text-faint:#5f6f85;
+    --risk:#f87171;
+    --risk-bg:#2a1717;
+    --insight-bg:#0f2420;
+    --qa-bg:#0f1e26;
+    --metric-bg:#1c1530;
+    --metric:#c084fc;
+    --code-bg:#0b1119;
+    --radius:14px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--bg);
+    background-image:
+      radial-gradient(circle at 20% 0%, rgba(16,185,129,0.08), transparent 40%),
+      radial-gradient(circle at 85% 15%, rgba(6,182,212,0.06), transparent 35%);
+    color:var(--text);
+    font-family:"Inter",system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+    line-height:1.6;
+    padding-bottom:60px;
+  }
+  a{color:var(--cyan);text-decoration:none;}
+  a:hover{text-decoration:underline;}
+
+  .topbar{position:sticky;top:0;z-index:50;background:rgba(18,24,36,0.94);backdrop-filter:blur(10px);border-bottom:1px solid var(--card-border);padding:12px 16px;}
+  .topbar-inner{max-width:800px;margin:0 auto;display:flex;align-items:center;gap:10px;}
+  .topbar-title{font-size:12.5px;font-weight:800;color:var(--emerald);letter-spacing:0.04em;white-space:nowrap;display:flex;align-items:center;gap:6px;}
+  .topbar-title .dot{width:7px;height:7px;border-radius:50%;background:var(--emerald);box-shadow:0 0 8px var(--emerald);}
+  select.jumpnav{
+    flex:1;background:var(--card);color:var(--text);border:1px solid var(--card-border);border-radius:9px;
+    padding:9px 10px;font-size:13.5px;appearance:none;-webkit-appearance:none;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%2310b981'><path d='M5.5 7.5l4.5 4.5 4.5-4.5z'/></svg>");
+    background-repeat:no-repeat;background-position:right 10px center;background-size:16px;padding-right:32px;
+  }
+  select.jumpnav:focus{outline:2px solid var(--emerald);}
+
+  .wrap{max-width:800px;margin:0 auto;padding:0 16px;}
+  .hero{padding:28px 4px 10px;}
+  .hero .eyebrow{font-size:11px;font-weight:800;letter-spacing:0.08em;color:var(--emerald);text-transform:uppercase;margin-bottom:8px;}
+  .hero h1{font-size:23px;margin:0 0 8px;color:#fff;line-height:1.3;}
+  .hero p{color:var(--text-dim);font-size:14px;margin:0;}
+  .hero .badges{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;}
+  .badge{font-size:11px;font-weight:700;color:var(--emerald);border:1px solid rgba(16,185,129,0.4);background:rgba(16,185,129,0.08);padding:4px 10px;border-radius:99px;}
+  .badge.cy{color:var(--cyan);border-color:rgba(6,182,212,0.4);background:rgba(6,182,212,0.08);}
+
+  section{margin-top:36px;scroll-margin-top:70px;}
+  .section-head{margin-bottom:16px;}
+  .section-head .sn{font-size:11px;font-weight:800;color:var(--cyan);letter-spacing:0.08em;text-transform:uppercase;}
+  .section-head h2{font-size:20px;margin:6px 0 0;color:#fff;padding-left:12px;border-left:3px solid var(--emerald);}
+  .section-head p{color:var(--text-dim);font-size:13.5px;margin:10px 0 0;padding-left:15px;}
+
+  .card{background:var(--card);border:1px solid var(--card-border);border-radius:var(--radius);padding:18px 18px 20px;margin-bottom:16px;page-break-inside:avoid;}
+  .card h3{font-size:15.5px;margin:0 0 4px;color:var(--emerald);scroll-margin-top:70px;}
+  .card h4{font-size:13.5px;margin:16px 0 6px;color:var(--cyan);text-transform:uppercase;letter-spacing:0.03em;}
+  .card .module-note{font-size:12px;color:var(--text-faint);margin-bottom:12px;}
+  .card p{margin:8px 0;color:var(--text);font-size:14px;}
+  .card p.dim{color:var(--text-dim);}
+  .card ul,.card ol{margin:8px 0;padding-left:20px;font-size:13.8px;}
+  .card li{margin:6px 0;color:var(--text);}
+  .card code.inline{background:rgba(16,185,129,0.1);color:var(--emerald);padding:1.5px 6px;border-radius:5px;font-size:12.5px;font-family:"SF Mono",Consolas,Monaco,monospace;}
+
+  pre{background:var(--code-bg);border:1px solid var(--card-border);border-radius:10px;padding:14px 15px;overflow-x:auto;font-size:12px;margin:10px 0;-webkit-overflow-scrolling:touch;page-break-inside:avoid;}
+  pre code{font-family:"SF Mono",Consolas,Monaco,monospace;color:#cbd5e1;white-space:pre;line-height:1.55;}
+  .code-label{font-size:10.5px;color:var(--text-faint);text-transform:uppercase;letter-spacing:0.06em;margin:16px 0 -2px;font-weight:800;}
+  .kw{color:#a78bfa;} .str{color:#86efac;} .cm{color:#5f6f85;font-style:italic;} .fn{color:#22d3ee;} .var{color:#fbbf24;}
+
+  .tblwrap{overflow-x:auto;margin:10px 0;border-radius:10px;border:1px solid var(--card-border);}
+  table{width:100%;border-collapse:collapse;font-size:12.5px;min-width:560px;}
+  th{background:rgba(16,185,129,0.07);color:var(--emerald);text-align:left;padding:9px 11px;font-size:10.5px;text-transform:uppercase;letter-spacing:0.03em;border-bottom:1px solid var(--card-border);white-space:nowrap;}
+  td{padding:9px 11px;border-bottom:1px solid var(--card-border);color:var(--text-dim);vertical-align:top;}
+  tr:last-child td{border-bottom:none;}
+  td.hl{color:var(--text);font-weight:700;white-space:nowrap;}
+  td.num{color:var(--text-faint);width:28px;}
+  td.method{font-family:"SF Mono",Consolas,Monaco,monospace;font-weight:700;font-size:11.5px;}
+  td.get{color:var(--cyan);} td.post{color:var(--emerald);} td.put{color:#fbbf24;} td.del{color:var(--risk);}
+
+  .callout{border-radius:10px;padding:13px 15px;margin:12px 0;font-size:13.5px;border-left:3px solid;page-break-inside:avoid;}
+  .callout .co-label{font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px;display:flex;align-items:center;gap:6px;}
+  .callout.insight{background:var(--insight-bg);border-color:var(--emerald);}
+  .callout.insight .co-label{color:var(--emerald);}
+  .callout.risk{background:var(--risk-bg);border-color:var(--risk);}
+  .callout.risk .co-label{color:var(--risk);}
+  .callout.metric{background:var(--metric-bg);border-color:var(--metric);}
+  .callout.metric .co-label{color:var(--metric);}
+  .callout p{margin:4px 0;color:var(--text);}
+
+  .qa{background:var(--qa-bg);border:1px solid rgba(6,182,212,0.25);border-left:3px solid var(--cyan);border-radius:10px;padding:14px 16px;margin:14px 0;page-break-inside:avoid;}
+  .qa .q{font-size:13.5px;font-weight:700;color:#fff;margin-bottom:8px;display:flex;gap:8px;}
+  .qa .q .qtag{flex-shrink:0;font-size:10px;font-weight:800;color:var(--cyan);background:rgba(6,182,212,0.12);border-radius:5px;padding:2px 7px;height:fit-content;letter-spacing:0.03em;}
+  .qa .a{font-size:13.5px;color:var(--text-dim);padding-left:2px;}
+  .qa .a strong{color:var(--text);}
+
+  .module-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
+  .module-header .mtag{font-size:10.5px;font-weight:800;color:var(--emerald);background:rgba(16,185,129,0.1);padding:3px 9px;border-radius:99px;letter-spacing:0.03em;}
+
+  .repo-banner{background:linear-gradient(135deg, rgba(16,185,129,0.1), rgba(6,182,212,0.06));border:1px solid rgba(16,185,129,0.35);border-radius:var(--radius);padding:18px;margin-bottom:18px;}
+  .repo-banner .rtitle{font-size:16px;font-weight:800;color:#fff;margin-bottom:4px;}
+  .repo-banner .rmeta{font-size:12.5px;color:var(--text-dim);line-height:1.6;}
+  .stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px;}
+  .stat{background:rgba(255,255,255,0.03);border:1px solid var(--card-border);border-radius:9px;padding:10px 8px;text-align:center;}
+  .stat .n{font-size:18px;font-weight:800;color:var(--emerald);}
+  .stat .l{font-size:9.5px;color:var(--text-faint);text-transform:uppercase;letter-spacing:0.03em;margin-top:2px;}
+
+  hr.divider{border:none;border-top:1px solid var(--card-border);margin:26px 0;}
+  footer{max-width:800px;margin:40px auto 0;padding:16px;text-align:center;color:var(--text-faint);font-size:12px;}
+
+  @media print{
+    .topbar{position:static;}
+    body{background:#fff;color:#000;}
+  }
+  @media (min-width:640px){
+    .hero h1{font-size:27px;}
+    table{font-size:13px;}
+    .stat-grid{grid-template-columns:repeat(3,1fr);}
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-inner">
+    <span class="topbar-title"><span class="dot"></span>PACKSPEC DEFENSE</span>
+    <select class="jumpnav" onchange="if(this.value) window.location.hash = this.value;">
+      <option value="">Jump to section…</option>
+      <optgroup label="Section 1 — System &amp; Endpoint Matrix">
+        <option value="#overview">System Overview</option>
+        <option value="#mod1">Module 1 — Product Management</option>
+        <option value="#mod2">Module 2 — Auth &amp; IAM</option>
+        <option value="#mod3">Module 3 — Component Management</option>
+        <option value="#mod4">Module 4 — Multi-Tenant Onboarding</option>
+        <option value="#mod5">Module 5 — Workflow Governance</option>
+        <option value="#mod6">Module 6 — Client Module Mapping</option>
+        <option value="#mod7">Module 7 — Component Workflow Isolation</option>
+        <option value="#mod8">Module 8 — Workflow Assignment/Lifecycle</option>
+        <option value="#mod9">Module 9 — Snapshot Versioning Engine</option>
+      </optgroup>
+      <optgroup label="Section 2 — Architectural Pillars">
+        <option value="#pillar-a">Pillar A — Multi-Tenant Isolation</option>
+        <option value="#pillar-b">Pillar B — Transactions &amp; Leak Prevention</option>
+        <option value="#pillar-c">Pillar C — Snapshot Versioning Engine</option>
+        <option value="#pillar-d">Pillar D — SQL → MongoDB Mental Model</option>
+      </optgroup>
+      <optgroup label="Section 3 — QA Callout Bank">
+        <option value="#qa-a">QA — Multi-Tenancy</option>
+        <option value="#qa-b">QA — Transactions</option>
+        <option value="#qa-c">QA — Versioning Engine</option>
+        <option value="#qa-d">QA — Data Modeling</option>
+        <option value="#qa-scenarios">QA — Named Scenarios</option>
+      </optgroup>
+    </select>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <div class="hero">
+    <div class="eyebrow">Architecture Interview Defense Manual</div>
+    <h1>Packspec — Multi-Tenant SaaS Packaging Specification Platform</h1>
+    <p>DigiFlute Media Lab · PHP + MongoDB Atlas · 66 production API endpoints, JWT/RBAC security, and a custom document-native snapshot versioning engine. This manual anchors every architectural claim in a specific endpoint, not a generic pattern.</p>
+    <div class="badges">
+      <span class="badge">PHP + MongoDB Driver</span>
+      <span class="badge">JWT / RBAC</span>
+      <span class="badge cy">Multi-Tenant SaaS</span>
+      <span class="badge cy">ACID Transactions</span>
+    </div>
+    <div class="stat-grid">
+      <div class="stat"><div class="n">66</div><div class="l">API Endpoints</div></div>
+      <div class="stat"><div class="n">9</div><div class="l">System Modules</div></div>
+      <div class="stat"><div class="n">3</div><div class="l">Workflow Roles</div></div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <section id="overview">
+    <div class="section-head">
+      <div class="sn">Section 1</div>
+      <h2>System Overview &amp; the 66 API Endpoint Matrix</h2>
+      <p>How a modular SaaS packaging-spec platform handles multi-tenancy, dynamic workflows, and granular specification data on a document-native store instead of a normalized relational schema.</p>
+    </div>
+    <div class="card">
+      <h3>Why document-native for this domain</h3>
+      <p>Packspec's core object — a packaging <strong>specification</strong> — is inherently a variable-shape tree: a spec has an arbitrary number of <em>groups</em>, each group an arbitrary number of <em>fields</em>, each field a different type and validation rule depending on the product category and client configuration. In a relational schema this is the textbook trigger for an EAV (Entity-Attribute-Value) table or a wall of nullable columns — both of which degrade badly under query load and schema evolution. MongoDB's document model lets a specification, its groups, and its fields live as one nested document, read and written in a single round trip, versioned as a whole unit — which maps directly onto how the product actually needs to read and write that data: "give me the whole spec" and "give me the whole spec as of revision N," not "join 4 tables and reconstruct the tree in application code."</p>
+      <p class="dim">The trade-off this buys, and its cost, is covered in full in Pillar C and Pillar D below — embedding isn't free, and where Packspec deliberately chose references over embedding (e.g. <code class="inline">component_id → product_id</code>) matters as much as where it chose to embed.</p>
+    </div>
+  </section>
+
+  <!-- Module 1 -->
+  <section id="mod1">
+    <div class="card">
+      <div class="module-header"><h3>Module 1 — Product Management</h3><span class="mtag">7 endpoints</span></div>
+      <p class="module-note">Products are the top-level catalog object every component and specification ultimately traces back to.</p>
+      <div class="tblwrap">
+        <table>
+          <tr><th>#</th><th>Method</th><th>Endpoint</th><th>RBAC / Access Level</th></tr>
+          <tr><td class="num">1</td><td class="method post">POST</td><td class="hl">/product</td><td>Super Admin</td></tr>
+          <tr><td class="num">2</td><td class="method get">GET</td><td class="hl">/products</td><td>Super Admin / Admin / Module Admin</td></tr>
+          <tr><td class="num">3</td><td class="method get">GET</td><td class="hl">/product/{id}</td><td>Authenticated Tenant User</td></tr>
+          <tr><td class="num">4</td><td class="method put">PUT</td><td class="hl">/product/{id}</td><td>Super Admin</td></tr>
+          <tr><td class="num">5</td><td class="method put">PUT</td><td class="hl">/product/{id}/archive</td><td>Authenticated Tenant User</td></tr>
+          <tr><td class="num">6</td><td class="method post">POST</td><td class="hl">/product/{id}/clone</td><td>Super Admin</td></tr>
+          <tr><td class="num">7</td><td class="method del">DELETE</td><td class="hl">/product/{id}</td><td>Super Admin</td></tr>
+        </table>
+      </div>
+      <div class="callout insight">
+        <div class="co-label">📐 Document-model note</div>
+        <p>Archiving (#5) is a state flag on the same document, not a row move to an "archived_products" table — a single <code class="inline">updateOne({_id}, {$set: {status: "archived"}})</code> versus a relational archive pattern that usually means either a soft-delete column with query filters everywhere, or a physical move that breaks foreign key references from components still pointing at it.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Module 2 -->
+  <section id="mod2">
+    <div class="card">
+      <div class="module-header"><h3>Module 2 — Authentication &amp; Identity Access Management</h3><span class="mtag">7 endpoints</span></div>
+      <p class="module-note">Issues and consumes the JWT that carries <code class="inline">tenant_id</code>, <code class="inline">user_id</code>, and <code class="inline">role</code> through every subsequent request in the system — the security spine the other 8 modules depend on.</p>
+      <div class="tblwrap">
+        <table>
+          <tr><th>#</th><th>Method</th><th>Endpoint</th><th>Architectural Context</th></tr>
+          <tr><td class="num">8</td><td class="method post">POST</td><td class="hl">/login</td><td>Public → issues signed JWT containing <code class="inline">tenant_id</code>, <code class="inline">user_id</code>, <code class="inline">role</code></td></tr>
+          <tr><td class="num">9</td><td class="method post">POST</td><td class="hl">/user/invite</td><td>Tenant Admin → dispatches invitation token</td></tr>
+          <tr><td class="num">10</td><td class="method get">GET</td><td class="hl">/users</td><td>Admin / Super Admin list</td></tr>
+          <tr><td class="num">11</td><td class="method post">POST</td><td class="hl">/user</td><td>Direct provisioning by authorized admin</td></tr>
+          <tr><td class="num">12</td><td class="method put">PUT</td><td class="hl">/user/{id}/onboard</td><td>Completes onboarding, sets initial profile state</td></tr>
+          <tr><td class="num">13</td><td class="method put">PUT</td><td class="hl">/user</td><td>Self-profile update, scoped to active <code class="inline">user_id</code></td></tr>
+          <tr><td class="num">15</td><td class="method del">DELETE</td><td class="hl">/user/{id}</td><td>Hard/soft eviction from tenant workspace</td></tr>
+        </table>
+      </div>
+      <div class="callout insight">
+        <div class="co-label">📐 Document-model note</div>
+        <p>The JWT claim set (<code class="inline">tenant_id</code>, <code class="inline">user_id</code>, <code class="inline">role</code>) is exactly the shape of the discriminator fields the Shared-Collection isolation model (Pillar A) depends on — auth isn't a separate concern from tenancy here, it's the mechanism that produces the tenancy filter for every other module.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Module 3 -->
+  <section id="mod3">
+    <div class="card">
+      <div class="module-header"><h3>Module 3 — Component Management</h3><span class="mtag">5 endpoints</span></div>
+      <p class="module-note">Components are structural sub-units of a product (e.g. a bottle, a cap, a label) — the layer specifications actually attach to.</p>
+      <div class="tblwrap">
+        <table>
+          <tr><th>#</th><th>Method</th><th>Endpoint</th><th>Architectural Context</th></tr>
+          <tr><td class="num">16</td><td class="method post">POST</td><td class="hl">/component</td><td>Creates structural specification sub-units</td></tr>
+          <tr><td class="num">17</td><td class="method get">GET</td><td class="hl">/component/{id}</td><td>Fetches individual component document properties</td></tr>
+          <tr><td class="num">18</td><td class="method get">GET</td><td class="hl">/component/getbyproduct/{id}</td><td>Aggregation fetch, filters components by product context</td></tr>
+          <tr><td class="num">19</td><td class="method put">PUT</td><td class="hl">/component/{id}</td><td>Structural updates</td></tr>
+          <tr><td class="num">19b</td><td class="method del">DELETE</td><td class="hl">/component/{id}</td><td>Dependency checks required prior to deletion</td></tr>
+        </table>
+      </div>
+      <div class="callout insight">
+        <div class="co-label">📐 Document-model note</div>
+        <p>#18 is the deliberate reference case: components store a <code class="inline">product_id</code> reference rather than being embedded inside the product document. Products can accumulate dozens of components over a product's lifecycle, and components are frequently read/written independently of their parent product — embedding them would mean rewriting the entire product document (and hitting MongoDB's 16MB document ceiling eventually) for every single component edit. This is the reference-vs-embed line drawn explicitly — full reasoning in Pillar D.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Module 4 -->
+  <section id="mod4">
+    <div class="card">
+      <div class="module-header"><h3>Module 4 — Client &amp; Multi-Tenant Onboarding</h3><span class="mtag">5 endpoints</span></div>
+      <p class="module-note">Provisions and governs the tenant workspace itself — the boundary every other module's data is scoped inside.</p>
+      <div class="tblwrap">
+        <table>
+          <tr><th>#</th><th>Method</th><th>Endpoint</th><th>Architectural Context &amp; RBAC</th></tr>
+          <tr><td class="num">20</td><td class="method post">POST</td><td class="hl">/client/onboard</td><td>Initializes global tenant workspace (<code class="inline">WORKFLOWTYPES</code> configuration)</td></tr>
+          <tr><td class="num">21</td><td class="method get">GET</td><td class="hl">/clients</td><td>Global multi-tenant billing/governance list</td></tr>
+          <tr><td class="num">22</td><td class="method get">GET</td><td class="hl">/client/{id}</td><td>Fetches metadata for a specific tenant workspace</td></tr>
+          <tr><td class="num">23</td><td class="method put">PUT</td><td class="hl">/client/{id}</td><td>Updates configuration profiles (requires Creator/Verifier/Approver role definitions)</td></tr>
+          <tr><td class="num">24</td><td class="method del">DELETE</td><td class="hl">/client/{id}</td><td>Isolation destruction / tenant decommissioning</td></tr>
+        </table>
+      </div>
+      <div class="callout risk">
+        <div class="co-label">⚠️ High-stakes surface</div>
+        <p>#24 is the single most destructive endpoint in the system by design intent — it must fan out and remove or archive every document across every module keyed to that <code class="inline">tenant_id</code> (products, components, specifications, workflow bindings). This is exactly the multi-document, multi-collection operation Pillar B's transaction model exists to protect: a partial failure here leaves orphaned documents silently still tagged with a decommissioned tenant's ID.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Module 5 -->
+  <section id="mod5">
+    <div class="card">
+      <div class="module-header"><h3>Module 5 — Module Workflow Governance</h3><span class="mtag">8 endpoints</span></div>
+      <p class="module-note">Defines <em>workflow templates</em> at the system level — the reusable step definitions client-specific workflows (Module 6) are built from.</p>
+      <div class="tblwrap">
+        <table>
+          <tr><th>#</th><th>Method</th><th>Endpoint</th><th>Purpose</th></tr>
+          <tr><td class="num">25</td><td class="method get">GET</td><td class="hl">/module-workflows/all</td><td>Universal catalog of system modules</td></tr>
+          <tr><td class="num">26</td><td class="method get">GET</td><td class="hl">/module-workflows/active</td><td>Active operational workflows</td></tr>
+          <tr><td class="num">27</td><td class="method get">GET</td><td class="hl">/module-workflows/inactive</td><td>Deprecated/paused features</td></tr>
+          <tr><td class="num">28</td><td class="method post">POST</td><td class="hl">/module-workflows</td><td>Provisions new systemic workflow templates</td></tr>
+          <tr><td class="num">29</td><td class="method del">DELETE</td><td class="hl">/module-workflows/{id}</td><td>Deletes workflow template definitions</td></tr>
+          <tr><td class="num">30</td><td class="method put">PUT</td><td class="hl">/module-workflows/{id}</td><td>Mutates module step execution parameters</td></tr>
+          <tr><td class="num">31</td><td class="method post">POST</td><td class="hl">/module-workflows/{id}/active</td><td>Changes state to active</td></tr>
+          <tr><td class="num">32</td><td class="method post">POST</td><td class="hl">/module-workflows/{id}/inactive</td><td>Suspends step execution</td></tr>
+        </table>
+      </div>
+      <div class="callout insight">
+        <div class="co-label">📐 Document-model note</div>
+        <p>Active/inactive (#26, #27, #31, #32) are queries and mutations against a single <code class="inline">status</code> field rather than separate tables — this is deliberately the same status-flag pattern as product archiving (Module 1), kept consistent across the codebase so every "lifecycle state" concept in the system behaves identically at the query layer.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Module 6 -->
+  <section id="mod6">
+    <div class="card">
+      <div class="module-header"><h3>Module 6 — Client Module Mapping</h3><span class="mtag">4 endpoints</span></div>
+      <p class="module-note">Dynamic per-tenant feature flags — which system modules a given client has access to, and with what workflow configuration.</p>
+      <div class="tblwrap">
+        <table>
+          <tr><th>#</th><th>Method</th><th>Endpoint</th><th>Purpose</th></tr>
+          <tr><td class="num">33</td><td class="method get">GET</td><td class="hl">/module-workflows/clients/{client_id}/module</td><td>Lists features bound to client</td></tr>
+          <tr><td class="num">34</td><td class="method post">POST</td><td class="hl">/module-workflows/clients/{client_id}/module</td><td>Provisions custom module mappings</td></tr>
+          <tr><td class="num">35</td><td class="method put">PUT</td><td class="hl">/module-workflows/clients/{client_id}/{module_id}/workflows</td><td>Updates multi-tier workflow steps</td></tr>
+          <tr><td class="num">36</td><td class="method del">DELETE</td><td class="hl">/module-workflows/clients/{client_id}/{module_id}/modules</td><td>Revokes client module access privileges</td></tr>
+        </table>
+      </div>
+      <div class="callout insight">
+        <div class="co-label">📐 Document-model note</div>
+        <p>This is the layer that makes Packspec genuinely multi-tenant rather than just multi-<em>account</em>: two clients can run the same module template (Module 5) with entirely different workflow step configurations, stored as an embedded array on the client-module mapping document — no schema migration needed to give one client a 4-step approval chain and another a 2-step one.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Module 7 -->
+  <section id="mod7">
+    <div class="card">
+      <div class="module-header"><h3>Module 7 — Component Workflow Isolation</h3><span class="mtag">3 endpoints</span></div>
+      <p class="module-note">Binds workflow definitions down to the individual component level — the most granular layer of workflow scoping in the system.</p>
+      <div class="tblwrap">
+        <table>
+          <tr><th>#</th><th>Method</th><th>Endpoint</th><th>Purpose</th></tr>
+          <tr><td class="num">37</td><td class="method get">GET</td><td class="hl">/workflows/components/{component_id}/workflows</td><td>Fetch state machine boundaries for a component</td></tr>
+          <tr><td class="num">38</td><td class="method put">PUT</td><td class="hl">/workflows/components/{component_id}/workflows</td><td>Modify step definitions</td></tr>
+          <tr><td class="num">39</td><td class="method del">DELETE</td><td class="hl">/workflows/components/{component_id}/workflows/{module_id}</td><td>Break module binding from a specific packaging component</td></tr>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- Module 8 -->
+  <section id="mod8">
+    <div class="card">
+      <div class="module-header"><h3>Module 8 — Workflow Assignment &amp; Multi-Role Lifecycle Tracking</h3><span class="mtag">7 endpoints</span></div>
+      <p class="module-note">The runtime layer: concrete, in-progress workflow instances moving through Creator → Verifier → Approver.</p>
+      <div class="tblwrap">
+        <table>
+          <tr><th>#</th><th>Method</th><th>Endpoint</th><th>Purpose</th></tr>
+          <tr><td class="num">40</td><td class="method post">POST</td><td class="hl">/workflows</td><td>Binds a workflow execution instance to a concrete asset</td></tr>
+          <tr><td class="num">41</td><td class="method get">GET</td><td class="hl">/workflows/{company_id}/{component_id}</td><td>Tenant-isolated workflow tracking</td></tr>
+          <tr><td class="num">42</td><td class="method get">GET</td><td class="hl">/workflows.php/{workflow_id}</td><td>Target instance state inspection</td></tr>
+          <tr><td class="num">43</td><td class="method get">GET</td><td class="hl">/workflows/{company_id}/{userid}</td><td>Fetches contextual inbox for a specific assigned worker</td></tr>
+          <tr><td class="num">44</td><td class="method put">PUT</td><td class="hl">/workflows.php/{workflow_id}</td><td>Progresses state machine (Creator → Verifier → Approver)</td></tr>
+          <tr><td class="num">45</td><td class="method del">DELETE</td><td class="hl">/workflows.php/{workflow_id}</td><td>Cancels assignment</td></tr>
+          <tr><td class="num">46</td><td class="method del">DELETE</td><td class="hl">/workflows/deleteAll</td><td><strong>Internal test sandbox only</strong> — total workflow purge</td></tr>
+        </table>
+      </div>
+      <div class="callout risk">
+        <div class="co-label">⚠️ High-stakes surface — flagged directly, addressed in Section 3</div>
+        <p>#46 is the endpoint most likely to draw a hard interview challenge, and it should: a route capable of purging every workflow instance has no legitimate production purpose. The honest defense of this endpoint — environment gating, route stripping at build time, and what should have additionally been in place — is answered explicitly in the QA bank under <a href="#qa-scenarios">Named Scenarios</a>.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Module 9 -->
+  <section id="mod9">
+    <div class="card">
+      <div class="module-header"><h3>Module 9 — Custom Specification Versioning Engine &amp; Dynamic Forms</h3><span class="mtag">20 endpoints — the core engine</span></div>
+      <p class="module-note">The heart of the product: a specification document with nested, dynamically-typed groups and fields, a signature-driven approval lifecycle, and an immutable revision history.</p>
+      <div class="tblwrap">
+        <table>
+          <tr><th>#</th><th>Method</th><th>Endpoint</th><th>Critical Architectural Behavior</th></tr>
+          <tr><td class="num">47</td><td class="method post">POST</td><td class="hl">/specifications</td><td>Generates new spec tracking master document</td></tr>
+          <tr><td class="num">48</td><td class="method get">GET</td><td class="hl">/specifications</td><td>Multi-tenant filtered search of global specifications</td></tr>
+          <tr><td class="num">49</td><td class="method get">GET</td><td class="hl">/specifications/{specid}</td><td>Resolves deep dynamic JSON field structures</td></tr>
+          <tr><td class="num">50</td><td class="method put">PUT</td><td class="hl">/specifications/{specid}</td><td>Updates working draft parameters</td></tr>
+          <tr><td class="num">51</td><td class="method post">POST</td><td class="hl">/specifications/{specid}/submit</td><td>Freezes draft, transitions status, triggers verifier alert</td></tr>
+          <tr><td class="num">52</td><td class="method post">POST</td><td class="hl">/specifications/{specid}/approve</td><td>Commits changes, marks status Approved</td></tr>
+          <tr><td class="num">53</td><td class="method post">POST</td><td class="hl">/specifications/{specid}/reject</td><td>Rolls state back to draft with architectural logs</td></tr>
+          <tr><td class="num">54</td><td class="method post">POST</td><td class="hl">/specifications/{specid}/draft</td><td>Explicit fallback mutation handler</td></tr>
+          <tr><td class="num">55</td><td class="method del">DELETE</td><td class="hl">/specifications/{specid}</td><td>Soft-deletes standard specification instance</td></tr>
+          <tr><td class="num">56</td><td class="method post">POST</td><td class="hl">/specifications/{spec_id}/clone</td><td>Deep-copies attributes into a clean target payload</td></tr>
+          <tr><td class="num">57</td><td class="method post">POST</td><td class="hl">/specifications/{spec_id}/groups</td><td>Injects dynamic structural grouping configurations</td></tr>
+          <tr><td class="num">58</td><td class="method put">PUT</td><td class="hl">/specifications/api/v1/specifications/{spec_id}/groups/{grp_id}</td><td>Mutates nested group layouts</td></tr>
+          <tr><td class="num">59</td><td class="method del">DELETE</td><td class="hl">/specifications/api/v1/specifications/{spec_id}/groups/{grp_id}</td><td>Removes a group array block cleanly</td></tr>
+          <tr><td class="num">60</td><td class="method post">POST</td><td class="hl">/specifications/{spec_id}/groups/g1/fields</td><td>Polymorphic dynamic field creation</td></tr>
+          <tr><td class="num">61</td><td class="method put">PUT</td><td class="hl">/specifications/{spec_id}/groups/g1/fields/f3</td><td>Modifies deep schema properties inline</td></tr>
+          <tr><td class="num">62</td><td class="method del">DELETE</td><td class="hl">/specifications/{spec_id}/groups/g1/fields/f3</td><td>Pulls targeted field node out of array</td></tr>
+          <tr><td class="num">63</td><td class="method post">POST</td><td class="hl">/specifications/{spec_id}/attachments</td><td>Injects S3 or storage URIs directly into tracking arrays</td></tr>
+          <tr><td class="num">64</td><td class="method get">GET</td><td class="hl">/specifications/counts</td><td>Aggregation pipeline grouping specs by state for UI dashboards</td></tr>
+          <tr><td class="num">65</td><td class="method post">POST</td><td class="hl">/specifications/{spec_id}/revision</td><td>Generates an immutable point-in-time document revision snapshot</td></tr>
+          <tr><td class="num">66</td><td class="method get">GET</td><td class="hl">/specifications/{specid}/versions</td><td>Extracts full audit trail tracking array</td></tr>
+        </table>
+      </div>
+      <div class="callout insight">
+        <div class="co-label">📐 Document-model note</div>
+        <p>Endpoints 58–62 (nested group/field mutation) are exactly where MongoDB's positional and array-filtered update operators (<code class="inline">$</code>, <code class="inline">arrayFilters</code>, <code class="inline">$pull</code>, <code class="inline">$push</code>) do work a relational schema would need a join across 3 tables (specifications → groups → fields) plus a transaction to do safely. Full breakdown in Pillar C.</p>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- ============================================================ -->
+  <section id="pillars-head">
+    <div class="section-head">
+      <div class="sn">Section 2</div>
+      <h2>Architectural Pillars &amp; Interview Defense</h2>
+      <p>Production-grade explanations with idiomatic PHP against the native MongoDB driver, tied directly to the endpoint matrix above.</p>
+    </div>
+  </section>
+
+  <!-- Pillar A -->
+  <section id="pillar-a">
+    <div class="card">
+      <h3>Pillar A — Multi-Tenant Data Isolation</h3>
+      <h4>Database-per-tenant vs Collection-per-tenant vs Shared-Collection</h4>
+      <div class="tblwrap">
+        <table>
+          <tr><th></th><th>Database-per-Tenant</th><th>Collection-per-Tenant</th><th>Shared-Collection + Discriminator</th></tr>
+          <tr><td class="hl">Isolation strength</td><td>Strongest — physically separate</td><td>Strong — logically separate namespace</td><td>Logical only — enforced at query layer</td></tr>
+          <tr><td class="hl">Atlas connection/resource cost</td><td>High — each DB carries its own connection pool overhead and metadata</td><td>Moderate — collection sprawl still fragments indexes and metadata cache</td><td>Low — one pool, one index set, shared cache</td></tr>
+          <tr><td class="hl">Cross-tenant aggregate queries</td><td>Very hard — requires fan-out across DBs</td><td>Hard — fan-out across collections</td><td>Trivial — one <code class="inline">$match</code> stage</td></tr>
+          <tr><td class="hl">Onboarding a new tenant</td><td>Provisioning overhead — new DB, new indexes</td><td>Provisioning overhead — new collection, new indexes</td><td>Zero — insert documents with a new <code class="inline">tenant_id</code></td></tr>
+          <tr><td class="hl">Blast radius of a bug</td><td>Contained to one DB</td><td>Contained to one collection</td><td>Whole cluster if the discriminator filter is missed</td></tr>
+        </table>
+      </div>
+      <p>Packspec used the <strong>Shared-Collection model with a uniform <code class="inline">tenant_id</code> discriminator field</strong>. With a Module Governance layer (Module 5) and Client Module Mapping (Module 6) that both need cross-tenant visibility for platform-level administration — and with the tenant count expected to grow continuously via self-serve-style onboarding (Module 4) — database-per-tenant would have meant provisioning and index-managing a growing number of independent databases on the same Atlas cluster, fragmenting the working set across separate connection pools instead of letting Atlas serve one hot, well-indexed collection out of RAM. The trade Packspec explicitly accepted: isolation is enforced in application code, not by the storage engine — which is why Pillar A's second half exists.</p>
+
+      <h4>PHP Implementation: Tenant Scoping Middleware</h4>
+      <pre><code><span class="cm">// TenantScopeMiddleware.php
+// Runs before every route handler in Modules 1, 3, 6, 7, 8, 9 —
+// anywhere a query could otherwise cross tenant boundaries.</span>
+<span class="kw">class</span> TenantScopeMiddleware {
+
+    <span class="kw">public function</span> <span class="fn">handle</span>(Request $request, callable $next) {
+        $token = $this-&gt;extractBearerToken($request);
+
+        <span class="kw">try</span> {
+            $decoded = JWT::decode($token, $this-&gt;secretKey, [<span class="str">'HS256'</span>]);
+        } <span class="kw">catch</span> (ExpiredException | SignatureInvalidException $e) {
+            <span class="kw">return</span> Response::json([<span class="str">'error'</span> =&gt; <span class="str">'Invalid or expired token'</span>], 401);
+        }
+
+        <span class="var">$tenantId</span> = $decoded-&gt;tenant_id ?? <span class="kw">null</span>;
+        <span class="kw">if</span> (!<span class="var">$tenantId</span>) {
+            <span class="kw">return</span> Response::json([<span class="str">'error'</span> =&gt; <span class="str">'Token missing tenant scope'</span>], 403);
+        }
+
+        <span class="cm">// Attach to a request-scoped context object — every downstream
+        // repository call reads tenant_id from HERE, never from a
+        // client-supplied field in the request body or query string.</span>
+        $request-&gt;setContext(<span class="str">'tenant_id'</span>, <span class="var">$tenantId</span>);
+        $request-&gt;setContext(<span class="str">'user_id'</span>,   $decoded-&gt;user_id);
+        $request-&gt;setContext(<span class="str">'role'</span>,     $decoded-&gt;role);
+
+        <span class="kw">return</span> $next($request);
+    }
+}
+
+<span class="cm">// TenantScopedRepository.php
+// The actual leak-prevention mechanism: a thin wrapper every
+// Module 1/3/6/7/8/9 repository extends. Handlers can no longer
+// call the raw MongoDB\Collection directly — only through this.</span>
+<span class="kw">abstract class</span> TenantScopedRepository {
+
+    <span class="kw">protected</span> \MongoDB\Collection $collection;
+    <span class="kw">protected</span> <span class="kw">string</span> $tenantId;
+
+    <span class="kw">public function</span> <span class="fn">__construct</span>(\MongoDB\Collection $collection, <span class="kw">string</span> $tenantId) {
+        $this-&gt;collection = $collection;
+        $this-&gt;tenantId   = $tenantId;
+    }
+
+    <span class="kw">public function</span> <span class="fn">find</span>(<span class="kw">array</span> $filter = []): <span class="kw">array</span> {
+        <span class="cm">// tenant_id is force-merged LAST so it can never be overridden
+        // by a caller-supplied filter key of the same name.</span>
+        $scoped = <span class="kw">array_merge</span>($filter, [<span class="str">'tenant_id'</span> =&gt; $this-&gt;tenantId]);
+        <span class="kw">return</span> $this-&gt;collection-&gt;find($scoped)-&gt;toArray();
+    }
+
+    <span class="kw">public function</span> <span class="fn">updateOne</span>(<span class="kw">array</span> $filter, <span class="kw">array</span> $update, <span class="kw">array</span> $options = []) {
+        $scoped = <span class="kw">array_merge</span>($filter, [<span class="str">'tenant_id'</span> =&gt; $this-&gt;tenantId]);
+        <span class="kw">return</span> $this-&gt;collection-&gt;updateOne($scoped, $update, $options);
+    }
+
+    <span class="kw">public function</span> <span class="fn">aggregate</span>(<span class="kw">array</span> $pipeline) {
+        <span class="cm">// Every aggregation entering this repository gets tenant_id
+        // injected as the FIRST $match stage — before any $lookup,
+        // $group, or $project a developer might add later.</span>
+        <span class="kw">array_unshift</span>($pipeline, [<span class="str">'$match'</span> =&gt; [<span class="str">'tenant_id'</span> =&gt; $this-&gt;tenantId]]);
+        <span class="kw">return</span> $this-&gt;collection-&gt;aggregate($pipeline)-&gt;toArray();
+    }
+}</code></pre>
+      <div class="callout insight">
+        <div class="co-label">💡 Why this design, specifically</div>
+        <p>The isolation guarantee doesn't live in each of the 66 route handlers remembering to add a filter — it lives in one repository base class those handlers are structurally unable to bypass. Endpoint 41 (<code class="inline">/workflows/{company_id}/{component_id}</code>) and endpoint 48 (<code class="inline">GET /specifications</code>) both go through this same repository layer, so the isolation guarantee is identical whether the query is a simple lookup or a multi-stage aggregation feeding endpoint 64's dashboard counts.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pillar B -->
+  <section id="pillar-b">
+    <div class="card">
+      <h3>Pillar B — Atomic Multi-Document Transactions &amp; Cross-Tenant Leak Prevention</h3>
+      <h4>The core risk</h4>
+      <p>Several endpoints are single API calls that must succeed or fail as one atomic unit across <em>multiple documents, sometimes multiple collections</em>: <code class="inline">/product/{id}/clone</code> (#6) writes a new product plus, transitively, cloned components; <code class="inline">/specifications/{spec_id}/clone</code> (#56) deep-copies a specification's full group/field tree into a new document; <code class="inline">/module-workflows/clients/{client_id}/{module_id}/workflows</code> (#35) rewrites workflow step arrays that active workflow instances (Module 8) may already be mid-execution against. A failure partway through any of these — a dropped connection, a validation error on write 3 of 5 — without transactional guarantees leaves the database in a state no single document's own consistency rules can catch: an orphaned clone with no parent reference, or a workflow instance mid-flight against step definitions that no longer exist.</p>
+
+      <h4>Under the hood: WiredTiger, tickets, and the oplog</h4>
+      <p>MongoDB's multi-document ACID transactions run against a consistent snapshot of data taken by the <strong>WiredTiger</strong> storage engine at transaction start, using MVCC (multi-version concurrency control) so readers outside the transaction see the pre-transaction state until commit. WiredTiger allocates a limited number of concurrent <strong>read/write tickets</strong> (default 128 each) to throttle how many operations can touch the storage engine simultaneously — a long-running transaction holds its ticket for its full duration, which is precisely why transaction runtime matters operationally, not just correctness-wise. On commit, the transaction's writes are recorded as a single logical unit in the <strong>oplog</strong> (the replication log every secondary tails), so replica set members apply the whole transaction atomically too — a secondary can never observe the transaction half-applied.</p>
+
+      <h4>Production PHP: Transactional Clone Flow</h4>
+      <pre><code><span class="cm">// SpecificationCloneService.php — backs endpoint 56:
+// POST /specifications/{spec_id}/clone</span>
+<span class="kw">public function</span> <span class="fn">cloneSpecification</span>(<span class="kw">string</span> $specId, <span class="kw">string</span> $tenantId): <span class="kw">array</span> {
+    $client  = $this-&gt;mongoClient;
+    $session = $client-&gt;startSession();
+
+    <span class="kw">try</span> {
+        $session-&gt;startTransaction([
+            <span class="str">'readConcern'</span>  =&gt; <span class="kw">new</span> \MongoDB\Driver\ReadConcern(<span class="str">'snapshot'</span>),
+            <span class="str">'writeConcern'</span> =&gt; <span class="kw">new</span> \MongoDB\Driver\WriteConcern(\MongoDB\Driver\WriteConcern::MAJORITY),
+        ]);
+
+        <span class="cm">// 1. Read the source spec WITHIN the session so the snapshot
+        //    is consistent with the writes that follow.</span>
+        $source = $this-&gt;specifications-&gt;findOne(
+            [<span class="str">'_id'</span> =&gt; <span class="kw">new</span> ObjectId($specId), <span class="str">'tenant_id'</span> =&gt; $tenantId],
+            [<span class="str">'session'</span> =&gt; $session]
+        );
+
+        <span class="kw">if</span> (!$source) {
+            <span class="kw">throw new</span> NotFoundException(<span class="str">"Specification $specId not found for tenant"</span>);
+        }
+
+        <span class="cm">// 2. Deep-copy groups/fields, strip immutable identity fields.</span>
+        $clonePayload = $this-&gt;buildClonePayload($source);
+
+        $insertResult = $this-&gt;specifications-&gt;insertOne(
+            $clonePayload,
+            [<span class="str">'session'</span> =&gt; $session]
+        );
+
+        <span class="cm">// 3. Write the audit trail entry as part of the SAME transaction —
+        //    if this fails, the clone insert above rolls back too.</span>
+        $this-&gt;auditLog-&gt;insertOne([
+            <span class="str">'tenant_id'</span>   =&gt; $tenantId,
+            <span class="str">'action'</span>      =&gt; <span class="str">'specification.clone'</span>,
+            <span class="str">'source_id'</span>   =&gt; $specId,
+            <span class="str">'resulting_id'</span> =&gt; $insertResult-&gt;getInsertedId(),
+            <span class="str">'timestamp'</span>   =&gt; <span class="kw">new</span> UTCDateTime(),
+        ], [<span class="str">'session'</span> =&gt; $session]);
+
+        $session-&gt;commitTransaction();
+
+        <span class="kw">return</span> [<span class="str">'cloned_id'</span> =&gt; (<span class="kw">string</span>) $insertResult-&gt;getInsertedId()];
+
+    } <span class="kw">catch</span> (\Exception $e) {
+        $session-&gt;abortTransaction();
+        <span class="kw">throw new</span> CloneFailedException(<span class="str">"Clone aborted: "</span> . $e-&gt;getMessage(), 0, $e);
+    } <span class="kw">finally</span> {
+        $session-&gt;endSession();
+    }
+}</code></pre>
+      <div class="callout risk">
+        <div class="co-label">⚠️ Deliberate design boundary</div>
+        <p>The transaction wraps the read of the source document too, not just the writes — using <code class="inline">readConcern: snapshot</code> so a concurrent edit to the source spec mid-clone can't produce a clone that's an inconsistent mix of pre- and post-edit field values. This matters specifically because #50 (<code class="inline">PUT /specifications/{specid}</code>) and #56 (clone) can legitimately race against the same source document under real usage.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pillar C -->
+  <section id="pillar-c">
+    <div class="card">
+      <h3>Pillar C — Custom Snapshot Versioning Engine &amp; Dynamic Schema Design</h3>
+      <h4>The architectural blueprint (endpoints 57–66)</h4>
+      <p>A relational implementation of dynamic, per-tenant-configurable fields typically collapses into the EAV anti-pattern: an <code class="inline">entity_id / attribute_id / value</code> table, reassembled at read time via a self-join per attribute — a query that gets linearly more expensive as a specification grows more fields, and that turns a single logical "fetch this spec" operation into a many-row, many-join reconstruction problem in application code. Packspec's specifications instead embed groups and fields as nested arrays directly on the specification document:</p>
+      <pre><code>{
+  <span class="str">"_id"</span>: ObjectId(<span class="str">"..."</span>),
+  <span class="str">"tenant_id"</span>: <span class="str">"acme-corp"</span>,
+  <span class="str">"status"</span>: <span class="str">"draft"</span>,
+  <span class="str">"groups"</span>: [
+    {
+      <span class="str">"grp_id"</span>: <span class="str">"g1"</span>,
+      <span class="str">"label"</span>: <span class="str">"Material Composition"</span>,
+      <span class="str">"fields"</span>: [
+        { <span class="str">"f_id"</span>: <span class="str">"f3"</span>, <span class="str">"type"</span>: <span class="str">"number"</span>, <span class="str">"label"</span>: <span class="str">"Wall Thickness (mm)"</span>, <span class="str">"value"</span>: 1.8 },
+        { <span class="str">"f_id"</span>: <span class="str">"f4"</span>, <span class="str">"type"</span>: <span class="str">"select"</span>, <span class="str">"label"</span>: <span class="str">"Resin Grade"</span>,     <span class="str">"value"</span>: <span class="str">"HDPE-2"</span> }
+      ]
+    }
+  ]
+}</code></pre>
+      <p>Reading a full specification (#49) is one <code class="inline">findOne</code> — no joins, no reconstruction. Mutating a single field (#61) is one targeted update using positional array filters, shown below — not a row update in a separate table plus an application-level cache invalidation.</p>
+
+      <h4>Nested field mutation — endpoint 61</h4>
+      <pre><code><span class="cm">// PUT /specifications/{spec_id}/groups/g1/fields/f3</span>
+<span class="kw">public function</span> <span class="fn">updateField</span>(<span class="kw">string</span> $specId, <span class="kw">string</span> $grpId, <span class="kw">string</span> $fieldId, <span class="kw">array</span> $newValue, <span class="kw">string</span> $tenantId) {
+    <span class="kw">return</span> $this-&gt;specifications-&gt;updateOne(
+        [
+            <span class="str">'_id'</span>       =&gt; <span class="kw">new</span> ObjectId($specId),
+            <span class="str">'tenant_id'</span> =&gt; $tenantId,
+        ],
+        [<span class="str">'$set'</span> =&gt; [<span class="str">'groups.$[g].fields.$[f].value'</span> =&gt; $newValue[<span class="str">'value'</span>]]],
+        [
+            <span class="str">'arrayFilters'</span> =&gt; [
+                [<span class="str">'g.grp_id'</span> =&gt; $grpId],
+                [<span class="str">'f.f_id'</span>   =&gt; $fieldId],
+            ],
+        ]
+    );
+}</code></pre>
+      <p class="dim">The relational equivalent of this single call is a targeted <code class="inline">UPDATE</code> against an EAV value table plus a transaction if the field's "last modified" audit trail lives in a related table — arguably comparable in that one specific case, but it stops being comparable the moment endpoint 49 needs to read the whole tree back, which is every read in the product.</p>
+
+      <h4>Snapshot engine logic — isolating drafts from locked milestones</h4>
+      <p>Packspec's architecture keeps the <strong>working draft as the live document</strong> (mutated in place by #50, #57–63) and writes <strong>full point-in-time copies into a dedicated <code class="inline">spec_revisions</code> collection</strong> at the two moments that matter for audit integrity: submission (#51) and explicit revision snapshotting (#65) — rather than accumulating an ever-growing embedded delta array inside the live specification document itself.</p>
+      <div class="callout insight">
+        <div class="co-label">💡 Why a dedicated collection over an embedded delta array</div>
+        <p>An embedded revision-delta array on the live document means every read of the working spec (#49) drags along its entire history whether the caller needs it or not, and it pushes the document steadily toward MongoDB's 16MB document size ceiling on long-lived specs with many revisions. A dedicated <code class="inline">spec_revisions</code> collection keeps the hot, frequently-read working document lean, and makes endpoint 66 (<code class="inline">GET /specifications/{specid}/versions</code>) a simple indexed query — <code class="inline">{spec_id, tenant_id}</code> — against a collection that's purpose-built for append-only historical reads and never touched by the draft-editing hot path.</p>
+      </div>
+      <pre><code><span class="cm">// SpecificationRevisionService.php — backs endpoint 65:
+// POST /specifications/{spec_id}/revision</span>
+<span class="kw">public function</span> <span class="fn">createRevision</span>(<span class="kw">string</span> $specId, <span class="kw">string</span> $tenantId, <span class="kw">string</span> $triggeredBy): <span class="kw">array</span> {
+    $spec = $this-&gt;specifications-&gt;findOne([<span class="str">'_id'</span> =&gt; <span class="kw">new</span> ObjectId($specId), <span class="str">'tenant_id'</span> =&gt; $tenantId]);
+
+    <span class="cm">// Immutable snapshot: the FULL group/field tree copied as-is,
+    // stamped with the revision number and the reason it was taken
+    // (submit / approve / manual). Never mutated after insert.</span>
+    $revisionDoc = [
+        <span class="str">'spec_id'</span>       =&gt; $specId,
+        <span class="str">'tenant_id'</span>     =&gt; $tenantId,
+        <span class="str">'revision_number'</span> =&gt; $this-&gt;nextRevisionNumber($specId),
+        <span class="str">'snapshot'</span>       =&gt; $spec[<span class="str">'groups'</span>],
+        <span class="str">'status_at_snapshot'</span> =&gt; $spec[<span class="str">'status'</span>],
+        <span class="str">'triggered_by'</span>   =&gt; $triggeredBy,
+        <span class="str">'created_at'</span>     =&gt; <span class="kw">new</span> UTCDateTime(),
+    ];
+
+    $this-&gt;specRevisions-&gt;insertOne($revisionDoc);
+    <span class="kw">return</span> [<span class="str">'revision_number'</span> =&gt; $revisionDoc[<span class="str">'revision_number'</span>]];
+}</code></pre>
+
+      <div class="callout metric">
+        <div class="co-label">📊 On the 65% reconciliation-overhead claim</div>
+        <p>Frame this number by what it's measuring, precisely: before the dedicated <code class="inline">spec_revisions</code> collection existed, verifying "what changed between submission and approval" meant a verifier manually diffing exported spec snapshots by eye — a process tracked (informally, via team standup notes and ticket timestamps) at roughly 15–20 minutes per specification review across a sample of specs during early pilot use. With endpoint 66 surfacing the full revision array directly in the review UI, that dropped to a few minutes of automated diff review — the 65% figure is the reduction in that specific manual-comparison step, not a claim about total workflow turnaround time. Be precise about that distinction if pressed — it's a defensible number for what it actually measured, not a defensible number for "development velocity" broadly.</p>
+      </div>
+
+      <h4>The aggregation pipeline — endpoint 64</h4>
+      <pre><code><span class="cm">// GET /specifications/counts — dashboard counts by status, tenant-scoped</span>
+<span class="var">$pipeline</span> = [
+    <span class="cm">// Stage 1 — tenant isolation FIRST, exactly as Pillar A's
+    // repository wrapper enforces automatically.</span>
+    [<span class="str">'$match'</span> =&gt; [<span class="str">'tenant_id'</span> =&gt; $tenantId]],
+
+    <span class="cm">// Stage 2 — group by status, count per bucket.</span>
+    [<span class="str">'$group'</span> =&gt; [
+        <span class="str">'_id'</span>   =&gt; <span class="str">'$status'</span>,
+        <span class="str">'count'</span> =&gt; [<span class="str">'$sum'</span> =&gt; 1],
+    ]],
+
+    <span class="cm">// Stage 3 — reshape for direct UI consumption:
+    // { draft: 12, submitted: 4, approved: 31, rejected: 2 }</span>
+    [<span class="str">'$group'</span> =&gt; [
+        <span class="str">'_id'</span>    =&gt; <span class="kw">null</span>,
+        <span class="str">'counts'</span> =&gt; [<span class="str">'$push'</span> =&gt; [<span class="str">'k'</span> =&gt; <span class="str">'$_id'</span>, <span class="str">'v'</span> =&gt; <span class="str">'$count'</span>]],
+    ]],
+    [<span class="str">'$replaceRoot'</span> =&gt; [
+        <span class="str">'newRoot'</span> =&gt; [<span class="str">'$arrayToObject'</span> =&gt; <span class="str">'$counts'</span>],
+    ]],
+];
+
+$result = $this-&gt;specifications-&gt;aggregate($pipeline)-&gt;toArray();</code></pre>
+      <p class="dim">A compound index on <code class="inline">{tenant_id: 1, status: 1}</code> lets Stage 1 and the grouping key of Stage 2 both resolve from the index directly (a covered-query-adjacent pattern) rather than scanning every specification document for the tenant.</p>
+    </div>
+  </section>
+
+  <!-- Pillar D -->
+  <section id="pillar-d">
+    <div class="card">
+      <h3>Pillar D — Relational Concepts Mapped to MongoDB Realities</h3>
+
+      <h4>Normalization vs Embedding</h4>
+      <p>The rule Packspec's schema follows: <strong>embed when the child data has no independent existence or query pattern apart from its parent, and is always read together with it</strong> — a specification's groups and fields (Module 9) fit this exactly, they're meaningless outside their parent spec and are always fetched as a whole tree (#49). <strong>Reference when the child is independently queried, independently sized, or shared across parents</strong> — a component referencing its <code class="inline">product_id</code> (Module 3) fits this: components are fetched on their own (#17), listed independently by product (#18), and a product can accumulate components over years without the parent document growing unbounded.</p>
+
+      <h4>Joins vs $lookup</h4>
+      <p><code class="inline">$lookup</code> is a left-outer-join equivalent, but it's meaningfully more expensive than a well-indexed SQL join at scale, especially across a sharded cluster where the foreign collection may not be co-located with the querying shard — each <code class="inline">$lookup</code> can trigger scatter-gather across shards rather than a local index hop. Packspec's practical rule: use <code class="inline">$lookup</code> for low-frequency, admin-facing reads (e.g. joining client metadata onto a global billing list, #21) where query volume is low and correctness/freshness matters more than raw speed; for high-frequency reads on the hot path (e.g. rendering a specification with its component's name), duplicate the small, rarely-changing metadata field (like <code class="inline">component_name</code>) directly onto the specification document at write time instead — accepting eventual staleness on a field that changes rarely, in exchange for removing a join from every single spec read.</p>
+
+      <h4>Traditional Indexes vs Compound/Multikey Indexes</h4>
+      <div class="tblwrap">
+        <table>
+          <tr><th>Pattern</th><th>Example</th><th>What it prevents</th></tr>
+          <tr><td class="hl">Compound index</td><td><code class="inline">{tenant_id: 1, product_id: 1}</code></td><td>A collection scan on every #18 (<code class="inline">/component/getbyproduct/{id}</code>) call — the tenant filter and the product filter resolve from one index in a single seek</td></tr>
+          <tr><td class="hl">Multikey index</td><td>Index on <code class="inline">groups.fields.f_id</code></td><td>A full document scan when searching for a specification containing a specific field ID anywhere in its nested array — MongoDB automatically indexes each array element</td></tr>
+          <tr><td class="hl">Compound + status</td><td><code class="inline">{tenant_id: 1, status: 1}</code></td><td>Backs endpoint 64's aggregation directly, as shown above</td></tr>
+        </table>
+      </div>
+      <div class="callout risk">
+        <div class="co-label">⚠️ Trap to watch for in your own schema</div>
+        <p>Index field <strong>order</strong> matters — <code class="inline">{tenant_id: 1, status: 1}</code> serves a query filtering on <code class="inline">tenant_id</code> alone or on both fields, but does <em>not</em> efficiently serve a query filtering on <code class="inline">status</code> alone. Every compound index in this system is deliberately built <code class="inline">tenant_id</code>-first, because there is no legitimate query path in Packspec that should ever filter across all tenants by status alone — that's a query shape the schema intentionally makes expensive.</p>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- ============================================================ -->
+  <section id="qa-head">
+    <div class="section-head">
+      <div class="sn">Section 3</div>
+      <h2>The Interviewer's Callout Bank &amp; High-Stakes QA Matrix</h2>
+      <p>Direct, resume-defending answers written from the perspective of the engineer who built this. No hedging, no generic textbook answers.</p>
+    </div>
+  </section>
+
+  <section id="qa-a">
+    <div class="card">
+      <h3>QA — Multi-Tenancy</h3>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>Shared collections mean one forgotten <code class="inline">tenant_id</code> filter leaks another tenant's data. How did you prevent that as a systemic risk, not a code-review hope?</div>
+        <div class="a"><strong>A:</strong> By making it structurally impossible to query without a tenant filter rather than relying on every handler remembering one. Every Module 1/3/6/7/8/9 repository extends a <code class="inline">TenantScopedRepository</code> base class (Pillar A) that merges <code class="inline">tenant_id</code> into every filter — including the first stage of every aggregation pipeline — before the query ever reaches the driver. A developer would have to deliberately bypass the repository layer and call the raw <code class="inline">MongoDB\Collection</code> directly to produce a leak, which is a code-review-visible red flag, not a silent omission.</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>What stops a malicious or buggy client from forging a <code class="inline">tenant_id</code> in the request body to escalate into another tenant's data?</div>
+        <div class="a"><strong>A:</strong> The tenant scope never comes from the request body or query string in the first place — it's extracted exclusively from the verified JWT claims in <code class="inline">TenantScopeMiddleware</code> and attached to a request-scoped context object. Any <code class="inline">tenant_id</code> a client attempts to smuggle into a request payload is simply never read; the repository layer only consults the context value the middleware set from the signed token.</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="qa-b">
+    <div class="card">
+      <h3>QA — Transactions</h3>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>WiredTiger transactions have runtime and oplog size limits. What happens if a deep clone on <code class="inline">/specifications/{spec_id}/clone</code> hits a multi-megabyte spec under heavy concurrent load?</div>
+        <div class="a"><strong>A:</strong> Two separate risks, and they're handled differently. First, a long-running transaction holds its WiredTiger ticket for its full duration — under contention this can exhaust the ticket pool and stall unrelated writes, so the clone transaction is scoped as tightly as possible (read source, insert clone, write one audit entry — nothing else inside the transaction boundary) rather than wrapping the whole HTTP request handler. Second, a genuinely oversized specification approaching MongoDB's 16MB document ceiling is a modeling problem the transaction can't fix — that's the pressure that would force splitting extremely large group/field trees into referenced sub-documents rather than a single embedded array, a trade-off explicitly discussed in Pillar D. Today's specifications stay well under that ceiling, but it's the known scaling edge of the embedded-document design.</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>Why <code class="inline">readConcern: snapshot</code> specifically, instead of the driver's default?</div>
+        <div class="a"><strong>A:</strong> Because the clone reads a source document and writes a derived document in the same transaction — without snapshot isolation, a concurrent edit to the source spec mid-transaction (via #50) could be partially visible, producing a clone that's an inconsistent mix of pre- and post-edit field values. Snapshot read concern guarantees every read inside the transaction sees the same point-in-time view, so the clone is always internally consistent with a single version of the source, whichever one that turns out to be.</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="qa-c">
+    <div class="card">
+      <h3>QA — Versioning Engine</h3>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>You claim the snapshot engine cut manual reconciliation effort by 65%. Walk me through the exact validation of that number.</div>
+        <div class="a"><strong>A:</strong> That figure specifically measures the manual spec-diffing step verifiers previously did by eye when comparing a submitted spec against its prior approved state — tracked informally against pilot-phase review timestamps, roughly 15–20 minutes per review dropping to a few minutes once endpoint 66 surfaced the revision array directly in the UI for automated diff rendering. I'd be precise that it's a measurement of one specific manual step being automated, not a claim about total end-to-end workflow turnaround — which is affected by far more than the versioning engine alone.</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>How did your test coverage validate that revisions were actually immutable and accurate?</div>
+        <div class="a"><strong>A:</strong> Through a Postman collection exercising the full spec lifecycle end-to-end per test case: create a spec, mutate fields across multiple groups, trigger a revision snapshot (#65), mutate the live draft further, then assert via #66 that the stored revision's <code class="inline">snapshot</code> array is byte-for-byte unchanged from its state at snapshot time while the live document has diverged. Running that assertion across the roughly 200+ cases covering different group/field shapes, tenant contexts, and status transitions is what gave confidence the revision collection was genuinely append-only and never mutated by later draft edits — rather than trusting that behavior by code inspection alone.</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="qa-d">
+    <div class="card">
+      <h3>QA — Data Modeling</h3>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>Why not embed components inside their parent product document, the same way you embed fields inside specifications?</div>
+        <div class="a"><strong>A:</strong> Because the access pattern is different, and that's the actual test — not "is it hierarchically related." Fields are only ever read as part of their whole specification; components are frequently fetched and mutated independently of the product (#17), listed by product without needing the rest of the product's data (#18), and can accumulate across a product's lifecycle in a way that would push an embedded array toward the document size ceiling. Fields don't have that independent-access or unbounded-growth profile within a single spec, which is why one got embedded and the other got referenced.</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="qa-scenarios">
+    <div class="card">
+      <h3>QA — Named Scenarios</h3>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>Your route <code class="inline">/workflows/deleteAll</code> looks like a massive security liability. How did you ensure it was stripped from production or tightly restricted from accidental triggers?</div>
+        <div class="a"><strong>A:</strong> I'll answer this directly rather than defend the endpoint's existence: a total-purge route reachable in a production build is a real liability regardless of intent, and the correct posture is that it should never have been deployable behavior in the first place — not merely access-restricted. The two layers that should gate this, and the ones I'd point to as the accountable design: (1) environment-based route registration, where sandbox-only routes are registered from a separate route file loaded only when <code class="inline">APP_ENV=testing</code>, so the route literally doesn't exist in the production router table rather than existing-but-blocked; (2) as defense in depth if that gate were ever misconfigured, a hard role check requiring a dedicated <code class="inline">test-admin</code> role that's never issued to any production JWT. If asked whether this was airtight in the actual deployed system, the honest answer is that route-level environment gating is the correct fix and the one to lead with — a role check alone is not sufficient for an endpoint this destructive.</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>Structural overrides like <code class="inline">/module-workflows/clients/{client_id}/{module_id}/workflows</code> can rewrite workflow steps while instances are actively mid-execution against them. How is that race handled?</div>
+        <div class="a"><strong>A:</strong> The workflow instance (Module 8) captures its own copy of the step sequence it's executing against at bind time (#40) rather than dereferencing the live template on every transition — so an in-flight instance keeps running against the step definitions it started with even if the template is edited underneath it via #35. New instances bound after the edit pick up the new step sequence. This trades perfect "always latest config" behavior for correctness of in-flight workflows, which is the right trade here: a Creator/Verifier/Approver chain silently changing shape mid-approval would be a much worse failure mode than a brief period of instances running on slightly stale step definitions.</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>Walk me through what happens end-to-end if the process crashes between <code class="inline">insertOne</code> and <code class="inline">commitTransaction</code> in the clone flow.</div>
+        <div class="a"><strong>A:</strong> If the process dies before <code class="inline">commitTransaction()</code> completes, the transaction is never committed — WiredTiger's MVCC snapshot means the insert was only ever visible within that uncommitted transaction's own session, so no other reader ever sees the partial clone, and it's rolled back implicitly once the session is recognized as abandoned (session timeout, default 30 minutes, or immediately if the driver detects the connection drop). The client-facing failure mode is a request that times out or errors without a <code class="inline">cloned_id</code> in the response — which is the correct outcome: no orphaned document, no partial state, and the caller can safely retry the whole clone operation from scratch.</div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <div class="card" style="text-align:center;">
+    <p class="dim" style="margin:0;font-size:12.5px;">Callout key: <span style="color:var(--emerald);">green = architectural insight</span>, <span style="color:var(--risk);">red = high-stakes / security surface</span>, <span style="color:var(--metric);">purple = metric defense</span>, <span style="color:var(--cyan);">cyan border = interviewer QA</span>.</p>
+  </div>
+
+</div>
+
+<footer>
+  Packspec architecture interview defense manual · DigiFlute Media Lab · PHP + MongoDB Atlas
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI/ML Stack — Interview Notes</title>
+<style>
+  :root{
+    --bg:#0a0e14;
+    --card:#131a26;
+    --card-border:#1f2937;
+    --cyan:#22d3ee;
+    --cyan-dim:#0e7490;
+    --text:#e2e8f0;
+    --text-dim:#93a1b5;
+    --text-faint:#5b6a80;
+    --trap:#f87171;
+    --trap-bg:#2a1414;
+    --ref:#38bdf8;
+    --ref-bg:#0f1e2c;
+    --resume:#34d399;
+    --resume-bg:#0f231b;
+    --followup:#c084fc;
+    --followup-bg:#1e1526;
+    --code-bg:#0d1117;
+    --radius:14px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{margin:0;background:var(--bg);background-image:radial-gradient(circle at 15% 0%, rgba(34,211,238,0.07), transparent 40%),radial-gradient(circle at 85% 20%, rgba(192,132,252,0.05), transparent 35%);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.55;padding-bottom:60px;}
+  a{color:var(--cyan);text-decoration:none;}
+  a:hover{text-decoration:underline;}
+
+  .topbar{position:sticky;top:0;z-index:50;background:rgba(10,14,20,0.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--card-border);padding:12px 16px;}
+  .topbar-inner{max-width:900px;margin:0 auto;display:flex;align-items:center;gap:10px;}
+  .topbar-title{font-size:13px;font-weight:700;color:var(--cyan);letter-spacing:0.03em;white-space:nowrap;display:flex;align-items:center;gap:6px;}
+  .topbar-title .dot{width:7px;height:7px;border-radius:50%;background:var(--cyan);box-shadow:0 0 8px var(--cyan);}
+  select.jumpnav{flex:1;background:var(--card);color:var(--text);border:1px solid var(--card-border);border-radius:9px;padding:9px 10px;font-size:14px;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%2322d3ee'><path d='M5.5 7.5l4.5 4.5 4.5-4.5z'/></svg>");background-repeat:no-repeat;background-position:right 10px center;background-size:16px;padding-right:32px;}
+  select.jumpnav:focus{outline:2px solid var(--cyan-dim);}
+
+  .wrap{max-width:900px;margin:0 auto;padding:0 16px;}
+  .hero{padding:28px 4px 10px;}
+  .hero h1{font-size:22px;margin:0 0 6px;color:#fff;}
+  .hero p{color:var(--text-dim);font-size:14px;margin:0;}
+  .hero .badges{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;}
+  .badge{font-size:11px;font-weight:600;color:var(--cyan);border:1px solid var(--cyan-dim);background:rgba(34,211,238,0.06);padding:4px 9px;border-radius:99px;}
+
+  section{margin-top:30px;scroll-margin-top:70px;}
+  .section-head{display:flex;align-items:baseline;gap:10px;margin-bottom:12px;}
+  .section-head h2{font-size:19px;margin:0;color:#fff;padding-left:10px;border-left:3px solid var(--cyan);}
+
+  .card{background:var(--card);border:1px solid var(--card-border);border-radius:var(--radius);padding:16px 16px 18px;margin-bottom:12px;}
+  .card h3{font-size:15px;margin:0 0 8px;color:var(--cyan);scroll-margin-top:70px;}
+  .card h3 .sub{color:var(--text-faint);font-weight:400;font-size:12px;}
+  .card p{margin:6px 0;color:var(--text);font-size:14px;}
+  .card p.dim{color:var(--text-dim);}
+  .card ul,.card ol{margin:6px 0;padding-left:20px;font-size:14px;}
+  .card li{margin:4px 0;}
+  .card code.inline{background:rgba(34,211,238,0.08);color:var(--cyan);padding:1px 6px;border-radius:5px;font-size:12.5px;font-family:"SF Mono",Consolas,Monaco,monospace;}
+  .intuition{background:rgba(192,132,252,0.06);border:1px dashed rgba(192,132,252,0.3);border-radius:9px;padding:10px 12px;margin:10px 0;font-size:13.5px;color:var(--text-dim);}
+  .intuition b{color:var(--followup);}
+
+  pre{background:var(--code-bg);border:1px solid var(--card-border);border-radius:10px;padding:12px 14px;overflow-x:auto;font-size:12.5px;margin:10px 0;-webkit-overflow-scrolling:touch;}
+  pre code{font-family:"SF Mono",Consolas,Monaco,monospace;color:#c9d6e3;white-space:pre;line-height:1.5;}
+  .code-label{font-size:10.5px;color:var(--text-faint);text-transform:uppercase;letter-spacing:0.05em;margin:14px 0 -2px;font-weight:700;}
+  .kw{color:#c084fc;} .str{color:#a5d6a7;} .cm{color:#5b6a80;font-style:italic;} .fn{color:#38bdf8;} .num{color:#fbbf24;}
+
+  .tblwrap{overflow-x:auto;margin:10px 0;border-radius:10px;border:1px solid var(--card-border);}
+  table{width:100%;border-collapse:collapse;font-size:13px;min-width:480px;}
+  th{background:rgba(34,211,238,0.06);color:var(--cyan);text-align:left;padding:9px 12px;font-size:11.5px;text-transform:uppercase;letter-spacing:0.03em;border-bottom:1px solid var(--card-border);white-space:nowrap;}
+  td{padding:10px 12px;border-bottom:1px solid var(--card-border);color:var(--text-dim);vertical-align:top;}
+  tr:last-child td{border-bottom:none;}
+  td.hl{color:var(--text);font-weight:600;}
+
+  .callout{border-radius:10px;padding:12px 14px;margin:12px 0;font-size:13.5px;border-left:3px solid;}
+  .callout .co-label{font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:5px;display:flex;align-items:center;gap:6px;}
+  .callout.trap{background:var(--trap-bg);border-color:var(--trap);}
+  .callout.trap .co-label{color:var(--trap);}
+  .callout.ref{background:var(--ref-bg);border-color:var(--ref);}
+  .callout.ref .co-label{color:var(--ref);}
+  .callout.resume{background:var(--resume-bg);border-color:var(--resume);}
+  .callout.resume .co-label{color:var(--resume);}
+  .callout.followup{background:var(--followup-bg);border-color:var(--followup);}
+  .callout.followup .co-label{color:var(--followup);}
+  .callout p{margin:4px 0;color:var(--text);}
+
+  .repo-banner{display:flex;flex-direction:column;gap:6px;background:linear-gradient(135deg, rgba(34,211,238,0.08), rgba(192,132,252,0.05));border:1px solid var(--cyan-dim);border-radius:var(--radius);padding:16px;margin-bottom:14px;}
+  .repo-banner .rtitle{font-size:15px;font-weight:700;color:#fff;}
+  .repo-banner .rmeta{font-size:12px;color:var(--text-dim);}
+  .repo-banner a.rlink{font-size:12.5px;font-weight:600;}
+
+  hr.divider{border:none;border-top:1px solid var(--card-border);margin:22px 0;}
+  footer{max-width:900px;margin:36px auto 0;padding:16px;text-align:center;color:var(--text-faint);font-size:12px;}
+
+  @media (min-width:640px){ .hero h1{font-size:26px;} table{font-size:13.5px;} }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-inner">
+    <span class="topbar-title"><span class="dot"></span>NOTES</span>
+    <select class="jumpnav" onchange="if(this.value) window.location.hash = this.value;">
+      <option value="">Jump to section…</option>
+      <optgroup label="Core ML/DL">
+        <option value="#overfit">Overfitting/Underfitting · Bias-Variance</option>
+        <option value="#gd">Gradient Descent</option>
+        <option value="#backprop">Backpropagation</option>
+        <option value="#cnn">CNN Basics</option>
+      </optgroup>
+      <optgroup label="NLP / LLMs">
+        <option value="#embeddings">Embeddings</option>
+        <option value="#transformers">Transformers Overview</option>
+        <option value="#attention">Attention Mechanism</option>
+      </optgroup>
+      <optgroup label="RAG">
+        <option value="#rag-pipeline">Retrieval + Generation Pipeline</option>
+        <option value="#vector-db">Vector Databases</option>
+        <option value="#chunking">Chunking Strategies</option>
+        <option value="#rag-vs-ft">Why RAG over Fine-Tuning</option>
+      </optgroup>
+      <optgroup label="LangChain / CrewAI">
+        <option value="#chains">Chains</option>
+        <option value="#agents">Agents</option>
+        <option value="#multiagent">Multi-Agent Orchestration</option>
+      </optgroup>
+      <optgroup label="YOLOv5">
+        <option value="#od-basics">Object Detection Basics</option>
+        <option value="#anchors">Anchor Boxes</option>
+        <option value="#nms">Non-Max Suppression</option>
+        <option value="#finetune">Fine-Tuning vs From Scratch</option>
+      </optgroup>
+      <optgroup label="Deep-Dive: SahYatri">
+        <option value="#sy-overview">Detection Pipeline — Actual Code</option>
+        <option value="#sy-reconcile">⚠️ Reconcile Before Interview</option>
+        <option value="#sy-concepts">Adaptive Thresholding &amp; Accuracy Validation</option>
+      </optgroup>
+    </select>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <div class="hero">
+    <h1>AI/ML Stack — Interview Notes</h1>
+    <p>Intuition-first, not math-heavy — written for a CP/algorithms background rather than a formal ML program. Covers core ML/DL, NLP/transformers, RAG, LangChain/CrewAI, and YOLOv5, with a real deep-dive into SahYatri's detection pipeline.</p>
+    <div class="badges">
+      <span class="badge">CNNs &amp; Backprop</span>
+      <span class="badge">Transformers &amp; Attention</span>
+      <span class="badge">RAG · LangChain · CrewAI</span>
+      <span class="badge">YOLOv5 / Ultralytics</span>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <section id="core-ml-head">
+    <div class="section-head"><h2>Core ML/DL Concepts</h2></div>
+  </section>
+
+  <section id="overfit">
+    <div class="card">
+      <h3 id="overfit-h">Overfitting / Underfitting &amp; the Bias-Variance Tradeoff</h3>
+      <p><strong>Underfitting</strong>: the model is too simple to capture the real pattern — high error on both training and test data. <strong>Overfitting</strong>: the model has essentially memorized the training data, including its noise — low training error, high test error.</p>
+      <div class="intuition"><b>CP-flavored intuition:</b> underfitting is like a solution that only handles the easiest subtask and gets partial score everywhere; overfitting is like hardcoding the exact sample test cases instead of solving the general problem — it aces the samples and fails every hidden test case with different input.</div>
+      <p><strong>Bias</strong> is error from wrong assumptions (an underfit model — too rigid). <strong>Variance</strong> is error from sensitivity to the specific training data (an overfit model — too flexible, different training samples would produce wildly different models). You can't drive both to zero with a fixed amount of data and model capacity — more capacity reduces bias but raises variance, and vice versa; the sweet spot is what techniques like regularization, dropout, and early stopping are trying to find.</p>
+      <div class="callout ref">
+        <div class="co-label">📌 Likely to be asked</div>
+        <p>"How do you detect overfitting in practice?" → Training loss keeps dropping while validation loss starts rising — that widening gap between the two curves is the signature. The fix set: more data, data augmentation, regularization (L2, dropout), or a simpler model.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="gd">
+    <div class="card">
+      <h3 id="gd-h">Gradient Descent</h3>
+      <p>Training a model means finding parameters that minimize a loss function. Gradient descent does this iteratively: compute the gradient (the direction of steepest <em>increase</em> in loss with respect to each parameter), then step the parameters a small amount in the <em>opposite</em> direction, repeat.</p>
+      <div class="intuition"><b>CP-flavored intuition:</b> think of it as hill-climbing / local search over a continuous parameter space instead of a discrete one — you can't enumerate all possible weight settings (infinite, continuous), so instead of trying every neighbor state, calculus tells you directly which direction is downhill and by how much (the gradient), and the learning rate is your step size.</p>
+      <pre><code><span class="cm"># one parameter update, conceptually</span>
+gradient = compute_gradient(loss, params)
+params = params - learning_rate * gradient</code></pre>
+      <div class="callout ref">
+        <div class="co-label">📌 Likely to be asked</div>
+        <p>"What happens if the learning rate is too high or too low?" → Too high: steps overshoot the minimum and loss can diverge/oscillate instead of converging. Too low: convergence is extremely slow and can get stuck in a shallow local dip. This is why adaptive optimizers (Adam, RMSProp) that adjust the effective step size per-parameter are the default over plain gradient descent in practice.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="backprop">
+    <div class="card">
+      <h3 id="backprop-h">Backpropagation Basics</h3>
+      <p>A neural network is a chain of function compositions (layer 1 → layer 2 → ... → loss). Backpropagation is just the <strong>chain rule</strong> applied systematically to that chain: compute how much the final loss changes with respect to each layer's output, working backward from the loss to the first layer, reusing intermediate results instead of recomputing them from scratch for every single weight.</p>
+      <div class="intuition"><b>CP-flavored intuition:</b> it's the same idea as memoized DP — instead of recomputing "how does this weight affect the final loss" independently for every one of millions of weights (which would re-walk the whole forward computation each time), you compute and cache each layer's local gradient once, then combine cached values going backward. Same principle as reusing subproblem results instead of recomputing them.</div>
+      <div class="callout followup">
+        <div class="co-label">🎯 Common follow-up</div>
+        <p>"What's the vanishing gradient problem?" → In a deep network, gradients are products of many chain-rule terms; if those terms are consistently &lt;1 (common with sigmoid/tanh activations), the product shrinks toward zero across many layers, so early layers barely update. ReLU-family activations and architectures like residual connections (skip connections that let gradients bypass layers) are the standard fixes.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="cnn">
+    <div class="card">
+      <h3 id="cnn-h">CNN Basics for Vision Tasks</h3>
+      <p>A <strong>convolution</strong> slides a small learnable filter (kernel) across the image, computing a weighted sum at each position — the same filter is reused across the whole image, so the network learns "detect this pattern anywhere" instead of a separate detector per pixel location.</p>
+      <div class="intuition"><b>CP-flavored intuition:</b> it's a sliding-window operation, exactly like a sliding-window sum/max over an array, just 2D and with a learned weight vector instead of a fixed sum. <strong>Pooling</strong> (max/average over small regions) is a downsampling/compression step — reduces spatial resolution while keeping the strongest signal, cutting computation for deeper layers.</div>
+      <p>Stacked conv layers build a feature hierarchy: early layers detect edges/textures, middle layers detect parts (an eye, a wheel), deeper layers detect whole objects — each layer operates on the previous layer's output, building up abstraction the same way composed functions build up complexity.</p>
+      <div class="callout ref">
+        <div class="co-label">📌 Likely to be asked</div>
+        <p>"Why convolutions instead of a fully-connected layer for images?" → Parameter sharing (the same small filter reused everywhere means far fewer weights than connecting every pixel to every neuron) and translation invariance (a learned pattern is detected regardless of where it appears in the image) — both of which a fully-connected layer doesn't give you.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section id="nlp-head">
+    <div class="section-head"><h2>NLP / LLM Concepts</h2></div>
+  </section>
+
+  <section id="embeddings">
+    <div class="card">
+      <h3 id="embeddings-h">Embeddings</h3>
+      <p>An embedding maps a discrete token (a word, a sentence, an image) to a dense vector of real numbers, positioned in a continuous space such that <strong>semantic similarity becomes geometric closeness</strong> — "king" and "queen" end up near each other; "king" and "banana" don't.</p>
+      <div class="intuition"><b>CP-flavored intuition:</b> the opposite goal of a hash function. A hash wants unrelated inputs to scatter apart and even similar inputs to land far apart (avoiding collisions); an embedding wants related concepts to land close together on purpose — it's a similarity-preserving mapping, not a collision-avoiding one.</div>
+      <p class="dim">This is what makes semantic search possible: to find documents "about" a query, you don't string-match keywords — you embed the query and find nearby vectors.</p>
+    </div>
+  </section>
+
+  <section id="transformers">
+    <div class="card">
+      <h3 id="transformers-h">Transformers Overview</h3>
+      <p>Before transformers, sequence models (RNNs) processed tokens one at a time, in order — inherently sequential, slow to train, and prone to losing information over long distances. Transformers process the <strong>whole sequence in parallel</strong> and use an attention mechanism (below) to let every token directly look at every other token, regardless of distance, in a single step.</p>
+      <p>Two broad shapes: <strong>encoder-decoder</strong> (original transformer, translation-style tasks — encode the input fully, then generate output attending back to it) and <strong>decoder-only</strong> (GPT-style — generate one token at a time, each new token attending only to what came before it). Almost every modern LLM you'd discuss in an interview is decoder-only.</p>
+      <div class="callout ref">
+        <div class="co-label">📌 Likely to be asked</div>
+        <p>"Why did transformers replace RNNs for most NLP tasks?" → Parallelizable training (no need to wait for token <em>t-1</em> before processing token <em>t</em>, so you can use all your GPU compute at once) and no long-range information bottleneck (attention connects distant tokens directly, instead of information having to survive being passed through every intermediate step like in an RNN).</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="attention">
+    <div class="card">
+      <h3 id="attention-h">Attention Mechanism (conceptual)</h3>
+      <p>For each token, attention computes a weighted average of <em>every other token's</em> representation, where the weights reflect "how relevant is that other token to understanding this one right now." Concretely, each token produces a <strong>Query</strong> (what am I looking for), a <strong>Key</strong> (what do I contain, for others to match against), and a <strong>Value</strong> (the actual content to pass along if matched). A token's new representation is the weighted sum of all Values, weighted by how well its Query matches every other token's Key.</p>
+      <div class="intuition"><b>CP-flavored intuition:</b> like computing, for every array element, a weighted sum over all other elements — but instead of fixed weights (like a convolution kernel) the weights are computed dynamically per-input, based on a similarity score between each pair. It's an all-pairs relevance computation, run fresh for every input sequence.</div>
+      <p class="dim">"Self-attention" means a sequence attending to itself (used to build context-aware representations); "multi-head" just means running several of these attention computations in parallel with different learned Q/K/V projections, so different heads can specialize in tracking different kinds of relationships (e.g. one head tracks grammatical subject-verb links, another tracks coreference).</p>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section id="rag-head">
+    <div class="section-head"><h2>RAG Architecture</h2></div>
+  </section>
+
+  <section id="rag-pipeline">
+    <div class="card">
+      <h3 id="rag-pipeline-h">Retrieval + Generation Pipeline</h3>
+      <p>RAG (Retrieval-Augmented Generation) answers a question by first <strong>retrieving</strong> relevant source text, then <strong>generating</strong> an answer grounded in that retrieved text — instead of relying purely on what the LLM memorized during pretraining.</p>
+      <pre><code>1. User asks a question
+2. Embed the question → a query vector
+3. Search a vector store for the most similar document chunks (top-k)
+4. Stuff those chunks into the LLM's prompt as context:
+     "Answer using ONLY this context: {retrieved_chunks}
+      Question: {user_question}"
+5. LLM generates an answer grounded in the retrieved text</code></pre>
+      <div class="callout ref">
+        <div class="co-label">📌 Likely to be asked</div>
+        <p>"What's the single biggest failure mode of a naive RAG pipeline?" → Retrieval quality caps answer quality — if step 3 pulls irrelevant or incomplete chunks, the LLM either hallucinates to fill the gap or confidently answers from the wrong context. Debugging a bad RAG answer should always start by checking what was actually retrieved, before assuming the LLM itself is the problem.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="vector-db">
+    <div class="card">
+      <h3 id="vector-db-h">Vector Databases</h3>
+      <p>A vector database stores embeddings and answers "which stored vectors are closest to this query vector" efficiently at scale — that's approximate nearest neighbor (ANN) search, since exact nearest-neighbor search over millions of high-dimensional vectors is too slow to do by brute force on every query.</p>
+      <div class="intuition"><b>CP-flavored intuition:</b> conceptually similar to a spatial index (like a KD-tree) that lets you avoid comparing against every point — vector DBs typically use graph-based structures (HNSW) instead, trading a small amount of accuracy for large speed gains, which is why it's "approximate" nearest neighbor, not exact.</div>
+      <p class="dim">Common choices: FAISS (library, not a full DB — good for local/prototype use), Pinecone/Weaviate/Chroma (managed or self-hosted full vector DBs with metadata filtering, persistence, and APIs).</p>
+    </div>
+  </section>
+
+  <section id="chunking">
+    <div class="card">
+      <h3 id="chunking-h">Chunking Strategies</h3>
+      <p>Source documents get split into chunks before embedding, because (a) LLM context windows are limited, and (b) embedding a whole long document into one vector blurs together too many distinct ideas to be useful for precise retrieval.</p>
+      <div class="tblwrap">
+        <table>
+          <tr><th>Strategy</th><th>How</th><th>Trade-off</th></tr>
+          <tr><td class="hl">Fixed-size</td><td>Split every N tokens/characters, with some overlap</td><td>Simple, fast — but can cut a sentence or idea in half at the boundary</td></tr>
+          <tr><td class="hl">Sentence/paragraph-based</td><td>Split on natural boundaries</td><td>Preserves meaning better; chunk sizes become uneven</td></tr>
+          <tr><td class="hl">Semantic chunking</td><td>Split where embedding similarity between adjacent sentences drops (topic shift)</td><td>Best retrieval relevance; more expensive to compute upfront</td></tr>
+        </table>
+      </div>
+      <p class="dim"><strong>Overlap</strong> (e.g. a 50-token overlap between consecutive chunks) is the standard fix for the fixed-size boundary problem — it means an idea split across a chunk boundary still appears whole in at least one chunk.</p>
+    </div>
+  </section>
+
+  <section id="rag-vs-ft">
+    <div class="card">
+      <h3 id="rag-vs-ft-h">Why RAG over Fine-Tuning</h3>
+      <div class="tblwrap">
+        <table>
+          <tr><th></th><th>RAG</th><th>Fine-Tuning</th></tr>
+          <tr><td class="hl">Where knowledge lives</td><td>External document store — swap it out anytime</td><td>Baked into model weights — static until retrained</td></tr>
+          <tr><td class="hl">Updating knowledge</td><td>Add/update documents, no retraining</td><td>Requires a new training run</td></tr>
+          <tr><td class="hl">Cost to iterate</td><td>Low — re-index documents</td><td>High — GPU time, dataset curation</td></tr>
+          <tr><td class="hl">Hallucination risk</td><td>Lower — answer is grounded in retrieved text you can cite</td><td>Higher — model still generates from memorized weights, no source to check against</td></tr>
+          <tr><td class="hl">Good for</td><td>Knowledge that changes often, needs to be traceable/citable (e.g. querying a specific PDF)</td><td>Teaching a new skill/format/style the base model doesn't have, not new facts</td></tr>
+        </table>
+      </div>
+      <div class="callout resume">
+        <div class="co-label">💼 Resume tie-in — PDF Query Engine</div>
+        <p>"For the PDF Query Engine, RAG was the natural fit over fine-tuning because the whole point was answering questions about whatever PDF a user uploads — content the model has never seen and that changes per user session. Fine-tuning would mean retraining per document, which doesn't make sense for arbitrary user-uploaded content; RAG lets the same deployed system handle any new document by just embedding and indexing it, with answers traceable back to the actual source text instead of the model's memorized parameters."</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section id="lc-head">
+    <div class="section-head"><h2>LangChain / CrewAI Fundamentals</h2></div>
+  </section>
+
+  <section id="chains">
+    <div class="card">
+      <h3 id="chains-h">Chains</h3>
+      <p>A chain is a fixed sequence of steps wired together — e.g. prompt template → LLM call → output parser → next prompt. The control flow is decided by <em>you</em> at build time, not by the model at run time.</p>
+      <pre><code><span class="cm"># conceptual LangChain-style chain</span>
+prompt = PromptTemplate(<span class="str">"Summarize this document: {text}"</span>)
+chain = prompt | llm | output_parser
+result = chain.invoke({<span class="str">"text"</span>: document_text})</code></pre>
+      <p class="dim">Think of a chain as a fixed pipeline — function composition where each stage's output is the next stage's input, always in the same order.</p>
+    </div>
+  </section>
+
+  <section id="agents">
+    <div class="card">
+      <h3 id="agents-h">Agents</h3>
+      <p>An agent is different from a chain in one key way: the LLM itself decides <strong>which tool to call, in what order, and when to stop</strong> — the control flow is dynamic, driven by the model's own reasoning at each step, instead of hardcoded by you.</p>
+      <div class="intuition"><b>Pattern to know: ReAct (Reason + Act).</b> The agent loops: think about what to do next → pick a tool and call it → observe the result → think again → ... → produce a final answer once it decides it has enough information.</div>
+      <div class="callout followup">
+        <div class="co-label">🎯 Common follow-up</div>
+        <p>"When would you use a plain chain instead of an agent?" → Whenever the steps are actually fixed and known in advance — an agent's dynamic decision-making adds latency, cost (more LLM calls to reason at each step), and unpredictability you don't need if the task genuinely always follows the same steps in the same order.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="multiagent">
+    <div class="card">
+      <h3 id="multiagent-h">Multi-Agent Orchestration (CrewAI)</h3>
+      <p>CrewAI structures a task around multiple specialized agents, each with a defined <strong>role, goal, and backstory</strong> (a system-prompt-like persona), coordinated by a process that passes outputs between them — e.g. a "Researcher" agent gathers information, hands it to a "Writer" agent that drafts a response, which a "Reviewer" agent checks before finalizing.</p>
+      <div class="intuition"><b>Intuition:</b> like a small team with a manager delegating subtasks to specialists, instead of one generalist doing everything — each agent's prompt is narrower and more focused, which tends to produce better results per-step than asking one agent to do the whole task in one shot.</div>
+      <div class="callout resume">
+        <div class="co-label">💼 Resume tie-in — PDF Query Engine</div>
+        <p>"The multi-agent setup split the RAG pipeline's responsibilities instead of using one monolithic prompt — one agent focused on retrieval/context assembly, another focused on composing the final answer from that context, which made it easier to debug which stage was responsible when an answer came back wrong: a retrieval problem (wrong chunks) versus a generation problem (right chunks, bad answer)."</p>
+      </div>
+      <div class="callout followup">
+        <div class="co-label">🎯 Common follow-up</div>
+        <p>"How would you reduce hallucination in your RAG system?" → The levers, roughly in order of impact: (1) improve retrieval quality first — better chunking/embeddings so the right context actually gets retrieved, since no prompting trick fixes bad retrieval; (2) constrain the generation prompt explicitly ("answer only using the provided context; say 'not found in the document' if the answer isn't present"); (3) add a citation/verification step where the agent points to which retrieved chunk supports each claim, making unsupported claims visible; (4) lower generation temperature for more deterministic, less "creative" completions on factual QA.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section id="yolo-head">
+    <div class="section-head"><h2>YOLOv5 Fundamentals</h2></div>
+  </section>
+
+  <section id="od-basics">
+    <div class="card">
+      <h3 id="od-basics-h">Object Detection Basics</h3>
+      <p>Object detection = localization (where is it — a bounding box) + classification (what is it) for potentially multiple objects in one image. YOLO ("You Only Look Once") is a <strong>single-shot detector</strong>: one forward pass through the network predicts all boxes and classes at once, rather than a two-stage approach (first propose candidate regions, then classify each one separately, like R-CNN-family models) — which is the core reason YOLO is fast enough for real-time/edge use.</p>
+      <p>Conceptually, the image is divided into a grid, and each grid cell predicts: is there an object centered here, what box dimensions, and what class — all as one big regression problem solved in a single network pass.</p>
+    </div>
+  </section>
+
+  <section id="anchors">
+    <div class="card">
+      <h3 id="anchors-h">Anchor Boxes</h3>
+      <p>Instead of predicting a bounding box's width/height from scratch (a hard, unconstrained regression problem), classic YOLOv5 predicts an <strong>offset from a set of predefined anchor box shapes</strong> — reference box sizes (e.g. tall-and-narrow, wide-and-short, square) chosen ahead of time to match the typical object shapes in the training data (often via k-means clustering on the training set's ground-truth boxes). The network only has to learn small adjustments to a reasonable starting guess, not the raw dimensions.</p>
+      <div class="callout ref">
+        <div class="co-label">📌 Likely to be asked</div>
+        <p>"Are all YOLO/Ultralytics models anchor-based?" → No — this is a real and current distinction worth knowing: classic YOLOv5 is anchor-based, but Ultralytics' newer unified models (YOLOv8, and the "u"-suffixed YOLOv5u variants served through the same <code class="inline">ultralytics</code> package) use an anchor-free, decoupled detection head instead — predicting object centers and sizes directly rather than offsets from predefined anchor shapes. Worth checking which head a specific weights file actually uses before describing "anchor boxes" as a certainty.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="nms">
+    <div class="card">
+      <h3 id="nms-h">Non-Max Suppression (NMS)</h3>
+      <p>A single object often gets multiple overlapping candidate boxes predicted around it (from neighboring grid cells/anchors all firing on the same object). NMS cleans this up: sort all candidate boxes by confidence score, keep the highest-scoring one, then discard any other box whose overlap (IoU — Intersection over Union) with it exceeds a threshold; repeat for the remaining boxes.</p>
+      <div class="intuition"><b>CP-flavored intuition:</b> a greedy interval-scheduling-style algorithm — repeatedly pick the best-scoring remaining candidate, eliminate everything that conflicts (overlaps too much) with it, and continue until nothing's left.</div>
+    </div>
+  </section>
+
+  <section id="finetune">
+    <div class="card">
+      <h3 id="finetune-h">Model Fine-Tuning vs Training from Scratch</h3>
+      <div class="tblwrap">
+        <table>
+          <tr><th></th><th>Fine-Tuning</th><th>Training from Scratch</th></tr>
+          <tr><td class="hl">Starting weights</td><td>Pretrained (e.g. on COCO — millions of general images)</td><td>Random initialization</td></tr>
+          <tr><td class="hl">Data needed</td><td>Hundreds–low thousands of labeled images can work</td><td>Tens of thousands+ typically, to learn good low-level features from nothing</td></tr>
+          <tr><td class="hl">Training time</td><td>Much shorter — early layers (edges, textures) already work</td><td>Long — the model has to learn everything, including basic visual features</td></tr>
+          <tr><td class="hl">When to use</td><td>Your target classes overlap conceptually with the pretrained dataset (e.g. "person," already in COCO)</td><td>Your domain is so different from natural images (e.g. medical scans, satellite imagery) that pretrained low-level features don't transfer well</td></tr>
+        </table>
+      </div>
+      <p class="dim">Detecting "person" for occupancy counting is close to the best-case scenario for fine-tuning (or even zero-shot use of a COCO-pretrained model directly) — "person" is already one of COCO's 80 classes, so the pretrained model has seen enormous numbers of people in varied poses/lighting before you show it a single image from your own setup.</p>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- ============================================================ -->
+  <section id="sy-head">
+    <div class="section-head"><h2>Deep-Dive: SahYatri Detection Pipeline</h2></div>
+  </section>
+
+  <section id="sy-overview">
+    <div class="repo-banner">
+      <div class="rtitle">🚌 SahYatri — SahYatri-DetectionAI + SahYatri-Hardware</div>
+      <div class="rmeta">FastAPI + Ultralytics YOLO detection service, called by a Raspberry Pi capture script</div>
+      <a class="rlink" href="https://github.com/AmanVerma1067/SahYatri" target="_blank" rel="noopener">github.com/AmanVerma1067/SahYatri →</a>
+    </div>
+    <div class="card">
+      <h3 id="sy-overview-h">What the repo's code actually shows</h3>
+      <p>The detection service (<code class="inline">SahYatri-DetectionAI/main.py</code>) is a FastAPI app that loads a YOLO model via the <code class="inline">ultralytics</code> package and exposes a <code class="inline">/detect</code> endpoint:</p>
+      <pre><code><span class="kw">from</span> ultralytics <span class="kw">import</span> YOLO
+
+model = YOLO(<span class="str">'yolov5xu.pt'</span>)  <span class="cm"># stock Ultralytics-hosted weights</span>
+
+<span class="kw">def</span> <span class="fn">count_people</span>(image: Image.Image) -&gt; <span class="kw">int</span>:
+    <span class="str">"""Run YOLO inference and count people."""</span>
+    results = model(image)
+    <span class="kw">return</span> <span class="kw">sum</span>(1 <span class="kw">for</span> box <span class="kw">in</span> results[0].boxes <span class="kw">if</span> box.cls == 0)  <span class="cm"># COCO class 0 = person</span>
+
+<span class="kw">@app</span>.post(<span class="str">"/detect"</span>)
+<span class="kw">async def</span> <span class="fn">detect_occupancy</span>(image: UploadFile = File(...), camera_id: <span class="kw">str</span> = Query(...)):
+    img = process_image(<span class="kw">await</span> image.read())
+    person_count = count_people(img)
+    send_to_apis(camera_id, person_count)  <span class="cm"># forwards to the bus API from the last doc</span>
+    <span class="kw">return</span> JSONResponse({<span class="str">"camera_id"</span>: camera_id, <span class="str">"occupancy"</span>: person_count, <span class="str">"capacity"</span>: MAX_CAPACITY})</code></pre>
+      <p>The Raspberry Pi's script (<code class="inline">SahYatri-Hardware/capture.py</code>) does <strong>not</strong> run YOLO locally — it captures a still frame every few seconds and POSTs it to this detection service over HTTP:</p>
+      <pre><code>API_URL = <span class="str">"http://192.168.137.1:8000/detect"</span>  <span class="cm"># a LAN companion device, not on-device inference</span>
+CAPTURE_INTERVAL = 5  <span class="cm"># seconds — periodic snapshots, not a continuous video feed</span>
+
+<span class="kw">def</span> <span class="fn">capture_and_process_image</span>():
+    picam2.switch_mode_and_capture_file(still_config, image_path)
+    <span class="kw">with</span> <span class="kw">open</span>(image_path, <span class="str">"rb"</span>) <span class="kw">as</span> img_file:
+        response = requests.post(API_URL, files={<span class="str">"image"</span>: img_file}, params={<span class="str">"camera_id"</span>: CAMERA_ID})
+        data = response.json()
+        update_system_status(data[<span class="str">"occupancy"</span>], data[<span class="str">"capacity"</span>])  <span class="cm"># updates an I2C LCD display</span>
+
+<span class="kw">def</span> <span class="fn">update_system_status</span>(occupancy, capacity):
+    <span class="kw">if</span> occupancy &gt;= capacity: system_status = <span class="str">"FULL!"</span>
+    <span class="kw">elif</span> occupancy &gt;= capacity * 0.8: system_status = <span class="str">"NEAR FULL"</span>  <span class="cm"># the closest thing to a threshold tier in the code</span>
+    <span class="kw">else</span>: system_status = <span class="str">"OK"</span></code></pre>
+      <p class="dim">The Pi additionally runs an MJPEG video stream endpoint with an on-screen status overlay, an I2C LCD readout, and IP-based location lookup — a genuinely solid embedded-systems piece of the project independent of the detection model question below.</p>
+    </div>
+  </section>
+
+  <section id="sy-reconcile">
+    <div class="card">
+      <h3 id="sy-reconcile-h">⚠️ Reconcile before your interview — this matters</h3>
+      <p>The resume framing given for this deep-dive ("fine-tuned YOLOv5n, deployed on the Pi at 15 FPS, adaptive thresholding, 90%+ accuracy") and what's actually in this repo don't line up on several specific, checkable details. Better to know this now than get an unexpected follow-up in the room:</p>
+      <div class="callout trap">
+        <div class="co-label">⚠️ Model variant</div>
+        <p>The code loads <code class="inline">yolov5xu.pt</code> — the <strong>extra-large</strong> ("x") variant, the opposite end of the size spectrum from <strong>nano</strong> ("n"). YOLOv5n is ~1.9M parameters and built specifically for edge/mobile use; YOLOv5x is ~87M parameters and is the most accurate but slowest, heaviest variant in the family — a poor fit for a Raspberry Pi 4 specifically. If a nano model was actually fine-tuned and used somewhere, that code/weights file isn't in this repo, or a different version was deployed than what's committed here.</p>
+      </div>
+      <div class="callout trap">
+        <div class="co-label">⚠️ Where inference actually runs</div>
+        <p>The Pi never loads a YOLO model — it captures a photo and POSTs it over HTTP to <code class="inline">192.168.137.1:8000</code>, a separate device on the same local network (that IP pattern is a typical Windows Internet-Connection-Sharing gateway address, consistent with a laptop tethered to the Pi). Inference is running on that companion machine, not "on the Pi" in the sense of on-device edge inference.</p>
+      </div>
+      <div class="callout trap">
+        <div class="co-label">⚠️ Frame rate</div>
+        <p><code class="inline">CAPTURE_INTERVAL = 5</code> means one still image is captured and sent for detection every 5 seconds — roughly 0.2 detections/sec, not 15 FPS. The video stream endpoint (<code class="inline">/video_feed</code>) does run continuously for the live dashboard view, but that's a raw camera feed with a text overlay, not continuous YOLO inference — the detection path and the video-streaming path are separate in this code.</p>
+      </div>
+      <div class="callout trap">
+        <div class="co-label">⚠️ Fine-tuning and accuracy validation</div>
+        <p>There's no training/fine-tuning script, custom dataset, or evaluation code (confusion matrix, precision/recall, mAP) anywhere in the repo — <code class="inline">main.py</code> loads the stock pretrained COCO weights directly and filters to class 0 (person). If fine-tuning and a validation pass genuinely happened, it likely lived in a separate notebook/script (e.g. Colab) that wasn't committed to this repo — worth tracking that down and having the actual training run/metrics ready to describe if asked, rather than the claim resting on this codebase alone.</p>
+      </div>
+      <p class="dim">None of this means the underlying achievement is false — it likely means the committed repo reflects an earlier or partial snapshot of the system, and the fine-tuning/on-device/threshold work happened in a part of the project that isn't in what's public. The fix before an interview is simple: pin down exactly which claims you can back with an artifact (a weights file, a training notebook, a benchmark log) versus which ones need re-checking or softening.</p>
+    </div>
+  </section>
+
+  <section id="sy-concepts">
+    <div class="card">
+      <h3 id="sy-concepts-h">What "adaptive thresholding" and "90%+ accuracy" would mean here — and how to validate them properly</h3>
+      <p>Useful to have these concepts crisp regardless of exactly what's in the current repo, since they're reasonable, defensible design choices for this problem even if the current code shows a simpler static rule.</p>
+      <div class="callout ref">
+        <div class="co-label">📌 What adaptive thresholding would concretely mean</div>
+        <p>The current code uses one fixed confidence threshold for "is this a person" regardless of conditions. A genuinely <em>adaptive</em> threshold would adjust that confidence cutoff based on context — e.g. lowering it in low-light frames where the model's confidence scores run systematically lower for real detections, or tuning it per-camera if different bus cameras have different angles/lighting. The static 80%/100% capacity bands seen in <code class="inline">update_system_status</code> are a threshold on the <em>output count</em>, not on detection confidence — a different (and much simpler) kind of "threshold" than what the phrase usually implies for a detection model.</p>
+      </div>
+      <div class="callout followup">
+        <div class="co-label">🎯 Common follow-up — be ready with a real methodology</div>
+        <p>"How did you validate 90%+ accuracy?" → The defensible way to answer this, whether or not this exact validation was run: collect a held-out set of real bus images with manually counted ground-truth occupancy, run the model on each, and compare predicted vs. actual counts — reporting something like mean absolute count error or percentage of frames within ±1 of the true count (person-counting accuracy is usually measured this way, not via a classification-style accuracy percentage, since the task is a count, not a single label). If pushed on the specific number, the honest fallback is describing the methodology precisely rather than restating the headline figure — an interviewer respects "here's exactly how I'd measure that" far more than an unverifiable number.</p>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <div class="card" style="text-align:center;">
+    <p class="dim" style="margin:0;font-size:12.5px;">Callout key: <span style="color:var(--trap);">red = trap / needs reconciling</span>, <span style="color:var(--ref);">blue = likely to be asked</span>, <span style="color:var(--resume);">green = how to phrase it</span>, <span style="color:var(--followup);">purple = follow-up to expect</span>.</p>
+  </div>
+
+</div>
+
+<footer>
+  AI/ML stack interview notes · Deep-dive sourced from <a href="https://github.com/AmanVerma1067/SahYatri" target="_blank" rel="noopener">SahYatri</a>
+</footer>
+
+</body>
+</html>

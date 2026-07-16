@@ -253,3 +253,325 @@ h1, h2, h3, h4 { font-family: var(--font-head); font-weight: 700; letter-spacing
   .stats-grid { grid-template-columns: 1fr; }
   .heatmap { grid-template-columns: repeat(7, 1fr); }
 }
+
+/* ── Split Pane Layout ── */
+.roadmap-split-pane {
+  display: grid;
+  grid-template-columns: 1.8fr 1.2fr;
+  gap: 20px;
+  height: calc(100vh - 170px);
+  margin-top: 10px;
+}
+.notes-pane {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  height: 100%;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
+}
+#notesFrame {
+  width: 100%;
+  height: 100%;
+  border: none;
+  background: #1a1b26; /* Matches the Tokyo Night theme of notes files */
+}
+.checklist-pane {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px;
+  overflow: hidden;
+}
+.checklist-pane-header {
+  margin-bottom: 16px;
+}
+.checklist-scroll {
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+.checklist-topic-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.01);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.checklist-topic-row:hover {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: var(--accent);
+}
+.checklist-topic-row.completed {
+  opacity: 0.6;
+}
+.checklist-topic-row.completed .checklist-topic-name {
+  text-decoration: line-through;
+  color: var(--text-muted);
+}
+.checklist-topic-name {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text);
+  flex: 1;
+  line-height: 1.4;
+}
+.checklist-phase-header {
+  font-family: var(--font-head);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--accent);
+  margin: 18px 0 10px;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 6px;
+}
+.checklist-phase-header:first-of-type {
+  margin-top: 0;
+}
+.checklist-search-box {
+  position: relative;
+  margin-bottom: 12px;
+}
+.checklist-search-input {
+  width: 100%;
+  padding: 8px 12px 8px 32px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text);
+  font-size: 12.5px;
+  outline: none;
+  transition: border-color 0.15s;
+}
+.checklist-search-input:focus {
+  border-color: var(--accent);
+}
+.checklist-search-icon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 14px;
+  height: 14px;
+  color: var(--text-muted);
+}
+
+/* ── Resume View Styles ── */
+.resume-container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+.resume-header {
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 20px;
+  margin-bottom: 10px;
+}
+.resume-title {
+  font-size: 32px;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+.resume-subtitle {
+  font-family: var(--font-mono);
+  color: var(--accent);
+  font-size: 13px;
+  letter-spacing: 0.05em;
+}
+.resume-section-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+.resume-section-title {
+  font-size: 18px;
+  color: var(--text);
+  margin-bottom: 20px;
+  border-left: 3px solid var(--accent);
+  padding-left: 12px;
+}
+.resume-skills-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+.resume-skill-cat {
+  background: rgba(255, 255, 255, 0.01);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px;
+}
+.resume-skill-cat h4 {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  margin-bottom: 12px;
+  letter-spacing: 0.08em;
+}
+.resume-skills-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.resume-skill-pill {
+  font-size: 11px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  background: var(--surface-elevated);
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+.resume-experience-item {
+  position: relative;
+  padding-left: 20px;
+  border-left: 2px solid var(--border);
+  margin-bottom: 20px;
+}
+.resume-experience-item:last-child {
+  margin-bottom: 0;
+  border-left-color: transparent;
+}
+.resume-exp-dot {
+  position: absolute;
+  left: -6px;
+  top: 6px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 8px var(--accent);
+}
+.resume-exp-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+.resume-exp-company {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
+}
+.resume-exp-role {
+  font-size: 14px;
+  color: var(--text-muted);
+  font-weight: 500;
+  margin-top: 2px;
+}
+.resume-exp-period {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--accent);
+}
+.resume-points {
+  padding-left: 18px;
+  margin-bottom: 14px;
+}
+.resume-points li {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+  line-height: 1.6;
+}
+.resume-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  background: rgba(165, 180, 252, 0.08);
+  border: 1px solid rgba(165, 180, 252, 0.2);
+  border-radius: 6px;
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-decoration: none;
+}
+.resume-action-btn:hover {
+  background: var(--accent);
+  color: var(--bg);
+  box-shadow: 0 0 10px var(--accent-glow);
+}
+.resume-projects-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
+.resume-project-card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.01);
+  padding: 20px;
+}
+.resume-proj-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+.resume-proj-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
+}
+.resume-proj-tech {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-muted);
+  background: var(--surface-elevated);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+.resume-achievements-list {
+  list-style: none;
+  padding: 0;
+}
+.resume-achievements-list li {
+  font-size: 13.5px;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+  line-height: 1.6;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+.resume-achievements-list li::before {
+  content: "🏆";
+  font-size: 14px;
+}
+.resume-achievements-list li.lc::before {
+  content: "🛡️";
+}
+.resume-achievements-list li.agent::before {
+  content: "🤖";
+}
+.resume-achievements-list li.bootcamp::before {
+  content: "🎓";
+}
+
+@media (max-width: 1000px) {
+  .roadmap-split-pane {
+    grid-template-columns: 1fr;
+    height: auto;
+  }
+  .notes-pane {
+    height: 60vh;
+  }
+  .checklist-pane {
+    height: 40vh;
+  }
+}
