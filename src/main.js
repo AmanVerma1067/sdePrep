@@ -8,8 +8,8 @@ let currentView = 'dashboard';
 let currentRoadmap = null;
 let previousView = null;
 let previousRoadmap = null;
-let searchQuery = '';
 let targetHashOnLoad = null;
+let isFullscreenReading = false;
 
 function topicId(rmId, phase, topicName) {
   return `${rmId}::${phase}::${topicName}`;
@@ -39,7 +39,7 @@ function navigateTo(view, roadmap) {
   previousRoadmap = currentRoadmap;
   currentView = view;
   currentRoadmap = roadmap || null;
-  searchQuery = '';
+  isFullscreenReading = false;
   renderApp();
 }
 
@@ -58,8 +58,52 @@ function goBack() {
     currentView = 'dashboard';
     currentRoadmap = null;
   }
-  searchQuery = '';
+  isFullscreenReading = false;
   renderApp();
+}
+
+function toggleFullscreenReading() {
+  isFullscreenReading = !isFullscreenReading;
+  document.body.classList.toggle('fullscreen-reading', isFullscreenReading);
+  const sidebar = document.getElementById('sidebar');
+  const mainContent = document.querySelector('.main-content');
+  const splitPane = document.querySelector('.roadmap-split-pane');
+  const notesPane = document.querySelector('.notes-pane');
+  const checklistPane = document.querySelector('.checklist-pane');
+  const header = document.querySelector('.roadmap-header-bar');
+  const mobileTabs = document.querySelector('.roadmap-mobile-tabs');
+
+  if (isFullscreenReading) {
+    if (sidebar) sidebar.style.display = 'none';
+    if (mainContent) {
+      mainContent.style.marginLeft = '0';
+      mainContent.style.padding = '0';
+      mainContent.style.maxWidth = '100%';
+    }
+    if (header) header.style.display = 'none';
+    if (mobileTabs) mobileTabs.style.display = 'none';
+    if (splitPane) {
+      splitPane.style.height = '100vh';
+      splitPane.style.gridTemplateColumns = '1fr';
+    }
+    if (notesPane) notesPane.style.height = '100vh';
+    if (checklistPane) checklistPane.style.display = 'none';
+  } else {
+    if (sidebar) sidebar.style.display = '';
+    if (mainContent) {
+      mainContent.style.marginLeft = '';
+      mainContent.style.padding = '';
+      mainContent.style.maxWidth = '';
+    }
+    if (header) header.style.display = '';
+    if (mobileTabs) mobileTabs.style.display = '';
+    if (splitPane) {
+      splitPane.style.height = '';
+      splitPane.style.gridTemplateColumns = '';
+    }
+    if (notesPane) notesPane.style.height = '';
+    if (checklistPane) checklistPane.style.display = '';
+  }
 }
 
 function renderApp() {
@@ -260,21 +304,31 @@ function renderRoadmapView() {
 
   return `
   <div class="fade-in" style="height: 100%; display: flex; flex-direction: column;">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-      ${renderBackButton()}
-      <div style="display: flex; align-items: center; gap: 15px;">
-        <span style="font-size: 24px;">${rm.icon}</span>
-        <h1 style="margin: 0; font-size: 24px; font-family: var(--font-head);">${rm.title}</h1>
-        <span style="font-family: var(--font-mono); font-size: 13px; background: rgba(255, 255, 255, 0.05); padding: 4px 8px; border-radius: 6px; border: 1px solid var(--border);">
+    <div class="roadmap-header-bar">
+      <div style="display: flex; align-items: center; gap: 12px;">
+        ${renderBackButton()}
+        <span style="font-size: 22px;">${rm.icon}</span>
+        <h1 style="margin: 0; font-size: 22px; font-family: var(--font-head);">${rm.title}</h1>
+        <span class="roadmap-mastery-badge">
           ${stats.done}/${stats.total} Mastered (${stats.pct}%)
         </span>
       </div>
+      <button class="fullscreen-toggle-btn" id="fullscreenReadBtn" title="Toggle fullscreen reading mode">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="15 3 21 3 21 9"></polyline>
+          <polyline points="9 21 3 21 3 15"></polyline>
+          <line x1="21" y1="3" x2="14" y2="10"></line>
+          <line x1="3" y1="21" x2="10" y2="14"></line>
+        </svg>
+        <span class="fullscreen-label">Focus Mode</span>
+      </button>
     </div>
 
     <!-- Responsive Mobile Tabs Selector -->
     <div class="roadmap-mobile-tabs">
-      <button class="mobile-tab-btn active" data-target="notes">Study Notes</button>
-      <button class="mobile-tab-btn" data-target="checklist">Checklist</button>
+      <button class="mobile-tab-btn active" data-target="notes">📖 Notes</button>
+      <button class="mobile-tab-btn" data-target="checklist">✅ Checklist</button>
+      <button class="mobile-tab-btn" data-target="fullscreen" id="mobileFullscreenBtn">🔍 Focus</button>
     </div>
 
     <div class="roadmap-split-pane show-notes">
@@ -287,6 +341,16 @@ function renderRoadmapView() {
         </div>
       </div>
     </div>
+
+    <!-- Fullscreen exit floating button (visible only in fullscreen mode) -->
+    <button class="fullscreen-exit-fab" id="fullscreenExitFab" title="Exit fullscreen (Esc)">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="4 14 10 14 10 20"></polyline>
+        <polyline points="20 10 14 10 14 4"></polyline>
+        <line x1="14" y1="10" x2="21" y2="3"></line>
+        <line x1="3" y1="21" x2="10" y2="14"></line>
+      </svg>
+    </button>
   </div>`;
 }
 
@@ -534,10 +598,16 @@ function renderResumeView() {
             <li>Built a cross-platform academic timetable application utilizing offline-first local caching and seamless server synchronization.</li>
             <li>Created an authenticated admin panel for centralized timetable updates, serving sub-second updates to active student devices.</li>
           </ul>
-          <button class="resume-action-btn" data-jump-roadmap="node-express" data-jump-hash="#study-overview">
-            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-            StudySync Express/MongoDB Notes
-          </button>
+          <div style="display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap;">
+            <button class="resume-action-btn" data-jump-roadmap="node-express" data-jump-hash="#study-overview">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+              StudySync Express/MongoDB Notes
+            </button>
+            <button class="resume-action-btn" data-jump-roadmap="flutter" data-jump-hash="#ss-overview">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+              StudySync Flutter Notes
+            </button>
+          </div>
         </div>
 
         <!-- SahYatri -->
@@ -610,9 +680,22 @@ function attachEvents() {
     });
   });
 
+  // Fullscreen reading mode toggle
+  document.getElementById('fullscreenReadBtn')?.addEventListener('click', toggleFullscreenReading);
+  document.getElementById('fullscreenExitFab')?.addEventListener('click', toggleFullscreenReading);
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && isFullscreenReading) {
+      toggleFullscreenReading();
+    }
+  });
+
   // Mobile tabs switching event handlers
   document.querySelectorAll('.mobile-tab-btn').forEach(btn => {
     btn.addEventListener('click', () => {
+      if (btn.dataset.target === 'fullscreen') {
+        toggleFullscreenReading();
+        return;
+      }
       document.querySelectorAll('.mobile-tab-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       const pane = document.querySelector('.roadmap-split-pane');

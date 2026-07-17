@@ -229,6 +229,118 @@ export const roadmaps = [
     ]
   },
   {
+    "id": "flutter",
+    "title": "Flutter & Dart",
+    "icon": "📱",
+    "accent": "#22d3ee",
+    "url": "/flutter-interview-notes.html",
+    "phases": [
+      {
+        "title": "Flutter Fundamentals",
+        "topics": [
+          {
+            "name": "Widget Tree",
+            "hash": "#widget-tree",
+            "desc": "Master the Widget Tree core concepts and interview answers.",
+            "links": []
+          },
+          {
+            "name": "StatefulWidget vs StatelessWidget",
+            "hash": "#stateful-stateless",
+            "desc": "Master the StatefulWidget vs StatelessWidget core concepts and interview answers.",
+            "links": []
+          },
+          {
+            "name": "Widget Lifecycle",
+            "hash": "#lifecycle",
+            "desc": "Master the Widget Lifecycle core concepts and interview answers.",
+            "links": []
+          },
+          {
+            "name": "setState vs Provider vs Riverpod/Bloc",
+            "hash": "#state-mgmt",
+            "desc": "Master the setState vs Provider vs Riverpod/Bloc core concepts and interview answers.",
+            "links": []
+          }
+        ]
+      },
+      {
+        "title": "Architecture & Dart",
+        "topics": [
+          {
+            "name": "How Flutter Compiles to Native",
+            "hash": "#compile-native",
+            "desc": "Master how Flutter compiles to native for interview answers.",
+            "links": []
+          },
+          {
+            "name": "Dart Basics for Interviews",
+            "hash": "#dart-basics",
+            "desc": "Master the Dart basics relevant to interviews.",
+            "links": []
+          }
+        ]
+      },
+      {
+        "title": "Offline-First Architecture",
+        "topics": [
+          {
+            "name": "Local Caching Strategies",
+            "hash": "#local-caching",
+            "desc": "Master the Local Caching Strategies core concepts and interview answers.",
+            "links": []
+          },
+          {
+            "name": "Sync-on-Reconnect Architecture",
+            "hash": "#sync-reconnect",
+            "desc": "Master the Sync-on-Reconnect Architecture core concepts and interview answers.",
+            "links": []
+          },
+          {
+            "name": "Conflict Resolution Basics",
+            "hash": "#conflict-resolution",
+            "desc": "Master the Conflict Resolution Basics core concepts and interview answers.",
+            "links": []
+          }
+        ]
+      },
+      {
+        "title": "Deep-Dive: StudySync",
+        "topics": [
+          {
+            "name": "Actual Cache-Then-Network Flow",
+            "hash": "#ss-overview",
+            "desc": "Master the actual cache-then-network flow used in StudySync.",
+            "links": []
+          },
+          {
+            "name": "⚠️ Dead Code & the 1.5s Claim",
+            "hash": "#ss-reconcile",
+            "desc": "Reconcile the dead code and the 1.5 second claim before your interview.",
+            "links": []
+          },
+          {
+            "name": "Conflicts & Partial-Sync Failure",
+            "hash": "#ss-followups",
+            "desc": "Master the conflicting writes and partial-sync failure scenarios.",
+            "links": []
+          }
+        ]
+      },
+      {
+        "title": "Deep-Dive: SahYatri Mobile",
+        "topics": [
+          {
+            "name": "Contrast: No Offline Fallback",
+            "hash": "#sy-mobile",
+            "desc": "Understand the contrast — no offline fallback despite a caching dependency.",
+            "links": []
+          }
+        ]
+      }
+    ]
+  },
+  {
     "id": "node-express",
     "title": "Node & Express",
     "icon": "🟢",

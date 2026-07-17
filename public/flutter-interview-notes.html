@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flutter — Interview Notes</title>
+<style>
+  :root{
+    --bg:#0a0e14;
+    --card:#131a26;
+    --card-border:#1f2937;
+    --cyan:#22d3ee;
+    --cyan-dim:#0e7490;
+    --text:#e2e8f0;
+    --text-dim:#93a1b5;
+    --text-faint:#5b6a80;
+    --trap:#f87171;
+    --trap-bg:#2a1414;
+    --ref:#38bdf8;
+    --ref-bg:#0f1e2c;
+    --resume:#34d399;
+    --resume-bg:#0f231b;
+    --followup:#c084fc;
+    --followup-bg:#1e1526;
+    --code-bg:#0d1117;
+    --radius:14px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{margin:0;background:var(--bg);background-image:radial-gradient(circle at 15% 0%, rgba(34,211,238,0.07), transparent 40%),radial-gradient(circle at 85% 20%, rgba(192,132,252,0.05), transparent 35%);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.55;padding-bottom:60px;}
+  a{color:var(--cyan);text-decoration:none;}
+  a:hover{text-decoration:underline;}
+
+  .topbar{position:sticky;top:0;z-index:50;background:rgba(10,14,20,0.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--card-border);padding:12px 16px;}
+  .topbar-inner{max-width:900px;margin:0 auto;display:flex;align-items:center;gap:10px;}
+  .topbar-title{font-size:13px;font-weight:700;color:var(--cyan);letter-spacing:0.03em;white-space:nowrap;display:flex;align-items:center;gap:6px;}
+  .topbar-title .dot{width:7px;height:7px;border-radius:50%;background:var(--cyan);box-shadow:0 0 8px var(--cyan);}
+  select.jumpnav{flex:1;background:var(--card);color:var(--text);border:1px solid var(--card-border);border-radius:9px;padding:9px 10px;font-size:14px;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%2322d3ee'><path d='M5.5 7.5l4.5 4.5 4.5-4.5z'/></svg>");background-repeat:no-repeat;background-position:right 10px center;background-size:16px;padding-right:32px;}
+  select.jumpnav:focus{outline:2px solid var(--cyan-dim);}
+
+  .wrap{max-width:900px;margin:0 auto;padding:0 16px;}
+  .hero{padding:28px 4px 10px;}
+  .hero h1{font-size:22px;margin:0 0 6px;color:#fff;}
+  .hero p{color:var(--text-dim);font-size:14px;margin:0;}
+  .hero .badges{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;}
+  .badge{font-size:11px;font-weight:600;color:var(--cyan);border:1px solid var(--cyan-dim);background:rgba(34,211,238,0.06);padding:4px 9px;border-radius:99px;}
+
+  section{margin-top:30px;scroll-margin-top:70px;}
+  .section-head{display:flex;align-items:baseline;gap:10px;margin-bottom:12px;}
+  .section-head h2{font-size:19px;margin:0;color:#fff;padding-left:10px;border-left:3px solid var(--cyan);}
+
+  .card{background:var(--card);border:1px solid var(--card-border);border-radius:var(--radius);padding:16px 16px 18px;margin-bottom:12px;}
+  .card h3{font-size:15px;margin:0 0 8px;color:var(--cyan);scroll-margin-top:70px;}
+  .card h3 .sub{color:var(--text-faint);font-weight:400;font-size:12px;}
+  .card p{margin:6px 0;color:var(--text);font-size:14px;}
+  .card p.dim{color:var(--text-dim);}
+  .card ul,.card ol{margin:6px 0;padding-left:20px;font-size:14px;}
+  .card li{margin:4px 0;}
+  .card code.inline{background:rgba(34,211,238,0.08);color:var(--cyan);padding:1px 6px;border-radius:5px;font-size:12.5px;font-family:"SF Mono",Consolas,Monaco,monospace;}
+
+  pre{background:var(--code-bg);border:1px solid var(--card-border);border-radius:10px;padding:12px 14px;overflow-x:auto;font-size:12.5px;margin:10px 0;-webkit-overflow-scrolling:touch;}
+  pre code{font-family:"SF Mono",Consolas,Monaco,monospace;color:#c9d6e3;white-space:pre;line-height:1.5;}
+  .code-label{font-size:10.5px;color:var(--text-faint);text-transform:uppercase;letter-spacing:0.05em;margin:14px 0 -2px;font-weight:700;}
+  .kw{color:#c084fc;} .str{color:#a5d6a7;} .cm{color:#5b6a80;font-style:italic;} .fn{color:#38bdf8;} .cls{color:#fbbf24;}
+
+  .tblwrap{overflow-x:auto;margin:10px 0;border-radius:10px;border:1px solid var(--card-border);}
+  table{width:100%;border-collapse:collapse;font-size:13px;min-width:480px;}
+  th{background:rgba(34,211,238,0.06);color:var(--cyan);text-align:left;padding:9px 12px;font-size:11.5px;text-transform:uppercase;letter-spacing:0.03em;border-bottom:1px solid var(--card-border);white-space:nowrap;}
+  td{padding:10px 12px;border-bottom:1px solid var(--card-border);color:var(--text-dim);vertical-align:top;}
+  tr:last-child td{border-bottom:none;}
+  td.hl{color:var(--text);font-weight:600;}
+
+  .callout{border-radius:10px;padding:12px 14px;margin:12px 0;font-size:13.5px;border-left:3px solid;}
+  .callout .co-label{font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:5px;display:flex;align-items:center;gap:6px;}
+  .callout.trap{background:var(--trap-bg);border-color:var(--trap);}
+  .callout.trap .co-label{color:var(--trap);}
+  .callout.ref{background:var(--ref-bg);border-color:var(--ref);}
+  .callout.ref .co-label{color:var(--ref);}
+  .callout.resume{background:var(--resume-bg);border-color:var(--resume);}
+  .callout.resume .co-label{color:var(--resume);}
+  .callout.followup{background:var(--followup-bg);border-color:var(--followup);}
+  .callout.followup .co-label{color:var(--followup);}
+  .callout p{margin:4px 0;color:var(--text);}
+
+  .repo-banner{display:flex;flex-direction:column;gap:6px;background:linear-gradient(135deg, rgba(34,211,238,0.08), rgba(192,132,252,0.05));border:1px solid var(--cyan-dim);border-radius:var(--radius);padding:16px;margin-bottom:14px;}
+  .repo-banner .rtitle{font-size:15px;font-weight:700;color:#fff;}
+  .repo-banner .rmeta{font-size:12px;color:var(--text-dim);}
+  .repo-banner a.rlink{font-size:12.5px;font-weight:600;}
+
+  hr.divider{border:none;border-top:1px solid var(--card-border);margin:22px 0;}
+  footer{max-width:900px;margin:36px auto 0;padding:16px;text-align:center;color:var(--text-faint);font-size:12px;}
+
+  @media (min-width:640px){ .hero h1{font-size:26px;} table{font-size:13.5px;} }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-inner">
+    <span class="topbar-title"><span class="dot"></span>NOTES</span>
+    <select class="jumpnav" onchange="if(this.value) window.location.hash = this.value;">
+      <option value="">Jump to section…</option>
+      <optgroup label="Flutter Fundamentals">
+        <option value="#widget-tree">Widget Tree</option>
+        <option value="#stateful-stateless">StatefulWidget vs StatelessWidget</option>
+        <option value="#lifecycle">Widget Lifecycle</option>
+        <option value="#state-mgmt">setState vs Provider vs Riverpod/Bloc</option>
+      </optgroup>
+      <optgroup label="Cross-Platform Architecture">
+        <option value="#compile-native">How Flutter Compiles to Native</option>
+        <option value="#dart-basics">Dart Basics for Interviews</option>
+      </optgroup>
+      <optgroup label="Offline-First Patterns">
+        <option value="#local-caching">Local Caching Strategies</option>
+        <option value="#sync-reconnect">Sync-on-Reconnect Architecture</option>
+        <option value="#conflict-resolution">Conflict Resolution Basics</option>
+      </optgroup>
+      <optgroup label="Deep-Dive: StudySync">
+        <option value="#ss-overview">Actual Cache-Then-Network Flow</option>
+        <option value="#ss-reconcile">⚠️ Dead Code &amp; the 1.5s Claim</option>
+        <option value="#ss-followups">Conflicts &amp; Partial-Sync Failure</option>
+      </optgroup>
+      <optgroup label="Deep-Dive: SahYatri Mobile">
+        <option value="#sy-mobile">Contrast: No Offline Fallback</option>
+      </optgroup>
+    </select>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <div class="hero">
+    <h1>Flutter — Interview Notes</h1>
+    <p>Fundamentals + cross-platform architecture + offline-first patterns, grounded in what's actually in your two Flutter repos rather than generic widget-catalog content.</p>
+    <div class="badges">
+      <span class="badge">Widgets &amp; State</span>
+      <span class="badge">Dart / AOT / Skia</span>
+      <span class="badge">Offline-First Caching</span>
+      <span class="badge">SharedPreferences</span>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <section id="fund-head">
+    <div class="section-head"><h2>Flutter Fundamentals</h2></div>
+  </section>
+
+  <section id="widget-tree">
+    <div class="card">
+      <h3 id="widget-tree-h">Widget Tree</h3>
+      <p>In Flutter, <strong>everything is a widget</strong> — layout, styling, even padding and alignment are widgets that wrap other widgets. The UI is a tree of these, rebuilt (not literally recreated on the OS canvas, but recomputed as a lightweight description) whenever state changes. Flutter actually maintains three parallel trees: the <strong>Widget tree</strong> (your immutable configuration, cheap to rebuild), the <strong>Element tree</strong> (the mutable, persistent structure that manages widget lifecycle and links to the render tree), and the <strong>RenderObject tree</strong> (does actual layout/painting). This separation is why "rebuild" doesn't mean "repaint everything" — Flutter diffs the new widget tree against the existing element tree and only touches the render objects that actually changed.</p>
+      <div class="callout ref">
+        <div class="co-label">📌 Likely to be asked</div>
+        <p>"Why three trees instead of one?" → Widgets are cheap, throwaway, immutable descriptions rebuilt constantly; Elements and RenderObjects are the expensive, stateful, persistent parts that shouldn't be recreated every frame. Separating "what should this look like" (widget) from "the actual mutable object doing the work" (element/render object) is what makes Flutter's declarative rebuild-on-every-change model fast.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="stateful-stateless">
+    <div class="card">
+      <h3 id="stateful-stateless-h">StatefulWidget vs StatelessWidget</h3>
+      <div class="tblwrap">
+        <table>
+          <tr><th></th><th>StatelessWidget</th><th>StatefulWidget</th></tr>
+          <tr><td class="hl">Has mutable state?</td><td>No — fully determined by its constructor params</td><td>Yes — via an attached <code class="inline">State</code> object that persists across rebuilds</td></tr>
+          <tr><td class="hl">Rebuilds when</td><td>Its parent rebuilds with new params</td><td>Its own <code class="inline">setState()</code> is called, or its parent rebuilds it</td></tr>
+          <tr><td class="hl">Use for</td><td>Pure presentation — a styled text label, an icon button</td><td>Anything that changes over time from user interaction or async data (a form, a loading screen, a live counter)</td></tr>
+        </table>
+      </div>
+      <pre><code><span class="kw">class</span> <span class="cls">Greeting</span> <span class="kw">extends</span> StatelessWidget {
+  <span class="kw">final</span> String name;
+  <span class="kw">const</span> Greeting({<span class="kw">required</span> <span class="kw">this</span>.name});
+  <span class="kw">@override</span>
+  Widget <span class="fn">build</span>(BuildContext context) =&gt; Text(<span class="str">'Hi, $name'</span>);
+}
+
+<span class="kw">class</span> <span class="cls">Counter</span> <span class="kw">extends</span> StatefulWidget {
+  <span class="kw">@override</span>
+  State&lt;Counter&gt; <span class="fn">createState</span>() =&gt; _CounterState();
+}
+<span class="kw">class</span> <span class="cls">_CounterState</span> <span class="kw">extends</span> State&lt;Counter&gt; {
+  <span class="kw">int</span> count = 0;
+  <span class="kw">void</span> <span class="fn">_increment</span>() =&gt; setState(() =&gt; count++); <span class="cm">// triggers a rebuild of THIS subtree only</span>
+  <span class="kw">@override</span>
+  Widget <span class="fn">build</span>(BuildContext context) =&gt; Text(<span class="str">'$count'</span>);
+}</code></pre>
+    </div>
+  </section>
+
+  <section id="lifecycle">
+    <div class="card">
+      <h3 id="lifecycle-h">Widget Lifecycle</h3>
+      <div class="tblwrap">
+        <table>
+          <tr><th>Method</th><th>When</th></tr>
+          <tr><td class="hl"><code class="inline">initState()</code></td><td>Once, when the State object is first created — the place to kick off initial data loads, subscriptions, controllers</td></tr>
+          <tr><td class="hl"><code class="inline">build()</code></td><td>Every time the widget needs to render — called far more often than the others, must stay fast and side-effect-free</td></tr>
+          <tr><td class="hl"><code class="inline">didUpdateWidget()</code></td><td>When the parent rebuilds this widget with new configuration (same State object reused) — compare old vs new widget params here</td></tr>
+          <tr><td class="hl"><code class="inline">dispose()</code></td><td>Once, when the widget is permanently removed — cancel subscriptions/controllers/timers here or leak memory</td></tr>
+        </table>
+      </div>
+      <div class="callout trap">
+        <div class="co-label">⚠️ Interview trap</div>
+        <p>Calling <code class="inline">setState()</code> after a widget is disposed (e.g. an async network call completing after the user navigated away) throws in debug mode and is a real production bug — always guard with a <code class="inline">mounted</code> check: <code class="inline">if (mounted) setState(() =&gt; ...)</code> before touching state after an <code class="inline">await</code>.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="state-mgmt">
+    <div class="card">
+      <h3 id="state-mgmt-h">setState vs Provider vs Riverpod/Bloc</h3>
+      <div class="tblwrap">
+        <table>
+          <tr><th></th><th>setState</th><th>Provider</th><th>Riverpod</th><th>Bloc</th></tr>
+          <tr><td class="hl">Scope</td><td>Local to one widget's subtree</td><td>App-wide, via <code class="inline">InheritedWidget</code></td><td>App-wide, compile-time safe (no BuildContext lookup needed)</td><td>App-wide, strict event → state stream pattern</td></tr>
+          <tr><td class="hl">Boilerplate</td><td>Minimal</td><td>Low-moderate</td><td>Moderate</td><td>Higher — explicit events, states, and a Bloc class per feature</td></tr>
+          <tr><td class="hl">Good for</td><td>A single screen's own UI state</td><td>Shared state across a few screens without heavy ceremony</td><td>Same as Provider but with compile-time safety and easier testing</td><td>Large teams wanting a strict, testable, unidirectional data flow convention</td></tr>
+        </table>
+      </div>
+      <div class="callout trap">
+        <div class="co-label">⚠️ Flag before you get asked this directly</div>
+        <p>Both StudySync and SahYatri's mobile app use plain <code class="inline">StatefulWidget</code> + <code class="inline">setState()</code> only — neither <code class="inline">provider</code>, <code class="inline">riverpod</code>, <code class="inline">flutter_bloc</code>, nor any other state package appears in either app's <code class="inline">pubspec.yaml</code>. If asked "which state management approach did you use," the honest answer for these two projects specifically is setState, which is a perfectly reasonable choice given both apps are single-screen-dominant (one main timetable/occupancy view) — but be ready to explain <em>why</em> that was sufficient here rather than implying a library was used that wasn't.</p>
+      </div>
+      <div class="callout followup">
+        <div class="co-label">🎯 Common follow-up</div>
+        <p>"At what point would setState stop being sufficient for one of these apps?" → Once state needs to be shared across widgets that aren't in a direct parent-child relationship (e.g. a global connectivity/sync-status indicator visible in multiple screens), or once the same async loading/caching logic needs to be triggered from more than one place — at that point duplicating <code class="inline">setState</code> calls across widgets gets error-prone, and lifting that logic into a Provider/Riverpod-managed service becomes the right move.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section id="arch-head">
+    <div class="section-head"><h2>Cross-Platform Architecture</h2></div>
+  </section>
+
+  <section id="compile-native">
+    <div class="card">
+      <h3 id="compile-native-h">How Flutter compiles to native</h3>
+      <p>Flutter apps are written in Dart and don't run through a JS bridge or WebView the way some cross-platform frameworks do. In release builds, Dart is <strong>AOT (Ahead-Of-Time) compiled to native ARM/x64 machine code</strong> — the app ships as real native machine instructions, not interpreted at runtime. During development, Dart uses <strong>JIT (Just-In-Time) compilation</strong> instead, which is what enables hot reload — the running app's Dart code can be patched and re-executed without a full rebuild.</p>
+      <p>Flutter doesn't use each platform's native UI widgets at all — it draws every pixel itself using its own rendering engine (historically <strong>Skia</strong>, transitioning to <strong>Impeller</strong> on newer versions), directly onto a canvas the OS gives it. That's why a Flutter app looks pixel-identical on iOS and Android — it's not translating to native <code class="inline">UIButton</code>/native Android widgets, it's painting its own.</p>
+      <div class="callout ref">
+        <div class="co-label">📌 Likely to be asked</div>
+        <p>"How does Flutter talk to native platform APIs (camera, GPS, Bluetooth) if it doesn't use native UI widgets?" → <strong>Platform Channels</strong> — an async message-passing bridge between Dart code and platform-specific Kotlin/Java (Android) or Swift/Objective-C (iOS) code, used specifically for capability access, not UI rendering. Packages like <code class="inline">shared_preferences</code>, <code class="inline">http</code>, and <code class="inline">picamera2</code>-style hardware access all sit on top of platform channels under the hood.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="dart-basics">
+    <div class="card">
+      <h3 id="dart-basics-h">Dart basics relevant to interviews</h3>
+      <ul>
+        <li><strong>Null safety:</strong> types are non-nullable by default (<code class="inline">String name</code> can never be null); nullable types are explicit (<code class="inline">String? name</code>), enforced at compile time — eliminates most null-pointer-style crashes before runtime.</li>
+        <li><strong><code class="inline">Future</code> and async/await:</strong> Dart's async model mirrors JS Promises conceptually — a <code class="inline">Future&lt;T&gt;</code> represents a value that will exist later, <code class="inline">await</code> pauses execution of the current async function until it resolves, without blocking the whole isolate.</li>
+        <li><strong>Isolates:</strong> Dart's concurrency unit — each isolate has its own memory and event loop, no shared mutable state, communicating via message passing (similar spirit to Node's cluster workers, not OS threads with shared memory).</li>
+        <li><strong>Everything is an expression-friendly, class-based OOP language</strong> with strong typing, closer to Java/Kotlin/TypeScript in syntax than to Python — comfortable ground coming from a CP/algorithms background.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section id="offline-head">
+    <div class="section-head"><h2>Offline-First App Patterns</h2></div>
+  </section>
+
+  <section id="local-caching">
+    <div class="card">
+      <h3 id="local-caching-h">Local Caching Strategies</h3>
+      <div class="tblwrap">
+        <table>
+          <tr><th>Option</th><th>Shape</th><th>Fits</th></tr>
+          <tr><td class="hl">SharedPreferences</td><td>Simple key-value store, values are primitives/strings</td><td>Small data — settings, tokens, a single cached JSON blob (as in StudySync, below)</td></tr>
+          <tr><td class="hl">sqflite / Drift</td><td>Real SQLite database with tables/queries</td><td>Structured, queryable local data — many records, relationships, filtering</td></tr>
+          <tr><td class="hl">Hive / Isar</td><td>NoSQL local object store, typically faster than SQLite for simple object storage</td><td>Larger structured datasets without needing SQL query capability</td></tr>
+        </table>
+      </div>
+      <p class="dim">The general pattern regardless of storage choice: fetch from network → on success, write to local storage → render from the freshly fetched data; on failure, read whatever's already in local storage and render that instead. The "offline-first" framing means the local cache is treated as a legitimate data source, not just a fallback bolted on as an afterthought.</p>
+    </div>
+  </section>
+
+  <section id="sync-reconnect">
+    <div class="card">
+      <h3 id="sync-reconnect-h">Sync-on-Reconnect Architecture (conceptual)</h3>
+      <p>A fuller sync-on-reconnect system typically has three pieces: (1) a <strong>connectivity listener</strong> (e.g. Flutter's <code class="inline">connectivity_plus</code> package) that fires when the device transitions from offline to online, (2) a <strong>pending-write queue</strong> that buffers local changes made while offline so they can be replayed once connectivity returns, and (3) a <strong>reconciliation step</strong> that merges server state with local state once the replay completes.</p>
+      <div class="callout ref">
+        <div class="co-label">📌 Likely to be asked</div>
+        <p>"What's the difference between 'sync on reconnect' and just 'retry on next request'?" → Retry-on-next-request is passive — the app only re-syncs the next time the user happens to trigger a network call (opening a screen, pulling to refresh). True sync-on-reconnect is active — a connectivity listener detects the transition back online and triggers a sync immediately, without waiting for the user to do anything. The difference matters most for apps with pending offline writes that need to reach the server promptly.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="conflict-resolution">
+    <div class="card">
+      <h3 id="conflict-resolution-h">Conflict Resolution Basics</h3>
+      <p>Conflicts only arise when writes can happen on <em>both</em> the client and elsewhere (another device, the server) to the same data while disconnected. Common strategies, roughly in order of complexity:</p>
+      <ul>
+        <li><strong>Last-write-wins (LWW):</strong> each record carries a timestamp; whichever write has the latest timestamp overwrites the other. Simple, but silently discards the losing write.</li>
+        <li><strong>Field-level merge:</strong> instead of one write overwriting a whole record, merge at the field level — if device A changed the title and device B changed the description, keep both changes instead of one clobbering the other.</li>
+        <li><strong>Version vectors / CRDTs:</strong> data structures specifically designed so concurrent edits can be merged deterministically without conflicts by construction — used in systems like collaborative editors; genuinely complex to implement correctly, usually reached for only when LWW's data loss is unacceptable.</li>
+      </ul>
+      <div class="callout followup">
+        <div class="co-label">🎯 Common follow-up</div>
+        <p>"How would you decide which strategy to use?" → Start from what happens if you're wrong: if losing a conflicting write is low-stakes (e.g. a "last viewed" timestamp), LWW is fine. If losing data is unacceptable (e.g. two people editing the same document offline), you need field-level merging or to surface the conflict to a human to resolve rather than resolving it silently.</p>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- ============================================================ -->
+  <section id="ss-head">
+    <div class="section-head"><h2>Deep-Dive: StudySync</h2></div>
+  </section>
+
+  <section id="ss-overview">
+    <div class="repo-banner">
+      <div class="rtitle">📚 StudySync — Flutter timetable app</div>
+      <div class="rmeta">StatefulWidget + SharedPreferences — cache-then-network-fallback pattern in <code style="color:#fff;">timetable_screen.dart</code></div>
+      <a class="rlink" href="https://github.com/AmanVerma1067/StudySync" target="_blank" rel="noopener">github.com/AmanVerma1067/StudySync →</a>
+    </div>
+    <div class="card">
+      <h3 id="ss-overview-h">The actual cache-then-network flow</h3>
+      <pre><code>Future&lt;<span class="kw">void</span>&gt; <span class="fn">loadTimetable</span>() <span class="kw">async</span> {
+  setState(() =&gt; isLoading = <span class="kw">true</span>);
+  <span class="kw">try</span> {
+    <span class="kw">final</span> response = <span class="kw">await</span> http.get(
+      Uri.parse(<span class="str">'https://timetable-api-9xsz.onrender.com/api/timetable'</span>),
+      headers: {<span class="str">'x-api-key'</span>: <span class="str">'tt_api_key'</span>, <span class="str">'Content-Type'</span>: <span class="str">'application/json'</span>},
+    );
+
+    <span class="kw">if</span> (response.statusCode == 200) {
+      <span class="kw">final</span> data = json.decode(response.body) <span class="kw">as</span> List&lt;<span class="kw">dynamic</span>&gt;;
+      <span class="kw">await</span> cacheTimetable(response.body);  <span class="cm">// write-through: cache the raw response</span>
+      applyTimetable(data);                     <span class="cm">// render from the fresh data</span>
+      <span class="cm">// shows a "Timetable updated successfully!" snackbar</span>
+    } <span class="kw">else</span> {
+      <span class="kw">await</span> loadCachedTimetable();               <span class="cm">// non-200 → fall back to cache</span>
+      <span class="cm">// shows a "Using cached timetable" snackbar</span>
+    }
+  } <span class="kw">catch</span> (_) {
+    <span class="kw">await</span> loadCachedTimetable();                 <span class="cm">// network exception → fall back to cache</span>
+    <span class="cm">// shows a "Failed to connect. Using cached data" snackbar</span>
+  }
+  setState(() =&gt; isLoading = <span class="kw">false</span>);
+}
+
+Future&lt;<span class="kw">void</span>&gt; <span class="fn">cacheTimetable</span>(String jsonData) <span class="kw">async</span> {
+  <span class="kw">final</span> prefs = <span class="kw">await</span> SharedPreferences.getInstance();
+  <span class="kw">await</span> prefs.setString(<span class="str">'cached_timetable'</span>, jsonData); <span class="cm">// raw JSON string, written whole</span>
+}
+
+Future&lt;<span class="kw">void</span>&gt; <span class="fn">loadCachedTimetable</span>() <span class="kw">async</span> {
+  <span class="kw">final</span> prefs = <span class="kw">await</span> SharedPreferences.getInstance();
+  <span class="kw">final</span> cachedData = prefs.getString(<span class="str">'cached_timetable'</span>);
+  <span class="kw">if</span> (cachedData != <span class="kw">null</span>) applyTimetable(List&lt;<span class="kw">dynamic</span>&gt;.from(json.decode(cachedData)));
+}</code></pre>
+      <p><code class="inline">loadTimetable()</code> is called from two triggers: <code class="inline">initState()</code> on app launch, and the <code class="inline">LiquidPullToRefresh</code> widget's <code class="inline">onRefresh</code> callback — a manual pull gesture re-runs the exact same fetch-cache-fallback flow.</p>
+      <div class="callout resume">
+        <div class="co-label">💼 Resume tie-in</div>
+        <p>"The app treats the local cache as a first-class data source, not just a crash fallback — every successful network fetch writes through to SharedPreferences immediately, and any failure (bad status code or a thrown exception, covering both 'server responded with an error' and 'no network at all') falls back to whatever's cached, with an explicit snackbar telling the user which state they're in. That mattered specifically because the app is used by students checking their timetable throughout the day, often on unreliable campus WiFi — showing stale-but-present data beats showing a blank error screen."</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="ss-reconcile">
+    <div class="card">
+      <h3 id="ss-reconcile-h">⚠️ Dead code, and the "1.5 second" claim — reconcile before your interview</h3>
+      <div class="callout trap">
+        <div class="co-label">⚠️ Unused parallel implementation</div>
+        <p>The repo contains a second, separate caching implementation — <code class="inline">lib/services/api_service.dart</code>, <code class="inline">lib/utils/local_storage.dart</code>, and <code class="inline">lib/models/timetable_model.dart</code> (a typed <code class="inline">TimetableEntry</code> model with a <code class="inline">LocalStorage</code> class) — that <code class="inline">timetable_screen.dart</code> never actually calls. The live screen has its own inline <code class="inline">cacheTimetable</code>/<code class="inline">loadCachedTimetable</code> methods working directly with raw JSON strings, duplicating what the typed <code class="inline">LocalStorage</code> class already does. Worth knowing which files are load-bearing before a walkthrough — if asked to explain the caching architecture, describe the actual live path in <code class="inline">timetable_screen.dart</code>, not the unused typed-model version, or be upfront that the typed version was an earlier iteration that got superseded but not cleaned up.</p>
+      </div>
+      <div class="callout trap">
+        <div class="co-label">⚠️ "Restores full sync within 1.5s of reconnect" — what this claim can and can't mean given the actual code</div>
+        <p>There's no connectivity listener anywhere in this code — no <code class="inline">connectivity_plus</code> or equivalent package, nothing watching for the device transitioning from offline to online. Sync happens on two triggers only: app launch (<code class="inline">initState</code>) and a manual pull-to-refresh gesture. So "restores sync within 1.5s of reconnect" cannot mean "the instant the network comes back, sync happens automatically" in this codebase — that behavior isn't implemented. What the 1.5s figure <em>can</em> honestly describe: the time from a sync being triggered (app reopened, or user pulls to refresh) to the cache being updated and the UI re-rendered with fresh data — which is plausible and measurable, since it's one HTTP GET against a small hosted API returning a small JSON payload, followed by a SharedPreferences string write and a <code class="inline">setState</code> call. That's a real, defensible number for "how fast does a triggered sync complete" — just be precise that it's not describing automatic background reconnect detection.</p>
+      </div>
+      <p class="dim">The honest framing for an interview: "sync is trigger-based, not connectivity-event-based — it runs on app foreground and on pull-to-refresh, and completes quickly (~1.5s) because it's a single lightweight request against a small payload with a simple write-through cache." That's a true, specific, defensible claim; "the app detects reconnection and syncs automatically" is not, for this codebase as written.</p>
+    </div>
+  </section>
+
+  <section id="ss-followups">
+    <div class="card">
+      <h3 id="ss-followups-h">Conflicting writes &amp; partial-sync failure</h3>
+      <div class="callout followup">
+        <div class="co-label">🎯 "How do you handle conflicting writes made offline by two devices?"</div>
+        <p>Honest answer for this specific app: it doesn't need to, because it isn't bidirectional. Data flows one way — server → client cache — the app never writes timetable data back up to the API, so there's no scenario where two devices' local edits could collide. If asked to design the bidirectional case anyway (worth having ready, since it's a natural extension question): I'd timestamp each local write, and on reconnect, compare the local write's timestamp against the server's last-modified timestamp for that record — last-write-wins for low-stakes fields, with a merge or user-prompted resolution for anything where silently discarding a change would be a real problem (see Conflict Resolution Basics above).</p>
+      </div>
+      <div class="callout followup">
+        <div class="co-label">🎯 "What happens if sync fails partway through?"</div>
+        <p>There isn't really a "partway" state to worry about here, and that's worth stating as a deliberate strength of the simple design rather than a gap: the cache write is a single <code class="inline">SharedPreferences.setString()</code> call with the complete response body, executed only after the HTTP request has already fully succeeded (status 200) and the full body is in hand. There's no multi-step write sequence that could be interrupted midway — either the whole fetch succeeds and the whole cache gets overwritten in one atomic call, or it doesn't and the previous cache is untouched. The trade-off: this simplicity works because the payload is small and the write is a single key. A more complex sync (e.g. writing many individual records) would need to actually reason about partial-failure/rollback, which this pattern sidesteps rather than solves.</p>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- ============================================================ -->
+  <section id="sy-mobile-head">
+    <div class="section-head"><h2>Deep-Dive: SahYatri Mobile App</h2></div>
+  </section>
+
+  <section id="sy-mobile">
+    <div class="repo-banner">
+      <div class="rtitle">🚌 SahYatri-MobileApp — commuter occupancy app</div>
+      <div class="rmeta">Flutter + http — a useful contrast point to StudySync</div>
+      <a class="rlink" href="https://github.com/AmanVerma1067/SahYatri" target="_blank" rel="noopener">github.com/AmanVerma1067/SahYatri →</a>
+    </div>
+    <div class="card">
+      <h3 id="sy-mobile-h">Contrast: no offline fallback despite a caching dependency</h3>
+      <pre><code><span class="kw">class</span> <span class="cls">ApiService</span> {
+  <span class="kw">static const</span> String apiUrl = <span class="str">"https://bus-api-ihcu.onrender.com/api/occupancy"</span>;
+
+  <span class="kw">static</span> Future&lt;List&lt;BusOccupancy&gt;&gt; <span class="fn">fetchOccupancyData</span>() <span class="kw">async</span> {
+    <span class="kw">final</span> response = <span class="kw">await</span> http.get(Uri.parse(apiUrl));
+    <span class="kw">if</span> (response.statusCode == 200) {
+      List&lt;<span class="kw">dynamic</span>&gt; data = jsonDecode(response.body);
+      <span class="kw">return</span> data.map((json) =&gt; BusOccupancy.fromJson(json)).toList();
+    } <span class="kw">else</span> {
+      <span class="kw">throw</span> Exception(<span class="str">"Failed to load data"</span>);  <span class="cm">// no fallback — propagates straight up</span>
+    }
+  }
+}</code></pre>
+      <p><code class="inline">shared_preferences</code> is listed in this app's <code class="inline">pubspec.yaml</code>, but grep across the screens shows it's never actually used — no cache write, no cache read, no offline fallback path. A failed request throws and, unless the calling screen wraps it, surfaces as an error state with no cached data to fall back on.</p>
+      <div class="callout trap">
+        <div class="co-label">⚠️ Be precise about which app has which architecture</div>
+        <p>If asked generally "tell me about your offline-first Flutter work," this app is not an example of it — StudySync is. It's a good thing to know cold rather than accidentally conflate the two apps' architectures under interview pressure; SahYatri's mobile app is a straightforward online-only client for the bus-occupancy API, and that's a perfectly fine, honest thing to say about it.</p>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <div class="card" style="text-align:center;">
+    <p class="dim" style="margin:0;font-size:12.5px;">Callout key: <span style="color:var(--trap);">red = trap / needs reconciling</span>, <span style="color:var(--ref);">blue = likely to be asked</span>, <span style="color:var(--resume);">green = how to phrase it</span>, <span style="color:var(--followup);">purple = follow-up to expect</span>.</p>
+  </div>
+
+</div>
+
+<footer>
+  Flutter interview notes · Deep-dives sourced from <a href="https://github.com/AmanVerma1067/StudySync" target="_blank" rel="noopener">StudySync</a> and <a href="https://github.com/AmanVerma1067/SahYatri" target="_blank" rel="noopener">SahYatri</a>
+</footer>
+
+</body>
+</html>
