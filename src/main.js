@@ -65,45 +65,6 @@ function goBack() {
 function toggleFullscreenReading() {
   isFullscreenReading = !isFullscreenReading;
   document.body.classList.toggle('fullscreen-reading', isFullscreenReading);
-  const sidebar = document.getElementById('sidebar');
-  const mainContent = document.querySelector('.main-content');
-  const splitPane = document.querySelector('.roadmap-split-pane');
-  const notesPane = document.querySelector('.notes-pane');
-  const checklistPane = document.querySelector('.checklist-pane');
-  const header = document.querySelector('.roadmap-header-bar');
-  const mobileTabs = document.querySelector('.roadmap-mobile-tabs');
-
-  if (isFullscreenReading) {
-    if (sidebar) sidebar.style.display = 'none';
-    if (mainContent) {
-      mainContent.style.marginLeft = '0';
-      mainContent.style.padding = '0';
-      mainContent.style.maxWidth = '100%';
-    }
-    if (header) header.style.display = 'none';
-    if (mobileTabs) mobileTabs.style.display = 'none';
-    if (splitPane) {
-      splitPane.style.height = '100vh';
-      splitPane.style.gridTemplateColumns = '1fr';
-    }
-    if (notesPane) notesPane.style.height = '100vh';
-    if (checklistPane) checklistPane.style.display = 'none';
-  } else {
-    if (sidebar) sidebar.style.display = '';
-    if (mainContent) {
-      mainContent.style.marginLeft = '';
-      mainContent.style.padding = '';
-      mainContent.style.maxWidth = '';
-    }
-    if (header) header.style.display = '';
-    if (mobileTabs) mobileTabs.style.display = '';
-    if (splitPane) {
-      splitPane.style.height = '';
-      splitPane.style.gridTemplateColumns = '';
-    }
-    if (notesPane) notesPane.style.height = '';
-    if (checklistPane) checklistPane.style.display = '';
-  }
 }
 
 function renderApp() {
@@ -388,64 +349,102 @@ function renderTipsView() {
   return `
   <div class="fade-in">
     ${renderBackButton()}
-    <div class="page-header"><h1>Strategy & Interview Tips</h1><p class="page-sub">The meta-game for cracking SDE interviews this summer.</p></div>
+    <div class="page-header"><h1>Strategy & Interview Tips</h1><p class="page-sub">The meta-game for cracking SDE interviews — and how to use this prep tool effectively.</p></div>
 
     <div class="tips-grid">
+
+      <!-- How to Use This Website -->
+      <div class="tip-card wide guide-card">
+        <h3>🖥️ How to Use This Website</h3>
+        <div class="guide-grid">
+          <div class="guide-item">
+            <strong>📖 Learning Paths</strong>
+            <p>Open any learning path from the sidebar. The left pane loads the full interview notes document, the right pane shows a checklist of every section. Click the ▾ arrow on any topic to expand it — you'll see a "Scroll Notes to Section" button and a personal notes textarea.</p>
+          </div>
+          <div class="guide-item">
+            <strong>✅ Track Progress</strong>
+            <p>Check off topics as you master them. Your progress syncs to the consistency heatmap on the dashboard. Set a daily goal and maintain your study streak — it's shown on the sidebar.</p>
+          </div>
+          <div class="guide-item">
+            <strong>🔍 Focus Reading Mode</strong>
+            <p>Click "Focus Mode" (or the 🔍 tab on mobile) to enter distraction-free fullscreen reading. The sidebar and checklist disappear, leaving only the notes. Press <kbd>Esc</kbd> or tap the exit button to return.</p>
+          </div>
+          <div class="guide-item">
+            <strong>📝 Section Notes</strong>
+            <p>Each checklist topic has a collapsible textarea. Jot down key points, gotcha reminders, or interview phrases. Notes are saved to localStorage and optionally synced via Firebase.</p>
+          </div>
+          <div class="guide-item">
+            <strong>📄 Resume → Deep Dives</strong>
+            <p>The "My Resume" tab shows your full profile. Under each experience and project, action buttons jump you directly to the relevant interview notes section. Use these before an interview to rehearse your talking points.</p>
+          </div>
+          <div class="guide-item">
+            <strong>☁️ Cloud Sync</strong>
+            <p>Click "Cloud Sync" in the sidebar footer to connect your Firebase config. Once connected, your checklist progress, notes, tasks, and streaks sync across all your devices.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Preparation Strategy -->
       <div class="tip-card priority">
-        <h3>🎯 Priority Order for Topics</h3>
+        <h3>🎯 Recommended Study Order</h3>
         <ol class="priority-list">
-          <li><strong>Dynamic Programming</strong> — decides most outcomes</li>
-          <li><strong>Trees + BST</strong> — THE most asked interview topic</li>
-          <li><strong>Graphs</strong> — everywhere in OAs now</li>
-          <li><strong>Recursion + Backtracking</strong> — foundation for DP/Graphs</li>
-          <li><strong>Stack + Queue</strong> — extremely frequent</li>
-          <li><strong>Greedy</strong> — common in OAs</li>
-          <li><strong>Heaps</strong> — top-k patterns</li>
-          <li><strong>Bit Manipulation</strong> — OA favorite</li>
-          <li><strong>Tries</strong> — moderate frequency</li>
+          <li><strong>Tech Fundamentals</strong> — build the vocabulary first (language comparisons, API paradigms, cloud basics)</li>
+          <li><strong>React & Next.js + Flutter</strong> — cover frontend/mobile to defend your resume projects</li>
+          <li><strong>Node & Express</strong> — backend deep-dive: event loop, middleware, JWT, Socket.IO</li>
+          <li><strong>Packspec Architecture</strong> — prepare to walk through your internship endpoints and design decisions</li>
+          <li><strong>Flask & FastAPI</strong> — Python backends + Chessify minimax engine defense</li>
+          <li><strong>AI/ML Stack</strong> — ML fundamentals, RAG, LangChain, YOLOv5 for SahYatri</li>
+          <li><strong>Databases & Cloud</strong> — SQL vs NoSQL, Docker, CI/CD, Git, Postman workflow</li>
         </ol>
+        <p class="tip-note">This matches the sidebar ordering. Work top-to-bottom, checking off topics as you go.</p>
       </div>
 
       <div class="tip-card">
         <h3>⏰ Ideal Daily Routine</h3>
         <div class="routine-block">
-          <div class="routine-row"><span class="routine-time">Morning 2-3h</span><span>New topic learning + theory</span></div>
-          <div class="routine-row"><span class="routine-time">Afternoon 2-3h</span><span>Problem solving (timed)</span></div>
-          <div class="routine-row"><span class="routine-time">Evening 2h</span><span>Revision + retry failed problems</span></div>
+          <div class="routine-row"><span class="routine-time">Morning 2-3h</span><span>New topic learning + read notes in Focus Mode</span></div>
+          <div class="routine-row"><span class="routine-time">Afternoon 2-3h</span><span>Timed problem solving (LeetCode mediums)</span></div>
+          <div class="routine-row"><span class="routine-time">Evening 1-2h</span><span>Revision — re-read checked topics, retry failed problems</span></div>
+          <div class="routine-row"><span class="routine-time">Night 30min</span><span>Mock interview or behavioral prep</span></div>
         </div>
-        <p class="tip-note">Target 6-8 focused hours/day. Not "studying all day".</p>
+        <p class="tip-note">Target 6-8 focused hours/day. Quality beats quantity — take real breaks.</p>
       </div>
 
       <div class="tip-card">
         <h3>📊 Problem Targets (2 Months)</h3>
         <div class="target-grid">
-          <div class="target-row"><span>Recursion</span><span class="target-num">25</span></div>
-          <div class="target-row"><span>Stack/Queue</span><span class="target-num">25</span></div>
-          <div class="target-row"><span>Trees</span><span class="target-num">40</span></div>
-          <div class="target-row"><span>Graphs</span><span class="target-num">45</span></div>
-          <div class="target-row"><span>DP</span><span class="target-num">50</span></div>
-          <div class="target-row"><span>Others</span><span class="target-num">40</span></div>
-          <div class="target-row total"><span>Total</span><span class="target-num">~225</span></div>
+          <div class="target-row"><span>Recursion + Backtracking</span><span class="target-num">25</span></div>
+          <div class="target-row"><span>Stack / Queue</span><span class="target-num">25</span></div>
+          <div class="target-row"><span>Trees + BST</span><span class="target-num">40</span></div>
+          <div class="target-row"><span>Graphs (BFS/DFS/Dijkstra)</span><span class="target-num">45</span></div>
+          <div class="target-row"><span>Dynamic Programming</span><span class="target-num">50</span></div>
+          <div class="target-row"><span>Greedy + Heaps + Tries</span><span class="target-num">30</span></div>
+          <div class="target-row"><span>Bit Manipulation + Math</span><span class="target-num">15</span></div>
+          <div class="target-row total"><span>Total</span><span class="target-num">~230</span></div>
         </div>
+        <p class="tip-note">Aim for 70% medium, 20% easy, 10% hard. Time yourself — 25min per medium max.</p>
       </div>
 
       <div class="tip-card">
         <h3>🚫 What NOT To Do</h3>
         <ul class="dont-list">
-          <li>Chase hard problems — master mediums instead</li>
-          <li>Jump randomly between topics</li>
-          <li>Compare yourself to CP experts</li>
-          <li>Spend 3 days on one DP hard problem</li>
-          <li>Watch too many videos in Phase 2 — solve more, think more</li>
+          <li>Chase hard problems before mastering mediums</li>
+          <li>Jump randomly between topics without finishing one</li>
+          <li>Compare yourself to competitive programmers</li>
+          <li>Spend 3 days on one DP hard — look at the solution after 45min</li>
+          <li>Watch too many video explanations instead of solving</li>
+          <li>Memorize solutions instead of understanding patterns</li>
+          <li>Neglect system design and CS fundamentals for DSA-only prep</li>
+          <li>Skip mock interviews — you need to practice communicating under pressure</li>
         </ul>
       </div>
 
       <div class="tip-card wide">
         <h3>📓 Three Notebooks You MUST Maintain</h3>
         <div class="notebook-grid">
-          <div class="notebook-item"><strong>Mistake Notebook</strong><p>Every wrong approach, why it failed, what the correct intuition was.</p></div>
-          <div class="notebook-item"><strong>Pattern Notebook</strong><p>Sliding window, binary search on answer, monotonic stack, take/not-take DP, etc.</p></div>
-          <div class="notebook-item"><strong>Template Notebook</strong><p>BFS/DFS template, Dijkstra's, DSU, segment tree, trie — ready-to-paste code.</p></div>
+          <div class="notebook-item"><strong>Mistake Notebook</strong><p>Every wrong approach, why it failed, what the correct intuition was. Review weekly.</p></div>
+          <div class="notebook-item"><strong>Pattern Notebook</strong><p>Sliding window, binary search on answer, monotonic stack, take/not-take DP, topological sort, etc.</p></div>
+          <div class="notebook-item"><strong>Template Notebook</strong><p>BFS/DFS template, Dijkstra's, DSU, segment tree, trie, KMP — ready-to-paste code in your language.</p></div>
         </div>
       </div>
 
@@ -462,6 +461,30 @@ function renderTipsView() {
           <span class="pattern-chip high">Heap Top-K</span>
           <span class="pattern-chip med">Greedy Intervals</span>
           <span class="pattern-chip med">Backtracking</span>
+          <span class="pattern-chip med">Union-Find</span>
+          <span class="pattern-chip med">Topological Sort</span>
+        </div>
+      </div>
+
+      <div class="tip-card wide">
+        <h3>🗣️ Interview Day Checklist</h3>
+        <div class="guide-grid">
+          <div class="guide-item">
+            <strong>Before the Call</strong>
+            <p>Review your resume deep-dives using the "My Resume" tab. Re-read the Packspec and Chessify notes. Have your template notebook open. Test your mic, camera, and screen share.</p>
+          </div>
+          <div class="guide-item">
+            <strong>During DSA Round</strong>
+            <p>Clarify constraints FIRST. Think out loud. Start with brute force, then optimize. Trace through an example before coding. Handle edge cases. Analyze time/space complexity.</p>
+          </div>
+          <div class="guide-item">
+            <strong>During Tech/System Design</strong>
+            <p>Use the STAR method for experience questions. For system design: start with requirements → high-level design → deep-dive into components → discuss trade-offs and scaling.</p>
+          </div>
+          <div class="guide-item">
+            <strong>Behavioral Tips</strong>
+            <p>"Tell me about yourself" — 90-second pitch max. Lead with your strongest project. Every answer should have: situation, action, metric/result. Ask thoughtful questions about the team.</p>
+          </div>
         </div>
       </div>
 
@@ -474,11 +497,15 @@ function renderTipsView() {
           </div>
           <div>
             <h4>CS Fundamentals</h4>
-            <ul><li>OS: processes, threads, scheduling, memory</li><li>DBMS: SQL, normalization, transactions</li><li>Networks: TCP/IP, HTTP, DNS, TLS</li><li>OOP: SOLID, design patterns, polymorphism</li></ul>
+            <ul><li>OS: processes, threads, scheduling, memory</li><li>DBMS: SQL, normalization, ACID transactions</li><li>Networks: TCP/IP, HTTP, DNS, TLS</li><li>OOP: SOLID, design patterns, polymorphism</li></ul>
           </div>
           <div>
             <h4>System Design (Basics)</h4>
-            <ul><li>Client-server architecture</li><li>Database choice (SQL vs NoSQL)</li><li>Caching, load balancing concepts</li><li>REST API design</li></ul>
+            <ul><li>Client-server architecture</li><li>Database choice (SQL vs NoSQL)</li><li>Caching, load balancing, CDNs</li><li>REST API design & rate limiting</li></ul>
+          </div>
+          <div>
+            <h4>Projects & Experience</h4>
+            <ul><li>Walk through architecture decisions</li><li>Defend tech stack choices with trade-offs</li><li>Explain scaling strategies you implemented</li><li>Discuss what you'd do differently today</li></ul>
           </div>
         </div>
       </div>

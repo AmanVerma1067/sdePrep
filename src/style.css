@@ -662,11 +662,79 @@ h1, h2, h3, h4 { font-family: var(--font-head); font-weight: 700; letter-spacing
   transform: scale(1.1);
   box-shadow: 0 0 20px var(--accent-glow);
 }
-body.fullscreen-reading .fullscreen-exit-fab {
-  display: flex;
+
+/* ── Fullscreen Reading Mode (all driven by body class) ── */
+body.fullscreen-reading .sidebar {
+  display: none !important;
 }
 body.fullscreen-reading .mobile-toggle {
   display: none !important;
+}
+body.fullscreen-reading .main-content {
+  margin-left: 0 !important;
+  padding: 0 !important;
+  max-width: 100% !important;
+}
+body.fullscreen-reading .roadmap-header-bar {
+  display: none !important;
+}
+body.fullscreen-reading .roadmap-mobile-tabs {
+  display: none !important;
+}
+body.fullscreen-reading .roadmap-split-pane {
+  display: block !important;
+  height: 100vh !important;
+  grid-template-columns: 1fr !important;
+}
+body.fullscreen-reading .notes-pane {
+  display: block !important;
+  height: 100vh !important;
+  border-radius: 0;
+  border: none;
+}
+body.fullscreen-reading .checklist-pane {
+  display: none !important;
+}
+body.fullscreen-reading .fullscreen-exit-fab {
+  display: flex;
+}
+
+/* ── Guide Grid (Tips Page) ── */
+.guide-card {
+  border-left: 3px solid var(--accent);
+}
+.guide-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+}
+.guide-item {
+  background: rgba(255, 255, 255, 0.01);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 14px;
+}
+.guide-item strong {
+  display: block;
+  font-size: 13px;
+  margin-bottom: 6px;
+  color: var(--text);
+}
+.guide-item p {
+  font-size: 12.5px;
+  color: var(--text-muted);
+  line-height: 1.6;
+  margin: 0;
+}
+.guide-item kbd {
+  display: inline-block;
+  padding: 1px 5px;
+  font-size: 11px;
+  font-family: var(--font-mono);
+  background: var(--surface-elevated);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  color: var(--accent);
 }
 
 /* ── Responsive Roadmap Mobile View ── */
