@@ -395,6 +395,7 @@ function renderTipsView() {
           <li><strong>Flask & FastAPI</strong> — Python backends + Chessify minimax engine defense</li>
           <li><strong>AI/ML Stack</strong> — ML fundamentals, RAG, LangChain, YOLOv5 for SahYatri</li>
           <li><strong>Databases & Cloud</strong> — SQL vs NoSQL, Docker, CI/CD, Git, Postman workflow</li>
+          <li><strong>Resume Defense Rehearsal</strong> — Final interview prep for all your experiences and projects</li>
         </ol>
         <p class="tip-note">This matches the sidebar ordering. Work top-to-bottom, checking off topics as you go.</p>
       </div>

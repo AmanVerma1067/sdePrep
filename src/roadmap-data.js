@@ -1049,5 +1049,117 @@ export const roadmaps = [
         ]
       }
     ]
+  },
+  {
+    "id": "resume-defense",
+    "title": "Resume Defense Rehearsal",
+    "icon": "🛡️",
+    "accent": "#f43f5e",
+    "url": "/resume-defense-rehearsal.html",
+    "phases": [
+      {
+        "title": "Work Experience (Internship)",
+        "topics": [
+          {
+            "name": "30+ endpoints, PHP + Atlas, Agile team of 8",
+            "hash": "#exp1",
+            "desc": "Master the 30+ endpoints, PHP + Atlas, Agile team of 8 core concepts and interview answers.",
+            "links": []
+          },
+          {
+            "name": "Multi-tenant, JWT/RBAC, atomic transactions",
+            "hash": "#exp2",
+            "desc": "Master the Multi-tenant, JWT/RBAC, atomic transactions core concepts and interview answers.",
+            "links": []
+          },
+          {
+            "name": "Snapshot engine, 65% reduction, 200+ tests",
+            "hash": "#exp3",
+            "desc": "Master the Snapshot engine, 65% reduction, 200+ tests core concepts and interview answers.",
+            "links": []
+          }
+        ]
+      },
+      {
+        "title": "Project: Chessify AI",
+        "topics": [
+          {
+            "name": "Real-time multiplayer, 100+ concurrent users",
+            "hash": "#ch1",
+            "desc": "Master the Real-time multiplayer, 100+ concurrent users core concepts and interview answers.",
+            "links": []
+          },
+          {
+            "name": "Stockfish ELO 1800, Minimax depth 3",
+            "hash": "#ch2",
+            "desc": "Master the Stockfish ELO 1800, Minimax depth 3 core concepts and interview answers.",
+            "links": []
+          }
+        ]
+      },
+      {
+        "title": "Project: StudySync",
+        "topics": [
+          {
+            "name": "Offline-first, 1.5s reconnect sync",
+            "hash": "#ss1",
+            "desc": "Master the Offline-first, 1.5s reconnect sync core concepts and interview answers.",
+            "links": []
+          },
+          {
+            "name": "10+ endpoints, admin panel, under 120ms",
+            "hash": "#ss2",
+            "desc": "Master the 10+ endpoints, admin panel, under 120ms core concepts and interview answers.",
+            "links": []
+          }
+        ]
+      },
+      {
+        "title": "Project: SahYatri",
+        "topics": [
+          {
+            "name": "Fine-tuned YOLOv5n, 15 FPS, 90%+ accuracy",
+            "hash": "#sy1",
+            "desc": "Master the Fine-tuned YOLOv5n, 15 FPS, 90%+ accuracy core concepts and interview answers.",
+            "links": []
+          },
+          {
+            "name": "50,000+ events/day, every 3s",
+            "hash": "#sy2",
+            "desc": "Master the 50,000+ events/day, every 3s core concepts and interview answers.",
+            "links": []
+          }
+        ]
+      },
+      {
+        "title": "Achievements & Competencies",
+        "topics": [
+          {
+            "name": "Hackathon wins",
+            "hash": "#ach1",
+            "desc": "Master the Hackathon wins core concepts and interview answers.",
+            "links": []
+          },
+          {
+            "name": "LeetCode Knight — 1000+, 250-day streak",
+            "hash": "#ach2",
+            "desc": "Master the LeetCode Knight — 1000+, 250-day streak core concepts and interview answers.",
+            "links": []
+          },
+          {
+            "name": "PDF Query Engine (RAG)",
+            "hash": "#ach3",
+            "desc": "Master the PDF Query Engine (RAG) core concepts and interview answers.",
+            "links": []
+          },
+          {
+            "name": "Bootcamps & certifications",
+            "hash": "#ach4",
+            "desc": "Master the Bootcamps & certifications core concepts and interview answers.",
+            "links": []
+          }
+        ]
+      }
+    ]
   }
 ];
