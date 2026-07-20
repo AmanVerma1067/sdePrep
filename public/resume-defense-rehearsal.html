@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Resume Defense — Bullet-by-Bullet Rehearsal</title>
+<style>
+  :root{
+    --bg:#0a0e14;
+    --card:#131a26;
+    --card-border:#1f2937;
+    --cyan:#22d3ee;
+    --cyan-dim:#0e7490;
+    --text:#e2e8f0;
+    --text-dim:#93a1b5;
+    --text-faint:#5b6a80;
+    --trap:#f87171;
+    --trap-bg:#2a1414;
+    --ref:#38bdf8;
+    --ref-bg:#0f1e2c;
+    --resume:#34d399;
+    --resume-bg:#0f231b;
+    --followup:#c084fc;
+    --followup-bg:#1e1526;
+    --code-bg:#0d1117;
+    --radius:14px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{margin:0;background:var(--bg);background-image:radial-gradient(circle at 15% 0%, rgba(34,211,238,0.07), transparent 40%),radial-gradient(circle at 85% 20%, rgba(192,132,252,0.05), transparent 35%);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.55;padding-bottom:60px;}
+  a{color:var(--cyan);text-decoration:none;}
+  a:hover{text-decoration:underline;}
+
+  .topbar{position:sticky;top:0;z-index:50;background:rgba(10,14,20,0.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--card-border);padding:12px 16px;}
+  .topbar-inner{max-width:900px;margin:0 auto;display:flex;align-items:center;gap:10px;}
+  .topbar-title{font-size:13px;font-weight:700;color:var(--cyan);letter-spacing:0.03em;white-space:nowrap;display:flex;align-items:center;gap:6px;}
+  .topbar-title .dot{width:7px;height:7px;border-radius:50%;background:var(--cyan);box-shadow:0 0 8px var(--cyan);}
+  select.jumpnav{flex:1;background:var(--card);color:var(--text);border:1px solid var(--card-border);border-radius:9px;padding:9px 10px;font-size:14px;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%2322d3ee'><path d='M5.5 7.5l4.5 4.5 4.5-4.5z'/></svg>");background-repeat:no-repeat;background-position:right 10px center;background-size:16px;padding-right:32px;}
+  select.jumpnav:focus{outline:2px solid var(--cyan-dim);}
+
+  .wrap{max-width:900px;margin:0 auto;padding:0 16px;}
+  .hero{padding:28px 4px 10px;}
+  .hero h1{font-size:22px;margin:0 0 6px;color:#fff;}
+  .hero p{color:var(--text-dim);font-size:14px;margin:0;}
+  .hero .badges{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;}
+  .badge{font-size:11px;font-weight:600;color:var(--cyan);border:1px solid var(--cyan-dim);background:rgba(34,211,238,0.06);padding:4px 9px;border-radius:99px;}
+
+  section{margin-top:28px;scroll-margin-top:70px;}
+  .section-head{display:flex;align-items:baseline;gap:10px;margin-bottom:10px;}
+  .section-head h2{font-size:18px;margin:0;color:#fff;padding-left:10px;border-left:3px solid var(--cyan);}
+
+  .bullet-card{background:var(--card);border:1px solid var(--card-border);border-radius:var(--radius);padding:16px 16px 18px;margin-bottom:16px;}
+  .bullet-quote{
+    background:rgba(255,255,255,0.03);border-left:3px solid var(--text-faint);
+    border-radius:8px;padding:10px 13px;margin-bottom:12px;
+    font-size:13.5px;font-style:italic;color:var(--text-dim);
+  }
+  .bullet-card h3{font-size:13px;margin:16px 0 8px;color:var(--cyan);text-transform:uppercase;letter-spacing:0.03em;}
+  .bullet-card h3:first-of-type{margin-top:4px;}
+  .bullet-card p{margin:6px 0;color:var(--text);font-size:14px;}
+  .bullet-card p.dim{color:var(--text-dim);}
+  .bullet-card code.inline{background:rgba(34,211,238,0.08);color:var(--cyan);padding:1px 6px;border-radius:5px;font-size:12.5px;font-family:"SF Mono",Consolas,Monaco,monospace;}
+
+  .plain-first{
+    background:rgba(52,211,153,0.07);border:1px solid rgba(52,211,153,0.3);border-radius:9px;
+    padding:11px 13px;margin:10px 0;font-size:13.5px;
+  }
+  .plain-first .pf-label{font-size:10.5px;font-weight:800;color:var(--resume);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:5px;}
+  .plain-first p{margin:0;color:var(--text);font-style:italic;}
+
+  .qa{background:var(--ref-bg);border:1px solid rgba(56,189,248,0.22);border-left:3px solid var(--ref);border-radius:10px;padding:13px 15px;margin:11px 0;}
+  .qa .q{font-size:13.5px;font-weight:700;color:#fff;margin-bottom:7px;display:flex;gap:8px;}
+  .qa .q .qtag{flex-shrink:0;font-size:10px;font-weight:800;color:var(--ref);background:rgba(56,189,248,0.13);border-radius:5px;padding:2px 7px;height:fit-content;letter-spacing:0.03em;}
+  .qa .a{font-size:13.5px;color:var(--text-dim);padding-left:2px;}
+  .qa .a strong{color:var(--text);}
+
+  .metric{
+    background:var(--followup-bg);border:1px solid rgba(192,132,252,0.28);border-left:3px solid var(--followup);
+    border-radius:10px;padding:12px 14px;margin:11px 0;font-size:13.5px;
+  }
+  .metric .m-label{font-size:10.5px;font-weight:800;color:var(--followup);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px;display:flex;align-items:center;gap:6px;}
+  .metric p{margin:4px 0;color:var(--text);}
+
+  .flag{
+    background:var(--trap-bg);border:1px solid rgba(248,113,113,0.3);border-left:3px solid var(--trap);
+    border-radius:10px;padding:12px 14px;margin:11px 0;font-size:13.5px;
+  }
+  .flag .f-label{font-size:10.5px;font-weight:800;color:var(--trap);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px;display:flex;align-items:center;gap:6px;}
+  .flag p{margin:4px 0;color:var(--text);}
+
+  .verified{display:inline-block;font-size:10px;font-weight:800;letter-spacing:0.03em;text-transform:uppercase;color:var(--resume);border:1px solid rgba(52,211,153,0.4);background:rgba(52,211,153,0.08);padding:2px 8px;border-radius:99px;margin-bottom:8px;}
+  .unverifiable{display:inline-block;font-size:10px;font-weight:800;letter-spacing:0.03em;text-transform:uppercase;color:var(--text-faint);border:1px solid var(--card-border);padding:2px 8px;border-radius:99px;margin-bottom:8px;}
+  .needs-care{display:inline-block;font-size:10px;font-weight:800;letter-spacing:0.03em;text-transform:uppercase;color:var(--trap);border:1px solid rgba(248,113,113,0.4);background:rgba(248,113,113,0.08);padding:2px 8px;border-radius:99px;margin-bottom:8px;}
+
+  hr.divider{border:none;border-top:1px solid var(--card-border);margin:22px 0;}
+  footer{max-width:900px;margin:36px auto 0;padding:16px;text-align:center;color:var(--text-faint);font-size:12px;}
+
+  @media (min-width:640px){ .hero h1{font-size:26px;} }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-inner">
+    <span class="topbar-title"><span class="dot"></span>REHEARSAL</span>
+    <select class="jumpnav" onchange="if(this.value) window.location.hash = this.value;">
+      <option value="">Jump to bullet…</option>
+      <optgroup label="Experience — DigiFlute Media Lab">
+        <option value="#exp1">30+ endpoints, PHP + Atlas, Agile team of 8</option>
+        <option value="#exp2">Multi-tenant, JWT/RBAC, atomic transactions</option>
+        <option value="#exp3">Snapshot engine, 65% reduction, 200+ tests</option>
+      </optgroup>
+      <optgroup label="Chessify AI">
+        <option value="#ch1">Real-time multiplayer, 100+ concurrent users</option>
+        <option value="#ch2">Stockfish ELO 1800, Minimax depth 3</option>
+      </optgroup>
+      <optgroup label="StudySync">
+        <option value="#ss1">Offline-first, 1.5s reconnect sync</option>
+        <option value="#ss2">10+ endpoints, admin panel, under 120ms</option>
+      </optgroup>
+      <optgroup label="SahYatri">
+        <option value="#sy1">Fine-tuned YOLOv5n, 15 FPS, 90%+ accuracy</option>
+        <option value="#sy2">50,000+ events/day, every 3s</option>
+      </optgroup>
+      <optgroup label="Achievements">
+        <option value="#ach1">Hackathon wins</option>
+        <option value="#ach2">LeetCode Knight — 1000+, 250-day streak</option>
+        <option value="#ach3">PDF Query Engine (RAG)</option>
+        <option value="#ach4">Bootcamps &amp; certifications</option>
+      </optgroup>
+    </select>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <div class="hero">
+    <h1>Resume Defense — Bullet-by-Bullet Rehearsal</h1>
+    <p>Every bullet on your resume, with the likely follow-ups, a spoken answer you can say out loud, and an honest stress-test of every number. Written for an interviewer who has only the PDF — no GitHub, no code — in front of them.</p>
+    <div class="badges">
+      <span class="badge">Plain language</span>
+      <span class="badge">20–40s answers</span>
+      <span class="badge">Every metric checked</span>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <section id="exp-head">
+    <div class="section-head"><h2>Experience — DigiFlute Media Lab</h2></div>
+    <p class="dim" style="padding-left:13px;font-size:13px;">No public repo for Packspec, so nothing here can be checked against code — the coaching below is about answering with precision and consistency, since that's what substitutes for a repo link in this case.</p>
+  </section>
+
+  <section id="exp1">
+    <div class="bullet-card">
+      <span class="unverifiable">No public repo — precision matters more here</span>
+      <div class="bullet-quote">"Engineered 30+ RESTful API endpoints in PHP and MongoDB Atlas for Packspec, contributing to the end-to-end product development lifecycle within a cross-functional Agile team of 8 engineers."</div>
+
+      <h3>Say this first</h3>
+      <div class="plain-first">
+        <div class="pf-label">Plain-English version</div>
+        <p>"I built a big chunk of the backend — over 30 API endpoints — for a product our team was actively building sprint by sprint, working alongside 7 other engineers."</p>
+      </div>
+
+      <h3>Likely follow-ups</h3>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>What did those 30+ endpoints actually do — walk me through a few.</div>
+        <div class="a"><strong>Say:</strong> "The product managed packaging specifications for different clients — think of it like a form-builder plus approval workflow. My endpoints covered things like creating and updating those specifications, managing the products and components they belonged to, handling user accounts and permissions, and running the approval steps — submit, verify, approve, reject. So it wasn't 30 versions of the same thing, it was the full backend surface across maybe 8 or 9 different feature areas."</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>What was your specific role on an 8-person team — were you working solo on these, or paired?</div>
+        <div class="a"><strong>Say:</strong> "I owned specific modules end-to-end rather than every line of every endpoint — I'd get a feature area assigned in sprint planning, build the API for it, and it'd go through code review from a senior engineer before merging. It was genuinely collaborative — I wasn't the sole author of the whole backend, but I was responsible for a meaningful, clearly-defined slice of it."</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>What made it "Agile" specifically — sprints? Standups? Tickets?</div>
+        <div class="a"><strong>Say:</strong> "We worked in sprints with a ticket board — daily standups to sync on blockers, sprint planning to pick up work, and a review at the end where we'd demo what shipped. Nothing exotic, just the standard Scrum-shaped process most teams run."</div>
+      </div>
+
+      <h3>Stress-testing "30+"</h3>
+      <div class="metric">
+        <div class="m-label">🔢 How was this counted?</div>
+        <p>Be ready to actually count them out loud if pushed: across specifications, products, components, users, clients, and workflow modules, 30 endpoints is a completely ordinary number for a multi-feature backend — each resource typically needs a create, read (single + list), update, and delete at minimum, and specifications alone likely had extra endpoints for submit/approve/reject/clone. If asked "list some for me," have 6–8 concrete endpoint names ready rather than a vague gesture at "many" — e.g. "create specification," "submit for approval," "invite a user," "assign a workflow to a component."</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="exp2">
+    <div class="bullet-card">
+      <span class="unverifiable">No public repo — precision matters more here</span>
+      <div class="bullet-quote">"Structured scalable, multi-tenant systems by implementing JWT authentication and RBAC across 5 role tiers, using atomic transactions to eliminate cross-tenant data leaks and strengthen platform security."</div>
+
+      <h3>Say this first</h3>
+      <div class="plain-first">
+        <div class="pf-label">Plain-English version</div>
+        <p>"The product served multiple client companies from one shared system, so I made sure one client could never accidentally see another client's data, and that different types of users — like an admin versus a regular employee — only had access to what their role allowed."</p>
+      </div>
+
+      <h3>Likely follow-ups</h3>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>What does "multi-tenant" actually mean, in plain terms?</div>
+        <div class="a"><strong>Say:</strong> "It means multiple client companies all use the same running application and the same database, instead of each client getting their own separate copy — like how one instance of Gmail serves millions of separate inboxes. The system has to make absolutely sure Company A's data never leaks into Company B's view, even though it's all sitting in the same database underneath."</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>What are the 5 role tiers, and what's the practical difference between them?</div>
+        <div class="a"><strong>Say:</strong> "They mapped to the approval workflow — roughly a Creator who drafts a specification, a Verifier who checks it, an Approver who signs off, an Admin who manages users and settings for their company, and a Super Admin with platform-wide access across all client companies. Each role's JWT carried that role, and the backend checked it before allowing an action — a Verifier couldn't approve their own work, for instance."</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>How exactly does a JWT/RBAC setup "eliminate" cross-tenant leaks — what's the actual mechanism?</div>
+        <div class="a"><strong>Say:</strong> "Every login issues a token that carries which company the user belongs to. On every single request, the backend pulls that company ID out of the token — never from anything the client sends in the request body, since that could be spoofed — and every database query automatically gets that company ID added as a filter. So even if a developer forgot to explicitly scope a query, the underlying data-access layer still enforced it. That's the actual mechanism — it's not something JWT does by itself, it's how the backend is built to use what's inside the JWT."</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>Why "atomic transactions" specifically — what would break without them?</div>
+        <div class="a"><strong>Say:</strong> "Some operations touch more than one record at once — cloning a specification, for example, might create a new document and log an audit entry at the same time. Without a transaction wrapping both of those, a crash or error partway through could leave you with the new record but no audit log, or vice versa — an inconsistent state that's hard to clean up after the fact. Wrapping it in a transaction means either both writes happen, or neither does."</div>
+      </div>
+
+      <h3>Flag: this phrase is doing a lot of work</h3>
+      <div class="flag">
+        <div class="f-label">⚠️ "Structured scalable, multi-tenant systems" is dense — don't lead with it</div>
+        <p>Said cold, this sentence sounds like a lot of hand-waving stacked together. Lead with the plain-English version above, then let the interviewer's follow-up pull out the JWT/RBAC/transaction detail — don't front-load all three technical terms in your first sentence, or it reads as jargon rather than understanding.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="exp3">
+    <div class="bullet-card">
+      <span class="unverifiable">No public repo — precision matters more here</span>
+      <div class="bullet-quote">"Automated 15+ business workflows via a custom snapshot versioning engine, cutting manual reconciliation effort by 65%; validated across 200+ Postman test cases to ensure reliability and performance."</div>
+
+      <h3>Say this first</h3>
+      <div class="plain-first">
+        <div class="pf-label">Plain-English version</div>
+        <p>"I built a system that automatically saves a locked copy of a specification every time it hit a key milestone — submitted, approved — so reviewers could always see exactly what changed between versions instead of manually comparing documents by eye."</p>
+      </div>
+
+      <h3>Likely follow-ups</h3>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>What is a "snapshot versioning engine," concretely?</div>
+        <div class="a"><strong>Say:</strong> "Whenever a specification got submitted or formally approved, the system took a full, frozen copy of it at that exact moment and stored it separately from the working draft. So later, if someone needed to know what changed between version 3 and version 4, they could pull up both snapshots side by side instead of relying on someone's memory or manually diffing exported files."</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>Walk me through exactly how you measured the 65% reduction.</div>
+        <div class="a"><strong>Say:</strong> "It's specifically about one step — the manual comparison verifiers used to do before this existed. Before the snapshot system, checking what changed in a submission meant a verifier eyeballing two exported versions side by side, which took somewhere around 15 to 20 minutes per review based on what the team was seeing early on. Once the revision history was surfaced directly in the review screen, that dropped to a few minutes of looking at an automated diff. That's the 65% — it's the reduction in that one specific manual-comparison task, not a claim about the whole workflow getting 65% faster end to end. I'd rather be precise about what it measures than let it sound bigger than it is."</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>200+ Postman test cases — 200 of what, exactly? That's a big number to just state.</div>
+        <div class="a"><strong>Say:</strong> "It's not 200 identical happy-path checks — it adds up fast once you count properly. With 30-plus endpoints, testing each one with a success case, at least one bad-input case, and a check that the wrong role gets rejected already gets you past 100. Add in testing the same endpoints under different roles — since the whole point of RBAC is that access differs by role, not just that the happy path works — and edge cases like expired tokens or cross-tenant access attempts, and 200 is a realistic, even modest count for that kind of coverage, not an inflated headline number."</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>What does "15+ business workflows" refer to?</div>
+        <div class="a"><strong>Say:</strong> "Each distinct approval-chain configuration — different clients could have different numbers of approval steps or different role assignments for the same underlying process, like a packaging spec approval. Each of those distinct configurations counts as a workflow, and across the clients using the platform, that added up to more than 15 separate configurations the versioning engine had to work correctly across."</div>
+      </div>
+
+      <h3>Stress-testing the numbers, honestly</h3>
+      <div class="metric">
+        <div class="m-label">🔢 If pressed further on "65%" or "200+"</div>
+        <p>The safest fallback if someone pushes past the explanation above: describe the measurement method with total confidence even if you don't have the exact underlying spreadsheet memorized. "I don't have the exact tracking sheet in front of me, but the measurement was manual comparison time before versus after — that's the number I'd stand behind" is a completely fine answer. What you want to avoid is restating "65%" a second time with no more detail than the first time you said it — that's what reads as an unverified soundbite rather than a real result.</p>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- ============================================================ -->
+  <section id="ch-head">
+    <div class="section-head"><h2>Projects — Chessify AI</h2></div>
+  </section>
+
+  <section id="ch1">
+    <div class="bullet-card">
+      <span class="verified">Public repo — architecture verified</span>
+      <div class="bullet-quote">"Architected a scalable real-time multiplayer chess platform using Node.js &amp; Socket.IO with live board sync, server-side validation, and spectator mode for 100+ concurrent users."</div>
+
+      <h3>Likely follow-ups</h3>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>How does the live board sync actually work?</div>
+        <div class="a"><strong>Say:</strong> "Each game is a room — when you join a game link, your browser opens a persistent connection to the server and joins that room. When either player makes a move, the server checks it's legal and it's actually their turn, and if so, broadcasts the new position to everyone else in that room instantly — the opponent and any spectators. Nobody's polling or refreshing; the server pushes the update the moment it happens."</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>What does "server-side validation" protect against?</div>
+        <div class="a"><strong>Say:</strong> "The client never gets trusted to just report 'I moved here.' Every move gets re-checked against the actual rules of chess on the server before it's accepted or broadcast — so someone can't tamper with their browser to make an illegal move, and it also catches accidental bugs on the client side before they corrupt the game state for everyone else watching."</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>Have you actually load-tested 100 concurrent users, or is that a design target?</div>
+        <div class="a"><strong>Say, honestly:</strong> "That's the concurrency the architecture is designed to comfortably handle on a single server instance — a room-based model where each game only broadcasts to the handful of people in it, rather than every user hearing about every game. I haven't run a formal load test with a tool spinning up 100 simulated connections and measuring latency under that load — if pushed on this in an interview, I'd rather say that plainly than imply I have a benchmark report I don't actually have."</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>What happens if a player's connection drops mid-game?</div>
+        <div class="a"><strong>Say:</strong> "The server notices the disconnect, tells the opponent their opponent dropped, and cleans up that player's seat in the room. If they reconnect, they rejoin the room and the server sends them the current board position, so they're caught back up to where the game actually is rather than starting from scratch."</div>
+      </div>
+
+      <h3>Stress-testing "100+ concurrent users"</h3>
+      <div class="metric">
+        <div class="m-label">🔢 How to frame this number honestly</div>
+        <p>Best framing: "designed for" or "architected to support," not "benchmarked at." The room-based broadcast pattern (only sending updates to sockets in the relevant game room, not every connected client) is a real, sound reason a single Node process can reasonably handle that many simultaneous connections for a turn-based game with infrequent messages — that's a legitimate architectural argument even without a formal load-test number to cite.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="ch2">
+    <div class="bullet-card">
+      <span class="needs-care">Repo shows the ELO isn't actually applied — read this before saying "1800" out loud</span>
+      <div class="bullet-quote">"Integrated a Flask AI backend with the Stockfish engine (ELO 1800), a Polyglot opening book, and a custom Minimax + alpha-beta pruning engine (depth 3) for move generation."</div>
+
+      <h3>Likely follow-ups</h3>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>Why both Stockfish and your own Minimax engine — isn't that redundant?</div>
+        <div class="a"><strong>Say:</strong> "Stockfish is what actually plays a strong, realistic game — it's a world-class open-source engine I integrated rather than trying to out-build. The Minimax engine with alpha-beta pruning was my own implementation, mainly to demonstrate I understand how a chess engine actually evaluates positions and searches moves under the hood, rather than treating Stockfish as a total black box. In practice they can serve different purposes — Stockfish for real opponent-quality play, my own engine as the from-scratch version I built and understand every line of."</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>What does "depth 3" mean for your Minimax engine, in plain terms?</div>
+        <div class="a"><strong>Say:</strong> "It means the engine looks 3 half-moves ahead before deciding — my move, the opponent's likely response, and my follow-up — evaluating how good the resulting position looks at that point, and picking the move that leads to the best worst-case outcome, which is what alpha-beta pruning helps make efficient by skipping branches that can't possibly change the decision."</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>What's a Polyglot opening book, and why use one?</div>
+        <div class="a"><strong>Say:</strong> "It's a precomputed database of strong opening moves from real games, so the engine doesn't have to calculate from scratch in the opening — it just looks up a known-good move instantly, which is both faster and more human-like than a search engine grinding through the opening the same way it would a complex middlegame position."</div>
+      </div>
+
+      <h3>⚠️ Read before your interview</h3>
+      <div class="flag">
+        <div class="f-label">⚠️ The "ELO 1800" figure isn't actually wired up in the code</div>
+        <p>The integration calls Stockfish with an <code class="inline">elo=1800</code> parameter, but that parameter is never actually passed into Stockfish's own strength-limiting settings anywhere in the function — it's accepted but unused. As written, Stockfish plays at its default strength, not a calibrated 1800 rating. If asked "how did you configure it to play at exactly 1800," the honest answer is that the intent was there in the code but the actual strength-limiting call wasn't wired through — worth fixing this before an interview (Stockfish has a documented setting for exactly this — limiting playing strength to a target ELO) so the number in your resume matches what the engine is actually doing. Saying "I set out to calibrate it to 1800 and need to double check that's fully wired up" is a fine, honest answer if it comes up before you've fixed it.</p>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- ============================================================ -->
+  <section id="ss-head">
+    <div class="section-head"><h2>Projects — StudySync</h2></div>
+  </section>
+
+  <section id="ss1">
+    <div class="bullet-card">
+      <span class="needs-care">Real mechanism is different from how this reads — see below</span>
+      <div class="bullet-quote">"Designed a robust cross-platform timetable app with offline-first architecture via local caching and auto-sync, restoring full sync within 1.5s of reconnect for 2,000+ users during network outages."</div>
+
+      <h3>Say this first</h3>
+      <div class="plain-first">
+        <div class="pf-label">Plain-English version</div>
+        <p>"If a student opens the app without internet — say they're in a basement lecture hall — they still see their last-known timetable instead of a blank error screen, because it's saved locally on the phone. As soon as they get signal again and reopen the app or pull to refresh, it grabs the latest version."</p>
+      </div>
+
+      <h3>Likely follow-ups</h3>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>Walk me through exactly what happens the moment the phone reconnects to the internet.</div>
+        <div class="a"><strong>Say, precisely:</strong> "It's trigger-based rather than something that fires the instant the network comes back in the background — the sync runs when the app is opened or when the user pulls down to refresh. On that trigger, it tries the network first; if that succeeds, it updates the cached copy and shows the fresh data; if it fails, it falls back to whatever's already cached, with a small message telling the user which state they're in. I want to be precise here rather than overstate it — it's not a background listener that detects the moment WiFi comes back and syncs automatically without the user doing anything."</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>How did you actually measure 1.5 seconds?</div>
+        <div class="a"><strong>Say:</strong> "It's the round-trip time from triggering that sync — app open or a pull-to-refresh — to the screen showing fresh data: one network request against a small hosted API returning a fairly small JSON payload, then a quick local save and a UI update. That's a lightweight enough operation that completing in around a second and a half on a normal connection is realistic and something I observed while testing, rather than a number from a formal timed benchmark suite."</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>What happens if two people edit the same timetable data while both are offline?</div>
+        <div class="a"><strong>Say, honestly:</strong> "That scenario doesn't actually apply to this app — the data only flows one direction, from the server down to each student's phone. Students view the timetable, they don't edit it; only an admin updates it centrally. So there's no case of two devices writing conflicting changes that need to be merged — if I were extending this to let users edit their own data offline, I'd add a timestamp to each local change and resolve conflicts by comparing that to the server's last-updated time on reconnect."</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>What happens if the sync fails halfway through — do users ever see half-updated data?</div>
+        <div class="a"><strong>Say:</strong> "No, and that's actually a deliberate simplicity in the design — the cache update only happens after the full response has already come back successfully, and it's a single write, not several steps that could get interrupted partway. So it's really one of two outcomes: the whole update goes through, or nothing changes and the old cached version stays exactly as it was."</div>
+      </div>
+
+      <h3>Stress-testing "2,000+ users"</h3>
+      <div class="metric">
+        <div class="m-label">🔢 How to frame this if asked</div>
+        <p>Be ready to say plainly whether this is total registered/downloaded users versus concurrent simultaneous users — those are very different claims and an interviewer may ask which one you mean. "2,000+" as a total user base across a college's student body checking a timetable app is a reasonable, believable number; "2,000+ concurrent" would be a much bigger technical claim about the backend's throughput that's worth not implying if it isn't what you mean.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="ss2">
+    <div class="bullet-card">
+      <span class="needs-care">Endpoint count in the public repo is lower than stated — read before quoting "10+"</span>
+      <div class="bullet-quote">"Architected 10+ REST API endpoints (Express + MongoDB) with an authenticated admin panel for centralized management, delivering real-time updates in under 120ms."</div>
+
+      <h3>Likely follow-ups</h3>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>Can you list a few of those endpoints for me?</div>
+        <div class="a"><strong>Say, and be ready to actually list them:</strong> "There's a login endpoint for the admin, an update endpoint that pushes a new timetable into the database, a public read endpoint the app uses to fetch the current timetable, and a health-check endpoint for monitoring. If I'm counting the ones visibly deployed and working today, that's a smaller, tighter set than 10 — worth being upfront that '10+' may be counting earlier iterations or planned endpoints that didn't all make it into what's currently live, and I'd rather say that honestly than fumble trying to name endpoints that aren't actually there."</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>What does "real-time updates" mean here — is there a WebSocket or push notification involved?</div>
+        <div class="a"><strong>Say, precisely:</strong> "Not push-based, no — there's no WebSocket in this app. 'Real-time' here refers to how fast the API responds when the app requests the timetable — under 120 milliseconds for that single request to come back, which is fast enough that it feels instant to the user. I'd clarify that distinction if asked directly, since 'real-time' can sound like it implies live push updates, and that's not the mechanism here."</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>How did you measure "under 120ms" specifically?</div>
+        <div class="a"><strong>Say:</strong> "That's the typical response time for a single GET request against a small document in a hosted MongoDB instance — it's a lightweight query with no complex joins or aggregation, so sub-150ms is what you'd expect and what I observed testing it directly, rather than a number pulled from a formal load-testing tool with logged percentiles."</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>Tell me about the admin panel — what does it look like, who can access it?</div>
+        <div class="a"><strong>Say carefully — verify this exists before your interview:</strong> "It's gated behind a login that issues a token, and only that authenticated session can push timetable updates." <em>(Before your interview: confirm whether this "admin panel" is an actual separate web UI you built, or whether admin updates happen via a direct API call/Postman rather than a dedicated interface — if it's the latter, say "an authenticated admin flow" rather than implying a full panel UI exists, since that's a specific, checkable claim an interviewer could ask to see.)</em></div>
+      </div>
+
+      <h3>Stress-testing "10+ endpoints" and "under 120ms"</h3>
+      <div class="metric">
+        <div class="m-label">🔢 What to actually verify before this interview</div>
+        <p>Count the live endpoints in your actual deployed backend and have the real number ready — if it's fewer than 10, that's fine to acknowledge ("a handful of core endpoints" is a perfectly good, honest description), but don't get caught trying to name a 10th endpoint that isn't there. For the 120ms figure, if you have any timing logs or even browser dev-tools network tab screenshots from testing, that's worth having as backup; otherwise, describe it as an observed typical response time rather than a benchmarked SLA.</p>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- ============================================================ -->
+  <section id="sy-head">
+    <div class="section-head"><h2>Projects — SahYatri</h2></div>
+  </section>
+
+  <section id="sy1">
+    <div class="bullet-card">
+      <span class="needs-care">Public repo shows a meaningfully different setup — read this carefully</span>
+      <div class="bullet-quote">"Deployed a fine-tuned YOLOv5n model on Raspberry Pi 4 at 15 FPS with adaptive thresholding, achieving 90%+ detection accuracy for real-time passenger counting."</div>
+
+      <h3>Say this first</h3>
+      <div class="plain-first">
+        <div class="pf-label">Plain-English version</div>
+        <p>"I set up a camera-based system that counts people getting on a bus, using an off-the-shelf object detection model tuned for spotting people, running as a service that a low-cost single-board computer sends photos to."</p>
+      </div>
+
+      <h3>Likely follow-ups — and the honest answer for each</h3>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>Walk me through the pipeline end to end — what happens from camera to count?</div>
+        <div class="a"><strong>Say, matching what's actually built:</strong> "The Raspberry Pi's camera captures a still photo periodically and sends it over the network to a detection service running YOLO, which is a computer vision model that finds and classifies objects in an image — I filter its results down to just the 'person' class to get an occupancy count, which then gets sent to the backend and shown on the dashboard and in the commuter app."</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>Why YOLOv5n specifically, over a larger, more accurate variant?</div>
+        <div class="a"><strong>Say, but verify this matches your actual setup first:</strong> "The nano variant is the smallest in the YOLOv5 family, built specifically to run on constrained hardware like a Raspberry Pi — far fewer parameters than the larger variants, which trades a bit of peak accuracy for something that can actually run in real time on edge hardware rather than needing a GPU server." <em>(Flag: the code I can point to for this project currently runs the large "x" variant through a separate service, not the nano variant on the Pi itself — if that's still the case in what you'd actually demo, be ready to explain honestly that the nano-on-device version was the goal/an earlier or separate iteration, or go verify and switch to the nano weights before your interview so this answer is fully accurate.)</em></div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>Is the model actually running ON the Raspberry Pi, or is the Pi just a camera sending data elsewhere?</div>
+        <div class="a"><strong>Answer honestly based on your real setup:</strong> if the inference genuinely runs on-device on the Pi, describe that directly and be ready to explain how you got a model running fast enough on that hardware (quantization, the nano variant's small size, etc.). If — as the code I reviewed shows — the Pi captures a photo and sends it to a separate machine on the same network that does the actual detection, say that plainly: "The Pi handles image capture and the physical deployment; the detection model runs on a companion device it talks to over the local network, which was the practical setup for this iteration rather than running inference directly on the Pi's own limited hardware." That's still a legitimate IoT/edge architecture — just be accurate about which piece does what.</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>15 FPS — walk me through how you measured that.</div>
+        <div class="a"><strong>Verify this before your interview:</strong> if your actual deployed system captures a still image every few seconds rather than processing a continuous video stream at 15 frames per second, that's a very different, much lower throughput than "15 FPS" implies, and it's worth reconciling which one is true before you say the number out loud. If it genuinely is continuous 15 FPS inference somewhere in your system, be ready to say exactly where that's measured (frames processed per second of wall-clock time, on which device) — a specific, concrete answer here is what separates a real benchmark from a guessed number.</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>What does "adaptive thresholding" mean in your system, concretely?</div>
+        <div class="a"><strong>Say, if this is genuinely implemented:</strong> "The confidence threshold for counting something as a detected person isn't fixed — it adjusts based on conditions like lighting, so the system doesn't undercount in dim conditions or overcount from false positives in bright, high-contrast scenes." <em>(Verify this exists in your actual code before claiming it — a fixed threshold on the person-count output, like a simple capacity percentage, is a different and much simpler thing than adaptive confidence thresholding on the detection model itself. If what you have is closer to the latter, describe it as "threshold-based capacity status" rather than "adaptive thresholding," which implies something more sophisticated.)</em></div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>How did you validate 90%+ accuracy?</div>
+        <div class="a"><strong>Say, and have a real methodology ready:</strong> "I compared the model's predicted count against a manually counted ground truth across a set of real bus photos, and looked at how often the prediction matched or was within one person of the actual count — that's the standard way to validate a counting task like this, since it's a count, not a single classification label." If you don't have this validation run and documented, the honest move is either to run it before your interview so you have real numbers, or to describe the methodology confidently without restating "90%" as a fact you can't currently back with a number.</div>
+      </div>
+
+      <h3>Stress-testing every number in this bullet</h3>
+      <div class="metric">
+        <div class="m-label">🔢 The four things to reconcile before you say this bullet out loud</div>
+        <p><strong>Model variant:</strong> confirm which YOLOv5 size is actually deployed where you'd demo it — "n" (nano, edge-appropriate) or a larger variant (server-appropriate, not really "on the Pi").<br>
+        <strong>Where inference runs:</strong> on the Pi itself, or on a companion device the Pi talks to over the network — these are different architectures and only one of them is truly "on Raspberry Pi 4."<br>
+        <strong>Frame rate:</strong> continuous video at 15 FPS is very different from a still photo captured every few seconds — confirm which one your system actually does.<br>
+        <strong>Accuracy validation:</strong> have an actual comparison (predicted count vs. manually counted ground truth) ready, even a small one, rather than a number with no method behind it.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="sy2">
+    <div class="bullet-card">
+      <span class="needs-care">Interval mismatch in the public repo — see below</span>
+      <div class="bullet-quote">"Established a Node.js &amp; PostgreSQL backend processing 50,000+ sensor events/day, streaming live time-series data every 3s to a React.js dashboard and Flutter commuter app."</div>
+
+      <h3>Likely follow-ups</h3>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>Why PostgreSQL for this instead of MongoDB, given you used MongoDB elsewhere?</div>
+        <div class="a"><strong>Say:</strong> "Every sensor reading has the exact same shape — a camera ID, an occupancy count, a capacity, a timestamp — and the whole value of the data is in aggregate questions across time, like average occupancy or the latest reading per bus. That's exactly what a relational database is good at computing efficiently inside the database itself, rather than pulling raw rows out and crunching them in application code."</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>How did you arrive at 50,000+ events a day — walk me through the math.</div>
+        <div class="a"><strong>Say:</strong> "It scales with the number of cameras and how often each one reports — one camera capturing roughly every few seconds across a full day of operation already gets you into the tens of thousands on its own, and that multiplies with the number of buses/cameras in the fleet. It's an extrapolated capacity figure based on the capture rate and fleet size, not a number pulled from a live production traffic dashboard with that many actual users."</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>"Streaming... every 3s" — is that a push stream (like a WebSocket) or is the dashboard just polling?</div>
+        <div class="a"><strong>Say, precisely:</strong> "It's polling, not a push stream — the dashboard and app each fetch the latest data on a short fixed interval rather than the server proactively pushing updates the moment new data arrives. 'Streaming' is describing the effect from the user's point of view — the numbers feel continuously live — rather than the underlying mechanism being a persistent streaming connection." <em>(Verify your actual polling interval — the dashboard I can point to as reference polls every 10 seconds and the device itself captures roughly every 5 seconds, neither of which is exactly 3 seconds, so double-check what your actual deployed interval is before citing "every 3s" specifically.)</em></div>
+      </div>
+
+      <h3>Stress-testing "50,000+/day" and "every 3s"</h3>
+      <div class="metric">
+        <div class="m-label">🔢 What to have ready</div>
+        <p>For the daily volume: know your assumed capture interval and fleet size, and be able to multiply them out loud confidently — that turns a vague "50,000+" into a defensible calculation. For the interval: confirm your actual polling/capture cadence and use that number in your spoken answer rather than the resume's "3s" if they don't match — an interviewer respects "it refreshes every 5–10 seconds" far more than a confidently wrong "every 3 seconds" that falls apart under a follow-up.</p>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- ============================================================ -->
+  <section id="ach-head">
+    <div class="section-head"><h2>Achievements &amp; Certifications</h2></div>
+  </section>
+
+  <section id="ach1">
+    <div class="bullet-card">
+      <span class="unverifiable">Backed by certificates — low risk, just be ready to describe the project</span>
+      <div class="bullet-quote">"1st Place, BitBox 5.0 Hackathon — Won for SahYatri... Finalist, Innovate 3.0 Hackathon — Selected for Drive-Sure..."</div>
+
+      <h3>Likely follow-ups</h3>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>What made SahYatri stand out to win first place — what was the judging criteria?</div>
+        <div class="a"><strong>Say:</strong> "It combined a working IoT hardware piece — an actual camera on a Raspberry Pi — with computer vision and a full-stack app people could interact with live, which is a more complete demo than most hackathon projects manage in the time given. I'd guess the judges valued that it wasn't just a slide deck concept — it was something you could point a camera at and watch actually count people in real time."</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>What was Drive-Sure, and why didn't it place first?</div>
+        <div class="a"><strong>Say:</strong> "It was a driver safety and vehicle telematics concept using AI and IoT sensors — I'd describe the specific problem it solved and what made it different, and if asked why it was a finalist rather than a winner, the honest answer is just that another team's execution or idea landed better with the judges that day — that's a completely normal outcome and not something to over-explain or feel defensive about."</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="ach2">
+    <div class="bullet-card">
+      <span class="verified">Platform-verifiable stats — straightforward to defend</span>
+      <div class="bullet-quote">"LeetCode Knight (Peak Rating: 2036) — Solved 1000+ Data Structures and Algorithms problems across LeetCode, Codeforces, and GeeksForGeeks with a 250-days consecutive algorithmic coding streak."</div>
+
+      <h3>Likely follow-ups</h3>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>What does a 2036 rating actually mean, for someone who doesn't know competitive programming?</div>
+        <div class="a"><strong>Say:</strong> "LeetCode contest ratings work similarly to a chess rating — they go up when you place well in timed contests against other participants and adjust based on the difficulty of who you're competing against. 'Knight' is one of LeetCode's tier badges, roughly analogous to a solid, consistently-performing competitive tier — it reflects sustained contest performance over time, not just solving a lot of practice problems casually."</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>How do you actually keep a 250-day streak — realistically, every single day?</div>
+        <div class="a"><strong>Say:</strong> "Yes, genuinely every day — even a short, easy problem counts toward keeping it going on a day that's otherwise packed. The value wasn't really the streak number itself, it was the consistency habit it built — treating problem-solving practice like something non-negotiable rather than something that only happens when there's spare time."</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>What kind of problems — can you solve one for me right now?</div>
+        <div class="a"><strong>Say:</strong> "Sure — happy to work through one live." (This is the one part of your resume that's meant to be tested directly in the interview itself, so treat any coding-round invitation as the natural, expected follow-up rather than something to be caught off guard by.)</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="ach3">
+    <div class="bullet-card">
+      <span class="unverifiable">No repo link provided — described conceptually</span>
+      <div class="bullet-quote">"Independent ML Engineering: Built and deployed a RAG-based PDF Query Engine on Hugging Face Spaces using LangChain and CrewAI multi-agent frameworks to automate document workflows."</div>
+
+      <h3>Say this first</h3>
+      <div class="plain-first">
+        <div class="pf-label">Plain-English version</div>
+        <p>"I built a tool where you upload a PDF and ask it questions in plain English, and it answers using only what's actually in that document — instead of relying on an AI model just guessing from what it was trained on."</p>
+      </div>
+
+      <h3>Likely follow-ups</h3>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>How does it avoid making things up that aren't in the PDF?</div>
+        <div class="a"><strong>Say:</strong> "The document gets broken into chunks and turned into a searchable index. When you ask a question, the system first finds the most relevant chunks of the actual document, then feeds only those chunks to the language model along with your question and an instruction to answer using just that context — so the model's response is grounded in real retrieved text rather than pulled purely from its training memory."</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>What did the multi-agent part (CrewAI) actually add over a single prompt?</div>
+        <div class="a"><strong>Say:</strong> "Instead of one prompt trying to do retrieval and answer-writing all at once, I split it into specialized roles — one agent focused on finding and assembling the right context, another focused on composing a clear final answer from that context. It made it much easier to tell, when an answer came out wrong, whether the problem was 'it found the wrong part of the document' versus 'it found the right part but wrote a bad answer' — those are different bugs with different fixes."</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>Why deploy on Hugging Face Spaces specifically?</div>
+        <div class="a"><strong>Say:</strong> "It's a free, straightforward way to host a small ML-backed demo publicly without setting up and paying for separate cloud infrastructure — good fit for a personal project meant to be shareable and demoable, rather than a production system with real uptime guarantees."</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="ach4">
+    <div class="bullet-card">
+      <span class="verified">Certificates exist — low scrutiny expected</span>
+      <div class="bullet-quote">"Completed Complete Data Science, Machine Learning, Deep Learning &amp; NLP Bootcamp (Udemy) and Generative AI with LangChain &amp; Hugging Face (Udemy)."</div>
+
+      <h3>Likely follow-ups</h3>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>What's the actual difference between what you learned from a formal CS background versus these bootcamps?</div>
+        <div class="a"><strong>Say:</strong> "My core CS and algorithms grounding came from my degree and independent practice — the bootcamps specifically filled in ML/AI-specific concepts and tooling I hadn't covered formally, like how transformers and RAG pipelines actually work in practice and how to use frameworks like LangChain and Hugging Face hands-on. They were a deliberate, targeted way to get practical fluency in a space my formal coursework didn't cover yet, which I then applied directly in the PDF Query Engine project."</div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <div class="bullet-card" style="text-align:center;">
+    <p class="dim" style="margin:0;font-size:12.5px;">Badge key: <span style="color:var(--resume);">green = verified against public code</span>, <span style="color:var(--text-faint);">grey = no repo to check, precision is your defense</span>, <span style="color:var(--trap);">red = reconcile the real details before you say this number out loud</span>.</p>
+  </div>
+
+</div>
+
+<footer>
+  Resume defense rehearsal notes · Built against the resume PDF and the public GitHub repos referenced within it
+</footer>
+
+</body>
+</html>
