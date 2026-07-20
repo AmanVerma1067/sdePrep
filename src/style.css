@@ -607,6 +607,9 @@ h1, h2, h3, h4 { font-family: var(--font-head); font-weight: 700; letter-spacing
   margin-bottom: 12px;
   gap: 12px;
 }
+.roadmap-header-bar .back-btn {
+  margin-bottom: 0;
+}
 .roadmap-mastery-badge {
   font-family: var(--font-mono);
   font-size: 12px;

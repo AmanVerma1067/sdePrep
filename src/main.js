@@ -124,7 +124,8 @@ function renderSidebar() {
       ${roadmaps.map(r => `
         <button class="nav-btn ${currentView === 'roadmap' && currentRoadmap === r.id ? 'active' : ''}" 
                 data-view="roadmap" data-roadmap="${r.id}" style="--rm-accent:${r.accent}">
-          <span class="nav-icon-emoji">${r.icon}</span> ${r.title}
+          <span class="nav-icon-emoji">${r.icon}</span>
+          <span style="flex: 1; text-align: left; line-height: 1.2;">${r.title}</span>
           <span class="nav-pct">${getRoadmapStats(r).pct}%</span>
         </button>
       `).join('')}
