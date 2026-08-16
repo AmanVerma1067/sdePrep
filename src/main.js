@@ -255,6 +255,17 @@ function renderRoadmapView() {
                   <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
                   Scroll Notes to Section
                 </button>
+                ${t.desc ? `<p class="topic-desc-text">${t.desc}</p>` : ''}
+                ${t.tip ? `
+                  <div class="topic-callout ${t.isTrap ? 'trap' : 'tip'}">
+                    <strong>${t.isTrap ? '⚠️ Interview Trap' : '💡 Interview Tip'}:</strong> ${t.tip}
+                  </div>
+                ` : ''}
+                ${t.links && t.links.length ? `
+                  <div class="topic-links-list">
+                    ${t.links.map(l => `<a href="${l.url}" target="_blank" rel="noopener noreferrer" class="resource-link">${l.text}</a>`).join('')}
+                  </div>
+                ` : ''}
                 <textarea class="checklist-note-input" data-tid="${tid}" placeholder="Add your notes...">${store.getNote(tid)}</textarea>
               </div>
             </div>
@@ -465,6 +476,47 @@ function renderTipsView() {
           <span class="pattern-chip med">Backtracking</span>
           <span class="pattern-chip med">Union-Find</span>
           <span class="pattern-chip med">Topological Sort</span>
+        </div>
+      </div>
+
+      <div class="tip-card wide">
+        <h3>⚡ 21-Day CS Core Sprint & OA Specific Strategy</h3>
+        <div class="guide-grid">
+          <div class="guide-item">
+            <strong>DBMS (Days 1–5)</strong>
+            <p>Normalization (1NF-BCNF), ACID properties, keys, joins, and hand-written SQL. SQL writing is almost always live-tested in interviews.</p>
+          </div>
+          <div class="guide-item">
+            <strong>Operating Systems (Days 6–12)</strong>
+            <p>CPU scheduling Gantt charts, process sync & semaphores, deadlock 4 conditions & Banker's algorithm, virtual memory & page replacement (LRU/FIFO/Belady's).</p>
+          </div>
+          <div class="guide-item">
+            <strong>Computer Networks (Days 13–16)</strong>
+            <p>OSI/TCP-IP 7-layer mapping, IP subnetting calculations, TCP 3-way handshake vs UDP, HTTP/1.1 vs HTTP/2/3, DNS & TLS security handshake.</p>
+          </div>
+          <div class="guide-item">
+            <strong>Software Engineering (Days 17–21)</strong>
+            <p>SDLC models (Waterfall, Spiral, RAD, Agile/Scrum), COCOMO estimation, SRS requirements, Coupling & Cohesion (Low coupling + High cohesion), and Software Testing (Unit, Black-box, White-box, Integration).</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="tip-card wide">
+        <h3>📝 OA (Online Assessment) Core CS MCQ Strategy</h3>
+        <p class="tip-note" style="margin-bottom: 12px;">Core-CS sections in OAs (Amazon, Flipkart GRiD, Juspay, Campus OAs) are almost always 10–20 MCQs. Aim for &lt;45 sec per question.</p>
+        <div class="guide-grid">
+          <div class="guide-item">
+            <strong>High-Yield Numericals</strong>
+            <p>CPU Scheduling avg waiting/turnaround time, Page Replacement FIFO/LRU/Optimal trace, Deadlock safe sequence, Subnetting host counts.</p>
+          </div>
+          <div class="guide-item">
+            <strong>Output Prediction & Syntax</strong>
+            <p>Predict output of SQL JOIN / GROUP BY queries, C++ polymorphism vtable calls, and process fork() loop counts.</p>
+          </div>
+          <div class="guide-item">
+            <strong>Conceptual Traps</strong>
+            <p>Multiprogramming ≠ Multitasking, 2-tier vs 3-tier, Candidate key vs Super key, MAC (L2) vs IP (L3), Low coupling + High cohesion.</p>
+          </div>
         </div>
       </div>
 

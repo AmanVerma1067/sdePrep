@@ -23,17 +23,22 @@ const csSubjectMap = {
   "Virtual Functions, vtable & Runtime Dispatch": "OOP & C++",
   "Advanced C++ OOP — Multiple Inheritance & Diamond Problem": "OOP & C++",
   "Design Principles — SOLID & Common Patterns": "OOP & C++",
+  "SE · Introduction to Software Engineering": "Software Engineering",
+  "SE · SDLC Models": "Software Engineering",
+  "SE · Software Project Management": "Software Engineering",
+  "SE · Software Requirements": "Software Engineering",
+  "SE · Software Testing & Debugging": "Software Engineering",
 };
 
 export function addSubjectsToCSCore(roadmaps) {
   const csCore = roadmaps.find(r => r.id === 'cs-core');
   if (!csCore) return roadmaps;
   
-  const subjectOrder = ["Operating Systems", "DBMS", "Computer Networks", "OOP & C++"];
+  const subjectOrder = ["Operating Systems", "DBMS", "Computer Networks", "OOP & C++", "Software Engineering"];
   const grouped = {};
   
   csCore.phases.forEach(phase => {
-    const subject = csSubjectMap[phase.title] || "Other";
+    const subject = csSubjectMap[phase.title] || "Software Engineering";
     if (!grouped[subject]) grouped[subject] = [];
     grouped[subject].push(phase);
   });
@@ -43,7 +48,7 @@ export function addSubjectsToCSCore(roadmaps) {
     phases: grouped[name] || []
   }));
   
-  // JS and Python get a single default subject
+  // Other roadmaps get a single default subject if not present
   roadmaps.forEach(r => {
     if (r.id !== 'cs-core' && !r.subjects) {
       r.subjects = [{ name: r.title, phases: r.phases }];

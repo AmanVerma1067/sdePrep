@@ -847,6 +847,271 @@ export const roadmaps = [
             "links": []
           }
         ]
+      },
+      {
+        "title": "SE \u00b7 Introduction to Software Engineering",
+        "topics": [
+          {
+            "name": "Introduction to Software Engineering",
+            "desc": "Core Software Engineering concept for SDE interview preparation.",
+            "links": [
+              {
+                "text": "Intro to SE",
+                "url": "https://www.geeksforgeeks.org/software-engineering/software-engineering-introduction-to-software-engineering/"
+              }
+            ]
+          },
+          {
+            "name": "Classification of Software",
+            "desc": "Core Software Engineering concept for SDE interview preparation.",
+            "links": [
+              {
+                "text": "Classification of Software",
+                "url": "https://www.geeksforgeeks.org/software-engineering/software-engineering-classification-software/"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "title": "SE \u00b7 SDLC Models",
+        "topics": [
+          {
+            "name": "Classical Waterfall Model",
+            "desc": "Core Software Engineering concept for SDE interview preparation.",
+            "links": [
+              {
+                "text": "Waterfall Model",
+                "url": "https://www.geeksforgeeks.org/software-engineering/waterfall-model/"
+              }
+            ]
+          },
+          {
+            "name": "Iterative Waterfall Model",
+            "desc": "Core Software Engineering concept for SDE interview preparation.",
+            "links": [
+              {
+                "text": "Iterative Waterfall",
+                "url": "https://www.geeksforgeeks.org/software-engineering/software-engineering-iterative-waterfall-model/"
+              }
+            ]
+          },
+          {
+            "name": "Spiral Model",
+            "desc": "Core Software Engineering concept for SDE interview preparation.",
+            "links": [
+              {
+                "text": "Spiral Model",
+                "url": "https://www.geeksforgeeks.org/software-engineering/software-engineering-spiral-model/"
+              }
+            ]
+          },
+          {
+            "name": "Rapid Application Development (RAD) Model",
+            "desc": "Core Software Engineering concept for SDE interview preparation.",
+            "links": [
+              {
+                "text": "RAD Model",
+                "url": "https://www.geeksforgeeks.org/software-engineering/software-engineering-rapid-application-development-model-rad/"
+              }
+            ]
+          },
+          {
+            "name": "RAD vs Traditional SDLC",
+            "desc": "Core Software Engineering concept for SDE interview preparation.",
+            "links": [
+              {
+                "text": "RAD vs Traditional SDLC",
+                "url": "https://www.geeksforgeeks.org/software-engineering/software-engineering-rad-model-vs-traditional-sdlc/"
+              }
+            ]
+          },
+          {
+            "name": "Agile Development Models \u2014 Scrum, Kanban, XP",
+            "desc": "Most-asked SE topic:know the 4 Agile Manifesto values, what a sprint/standup/retro is, and be ready to contrast Scrum (fixed sprints, roles) vs Kanban (continuous flow, WIP limits).",
+            "links": [
+              {
+                "text": "Agile Development Models",
+                "url": "https://www.geeksforgeeks.org/software-engineering/software-engineering-agile-development-models/"
+              }
+            ]
+          },
+          {
+            "name": "Comparison of Life Cycle Models",
+            "desc": "Core Software Engineering concept for SDE interview preparation.",
+            "links": [
+              {
+                "text": "Comparison of Life Cycle Models",
+                "url": "https://www.geeksforgeeks.org/software-engineering/software-engineering-comparison-of-different-life-cycle-models/"
+              }
+            ]
+          },
+          {
+            "name": "Coupling and Cohesion",
+            "desc": "Trap:good design = LOW coupling + HIGH cohesion. People sometimes flip this under pressure \u2014 say it out loud twice before the interview.",
+            "links": [
+              {
+                "text": "Coupling and Cohesion",
+                "url": "https://www.geeksforgeeks.org/software-engineering/software-engineering-coupling-and-cohesion/"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "title": "SE \u00b7 Software Project Management",
+        "topics": [
+          {
+            "name": "Project Management Process phases",
+            "desc": "Core Software Engineering concept for SDE interview preparation.",
+            "links": [
+              {
+                "text": "Project Management Process",
+                "url": "https://www.geeksforgeeks.org/software-engineering/phases-project-management-processes/"
+              }
+            ]
+          },
+          {
+            "name": "COCOMO Model \u2014 effort/cost estimation",
+            "desc": "Know the 3 modes: Organic (small, simple), Semi-detached (medium), Embedded (complex, tight constraints) \u2014 asked as a straight definitional MCQ.",
+            "links": [
+              {
+                "text": "COCOMO Model",
+                "url": "https://www.geeksforgeeks.org/software-engineering/software-engineering-cocomo-model/"
+              }
+            ]
+          },
+          {
+            "name": "Risk Management in SDLC",
+            "desc": "Core Software Engineering concept for SDE interview preparation.",
+            "links": [
+              {
+                "text": "Risk Management in SDLC",
+                "url": "https://www.geeksforgeeks.org/software-engineering/integrating-risk-management-in-sdlc-set-1/"
+              }
+            ]
+          },
+          {
+            "name": "Role & Responsibilities of a Software Project Manager",
+            "desc": "Core Software Engineering concept for SDE interview preparation.",
+            "links": [
+              {
+                "text": "Software Project Manager Role",
+                "url": "https://www.geeksforgeeks.org/software-engineering/software-engineering-role-and-responsibilities-of-a-software-project-manager/"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "title": "SE \u00b7 Software Requirements",
+        "topics": [
+          {
+            "name": "Classification of Software Requirements \u2014 functional vs non-functional",
+            "desc": "Core Software Engineering concept for SDE interview preparation.",
+            "links": [
+              {
+                "text": "Classification of Requirements",
+                "url": "https://www.geeksforgeeks.org/software-engineering/software-engineering-classification-of-software-requirements/"
+              }
+            ]
+          },
+          {
+            "name": "How to Write a Good SRS",
+            "desc": "Core Software Engineering concept for SDE interview preparation.",
+            "links": [
+              {
+                "text": "Writing a Good SRS",
+                "url": "https://www.geeksforgeeks.org/software-engineering/how-to-write-a-good-srs-for-your-project/"
+              }
+            ]
+          },
+          {
+            "name": "Quality Characteristics of a Good SRS",
+            "desc": "Core Software Engineering concept for SDE interview preparation.",
+            "links": [
+              {
+                "text": "Quality Characteristics of SRS",
+                "url": "https://www.geeksforgeeks.org/software-engineering/software-engineering-quality-characteristics-of-a-good-srs/"
+              }
+            ]
+          },
+          {
+            "name": "Requirements Elicitation",
+            "desc": "Core Software Engineering concept for SDE interview preparation.",
+            "links": [
+              {
+                "text": "Requirements Elicitation",
+                "url": "https://www.geeksforgeeks.org/software-engineering/software-engineering-requirements-elicitation/"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "title": "SE \u00b7 Software Testing & Debugging",
+        "topics": [
+          {
+            "name": "Seven Principles of Software Testing",
+            "desc": "Core Software Engineering concept for SDE interview preparation.",
+            "links": [
+              {
+                "text": "7 Principles of Testing",
+                "url": "https://www.geeksforgeeks.org/software-engineering/software-engineering-seven-principles-of-software-testing/"
+              }
+            ]
+          },
+          {
+            "name": "Testing Guidelines",
+            "desc": "Core Software Engineering concept for SDE interview preparation.",
+            "links": [
+              {
+                "text": "Testing Guidelines",
+                "url": "https://www.geeksforgeeks.org/software-engineering/software-engineering-testing-guidelines/"
+              }
+            ]
+          },
+          {
+            "name": "Black Box Testing",
+            "desc": "Trap:Black box = tests functionality without knowing internal code (you did this for PackSage's 90 endpoints). White box = tests internal logic/paths with code visibility. Don't mix them up under pressure.",
+            "links": [
+              {
+                "text": "Black Box Testing",
+                "url": "https://www.geeksforgeeks.org/software-testing/software-engineering-black-box-testing/"
+              }
+            ]
+          },
+          {
+            "name": "White Box Testing",
+            "desc": "Core Software Engineering concept for SDE interview preparation.",
+            "links": [
+              {
+                "text": "White Box Testing",
+                "url": "https://www.geeksforgeeks.org/software-testing/software-engineering-white-box-testing/"
+              }
+            ]
+          },
+          {
+            "name": "Debugging strategies",
+            "desc": "Core Software Engineering concept for SDE interview preparation.",
+            "links": [
+              {
+                "text": "Debugging",
+                "url": "https://www.geeksforgeeks.org/software-engineering/software-engineering-debugging/"
+              }
+            ]
+          },
+          {
+            "name": "Integration Testing \u2014 big bang, top-down, bottom-up",
+            "desc": "Core Software Engineering concept for SDE interview preparation.",
+            "links": [
+              {
+                "text": "Integration Testing",
+                "url": "https://www.geeksforgeeks.org/software-testing/software-engineering-integration-testing/"
+              }
+            ]
+          }
+        ]
       }
     ]
   },

@@ -1,0 +1,1132 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>CS Core 21-Day Sprint — DBMS · OS · CN · SE</title>
+<style>
+:root{
+  --bg:#1a1b26; --bg2:#16161e; --panel:#1f2335; --panel2:#24283b;
+  --border:#2f334d; --border-soft:#292e42;
+  --text:#c0caf5; --text-dim:#7a819e; --text-faint:#565f89;
+  --cyan:#00F7FF; --cyan-dim:#0db9c2; --purple:#bb9af7; --green:#9ece6a;
+  --orange:#ff9e64; --red:#f7768e; --yellow:#e0af68;
+  --radius:10px;
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+html{scroll-behavior:smooth;}
+body{
+  background:
+    radial-gradient(ellipse 900px 500px at 15% -5%, rgba(0,247,255,0.06), transparent),
+    radial-gradient(ellipse 700px 500px at 100% 10%, rgba(187,154,247,0.05), transparent),
+    var(--bg);
+  color:var(--text);
+  font-family:'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+  line-height:1.55;
+  padding-bottom:80px;
+  min-height:100vh;
+}
+::selection{background:rgba(0,247,255,0.25); color:#fff;}
+a{color:var(--cyan); text-decoration:none;}
+a:hover{text-decoration:underline;}
+code{font-family:'Consolas','Monaco',monospace; background:var(--panel2); padding:1px 6px; border-radius:4px; color:var(--orange); font-size:0.88em;}
+
+/* ---------- HERO ---------- */
+.hero{
+  padding:34px 20px 22px; text-align:center; position:relative;
+  border-bottom:1px solid var(--border-soft);
+}
+.hero .eyebrow{
+  font-size:11px; letter-spacing:3px; text-transform:uppercase; color:var(--cyan-dim);
+  font-weight:700; margin-bottom:10px;
+}
+.hero h1{
+  font-size:clamp(24px,5vw,38px); font-weight:800; letter-spacing:-0.5px;
+  background:linear-gradient(120deg,#fff 10%,var(--cyan) 55%,var(--purple) 100%);
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+  margin-bottom:10px;
+}
+.hero p.sub{color:var(--text-dim); font-size:14px; max-width:640px; margin:0 auto 16px;}
+.hero .source{font-size:12px; color:var(--text-faint);}
+.hero .source a{color:var(--text-faint); text-decoration:underline;}
+
+.overall-progress{max-width:520px; margin:20px auto 0; padding:14px 18px; background:var(--panel);
+  border:1px solid var(--border); border-radius:var(--radius);}
+.overall-progress .row{display:flex; justify-content:space-between; font-size:12px; color:var(--text-dim); margin-bottom:8px;}
+.overall-progress .row span#opct{color:var(--cyan); font-weight:700;}
+.bar-track{height:8px; background:var(--bg2); border-radius:6px; overflow:hidden; border:1px solid var(--border-soft);}
+.bar-fill{height:100%; width:0%; background:linear-gradient(90deg,var(--cyan-dim),var(--cyan)); transition:width .4s ease; border-radius:6px;}
+
+/* ---------- STICKY NAV ---------- */
+nav.top{
+  position:sticky; top:0; z-index:50;
+  background:rgba(22,22,30,0.92); backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--border); padding:10px 12px;
+  display:flex; gap:8px; overflow-x:auto; scrollbar-width:none;
+}
+nav.top::-webkit-scrollbar{display:none;}
+nav.top button{
+  flex:0 0 auto; background:var(--panel2); color:var(--text-dim); border:1px solid var(--border);
+  padding:8px 14px; border-radius:20px; font-size:12.5px; font-weight:600; cursor:pointer;
+  white-space:nowrap; transition:all .15s ease;
+}
+nav.top button:hover{color:var(--text); border-color:var(--cyan-dim);}
+nav.top button.active{background:rgba(0,247,255,0.1); color:var(--cyan); border-color:var(--cyan);}
+
+/* ---------- LAYOUT ---------- */
+.wrap{max-width:900px; margin:0 auto; padding:0 16px;}
+
+.subject-block{padding-top:28px;}
+.subject-head{
+  display:flex; align-items:center; gap:12px; margin-bottom:6px; flex-wrap:wrap;
+}
+.subject-head .tag{
+  font-size:11px; font-weight:800; letter-spacing:1.5px; padding:4px 10px; border-radius:6px;
+  border:1px solid; text-transform:uppercase;
+}
+.tag.dbms{color:var(--cyan); border-color:var(--cyan-dim); background:rgba(0,247,255,0.06);}
+.tag.os{color:var(--purple); border-color:#7c5fc4; background:rgba(187,154,247,0.06);}
+.tag.cn{color:var(--green); border-color:#5c8a4a; background:rgba(158,206,106,0.06);}
+.tag.se{color:var(--orange); border-color:#b5713f; background:rgba(255,158,100,0.06);}
+.subject-head h2{font-size:20px; font-weight:800;}
+.subject-head .days-range{font-size:12px; color:var(--text-faint); margin-left:auto;}
+.subject-intro{color:var(--text-dim); font-size:13.5px; margin:8px 0 18px; padding-left:2px; max-width:70ch;}
+
+.day-card{
+  background:var(--panel); border:1px solid var(--border); border-radius:var(--radius);
+  margin-bottom:14px; overflow:hidden;
+}
+.day-header{
+  display:flex; align-items:center; gap:12px; padding:14px 16px; cursor:pointer;
+  user-select:none;
+}
+.day-header .daynum{
+  flex:0 0 auto; width:40px; height:40px; border-radius:9px; display:flex; align-items:center; justify-content:center;
+  font-weight:800; font-size:14px; background:var(--panel2); border:1px solid var(--border-soft); color:var(--text-dim);
+}
+.day-card.dbms .day-header .daynum{color:var(--cyan);}
+.day-card.os .day-header .daynum{color:var(--purple);}
+.day-card.cn .day-header .daynum{color:var(--green);}
+.day-card.se .day-header .daynum{color:var(--orange);}
+.day-header .titles{flex:1; min-width:0;}
+.day-header .titles h3{font-size:15px; font-weight:700;}
+.day-header .titles .meta{font-size:11.5px; color:var(--text-faint); margin-top:2px;}
+.day-header .chev{color:var(--text-faint); font-size:13px; transition:transform .2s ease; flex:0 0 auto;}
+.day-card.open .chev{transform:rotate(90deg);}
+.day-progress-mini{flex:0 0 auto; font-size:11px; color:var(--text-dim); font-weight:700; min-width:38px; text-align:right;}
+
+.day-body{display:none; padding:0 16px 16px; border-top:1px solid var(--border-soft);}
+.day-card.open .day-body{display:block;}
+
+.topic-item{
+  display:flex; align-items:flex-start; gap:10px; padding:12px 0; border-bottom:1px dashed var(--border-soft);
+}
+.topic-item:last-child{border-bottom:none;}
+.topic-item input[type=checkbox]{
+  margin-top:3px; width:17px; height:17px; accent-color:var(--cyan); cursor:pointer; flex:0 0 auto;
+}
+.topic-item .tbody{flex:1; min-width:0;}
+.topic-item label{font-size:14px; font-weight:600; cursor:pointer; display:block;}
+.topic-item.done label{color:var(--text-faint); text-decoration:line-through; text-decoration-color:var(--border);}
+.topic-item .links{margin-top:4px; font-size:12px;}
+.topic-item .links a{margin-right:12px;}
+.tip{
+  margin-top:6px; font-size:12.5px; color:var(--text-dim); background:var(--bg2);
+  border-left:3px solid var(--yellow); padding:7px 10px; border-radius:5px;
+}
+.tip b{color:var(--yellow);}
+.tip.trap{border-left-color:var(--red);}
+.tip.trap b{color:var(--red);}
+
+.useful-links{
+  margin-top:10px; padding:12px 14px; background:var(--bg2); border-radius:8px; border:1px solid var(--border-soft);
+}
+.useful-links .ul-title{font-size:11px; letter-spacing:1px; text-transform:uppercase; color:var(--text-faint); font-weight:700; margin-bottom:6px;}
+.useful-links a{display:block; font-size:13px; margin-bottom:4px;}
+
+/* ---------- STRATEGY / TIPS SECTIONS ---------- */
+.section-plain{padding:30px 0 10px;}
+.section-plain h2{font-size:20px; font-weight:800; margin-bottom:6px; color:var(--text);}
+.section-plain .sub{color:var(--text-dim); font-size:13px; margin-bottom:16px;}
+.grid2{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
+@media(max-width:640px){.grid2{grid-template-columns:1fr;}}
+.card{background:var(--panel); border:1px solid var(--border); border-radius:var(--radius); padding:16px;}
+.card h4{font-size:14px; color:var(--cyan); margin-bottom:8px;}
+.card ul{padding-left:18px; font-size:13px; color:var(--text-dim);}
+.card ul li{margin-bottom:5px;}
+
+table.cmp{width:100%; border-collapse:collapse; font-size:13px; margin-top:8px;}
+table.cmp th, table.cmp td{padding:8px 10px; border:1px solid var(--border-soft); text-align:left;}
+table.cmp th{background:var(--panel2); color:var(--cyan); font-size:11.5px; text-transform:uppercase; letter-spacing:0.5px;}
+table.cmp tr:nth-child(even){background:rgba(255,255,255,0.015);}
+
+.oa-box{
+  background:linear-gradient(135deg, rgba(0,247,255,0.05), rgba(187,154,247,0.04));
+  border:1px solid var(--border); border-radius:var(--radius); padding:18px; margin-top:10px;
+}
+.oa-box h3{font-size:15px; color:var(--cyan); margin-bottom:8px;}
+.oa-box p{font-size:13px; color:var(--text-dim); margin-bottom:10px;}
+.pill-row{display:flex; flex-wrap:wrap; gap:8px;}
+.pill-row a{
+  background:var(--panel2); border:1px solid var(--border); padding:6px 12px; border-radius:16px;
+  font-size:12px; color:var(--text);
+}
+.pill-row a:hover{border-color:var(--cyan-dim); color:var(--cyan);}
+
+footer{text-align:center; padding:30px 20px 10px; font-size:11.5px; color:var(--text-faint);}
+
+/* reset button */
+.reset-row{text-align:center; margin-top:10px;}
+.reset-row button{
+  background:transparent; border:1px solid var(--border); color:var(--text-faint);
+  padding:6px 14px; border-radius:8px; font-size:11.5px; cursor:pointer;
+}
+.reset-row button:hover{border-color:var(--red); color:var(--red);}
+</style>
+</head>
+<body>
+<div class="hero">
+<div class="eyebrow">Placement Prep · Core CS Revision</div>
+<h1>21-Day CS Core Sprint</h1>
+<p class="sub">DBMS → OS → Computer Networks → Software Engineering. Every topic, every link, and interview-trap notes in one file — built for fast revision, not first-time learning.</p>
+<p class="source">Based on <a href="https://www.geeksforgeeks.org/blogs/prepare-cs-core-subjects-for-placements/" target="_blank">GeeksforGeeks: 21 Days to Prepare CS Core Subjects</a>, expanded with OA-round tips &amp; interview traps</p>
+<div class="overall-progress">
+<div class="row"><span>Overall progress</span><span id="opct">0%</span></div>
+<div class="bar-track"><div class="bar-fill" id="obar"></div></div>
+</div>
+</div>
+<nav class="top" id="topnav">
+<button class="active" data-target="dbms">DBMS · D1-5</button>
+<button data-target="os">OS · D6-12</button>
+<button data-target="cn">CN · D13-16</button>
+<button data-target="se">SE · D17-21</button>
+<button data-target="oa">OA Tips</button>
+<button data-target="strategy">Strategy</button>
+</nav>
+<div class="wrap">
+<!-- ===================== DBMS ===================== -->
+<div class="subject-block" id="dbms">
+<div class="subject-head">
+<span class="tag dbms">DBMS</span>
+<h2>Database Management System</h2>
+<span class="days-range">Day 1 – 5</span>
+</div>
+<p class="subject-intro">Second most-asked subject after DSA. Interviewers probe normalization, ACID, keys, joins, and expect you to write SQL on a whiteboard/notepad — not just define terms.</p>
+<div class="day-card dbms" data-day="1" id="day-1">
+<div class="day-header">
+<div class="daynum">D1</div>
+<div class="titles"><h3>Basics of DBMS + ER Model</h3><div class="meta">5 topics</div></div>
+<div class="day-progress-mini">0/5</div>
+<div class="chev">▶</div>
+</div>
+<div class="day-body">
+<div class="topic-item"><input data-id="d1t1" type="checkbox"/><div class="tbody">
+<label>Introduction to DBMS &amp; file system limitations</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/dbms/introduction-of-dbms-database-management-system-set-1/" target="_blank">Intro to DBMS</a><a href="https://www.geeksforgeeks.org/dbms/advantages-of-dbms-over-file-system/" target="_blank">DBMS vs File System</a></div>
+<div class="tip"><b>Say this:</b> data redundancy, integrity constraints, concurrent access, and crash recovery are the 4 things a file system can't give you but DBMS can.</div>
+</div></div>
+<div class="topic-item"><input data-id="d1t2" type="checkbox"/><div class="tbody">
+<label>3-Tier Architecture &amp; DBMS Architecture (1/2/3-level)</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/dbms/introduction-of-3-tier-architecture-in-dbms-set-2/" target="_blank">3-Tier Architecture</a><a href="https://www.geeksforgeeks.org/dbms/dbms-architecture-2-level-3-level/" target="_blank">DBMS Architecture Levels</a></div>
+<div class="tip trap"><b>Trap:</b> "2-tier" = client talks directly to DB (no app server). "3-tier" adds an application layer in between — used in almost every real SaaS backend (like your own PackSage stack).</div>
+</div></div>
+<div class="topic-item"><input data-id="d1t3" type="checkbox"/><div class="tbody">
+<label>ER Model — entities, attributes, relationships, cardinality</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/dbms/introduction-of-er-model/" target="_blank">Introduction of ER Model</a></div>
+<div class="tip">Be ready to draw a quick ER diagram on paper/whiteboard for a simple domain (e.g. "e-commerce orders") — very common OA/interview ask.</div>
+</div></div>
+<div class="topic-item"><input data-id="d1t4" type="checkbox"/><div class="tbody">
+<label>Types of Keys — Candidate, Super, Primary, Alternate, Foreign</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/dbms/types-of-keys-in-relational-model-candidate-super-primary-alternate-and-foreign/" target="_blank">Types of Keys</a></div>
+<div class="tip trap"><b>Trap:</b> every candidate key is a super key, but not every super key is a candidate key (super key can have extra redundant attributes). Primary key = the chosen candidate key.</div>
+</div></div>
+<div class="topic-item"><input data-id="d1t5" type="checkbox"/><div class="tbody">
+<label>Relational Algebra — basic operators (σ, π, ⋈, ∪, −)</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/dbms/introduction-of-relational-algebra-in-dbms/" target="_blank">Relational Algebra</a></div>
+<div class="tip">Know that SQL is a practical implementation of relational algebra — mapping SELECT→π, WHERE→σ, JOIN→⋈ helps you reason about query optimization questions.</div>
+</div></div>
+</div>
+</div>
+<div class="day-card dbms" data-day="2" id="day-2">
+<div class="day-header">
+<div class="daynum">D2</div>
+<div class="titles"><h3>Joins &amp; Query Comparisons</h3><div class="meta">2 topics</div></div>
+<div class="day-progress-mini">0/2</div><div class="chev">▶</div>
+</div>
+<div class="day-body">
+<div class="topic-item"><input data-id="d2t1" type="checkbox"/><div class="tbody">
+<label>Inner Join vs Outer Join (Left/Right/Full)</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/dbms/inner-join-vs-outer-join/" target="_blank">Inner vs Outer Join</a></div>
+<div class="tip trap"><b>Trap:</b> LEFT JOIN keeps all rows of the left table even with no match (NULLs on right) — interviewers love asking you to predict output row-count for a given join type + sample data.</div>
+</div></div>
+<div class="topic-item"><input data-id="d2t2" type="checkbox"/><div class="tbody">
+<label>Join operation vs Nested Subquery — when to prefer which</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/interview-experiences/join-operation-vs-nested-query-in-dbms/" target="_blank">Join vs Nested Query</a></div>
+<div class="tip">Joins are generally faster (optimizer-friendly, single pass) vs correlated subqueries that can re-execute per outer row. Good follow-up: "how would you rewrite this subquery as a join?"</div>
+</div></div>
+</div>
+</div>
+<div class="day-card dbms" data-day="3" id="day-3">
+<div class="day-header">
+<div class="daynum">D3</div>
+<div class="titles"><h3>Normalization</h3><div class="meta">5 topics</div></div>
+<div class="day-progress-mini">0/5</div><div class="chev">▶</div>
+</div>
+<div class="day-body">
+<div class="topic-item"><input data-id="d3t1" type="checkbox"/><div class="tbody">
+<label>Introduction to Normalization + Functional Dependencies</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/dbms/introduction-of-database-normalization/" target="_blank">Intro to Normalization</a></div>
+</div></div>
+<div class="topic-item"><input data-id="d3t2" type="checkbox"/><div class="tbody">
+<label>Normal Forms — 1NF, 2NF, 3NF, BCNF</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/dbms/normal-forms-in-dbms/" target="_blank">Normal Forms</a></div>
+<div class="tip trap"><b>Trap #1 asked topic:</b> memorize the exact difference between 3NF and BCNF — BCNF is stricter (every determinant must be a candidate key, not just handles transitive dependency like 3NF). Be ready to normalize a sample table live.</div>
+</div></div>
+<div class="topic-item"><input data-id="d3t3" type="checkbox"/><div class="tbody">
+<label>Lossless Join Decomposition</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/dbms/lossless-decomposition-in-dbms/" target="_blank">Lossless Decomposition</a></div>
+</div></div>
+<div class="topic-item"><input data-id="d3t4" type="checkbox"/><div class="tbody">
+<label>4th &amp; 5th Normal Form (multivalued / join dependency)</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/dbms/introduction-of-4th-and-5th-normal-form-in-dbms/" target="_blank">4NF &amp; 5NF</a></div>
+</div></div>
+<div class="topic-item"><input data-id="d3t5" type="checkbox"/><div class="tbody">
+<label>Denormalization — when &amp; why to intentionally break normal forms</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/dbms/denormalization-in-databases/" target="_blank">Denormalization</a></div>
+<div class="tip">Great system-design talking point: denormalize for read-heavy analytics/reporting workloads to cut join costs, at the price of update anomalies.</div>
+</div></div>
+</div>
+</div>
+<div class="day-card dbms" data-day="4" id="day-4">
+<div class="day-header">
+<div class="daynum">D4</div>
+<div class="titles"><h3>Transactions &amp; Concurrency Control</h3><div class="meta">7 topics</div></div>
+<div class="day-progress-mini">0/7</div><div class="chev">▶</div>
+</div>
+<div class="day-body">
+<div class="topic-item"><input data-id="d4t1" type="checkbox"/><div class="tbody">
+<label>ACID Properties</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/dbms/acid-properties-in-dbms/" target="_blank">ACID Properties</a></div>
+<div class="tip trap"><b>Trap:</b> Most-asked one-liner. Have a crisp real example ready for each: Atomicity (bank transfer rollback), Consistency (constraints hold), Isolation (concurrent txns don't see partial state), Durability (commit survives crash).</div>
+</div></div>
+<div class="topic-item"><input data-id="d4t2" type="checkbox"/><div class="tbody">
+<label>Concurrency Control — why it's needed</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/dbms/concurrency-control-in-dbms/" target="_blank">Concurrency Control</a></div>
+</div></div>
+<div class="topic-item"><input data-id="d4t3" type="checkbox"/><div class="tbody">
+<label>Locking — shared/exclusive locks, 2PL</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/dbms/implementation-of-locking-in-dbms/" target="_blank">Implementation of Locking</a></div>
+</div></div>
+<div class="topic-item"><input data-id="d4t4" type="checkbox"/><div class="tbody">
+<label>Types of Schedules — serial, non-serial</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/dbms/types-of-schedules-in-dbms/" target="_blank">Types of Schedules</a></div>
+</div></div>
+<div class="topic-item"><input data-id="d4t5" type="checkbox"/><div class="tbody">
+<label>Conflict Serializability vs View Serializability</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/dbms/conflict-serializability-in-dbms/" target="_blank">Conflict Serializability</a><a href="https://www.geeksforgeeks.org/dbms/condition-of-schedules-to-be-view-equivalent/" target="_blank">View Serializability</a></div>
+<div class="tip trap"><b>Trap:</b> every conflict-serializable schedule is view-serializable, but not vice versa. Practice drawing the precedence graph — if it has a cycle, the schedule is NOT conflict-serializable.</div>
+</div></div>
+<div class="topic-item"><input data-id="d4t6" type="checkbox"/><div class="tbody">
+<label>Starvation in DBMS</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/dbms/starvation-in-dbms/" target="_blank">Starvation in DBMS</a></div>
+</div></div>
+<div class="topic-item"><input data-id="d4t7" type="checkbox"/><div class="tbody">
+<label>Deadlock in DBMS — detection &amp; prevention</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/dbms/deadlock-in-dbms/" target="_blank">Deadlock in DBMS</a></div>
+</div></div>
+</div>
+</div>
+<div class="day-card dbms" data-day="5" id="day-5">
+<div class="day-header">
+<div class="daynum">D5</div>
+<div class="titles"><h3>SQL Tutorial (hands-on)</h3><div class="meta">7 topics</div></div>
+<div class="day-progress-mini">0/7</div><div class="chev">▶</div>
+</div>
+<div class="day-body">
+<div class="topic-item"><input data-id="d5t1" type="checkbox"/><div class="tbody">
+<label>Introduction to SQL — DDL/DML/DCL/TCL</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/dbms/structured-query-language/" target="_blank">Intro to SQL</a></div>
+</div></div>
+<div class="topic-item"><input data-id="d5t2" type="checkbox"/><div class="tbody">
+<label>SQL Data Types</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/sql/sql-data-types/" target="_blank">SQL Data Types</a></div>
+</div></div>
+<div class="topic-item"><input data-id="d5t3" type="checkbox"/><div class="tbody">
+<label>SQL Operators</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/sql/sql-operators/" target="_blank">SQL Operators</a></div>
+</div></div>
+<div class="topic-item"><input data-id="d5t4" type="checkbox"/><div class="tbody">
+<label>SQL Clauses — WHERE, GROUP BY, HAVING, ORDER BY</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/sql/sql-tutorial/" target="_blank">SQL Tutorial (clauses covered here)</a></div>
+<div class="tip trap"><b>Trap:</b> WHERE filters rows before grouping; HAVING filters groups after aggregation. Asking you to spot the bug in a query that uses WHERE with an aggregate function is a classic OA MCQ.</div>
+</div></div>
+<div class="topic-item"><input data-id="d5t5" type="checkbox"/><div class="tbody">
+<label>SQL Functions (Advanced)</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/sql/sql-advanced-functions/" target="_blank">SQL Advanced Functions</a></div>
+</div></div>
+<div class="topic-item"><input data-id="d5t6" type="checkbox"/><div class="tbody">
+<label>Aggregate Functions vs Scalar Functions</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/sql/sql-functions-aggregate-scalar-functions/" target="_blank">Aggregate vs Scalar Functions</a></div>
+</div></div>
+<div class="topic-item"><input data-id="d5t7" type="checkbox"/><div class="tbody">
+<label>SQL Queries — practice writing joins, subqueries, window functions</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/sql/sql-concepts-and-queries/" target="_blank">SQL Concepts &amp; Queries</a><a href="https://www.geeksforgeeks.org/quizzes/sql-gq/" target="_blank">Quiz on SQL</a></div>
+<div class="tip">If time is short, prioritize this: write 2nd-highest-salary, department-wise top-N, and self-join queries from memory. These 3 patterns cover ~70% of SQL rounds.</div>
+</div></div>
+</div>
+</div>
+<div class="useful-links">
+<div class="ul-title">DBMS · Useful Links</div>
+<a href="https://www.geeksforgeeks.org/dbms/dbms/" target="_blank">DBMS Tutorial — full index</a>
+<a href="https://www.geeksforgeeks.org/sql/sql-tutorial/" target="_blank">SQL Tutorial — full index</a>
+</div>
+</div>
+<!-- ===================== OS ===================== -->
+<div class="subject-block" id="os">
+<div class="subject-head">
+<span class="tag os">OS</span>
+<h2>Operating Systems</h2>
+<span class="days-range">Day 6 – 12</span>
+</div>
+<p class="subject-intro">Broadest core subject — scheduling, synchronization, deadlocks, and memory management show up in almost every core-CS + some SDE interviews. Weak OS answers can eliminate you even with strong DSA.</p>
+<div class="day-card os" data-day="6" id="day-6">
+<div class="day-header">
+<div class="daynum">D6</div>
+<div class="titles"><h3>Introduction to OS &amp; Types</h3><div class="meta">6 topics</div></div>
+<div class="day-progress-mini">0/6</div><div class="chev">▶</div>
+</div>
+<div class="day-body">
+<div class="topic-item"><input data-id="d6t1" type="checkbox"/><div class="tbody">
+<label>Types of Operating Systems (Batch, Time-Sharing, Distributed, RTOS...)</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/types-of-operating-systems/" target="_blank">Types of OS</a></div>
+</div></div>
+<div class="topic-item"><input data-id="d6t2" type="checkbox"/><div class="tbody">
+<label>Multiprogramming in OS</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/operating-systems/multiprogramming-in-operating-system/" target="_blank">Multiprogramming</a></div>
+<div class="tip trap"><b>Trap:</b> Multiprogramming (keep CPU busy, no time bound) ≠ Multitasking (time-shared, user sees concurrency) ≠ Multiprocessing (multiple CPUs). These 3 get mixed up in MCQs constantly.</div>
+</div></div>
+<div class="topic-item"><input data-id="d6t3" type="checkbox"/><div class="tbody">
+<label>Time-Sharing OS</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/operating-systems/time-sharing-operating-system/" target="_blank">Time-Sharing OS</a></div>
+</div></div>
+<div class="topic-item"><input data-id="d6t4" type="checkbox"/><div class="tbody">
+<label>Network Operating System</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/operating-systems/what-is-a-network-operating-system/" target="_blank">Network OS</a></div>
+</div></div>
+<div class="topic-item"><input data-id="d6t5" type="checkbox"/><div class="tbody">
+<label>Real-Time OS (RTOS) — hard vs soft real-time</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/operating-systems/real-time-operating-system-rtos/" target="_blank">RTOS</a></div>
+</div></div>
+<div class="topic-item"><input data-id="d6t6" type="checkbox"/><div class="tbody">
+<label>Functions of the Operating System</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/operating-systems/functions-of-operating-system/" target="_blank">Functions of OS</a></div>
+</div></div>
+</div>
+</div>
+<div class="day-card os" data-day="7" id="day-7">
+<div class="day-header">
+<div class="daynum">D7</div>
+<div class="titles"><h3>Process Management</h3><div class="meta">5 topics</div></div>
+<div class="day-progress-mini">0/5</div><div class="chev">▶</div>
+</div>
+<div class="day-body">
+<div class="topic-item"><input data-id="d7t1" type="checkbox"/><div class="tbody">
+<label>Introduction to Process Management</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/operating-systems/introduction-of-process-management/" target="_blank">Process Management</a></div>
+</div></div>
+<div class="topic-item"><input data-id="d7t2" type="checkbox"/><div class="tbody">
+<label>Process Table &amp; PCB (Process Control Block)</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/operating-systems/process-table-and-process-control-block-pcb/" target="_blank">Process Table &amp; PCB</a></div>
+<div class="tip">Memorize what fields live in the PCB (process state, PC, registers, memory limits, I/O status) — very commonly asked to "list."</div>
+</div></div>
+<div class="topic-item"><input data-id="d7t3" type="checkbox"/><div class="tbody">
+<label>Operations on Processes — creation, termination, process states</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/operating-systems/operations-on-processes/" target="_blank">Operations on Processes</a></div>
+</div></div>
+<div class="topic-item"><input data-id="d7t4" type="checkbox"/><div class="tbody">
+<label>Context Switching</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/operating-systems/context-switch-in-operating-system/" target="_blank">Context Switch</a></div>
+<div class="tip">Be ready to explain context switch overhead and why it's "pure overhead" (no useful work done during the switch itself).</div>
+</div></div>
+<div class="topic-item"><input data-id="d7t5" type="checkbox"/><div class="tbody">
+<label>Preemptive vs Non-Preemptive Scheduling</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/operating-systems/preemptive-and-non-preemptive-scheduling/" target="_blank">Preemptive vs Non-Preemptive</a></div>
+</div></div>
+</div>
+</div>
+<div class="day-card os" data-day="8" id="day-8">
+<div class="day-header">
+<div class="daynum">D8</div>
+<div class="titles"><h3>CPU Scheduling</h3><div class="meta">4 topics</div></div>
+<div class="day-progress-mini">0/4</div><div class="chev">▶</div>
+</div>
+<div class="day-body">
+<div class="topic-item"><input data-id="d8t1" type="checkbox"/><div class="tbody">
+<label>CPU Scheduling Algorithms — FCFS, SJF, Priority, Round Robin</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/operating-systems/cpu-scheduling-in-operating-systems/" target="_blank">CPU Scheduling</a></div>
+<div class="tip trap"><b>OA staple:</b> practice hand-computing average waiting time / turnaround time for a given process table under each algorithm — this shows up as a direct numeric MCQ constantly.</div>
+</div></div>
+<div class="topic-item"><input data-id="d8t2" type="checkbox"/><div class="tbody">
+<label>CPU Scheduling Criteria (throughput, turnaround, waiting, response time)</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/operating-systems/cpu-scheduling-criteria/" target="_blank">Scheduling Criteria</a></div>
+</div></div>
+<div class="topic-item"><input data-id="d8t3" type="checkbox"/><div class="tbody">
+<label>Multiple-Processor Scheduling</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/operating-systems/multiple-processor-scheduling-in-operating-system/" target="_blank">Multi-Processor Scheduling</a></div>
+</div></div>
+<div class="topic-item"><input data-id="d8t4" type="checkbox"/><div class="tbody">
+<label>Thread Scheduling</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/operating-systems/thread-scheduling/" target="_blank">Thread Scheduling</a></div>
+</div></div>
+</div>
+</div>
+<div class="day-card os" data-day="9" id="day-9">
+<div class="day-header">
+<div class="daynum">D9</div>
+<div class="titles"><h3>Process Synchronization</h3><div class="meta">4 topics</div></div>
+<div class="day-progress-mini">0/4</div><div class="chev">▶</div>
+</div>
+<div class="day-body">
+<div class="topic-item"><input data-id="d9t1" type="checkbox"/><div class="tbody">
+<label>Introduction to Process Synchronization</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/operating-systems/introduction-of-process-synchronization/" target="_blank">Process Synchronization</a></div>
+</div></div>
+<div class="topic-item"><input data-id="d9t2" type="checkbox"/><div class="tbody">
+<label>Race Condition Vulnerability</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/operating-systems/race-condition-vulnerability/" target="_blank">Race Condition</a></div>
+<div class="tip">Have one concrete real-world example ready (e.g. two threads incrementing a shared counter) and explain why it isn't atomic at the instruction level.</div>
+</div></div>
+<div class="topic-item"><input data-id="d9t3" type="checkbox"/><div class="tbody">
+<label>Critical Section — the 3 conditions (mutual exclusion, progress, bounded wait)</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/operating-systems/critical-section-in-synchronization/" target="_blank">Critical Section</a></div>
+</div></div>
+<div class="topic-item"><input data-id="d9t4" type="checkbox"/><div class="tbody">
+<label>Mutual Exclusion — Peterson's solution</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/operating-systems/mutual-exclusion-in-synchronization/" target="_blank">Mutual Exclusion</a></div>
+</div></div>
+</div>
+</div>
+<div class="day-card os" data-day="10" id="day-10">
+<div class="day-header">
+<div class="daynum">D10</div>
+<div class="titles"><h3>Semaphores &amp; Classical Problems</h3><div class="meta">4 topics</div></div>
+<div class="day-progress-mini">0/4</div><div class="chev">▶</div>
+</div>
+<div class="day-body">
+<div class="topic-item"><input data-id="d10t1" type="checkbox"/><div class="tbody">
+<label>Semaphores in Process Synchronization</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/operating-systems/semaphores-in-process-synchronization/" target="_blank">Semaphores</a></div>
+</div></div>
+<div class="topic-item"><input data-id="d10t2" type="checkbox"/><div class="tbody">
+<label>Types of Semaphores — binary (mutex) vs counting</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/operating-systems/semaphores-and-its-types/" target="_blank">Semaphore Types</a></div>
+<div class="tip trap"><b>Trap:</b> a mutex is locked/unlocked by the same thread; a binary semaphore can be signaled by a different thread than the one that waited — this distinction is a favorite "gotcha" question.</div>
+</div></div>
+<div class="topic-item"><input data-id="d10t3" type="checkbox"/><div class="tbody">
+<label>Readers-Writers Problem</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/operating-systems/readers-writers-problem-set-1-introduction-and-readers-preference-solution/" target="_blank">Readers-Writers Problem</a></div>
+</div></div>
+<div class="topic-item"><input data-id="d10t4" type="checkbox"/><div class="tbody">
+<label>Producer-Consumer Problem using Semaphores</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/operating-systems/producer-consumer-problem-using-semaphores-set-1/" target="_blank">Producer-Consumer Problem</a></div>
+<div class="tip">Be able to sketch the semaphore pseudocode (empty, full, mutex) from memory — this is the single most-drawn diagram in OS interviews.</div>
+</div></div>
+</div>
+</div>
+<div class="day-card os" data-day="11" id="day-11">
+<div class="day-header">
+<div class="daynum">D11</div>
+<div class="titles"><h3>Deadlocks</h3><div class="meta">4 topics</div></div>
+<div class="day-progress-mini">0/4</div><div class="chev">▶</div>
+</div>
+<div class="day-body">
+<div class="topic-item"><input data-id="d11t1" type="checkbox"/><div class="tbody">
+<label>Introduction to Deadlock</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/operating-systems/introduction-of-deadlock-in-operating-system/" target="_blank">Introduction to Deadlock</a></div>
+</div></div>
+<div class="topic-item"><input data-id="d11t2" type="checkbox"/><div class="tbody">
+<label>4 Necessary Conditions for Deadlock (Coffman conditions)</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/operating-systems/conditions-for-deadlock-in-operating-system/" target="_blank">Conditions for Deadlock</a></div>
+<div class="tip trap"><b>Must memorize verbatim:</b> Mutual Exclusion, Hold &amp; Wait, No Preemption, Circular Wait — breaking ANY one prevents deadlock. Interviewers ask "how would you prevent it" expecting you to map to one of these 4.</div>
+</div></div>
+<div class="topic-item"><input data-id="d11t3" type="checkbox"/><div class="tbody">
+<label>Banker's Algorithm — safe state check</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/operating-systems/bankers-algorithm-in-operating-system-2/" target="_blank">Banker's Algorithm</a></div>
+<div class="tip">Practice one full worked example (Allocation/Max/Available matrices → find a safe sequence) by hand — this is a very common written/OA question.</div>
+</div></div>
+<div class="topic-item"><input data-id="d11t4" type="checkbox"/><div class="tbody">
+<label>Handling Deadlocks — prevention, avoidance, detection &amp; recovery</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/operating-systems/handling-deadlocks/" target="_blank">Handling Deadlocks</a></div>
+</div></div>
+</div>
+</div>
+<div class="day-card os" data-day="12" id="day-12">
+<div class="day-header">
+<div class="daynum">D12</div>
+<div class="titles"><h3>Memory Management &amp; Page Replacement</h3><div class="meta">7 topics</div></div>
+<div class="day-progress-mini">0/7</div><div class="chev">▶</div>
+</div>
+<div class="day-body">
+<div class="topic-item"><input data-id="d12t1" type="checkbox"/><div class="tbody">
+<label>Memory Management overview</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/operating-systems/memory-management-in-operating-system/" target="_blank">Memory Management</a></div>
+</div></div>
+<div class="topic-item"><input data-id="d12t2" type="checkbox"/><div class="tbody">
+<label>Paging</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/operating-systems/paging-in-operating-system/" target="_blank">Paging</a></div>
+<div class="tip trap"><b>Trap:</b> paging removes external fragmentation but can still cause internal fragmentation (last page partially filled). Segmentation is the reverse — know both directions.</div>
+</div></div>
+<div class="topic-item"><input data-id="d12t3" type="checkbox"/><div class="tbody">
+<label>Segmentation</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/operating-systems/segmentation-in-operating-system/" target="_blank">Segmentation</a></div>
+</div></div>
+<div class="topic-item"><input data-id="d12t4" type="checkbox"/><div class="tbody">
+<label>Virtual Memory</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/operating-systems/virtual-memory-in-operating-system/" target="_blank">Virtual Memory</a></div>
+</div></div>
+<div class="topic-item"><input data-id="d12t5" type="checkbox"/><div class="tbody">
+<label>Page Replacement Algorithms — FIFO, LRU, Optimal</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/operating-systems/page-replacement-algorithms-in-operating-systems/" target="_blank">Page Replacement Algorithms</a></div>
+<div class="tip">Practice tracing FIFO vs LRU vs Optimal on the same reference string by hand — near-guaranteed OA numeric question.</div>
+</div></div>
+<div class="topic-item"><input data-id="d12t6" type="checkbox"/><div class="tbody">
+<label>Belady's Anomaly</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/operating-systems/beladys-anomaly-in-page-replacement-algorithms/" target="_blank">Belady's Anomaly</a></div>
+<div class="tip trap"><b>Trap:</b> Belady's Anomaly (more frames → more page faults) happens with FIFO, but never with LRU or Optimal. This exact fact is a recurring MCQ.</div>
+</div></div>
+<div class="topic-item"><input data-id="d12t7" type="checkbox"/><div class="tbody">
+<label>Optimal Page Replacement Algorithm (deep dive)</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/dsa/optimal-page-replacement-algorithm/" target="_blank">Optimal Page Replacement</a></div>
+</div></div>
+</div>
+</div>
+<div class="useful-links">
+<div class="ul-title">OS · Useful Links</div>
+<a href="https://www.geeksforgeeks.org/operating-systems/last-minute-notes-operating-systems/" target="_blank">Last Minute Notes — Operating Systems</a>
+<a href="https://www.geeksforgeeks.org/operating-systems/operating-systems-interview-questions/" target="_blank">Commonly Asked OS Interview Questions</a>
+</div>
+</div>
+<!-- ===================== CN ===================== -->
+<div class="subject-block" id="cn">
+<div class="subject-head">
+<span class="tag cn">CN</span>
+<h2>Computer Networks</h2>
+<span class="days-range">Day 13 – 16</span>
+</div>
+<p class="subject-intro">Less frequent in pure SDE rounds, but a few basic networking MCQs show up in most OAs, and it's core for network/infra-adjacent roles. Focus breadth over depth here.</p>
+<div class="day-card cn" data-day="13" id="day-13">
+<div class="day-header">
+<div class="daynum">D13</div>
+<div class="titles"><h3>Basics of Computer Networks</h3><div class="meta">6 topics</div></div>
+<div class="day-progress-mini">0/6</div><div class="chev">▶</div>
+</div>
+<div class="day-body">
+<div class="topic-item"><input data-id="d13t1" type="checkbox"/><div class="tbody">
+<label>Basics of Computer Networking</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/computer-networks/basics-computer-networking/" target="_blank">Basics of Networking</a></div>
+</div></div>
+<div class="topic-item"><input data-id="d13t2" type="checkbox"/><div class="tbody">
+<label>Network Topologies — star, bus, ring, mesh, hybrid</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/computer-networks/types-of-network-topology/" target="_blank">Network Topologies</a></div>
+</div></div>
+<div class="topic-item"><input data-id="d13t3" type="checkbox"/><div class="tbody">
+<label>Basic Networking Terminology</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/computer-networks/introduction-to-basic-networking-terminology/" target="_blank">Networking Terminology</a></div>
+</div></div>
+<div class="topic-item"><input data-id="d13t4" type="checkbox"/><div class="tbody">
+<label>LAN, MAN, WAN</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/types-of-area-networks-lan-man-and-wan/" target="_blank">LAN vs MAN vs WAN</a></div>
+</div></div>
+<div class="topic-item"><input data-id="d13t5" type="checkbox"/><div class="tbody">
+<label>TCP/IP Model</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/computer-networks/tcp-ip-model/" target="_blank">TCP/IP Model</a></div>
+</div></div>
+<div class="topic-item"><input data-id="d13t6" type="checkbox"/><div class="tbody">
+<label>OSI Model (7 layers)</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/computer-networks/open-systems-interconnection-model-osi/" target="_blank">OSI Model</a></div>
+<div class="tip trap"><b>Trap:</b> OSI has 7 layers, TCP/IP has 4-5 (models vary). Know "Please Do Not Throw Sausage Pizza Away" (Physical–Data Link–Network–Transport–Session–Presentation–Application) cold — asked as a rapid-fire MCQ constantly.</div>
+</div></div>
+</div>
+</div>
+<div class="day-card cn" data-day="14" id="day-14">
+<div class="day-header">
+<div class="daynum">D14</div>
+<div class="titles"><h3>Data Link Layer</h3><div class="meta">7 topics</div></div>
+<div class="day-progress-mini">0/7</div><div class="chev">▶</div>
+</div>
+<div class="day-body">
+<div class="topic-item"><input data-id="d14t1" type="checkbox"/><div class="tbody">
+<label>Ethernet (LAN Technologies)</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/computer-networks/what-is-ethernet/" target="_blank">Ethernet</a></div>
+</div></div>
+<div class="topic-item"><input data-id="d14t2" type="checkbox"/><div class="tbody">
+<label>MAC Address</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/computer-networks/mac-address-in-computer-network/" target="_blank">MAC Address</a></div>
+<div class="tip trap"><b>Trap:</b> MAC address = physical/hardware, fixed to NIC, works at Data Link layer. IP address = logical, changes, works at Network layer. Classic MCQ pair.</div>
+</div></div>
+<div class="topic-item"><input data-id="d14t3" type="checkbox"/><div class="tbody">
+<label>CSMA (Carrier Sense Multiple Access)</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/computer-networks/carrier-sense-multiple-access-csma/" target="_blank">CSMA</a></div>
+</div></div>
+<div class="topic-item"><input data-id="d14t4" type="checkbox"/><div class="tbody">
+<label>Basics of Wi-Fi</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/computer-networks/basics-of-wi-fi/" target="_blank">Basics of Wi-Fi</a></div>
+</div></div>
+<div class="topic-item"><input data-id="d14t5" type="checkbox"/><div class="tbody">
+<label>Virtual LAN (VLAN)</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/computer-networks/virtual-lan-vlan/" target="_blank">VLAN</a></div>
+</div></div>
+<div class="topic-item"><input data-id="d14t6" type="checkbox"/><div class="tbody">
+<label>Stop-and-Wait ARQ</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/computer-networks/stop-and-wait-arq/" target="_blank">Stop-and-Wait ARQ</a></div>
+</div></div>
+<div class="topic-item"><input data-id="d14t7" type="checkbox"/><div class="tbody">
+<label>Sliding Window Protocol</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/computer-networks/sliding-window-protocol-set-1/" target="_blank">Sliding Window Protocol</a></div>
+</div></div>
+</div>
+</div>
+<div class="day-card cn" data-day="15" id="day-15">
+<div class="day-header">
+<div class="daynum">D15</div>
+<div class="titles"><h3>Network Layer</h3><div class="meta">8 topics</div></div>
+<div class="day-progress-mini">0/8</div><div class="chev">▶</div>
+</div>
+<div class="day-body">
+<div class="topic-item"><input data-id="d15t1" type="checkbox"/><div class="tbody">
+<label>IPv4 Datagram Header</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/computer-networks/introduction-and-ipv4-datagram-header/" target="_blank">IPv4 Datagram Header</a></div>
+</div></div>
+<div class="topic-item"><input data-id="d15t2" type="checkbox"/><div class="tbody">
+<label>IP Addressing — classful addressing</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/computer-networks/introduction-of-classful-ip-addressing/" target="_blank">Classful IP Addressing</a></div>
+<div class="tip">Know how to compute network/host bits and subnet count from a given subnet mask — common OA calculation question.</div>
+</div></div>
+<div class="topic-item"><input data-id="d15t3" type="checkbox"/><div class="tbody">
+<label>Types of Routing — static, default, dynamic</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/computer-networks/types-of-routing/" target="_blank">Types of Routing</a></div>
+</div></div>
+<div class="topic-item"><input data-id="d15t4" type="checkbox"/><div class="tbody">
+<label>Unicast Routing — Link State Routing</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/computer-networks/unicast-routing-link-state-routing/" target="_blank">Link State Routing</a></div>
+</div></div>
+<div class="topic-item"><input data-id="d15t5" type="checkbox"/><div class="tbody">
+<label>Wi-Fi Protected Access (WPA)</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/computer-networks/wifi-protected-access-wpa/" target="_blank">WPA</a></div>
+</div></div>
+<div class="topic-item"><input data-id="d15t6" type="checkbox"/><div class="tbody">
+<label>Wi-Fi Protected Setup (WPS)</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/computer-networks/wifi-protected-setup-wps/" target="_blank">WPS</a></div>
+</div></div>
+<div class="topic-item"><input data-id="d15t7" type="checkbox"/><div class="tbody">
+<label>LiFi vs WiFi</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/computer-networks/difference-between-lifi-and-wifi/" target="_blank">LiFi vs WiFi</a></div>
+</div></div>
+<div class="topic-item"><input data-id="d15t8" type="checkbox"/><div class="tbody">
+<label>IPv4 vs IPv6</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/computer-networks/differences-between-ipv4-and-ipv6/" target="_blank">IPv4 vs IPv6</a></div>
+<div class="tip trap"><b>Trap:</b> IPv4 = 32-bit (~4.3B addresses), IPv6 = 128-bit. IPv6 removes the need for NAT and has no built-in checksum field (relies on lower/upper layers) — a detail interviewers use to check real understanding vs rote memorization.</div>
+</div></div>
+</div>
+</div>
+<div class="day-card cn" data-day="16" id="day-16">
+<div class="day-header">
+<div class="daynum">D16</div>
+<div class="titles"><h3>Transport &amp; Application Layer</h3><div class="meta">13 topics</div></div>
+<div class="day-progress-mini">0/13</div><div class="chev">▶</div>
+</div>
+<div class="day-body">
+<div class="topic-item"><input data-id="d16t1" type="checkbox"/><div class="tbody">
+<label>TCP Connection Establishment — 3-way handshake</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/computer-networks/tcp-connection-establishment/" target="_blank">TCP 3-Way Handshake</a></div>
+<div class="tip trap"><b>Highest-frequency CN question:</b> SYN → SYN-ACK → ACK. Also know 4-way termination (FIN, ACK, FIN, ACK) and why TIME_WAIT state exists.</div>
+</div></div>
+<div class="topic-item"><input data-id="d16t2" type="checkbox"/><div class="tbody">
+<label>Transport Layer Responsibilities</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/computer-networks/transport-layer-responsibilities/" target="_blank">Transport Layer Responsibilities</a></div>
+</div></div>
+<div class="topic-item"><input data-id="d16t3" type="checkbox"/><div class="tbody">
+<label>Multiplexing &amp; Demultiplexing</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/computer-networks/multiplexing-and-demultiplexing-in-transport-layer/" target="_blank">Multiplexing / Demultiplexing</a></div>
+</div></div>
+<div class="topic-item"><input data-id="d16t4" type="checkbox"/><div class="tbody">
+<label>UDP — connectionless transport</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/computer-networks/user-datagram-protocol-udp/" target="_blank">UDP</a></div>
+<div class="tip trap"><b>Trap:</b> TCP is reliable/ordered/connection-oriented (handshake, ACKs); UDP is unreliable/unordered/connectionless but lower latency (used for DNS, video streaming, gaming). Always asked as "why would you use UDP over TCP?"</div>
+</div></div>
+<div class="topic-item"><input data-id="d16t5" type="checkbox"/><div class="tbody">
+<label>P2P File Sharing</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/computer-networks/p2p-peer-to-peer-file-sharing/" target="_blank">P2P File Sharing</a></div>
+</div></div>
+<div class="topic-item"><input data-id="d16t6" type="checkbox"/><div class="tbody">
+<label>Congestion Control — general concept</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/computer-networks/congestion-control-in-computer-networks/" target="_blank">Congestion Control</a></div>
+</div></div>
+<div class="topic-item"><input data-id="d16t7" type="checkbox"/><div class="tbody">
+<label>TCP Congestion Control — slow start, congestion avoidance</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/computer-networks/tcp-congestion-control/" target="_blank">TCP Congestion Control</a></div>
+</div></div>
+<div class="topic-item"><input data-id="d16t8" type="checkbox"/><div class="tbody">
+<label>Congestion Control Techniques</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/computer-networks/congestion-control-techniques-in-computer-networks/" target="_blank">Congestion Control Techniques</a></div>
+</div></div>
+<div class="topic-item"><input data-id="d16t9" type="checkbox"/><div class="tbody">
+<label>Application Layer Protocols overview</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/computer-networks/protocols-application-layer/" target="_blank">Application Layer Protocols</a></div>
+</div></div>
+<div class="topic-item"><input data-id="d16t10" type="checkbox"/><div class="tbody">
+<label>SMTP (Simple Mail Transfer Protocol)</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/computer-networks/simple-mail-transfer-protocol-smtp/" target="_blank">SMTP</a></div>
+</div></div>
+<div class="topic-item"><input data-id="d16t11" type="checkbox"/><div class="tbody">
+<label>DNS (Domain Name System)</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/computer-networks/domain-name-system-dns-in-application-layer/" target="_blank">DNS</a></div>
+<div class="tip">Be ready to explain the DNS resolution chain: browser cache → OS cache → resolver → root → TLD → authoritative server.</div>
+</div></div>
+<div class="topic-item"><input data-id="d16t12" type="checkbox"/><div class="tbody">
+<label>HTTP vs HTTPS</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/computer-networks/difference-between-http-and-https/" target="_blank">HTTP vs HTTPS</a></div>
+</div></div>
+<div class="topic-item"><input data-id="d16t13" type="checkbox"/><div class="tbody">
+<label>FTP, ATM, DHCP</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/computer-networks/file-transfer-protocol-ftp-in-application-layer/" target="_blank">FTP</a><a href="https://www.geeksforgeeks.org/computer-networks/asynchronous-transfer-mode-atm-in-computer-network/" target="_blank">ATM</a><a href="https://www.geeksforgeeks.org/computer-networks/dynamic-host-configuration-protocol-dhcp/" target="_blank">DHCP</a></div>
+</div></div>
+</div>
+</div>
+<div class="useful-links">
+<div class="ul-title">CN · Quizzes (fast self-check)</div>
+<a href="https://www.geeksforgeeks.org/quizzes/data-link-layer-gq/" target="_blank">Quiz — Data Link Layer</a>
+<a href="https://www.geeksforgeeks.org/quizzes/network-layer-gq/" target="_blank">Quiz — Network Layer</a>
+<a href="https://www.geeksforgeeks.org/quizzes/ip-addressing-57/" target="_blank">Quiz — IP Addressing</a>
+<a href="https://www.geeksforgeeks.org/quizzes/transport-layer-gq/" target="_blank">Quiz — Transport Layer</a>
+<a href="https://www.geeksforgeeks.org/quizzes/application-layer-gq/" target="_blank">Quiz — Application Layer</a>
+</div>
+</div>
+<!-- ===================== SE ===================== -->
+<div class="subject-block" id="se">
+<div class="subject-head">
+<span class="tag se">SE</span>
+<h2>Software Engineering</h2>
+<span class="days-range">Day 17 – 21</span>
+</div>
+<p class="subject-intro">SDLC models, Agile, COCOMO, requirements, and testing types. Interviewers expect you to know why Agile fits real product teams — connect this back to your own project workflow (DigiFlute internship, hackathons) for a stronger answer.</p>
+<div class="day-card se" data-day="17" id="day-17">
+<div class="day-header">
+<div class="daynum">D17</div>
+<div class="titles"><h3>Introduction to Software Engineering</h3><div class="meta">2 topics</div></div>
+<div class="day-progress-mini">0/2</div><div class="chev">▶</div>
+</div>
+<div class="day-body">
+<div class="topic-item"><input data-id="d17t1" type="checkbox"/><div class="tbody">
+<label>Introduction to Software Engineering</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/software-engineering/software-engineering-introduction-to-software-engineering/" target="_blank">Intro to SE</a></div>
+</div></div>
+<div class="topic-item"><input data-id="d17t2" type="checkbox"/><div class="tbody">
+<label>Classification of Software</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/software-engineering/software-engineering-classification-software/" target="_blank">Classification of Software</a></div>
+</div></div>
+</div>
+</div>
+<div class="day-card se" data-day="18" id="day-18">
+<div class="day-header">
+<div class="daynum">D18</div>
+<div class="titles"><h3>SDLC Models</h3><div class="meta">8 topics</div></div>
+<div class="day-progress-mini">0/8</div><div class="chev">▶</div>
+</div>
+<div class="day-body">
+<div class="topic-item"><input data-id="d18t1" type="checkbox"/><div class="tbody">
+<label>Classical Waterfall Model</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/software-engineering/waterfall-model/" target="_blank">Waterfall Model</a></div>
+</div></div>
+<div class="topic-item"><input data-id="d18t2" type="checkbox"/><div class="tbody">
+<label>Iterative Waterfall Model</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/software-engineering/software-engineering-iterative-waterfall-model/" target="_blank">Iterative Waterfall</a></div>
+</div></div>
+<div class="topic-item"><input data-id="d18t3" type="checkbox"/><div class="tbody">
+<label>Spiral Model</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/software-engineering/software-engineering-spiral-model/" target="_blank">Spiral Model</a></div>
+</div></div>
+<div class="topic-item"><input data-id="d18t4" type="checkbox"/><div class="tbody">
+<label>Rapid Application Development (RAD) Model</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/software-engineering/software-engineering-rapid-application-development-model-rad/" target="_blank">RAD Model</a></div>
+</div></div>
+<div class="topic-item"><input data-id="d18t5" type="checkbox"/><div class="tbody">
+<label>RAD vs Traditional SDLC</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/software-engineering/software-engineering-rad-model-vs-traditional-sdlc/" target="_blank">RAD vs Traditional SDLC</a></div>
+</div></div>
+<div class="topic-item"><input data-id="d18t6" type="checkbox"/><div class="tbody">
+<label>Agile Development Models — Scrum, Kanban, XP</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/software-engineering/software-engineering-agile-development-models/" target="_blank">Agile Development Models</a></div>
+<div class="tip trap"><b>Most-asked SE topic:</b> know the 4 Agile Manifesto values, what a sprint/standup/retro is, and be ready to contrast Scrum (fixed sprints, roles) vs Kanban (continuous flow, WIP limits).</div>
+</div></div>
+<div class="topic-item"><input data-id="d18t7" type="checkbox"/><div class="tbody">
+<label>Comparison of Life Cycle Models</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/software-engineering/software-engineering-comparison-of-different-life-cycle-models/" target="_blank">Comparison of Life Cycle Models</a></div>
+</div></div>
+<div class="topic-item"><input data-id="d18t8" type="checkbox"/><div class="tbody">
+<label>Coupling and Cohesion</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/software-engineering/software-engineering-coupling-and-cohesion/" target="_blank">Coupling and Cohesion</a></div>
+<div class="tip trap"><b>Trap:</b> good design = LOW coupling + HIGH cohesion. People sometimes flip this under pressure — say it out loud twice before the interview.</div>
+</div></div>
+</div>
+</div>
+<div class="day-card se" data-day="19" id="day-19">
+<div class="day-header">
+<div class="daynum">D19</div>
+<div class="titles"><h3>Software Project Management</h3><div class="meta">4 topics</div></div>
+<div class="day-progress-mini">0/4</div><div class="chev">▶</div>
+</div>
+<div class="day-body">
+<div class="topic-item"><input data-id="d19t1" type="checkbox"/><div class="tbody">
+<label>Project Management Process phases</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/software-engineering/phases-project-management-processes/" target="_blank">Project Management Process</a></div>
+</div></div>
+<div class="topic-item"><input data-id="d19t2" type="checkbox"/><div class="tbody">
+<label>COCOMO Model — effort/cost estimation</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/software-engineering/software-engineering-cocomo-model/" target="_blank">COCOMO Model</a></div>
+<div class="tip">Know the 3 modes: Organic (small, simple), Semi-detached (medium), Embedded (complex, tight constraints) — asked as a straight definitional MCQ.</div>
+</div></div>
+<div class="topic-item"><input data-id="d19t3" type="checkbox"/><div class="tbody">
+<label>Risk Management in SDLC</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/software-engineering/integrating-risk-management-in-sdlc-set-1/" target="_blank">Risk Management in SDLC</a></div>
+</div></div>
+<div class="topic-item"><input data-id="d19t4" type="checkbox"/><div class="tbody">
+<label>Role &amp; Responsibilities of a Software Project Manager</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/software-engineering/software-engineering-role-and-responsibilities-of-a-software-project-manager/" target="_blank">Software Project Manager Role</a></div>
+</div></div>
+</div>
+</div>
+<div class="day-card se" data-day="20" id="day-20">
+<div class="day-header">
+<div class="daynum">D20</div>
+<div class="titles"><h3>Software Requirements</h3><div class="meta">4 topics</div></div>
+<div class="day-progress-mini">0/4</div><div class="chev">▶</div>
+</div>
+<div class="day-body">
+<div class="topic-item"><input data-id="d20t1" type="checkbox"/><div class="tbody">
+<label>Classification of Software Requirements — functional vs non-functional</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/software-engineering/software-engineering-classification-of-software-requirements/" target="_blank">Classification of Requirements</a></div>
+</div></div>
+<div class="topic-item"><input data-id="d20t2" type="checkbox"/><div class="tbody">
+<label>How to Write a Good SRS</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/software-engineering/how-to-write-a-good-srs-for-your-project/" target="_blank">Writing a Good SRS</a></div>
+</div></div>
+<div class="topic-item"><input data-id="d20t3" type="checkbox"/><div class="tbody">
+<label>Quality Characteristics of a Good SRS</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/software-engineering/software-engineering-quality-characteristics-of-a-good-srs/" target="_blank">Quality Characteristics of SRS</a></div>
+</div></div>
+<div class="topic-item"><input data-id="d20t4" type="checkbox"/><div class="tbody">
+<label>Requirements Elicitation</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/software-engineering/software-engineering-requirements-elicitation/" target="_blank">Requirements Elicitation</a></div>
+</div></div>
+</div>
+</div>
+<div class="day-card se" data-day="21" id="day-21">
+<div class="day-header">
+<div class="daynum">D21</div>
+<div class="titles"><h3>Software Testing &amp; Debugging</h3><div class="meta">6 topics</div></div>
+<div class="day-progress-mini">0/6</div><div class="chev">▶</div>
+</div>
+<div class="day-body">
+<div class="topic-item"><input data-id="d21t1" type="checkbox"/><div class="tbody">
+<label>Seven Principles of Software Testing</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/software-engineering/software-engineering-seven-principles-of-software-testing/" target="_blank">7 Principles of Testing</a></div>
+</div></div>
+<div class="topic-item"><input data-id="d21t2" type="checkbox"/><div class="tbody">
+<label>Testing Guidelines</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/software-engineering/software-engineering-testing-guidelines/" target="_blank">Testing Guidelines</a></div>
+</div></div>
+<div class="topic-item"><input data-id="d21t3" type="checkbox"/><div class="tbody">
+<label>Black Box Testing</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/software-testing/software-engineering-black-box-testing/" target="_blank">Black Box Testing</a></div>
+<div class="tip trap"><b>Trap:</b> Black box = tests functionality without knowing internal code (you did this for PackSage's 90 endpoints). White box = tests internal logic/paths with code visibility. Don't mix them up under pressure.</div>
+</div></div>
+<div class="topic-item"><input data-id="d21t4" type="checkbox"/><div class="tbody">
+<label>White Box Testing</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/software-testing/software-engineering-white-box-testing/" target="_blank">White Box Testing</a></div>
+</div></div>
+<div class="topic-item"><input data-id="d21t5" type="checkbox"/><div class="tbody">
+<label>Debugging strategies</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/software-engineering/software-engineering-debugging/" target="_blank">Debugging</a></div>
+</div></div>
+<div class="topic-item"><input data-id="d21t6" type="checkbox"/><div class="tbody">
+<label>Integration Testing — big bang, top-down, bottom-up</label>
+<div class="links"><a href="https://www.geeksforgeeks.org/software-testing/software-engineering-integration-testing/" target="_blank">Integration Testing</a></div>
+</div></div>
+</div>
+</div>
+</div>
+<!-- ===================== OA TIPS ===================== -->
+<div class="section-plain" id="oa">
+<h2>OA (Online Assessment) Specific Tips</h2>
+<p class="sub">Core-CS sections in OAs are almost always MCQ-based. Speed and pattern recognition matter more than deep derivation.</p>
+<div class="oa-box">
+<h3>How core-CS MCQs are actually asked</h3>
+<p>Across Amazon, Flipkart GRiD, Juspay-style OAs and campus tests, the CS-core section is usually 10–20 MCQs pulled from a large bank covering exactly the topics above. Expect: numeric computation (waiting time, page faults, subnet count), "which statement is true/false," and output-prediction for a given SQL query or scheduling table.</p>
+<div class="grid2">
+<div class="card">
+<h4>High-yield MCQ topics</h4>
+<ul>
+<li>CPU scheduling — compute avg waiting/turnaround time</li>
+<li>Page replacement — FIFO/LRU/Optimal trace + Belady's Anomaly</li>
+<li>Deadlock — 4 conditions + Banker's Algorithm safe sequence</li>
+<li>Normalization — identify highest normal form of a given table</li>
+<li>SQL — predict output of JOIN / GROUP BY / subquery</li>
+<li>OSI/TCP-IP layer mapping — "which layer does X belong to"</li>
+<li>TCP 3-way handshake &amp; TCP vs UDP</li>
+</ul>
+</div>
+<div class="card">
+<h4>Time-management strategy</h4>
+<ul>
+<li>Core-CS MCQs: aim &lt;45 sec/question — skip &amp; return if stuck</li>
+<li>Numeric ones (scheduling, paging) — draw the table fast on rough sheet</li>
+<li>Don't overthink phrasing tricks — most MCQs test one fact, not reasoning chains</li>
+<li>Revise the <b>trap notes</b> (red-bordered tips above) night before — they're the actual differentiators</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="oa-box" style="margin-top:14px;">
+<h3>Aptitude &amp; supplementary practice</h3>
+<p>Many OAs bundle a short quantitative aptitude / logical reasoning section alongside core-CS.</p>
+<div class="pill-row">
+<a href="https://www.geeksforgeeks.org/aptitude/aptitude-questions-and-answers/" target="_blank">Aptitude Questions &amp; Answers</a>
+<a href="https://www.geeksforgeeks.org/aptitude/puzzles/" target="_blank">Logical Puzzles</a>
+<a href="https://www.geeksforgeeks.org/blogs/company-wise-recruitment-process/" target="_blank">Company-wise Recruitment Process</a>
+<a href="https://www.geeksforgeeks.org/blogs/top-interview-problems-asked-in-2024-topic-wise/" target="_blank">Top Interview Problems (topic-wise)</a>
+</div>
+</div>
+</div>
+<!-- ===================== STRATEGY ===================== -->
+<div class="section-plain" id="strategy">
+<h2>Revision Strategy</h2>
+<p class="sub">You're revising, not learning from zero — so use this doc as a rapid-recall pass, not a first-read.</p>
+<div class="grid2">
+<div class="card">
+<h4>Suggested pace (if compressing 21 days)</h4>
+<table class="cmp">
+<tr><th>Days</th><th>Subject</th><th>Focus</th></tr>
+<tr><td>1–2</td><td>DBMS</td><td>Normalization, ACID, joins, SQL query practice</td></tr>
+<tr><td>3–5</td><td>OS</td><td>Scheduling, sync, deadlocks, paging — heaviest weight</td></tr>
+<tr><td>6</td><td>CN</td><td>OSI/TCP-IP, TCP handshake, HTTP/DNS basics only</td></tr>
+<tr><td>7</td><td>SE</td><td>SDLC + Agile + testing types</td></tr>
+</table>
+</div>
+<div class="card">
+<h4>How to use this doc</h4>
+<ul>
+<li>Tap a day card to expand/collapse its topic list</li>
+<li>Check off topics as you revise — progress auto-saves</li>
+<li>Red-bordered boxes = interview traps / commonly confused pairs — revise these last, night before</li>
+<li>Yellow-bordered boxes = practical tips to sound sharp in interviews</li>
+<li>Use the top nav to jump straight to a subject</li>
+</ul>
+</div>
+</div>
+<div class="card" style="margin-top:14px;">
+<h4>Weight in interviews (rough signal, not official)</h4>
+<table class="cmp">
+<tr><th>Subject</th><th>SDE Interviews</th><th>OA MCQs</th><th>Notes</th></tr>
+<tr><td>DBMS</td><td>High</td><td>High</td><td>SQL writing is almost always live-tested</td></tr>
+<tr><td>OS</td><td>High</td><td>High</td><td>Scheduling/deadlock/paging numericals recur</td></tr>
+<tr><td>CN</td><td>Low–Medium</td><td>Medium</td><td>A few basic MCQs; deep dive only for infra roles</td></tr>
+<tr><td>SE</td><td>Low–Medium</td><td>Medium</td><td>Agile/SDLC definitional; easy marks if revised</td></tr>
+</table>
+</div>
+<div class="reset-row">
+<button onclick="resetProgress()">Reset all progress</button>
+</div>
+</div>
+</div><!-- /wrap -->
+<footer>
+  Curated from GeeksforGeeks' 21-Day CS Core Prep guide · Built for fast, checkbox-driven revision · Progress saved automatically
+</footer>
+<script>
+// ---------- Storage-backed checkbox progress ----------
+const STORAGE_KEY = 'cs-core-21day-progress';
+let progress = {};
+
+async function loadProgress(){
+  try{
+    const res = await window.storage.get(STORAGE_KEY);
+    if(res && res.value) progress = JSON.parse(res.value);
+  }catch(e){ progress = {}; }
+  applyProgress();
+}
+
+async function saveProgress(){
+  try{ await window.storage.set(STORAGE_KEY, JSON.stringify(progress)); }catch(e){}
+}
+
+function applyProgress(){
+  document.querySelectorAll('.topic-item input[type=checkbox]').forEach(cb=>{
+    const id = cb.dataset.id;
+    if(progress[id]){ cb.checked = true; cb.closest('.topic-item').classList.add('done'); }
+  });
+  updateAllCounters();
+}
+
+function updateAllCounters(){
+  let totalAll=0, doneAll=0;
+  document.querySelectorAll('.day-card').forEach(card=>{
+    const boxes = card.querySelectorAll('.topic-item input[type=checkbox]');
+    const done = [...boxes].filter(b=>b.checked).length;
+    card.querySelector('.day-progress-mini').textContent = done+'/'+boxes.length;
+    totalAll += boxes.length; doneAll += done;
+  });
+  const pct = totalAll ? Math.round(doneAll/totalAll*100) : 0;
+  document.getElementById('opct').textContent = pct+'%';
+  document.getElementById('obar').style.width = pct+'%';
+}
+
+document.querySelectorAll('.topic-item input[type=checkbox]').forEach(cb=>{
+  cb.addEventListener('change', ()=>{
+    progress[cb.dataset.id] = cb.checked;
+    cb.closest('.topic-item').classList.toggle('done', cb.checked);
+    updateAllCounters();
+    saveProgress();
+  });
+});
+
+async function resetProgress(){
+  if(!confirm('Reset all checked topics? This cannot be undone.')) return;
+  progress = {};
+  document.querySelectorAll('.topic-item input[type=checkbox]').forEach(cb=>{
+    cb.checked=false; cb.closest('.topic-item').classList.remove('done');
+  });
+  updateAllCounters();
+  await saveProgress();
+}
+
+// ---------- Day card expand/collapse ----------
+document.querySelectorAll('.day-header').forEach(h=>{
+  h.addEventListener('click', ()=>{
+    h.closest('.day-card').classList.toggle('open');
+  });
+});
+// open Day 1 by default
+document.querySelector('.day-card[data-day="1"]')?.classList.add('open');
+
+// ---------- Sticky nav scroll ----------
+const navBtns = document.querySelectorAll('#topnav button');
+navBtns.forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    const el = document.getElementById(btn.dataset.target);
+    if(el){ el.scrollIntoView({behavior:'smooth', block:'start'}); }
+  });
+});
+const sections = ['dbms','os','cn','se','oa','strategy'].map(id=>document.getElementById(id));
+window.addEventListener('scroll', ()=>{
+  let current = sections[0].id;
+  for(const s of sections){
+    if(s.getBoundingClientRect().top < 120) current = s.id;
+  }
+  navBtns.forEach(b=>b.classList.toggle('active', b.dataset.target===current));
+}, {passive:true});
+
+loadProgress();
+</script>
+</body>
+</html>

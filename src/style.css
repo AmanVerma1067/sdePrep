@@ -150,6 +150,11 @@ h1, h2, h3, h4 { font-family: var(--font-head); font-weight: 700; letter-spacing
 .topic-card-body { padding: 0 14px 16px 44px; animation: slideDown 0.2s ease-out; }
 @keyframes slideDown { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
 .topic-desc { color: var(--text-muted); font-size: 13px; line-height: 1.6; margin-bottom: 14px; }
+.topic-desc-text { color: var(--text-muted); font-size: 12.5px; line-height: 1.5; margin: 8px 0; }
+.topic-callout { margin: 8px 0; padding: 8px 12px; border-radius: 6px; font-size: 12.5px; line-height: 1.5; }
+.topic-callout.tip { background: rgba(224, 175, 104, 0.08); border-left: 3px solid #e0af68; color: #f1fa8c; }
+.topic-callout.trap { background: rgba(247, 118, 142, 0.08); border-left: 3px solid #f7768e; color: #ffb86c; }
+.topic-links-list { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; }
 .topic-links { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
 .resource-link {
   display: inline-flex; align-items: center; padding: 5px 10px;

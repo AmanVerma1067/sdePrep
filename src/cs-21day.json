@@ -1,0 +1,1520 @@
+[
+  {
+    "tag": "DBMS",
+    "subject": "Database Management System",
+    "intro": "Second most-asked subject after DSA. Interviewers probe normalization, ACID, keys, joins, and expect you to write SQL on a whiteboard/notepad \u2014 not just define terms.",
+    "days": [
+      {
+        "day": "D1",
+        "title": "Basics of DBMS + ER Model",
+        "meta": "5 topics",
+        "topics": [
+          {
+            "name": "Introduction to DBMS & file system limitations",
+            "links": [
+              {
+                "text": "Intro to DBMS",
+                "url": "https://www.geeksforgeeks.org/dbms/introduction-of-dbms-database-management-system-set-1/"
+              },
+              {
+                "text": "DBMS vs File System",
+                "url": "https://www.geeksforgeeks.org/dbms/advantages-of-dbms-over-file-system/"
+              }
+            ],
+            "tip": "Say this:data redundancy, integrity constraints, concurrent access, and crash recovery are the 4 things a file system can't give you but DBMS can.",
+            "is_trap": false
+          },
+          {
+            "name": "3-Tier Architecture & DBMS Architecture (1/2/3-level)",
+            "links": [
+              {
+                "text": "3-Tier Architecture",
+                "url": "https://www.geeksforgeeks.org/dbms/introduction-of-3-tier-architecture-in-dbms-set-2/"
+              },
+              {
+                "text": "DBMS Architecture Levels",
+                "url": "https://www.geeksforgeeks.org/dbms/dbms-architecture-2-level-3-level/"
+              }
+            ],
+            "tip": "Trap:\"2-tier\" = client talks directly to DB (no app server). \"3-tier\" adds an application layer in between \u2014 used in almost every real SaaS backend (like your own PackSage stack).",
+            "is_trap": true
+          },
+          {
+            "name": "ER Model \u2014 entities, attributes, relationships, cardinality",
+            "links": [
+              {
+                "text": "Introduction of ER Model",
+                "url": "https://www.geeksforgeeks.org/dbms/introduction-of-er-model/"
+              }
+            ],
+            "tip": "Be ready to draw a quick ER diagram on paper/whiteboard for a simple domain (e.g. \"e-commerce orders\") \u2014 very common OA/interview ask.",
+            "is_trap": false
+          },
+          {
+            "name": "Types of Keys \u2014 Candidate, Super, Primary, Alternate, Foreign",
+            "links": [
+              {
+                "text": "Types of Keys",
+                "url": "https://www.geeksforgeeks.org/dbms/types-of-keys-in-relational-model-candidate-super-primary-alternate-and-foreign/"
+              }
+            ],
+            "tip": "Trap:every candidate key is a super key, but not every super key is a candidate key (super key can have extra redundant attributes). Primary key = the chosen candidate key.",
+            "is_trap": true
+          },
+          {
+            "name": "Relational Algebra \u2014 basic operators (\u03c3, \u03c0, \u22c8, \u222a, \u2212)",
+            "links": [
+              {
+                "text": "Relational Algebra",
+                "url": "https://www.geeksforgeeks.org/dbms/introduction-of-relational-algebra-in-dbms/"
+              }
+            ],
+            "tip": "Know that SQL is a practical implementation of relational algebra \u2014 mapping SELECT\u2192\u03c0, WHERE\u2192\u03c3, JOIN\u2192\u22c8 helps you reason about query optimization questions.",
+            "is_trap": false
+          }
+        ],
+        "useful_links": []
+      },
+      {
+        "day": "D2",
+        "title": "Joins & Query Comparisons",
+        "meta": "2 topics",
+        "topics": [
+          {
+            "name": "Inner Join vs Outer Join (Left/Right/Full)",
+            "links": [
+              {
+                "text": "Inner vs Outer Join",
+                "url": "https://www.geeksforgeeks.org/dbms/inner-join-vs-outer-join/"
+              }
+            ],
+            "tip": "Trap:LEFT JOIN keeps all rows of the left table even with no match (NULLs on right) \u2014 interviewers love asking you to predict output row-count for a given join type + sample data.",
+            "is_trap": true
+          },
+          {
+            "name": "Join operation vs Nested Subquery \u2014 when to prefer which",
+            "links": [
+              {
+                "text": "Join vs Nested Query",
+                "url": "https://www.geeksforgeeks.org/interview-experiences/join-operation-vs-nested-query-in-dbms/"
+              }
+            ],
+            "tip": "Joins are generally faster (optimizer-friendly, single pass) vs correlated subqueries that can re-execute per outer row. Good follow-up: \"how would you rewrite this subquery as a join?\"",
+            "is_trap": false
+          }
+        ],
+        "useful_links": []
+      },
+      {
+        "day": "D3",
+        "title": "Normalization",
+        "meta": "5 topics",
+        "topics": [
+          {
+            "name": "Introduction to Normalization + Functional Dependencies",
+            "links": [
+              {
+                "text": "Intro to Normalization",
+                "url": "https://www.geeksforgeeks.org/dbms/introduction-of-database-normalization/"
+              }
+            ],
+            "tip": "",
+            "is_trap": false
+          },
+          {
+            "name": "Normal Forms \u2014 1NF, 2NF, 3NF, BCNF",
+            "links": [
+              {
+                "text": "Normal Forms",
+                "url": "https://www.geeksforgeeks.org/dbms/normal-forms-in-dbms/"
+              }
+            ],
+            "tip": "Trap #1 asked topic:memorize the exact difference between 3NF and BCNF \u2014 BCNF is stricter (every determinant must be a candidate key, not just handles transitive dependency like 3NF). Be ready to normalize a sample table live.",
+            "is_trap": true
+          },
+          {
+            "name": "Lossless Join Decomposition",
+            "links": [
+              {
+                "text": "Lossless Decomposition",
+                "url": "https://www.geeksforgeeks.org/dbms/lossless-decomposition-in-dbms/"
+              }
+            ],
+            "tip": "",
+            "is_trap": false
+          },
+          {
+            "name": "4th & 5th Normal Form (multivalued / join dependency)",
+            "links": [
+              {
+                "text": "4NF & 5NF",
+                "url": "https://www.geeksforgeeks.org/dbms/introduction-of-4th-and-5th-normal-form-in-dbms/"
+              }
+            ],
+            "tip": "",
+            "is_trap": false
+          },
+          {
+            "name": "Denormalization \u2014 when & why to intentionally break normal forms",
+            "links": [
+              {
+                "text": "Denormalization",
+                "url": "https://www.geeksforgeeks.org/dbms/denormalization-in-databases/"
+              }
+            ],
+            "tip": "Great system-design talking point: denormalize for read-heavy analytics/reporting workloads to cut join costs, at the price of update anomalies.",
+            "is_trap": false
+          }
+        ],
+        "useful_links": []
+      },
+      {
+        "day": "D4",
+        "title": "Transactions & Concurrency Control",
+        "meta": "7 topics",
+        "topics": [
+          {
+            "name": "ACID Properties",
+            "links": [
+              {
+                "text": "ACID Properties",
+                "url": "https://www.geeksforgeeks.org/dbms/acid-properties-in-dbms/"
+              }
+            ],
+            "tip": "Trap:Most-asked one-liner. Have a crisp real example ready for each: Atomicity (bank transfer rollback), Consistency (constraints hold), Isolation (concurrent txns don't see partial state), Durability (commit survives crash).",
+            "is_trap": true
+          },
+          {
+            "name": "Concurrency Control \u2014 why it's needed",
+            "links": [
+              {
+                "text": "Concurrency Control",
+                "url": "https://www.geeksforgeeks.org/dbms/concurrency-control-in-dbms/"
+              }
+            ],
+            "tip": "",
+            "is_trap": false
+          },
+          {
+            "name": "Locking \u2014 shared/exclusive locks, 2PL",
+            "links": [
+              {
+                "text": "Implementation of Locking",
+                "url": "https://www.geeksforgeeks.org/dbms/implementation-of-locking-in-dbms/"
+              }
+            ],
+            "tip": "",
+            "is_trap": false
+          },
+          {
+            "name": "Types of Schedules \u2014 serial, non-serial",
+            "links": [
+              {
+                "text": "Types of Schedules",
+                "url": "https://www.geeksforgeeks.org/dbms/types-of-schedules-in-dbms/"
+              }
+            ],
+            "tip": "",
+            "is_trap": false
+          },
+          {
+            "name": "Conflict Serializability vs View Serializability",
+            "links": [
+              {
+                "text": "Conflict Serializability",
+                "url": "https://www.geeksforgeeks.org/dbms/conflict-serializability-in-dbms/"
+              },
+              {
+                "text": "View Serializability",
+                "url": "https://www.geeksforgeeks.org/dbms/condition-of-schedules-to-be-view-equivalent/"
+              }
+            ],
+            "tip": "Trap:every conflict-serializable schedule is view-serializable, but not vice versa. Practice drawing the precedence graph \u2014 if it has a cycle, the schedule is NOT conflict-serializable.",
+            "is_trap": true
+          },
+          {
+            "name": "Starvation in DBMS",
+            "links": [
+              {
+                "text": "Starvation in DBMS",
+                "url": "https://www.geeksforgeeks.org/dbms/starvation-in-dbms/"
+              }
+            ],
+            "tip": "",
+            "is_trap": false
+          },
+          {
+            "name": "Deadlock in DBMS \u2014 detection & prevention",
+            "links": [
+              {
+                "text": "Deadlock in DBMS",
+                "url": "https://www.geeksforgeeks.org/dbms/deadlock-in-dbms/"
+              }
+            ],
+            "tip": "",
+            "is_trap": false
+          }
+        ],
+        "useful_links": []
+      },
+      {
+        "day": "D5",
+        "title": "SQL Tutorial (hands-on)",
+        "meta": "7 topics",
+        "topics": [
+          {
+            "name": "Introduction to SQL \u2014 DDL/DML/DCL/TCL",
+            "links": [
+              {
+                "text": "Intro to SQL",
+                "url": "https://www.geeksforgeeks.org/dbms/structured-query-language/"
+              }
+            ],
+            "tip": "",
+            "is_trap": false
+          },
+          {
+            "name": "SQL Data Types",
+            "links": [
+              {
+                "text": "SQL Data Types",
+                "url": "https://www.geeksforgeeks.org/sql/sql-data-types/"
+              }
+            ],
+            "tip": "",
+            "is_trap": false
+          },
+          {
+            "name": "SQL Operators",
+            "links": [
+              {
+                "text": "SQL Operators",
+                "url": "https://www.geeksforgeeks.org/sql/sql-operators/"
+              }
+            ],
+            "tip": "",
+            "is_trap": false
+          },
+          {
+            "name": "SQL Clauses \u2014 WHERE, GROUP BY, HAVING, ORDER BY",
+            "links": [
+              {
+                "text": "SQL Tutorial (clauses covered here)",
+                "url": "https://www.geeksforgeeks.org/sql/sql-tutorial/"
+              }
+            ],
+            "tip": "Trap:WHERE filters rows before grouping; HAVING filters groups after aggregation. Asking you to spot the bug in a query that uses WHERE with an aggregate function is a classic OA MCQ.",
+            "is_trap": true
+          },
+          {
+            "name": "SQL Functions (Advanced)",
+            "links": [
+              {
+                "text": "SQL Advanced Functions",
+                "url": "https://www.geeksforgeeks.org/sql/sql-advanced-functions/"
+              }
+            ],
+            "tip": "",
+            "is_trap": false
+          },
+          {
+            "name": "Aggregate Functions vs Scalar Functions",
+            "links": [
+              {
+                "text": "Aggregate vs Scalar Functions",
+                "url": "https://www.geeksforgeeks.org/sql/sql-functions-aggregate-scalar-functions/"
+              }
+            ],
+            "tip": "",
+            "is_trap": false
+          },
+          {
+            "name": "SQL Queries \u2014 practice writing joins, subqueries, window functions",
+            "links": [
+              {
+                "text": "SQL Concepts & Queries",
+                "url": "https://www.geeksforgeeks.org/sql/sql-concepts-and-queries/"
+              },
+              {
+                "text": "Quiz on SQL",
+                "url": "https://www.geeksforgeeks.org/quizzes/sql-gq/"
+              }
+            ],
+            "tip": "If time is short, prioritize this: write 2nd-highest-salary, department-wise top-N, and self-join queries from memory. These 3 patterns cover ~70% of SQL rounds.",
+            "is_trap": false
+          }
+        ],
+        "useful_links": []
+      }
+    ]
+  },
+  {
+    "tag": "OS",
+    "subject": "Operating Systems",
+    "intro": "Broadest core subject \u2014 scheduling, synchronization, deadlocks, and memory management show up in almost every core-CS + some SDE interviews. Weak OS answers can eliminate you even with strong DSA.",
+    "days": [
+      {
+        "day": "D6",
+        "title": "Introduction to OS & Types",
+        "meta": "6 topics",
+        "topics": [
+          {
+            "name": "Types of Operating Systems (Batch, Time-Sharing, Distributed, RTOS...)",
+            "links": [
+              {
+                "text": "Types of OS",
+                "url": "https://www.geeksforgeeks.org/types-of-operating-systems/"
+              }
+            ],
+            "tip": "",
+            "is_trap": false
+          },
+          {
+            "name": "Multiprogramming in OS",
+            "links": [
+              {
+                "text": "Multiprogramming",
+                "url": "https://www.geeksforgeeks.org/operating-systems/multiprogramming-in-operating-system/"
+              }
+            ],
+            "tip": "Trap:Multiprogramming (keep CPU busy, no time bound) \u2260 Multitasking (time-shared, user sees concurrency) \u2260 Multiprocessing (multiple CPUs). These 3 get mixed up in MCQs constantly.",
+            "is_trap": true
+          },
+          {
+            "name": "Time-Sharing OS",
+            "links": [
+              {
+                "text": "Time-Sharing OS",
+                "url": "https://www.geeksforgeeks.org/operating-systems/time-sharing-operating-system/"
+              }
+            ],
+            "tip": "",
+            "is_trap": false
+          },
+          {
+            "name": "Network Operating System",
+            "links": [
+              {
+                "text": "Network OS",
+                "url": "https://www.geeksforgeeks.org/operating-systems/what-is-a-network-operating-system/"
+              }
+            ],
+            "tip": "",
+            "is_trap": false
+          },
+          {
+            "name": "Real-Time OS (RTOS) \u2014 hard vs soft real-time",
+            "links": [
+              {
+                "text": "RTOS",
+                "url": "https://www.geeksforgeeks.org/operating-systems/real-time-operating-system-rtos/"
+              }
+            ],
+            "tip": "",
+            "is_trap": false
+          },
+          {
+            "name": "Functions of the Operating System",
+            "links": [
+              {
+                "text": "Functions of OS",
+                "url": "https://www.geeksforgeeks.org/operating-systems/functions-of-operating-system/"
+              }
+            ],
+            "tip": "",
+            "is_trap": false
+          }
+        ],
+        "useful_links": []
+      },
+      {
+        "day": "D7",
+        "title": "Process Management",
+        "meta": "5 topics",
+        "topics": [
+          {
+            "name": "Introduction to Process Management",
+            "links": [
+              {
+                "text": "Process Management",
+                "url": "https://www.geeksforgeeks.org/operating-systems/introduction-of-process-management/"
+              }
+            ],
+            "tip": "",
+            "is_trap": false
+          },
+          {
+            "name": "Process Table & PCB (Process Control Block)",
+            "links": [
+              {
+                "text": "Process Table & PCB",
+                "url": "https://www.geeksforgeeks.org/operating-systems/process-table-and-process-control-block-pcb/"
+              }
+            ],
+            "tip": "Memorize what fields live in the PCB (process state, PC, registers, memory limits, I/O status) \u2014 very commonly asked to \"list.\"",
+            "is_trap": false
+          },
+          {
+            "name": "Operations on Processes \u2014 creation, termination, process states",
+            "links": [
+              {
+                "text": "Operations on Processes",
+                "url": "https://www.geeksforgeeks.org/operating-systems/operations-on-processes/"
+              }
+            ],
+            "tip": "",
+            "is_trap": false
+          },
+          {
+            "name": "Context Switching",
+            "links": [
+              {
+                "text": "Context Switch",
+                "url": "https://www.geeksforgeeks.org/operating-systems/context-switch-in-operating-system/"
+              }
+            ],
+            "tip": "Be ready to explain context switch overhead and why it's \"pure overhead\" (no useful work done during the switch itself).",
+            "is_trap": false
+          },
+          {
+            "name": "Preemptive vs Non-Preemptive Scheduling",
+            "links": [
+              {
+                "text": "Preemptive vs Non-Preemptive",
+                "url": "https://www.geeksforgeeks.org/operating-systems/preemptive-and-non-preemptive-scheduling/"
+              }
+            ],
+            "tip": "",
+            "is_trap": false
+          }
+        ],
+        "useful_links": []
+      },
+      {
+        "day": "D8",
+        "title": "CPU Scheduling",
+        "meta": "4 topics",
+        "topics": [
+          {
+            "name": "CPU Scheduling Algorithms \u2014 FCFS, SJF, Priority, Round Robin",
+            "links": [
+              {
+                "text": "CPU Scheduling",
+                "url": "https://www.geeksforgeeks.org/operating-systems/cpu-scheduling-in-operating-systems/"
+              }
+            ],
+            "tip": "OA staple:practice hand-computing average waiting time / turnaround time for a given process table under each algorithm \u2014 this shows up as a direct numeric MCQ constantly.",
+            "is_trap": true
+          },
+          {
+            "name": "CPU Scheduling Criteria (throughput, turnaround, waiting, response time)",
+            "links": [
+              {
+                "text": "Scheduling Criteria",
+                "url": "https://www.geeksforgeeks.org/operating-systems/cpu-scheduling-criteria/"
+              }
+            ],
+            "tip": "",
+            "is_trap": false
+          },
+          {
+            "name": "Multiple-Processor Scheduling",
+            "links": [
+              {
+                "text": "Multi-Processor Scheduling",
+                "url": "https://www.geeksforgeeks.org/operating-systems/multiple-processor-scheduling-in-operating-system/"
+              }
+            ],
+            "tip": "",
+            "is_trap": false
+          },
+          {
+            "name": "Thread Scheduling",
+            "links": [
+              {
+                "text": "Thread Scheduling",
+                "url": "https://www.geeksforgeeks.org/operating-systems/thread-scheduling/"
+              }
+            ],
+            "tip": "",
+            "is_trap": false
+          }
+        ],
+        "useful_links": []
+      },
+      {
+        "day": "D9",
+        "title": "Process Synchronization",
+        "meta": "4 topics",
+        "topics": [
+          {
+            "name": "Introduction to Process Synchronization",
+            "links": [
+              {
+                "text": "Process Synchronization",
+                "url": "https://www.geeksforgeeks.org/operating-systems/introduction-of-process-synchronization/"
+              }
+            ],
+            "tip": "",
+            "is_trap": false
+          },
+          {
+            "name": "Race Condition Vulnerability",
+            "links": [
+              {
+                "text": "Race Condition",
+                "url": "https://www.geeksforgeeks.org/operating-systems/race-condition-vulnerability/"
+              }
+            ],
+            "tip": "Have one concrete real-world example ready (e.g. two threads incrementing a shared counter) and explain why it isn't atomic at the instruction level.",
+            "is_trap": false
+          },
+          {
+            "name": "Critical Section \u2014 the 3 conditions (mutual exclusion, progress, bounded wait)",
+            "links": [
+              {
+                "text": "Critical Section",
+                "url": "https://www.geeksforgeeks.org/operating-systems/critical-section-in-synchronization/"
+              }
+            ],
+            "tip": "",
+            "is_trap": false
+          },
+          {
+            "name": "Mutual Exclusion \u2014 Peterson's solution",
+            "links": [
+              {
+                "text": "Mutual Exclusion",
+                "url": "https://www.geeksforgeeks.org/operating-systems/mutual-exclusion-in-synchronization/"
+              }
+            ],
+            "tip": "",
+            "is_trap": false
+          }
+        ],
+        "useful_links": []
+      },
+      {
+        "day": "D10",
+        "title": "Semaphores & Classical Problems",
+        "meta": "4 topics",
+        "topics": [
+          {
+            "name": "Semaphores in Process Synchronization",
+            "links": [
+              {
+                "text": "Semaphores",
+                "url": "https://www.geeksforgeeks.org/operating-systems/semaphores-in-process-synchronization/"
+              }
+            ],
+            "tip": "",
+            "is_trap": false
+          },
+          {
+            "name": "Types of Semaphores \u2014 binary (mutex) vs counting",
+            "links": [
+              {
+                "text": "Semaphore Types",
+                "url": "https://www.geeksforgeeks.org/operating-systems/semaphores-and-its-types/"
+              }
+            ],
+            "tip": "Trap:a mutex is locked/unlocked by the same thread; a binary semaphore can be signaled by a different thread than the one that waited \u2014 this distinction is a favorite \"gotcha\" question.",
+            "is_trap": true
+          },
+          {
+            "name": "Readers-Writers Problem",
+            "links": [
+              {
+                "text": "Readers-Writers Problem",
+                "url": "https://www.geeksforgeeks.org/operating-systems/readers-writers-problem-set-1-introduction-and-readers-preference-solution/"
+              }
+            ],
+            "tip": "",
+            "is_trap": false
+          },
+          {
+            "name": "Producer-Consumer Problem using Semaphores",
+            "links": [
+              {
+                "text": "Producer-Consumer Problem",
+                "url": "https://www.geeksforgeeks.org/operating-systems/producer-consumer-problem-using-semaphores-set-1/"
+              }
+            ],
+            "tip": "Be able to sketch the semaphore pseudocode (empty, full, mutex) from memory \u2014 this is the single most-drawn diagram in OS interviews.",
+            "is_trap": false
+          }
+        ],
+        "useful_links": []
+      },
+      {
+        "day": "D11",
+        "title": "Deadlocks",
+        "meta": "4 topics",
+        "topics": [
+          {
+            "name": "Introduction to Deadlock",
+            "links": [
+              {
+                "text": "Introduction to Deadlock",
+                "url": "https://www.geeksforgeeks.org/operating-systems/introduction-of-deadlock-in-operating-system/"
+              }
+            ],
+            "tip": "",
+            "is_trap": false
+          },
+          {
+            "name": "4 Necessary Conditions for Deadlock (Coffman conditions)",
+            "links": [
+              {
+                "text": "Conditions for Deadlock",
+                "url": "https://www.geeksforgeeks.org/operating-systems/conditions-for-deadlock-in-operating-system/"
+              }
+            ],
+            "tip": "Must memorize verbatim:Mutual Exclusion, Hold & Wait, No Preemption, Circular Wait \u2014 breaking ANY one prevents deadlock. Interviewers ask \"how would you prevent it\" expecting you to map to one of these 4.",
+            "is_trap": true
+          },
+          {
+            "name": "Banker's Algorithm \u2014 safe state check",
+            "links": [
+              {
+                "text": "Banker's Algorithm",
+                "url": "https://www.geeksforgeeks.org/operating-systems/bankers-algorithm-in-operating-system-2/"
+              }
+            ],
+            "tip": "Practice one full worked example (Allocation/Max/Available matrices \u2192 find a safe sequence) by hand \u2014 this is a very common written/OA question.",
+            "is_trap": false
+          },
+          {
+            "name": "Handling Deadlocks \u2014 prevention, avoidance, detection & recovery",
+            "links": [
+              {
+                "text": "Handling Deadlocks",
+                "url": "https://www.geeksforgeeks.org/operating-systems/handling-deadlocks/"
+              }
+            ],
+            "tip": "",
+            "is_trap": false
+          }
+        ],
+        "useful_links": []
+      },
+      {
+        "day": "D12",
+        "title": "Memory Management & Page Replacement",
+        "meta": "7 topics",
+        "topics": [
+          {
+            "name": "Memory Management overview",
+            "links": [
+              {
+                "text": "Memory Management",
+                "url": "https://www.geeksforgeeks.org/operating-systems/memory-management-in-operating-system/"
+              }
+            ],
+            "tip": "",
+            "is_trap": false
+          },
+          {
+            "name": "Paging",
+            "links": [
+              {
+                "text": "Paging",
+                "url": "https://www.geeksforgeeks.org/operating-systems/paging-in-operating-system/"
+              }
+            ],
+            "tip": "Trap:paging removes external fragmentation but can still cause internal fragmentation (last page partially filled). Segmentation is the reverse \u2014 know both directions.",
+            "is_trap": true
+          },
+          {
+            "name": "Segmentation",
+            "links": [
+              {
+                "text": "Segmentation",
+                "url": "https://www.geeksforgeeks.org/operating-systems/segmentation-in-operating-system/"
+              }
+            ],
+            "tip": "",
+            "is_trap": false
+          },
+          {
+            "name": "Virtual Memory",
+            "links": [
+              {
+                "text": "Virtual Memory",
+                "url": "https://www.geeksforgeeks.org/operating-systems/virtual-memory-in-operating-system/"
+              }
+            ],
+            "tip": "",
+            "is_trap": false
+          },
+          {
+            "name": "Page Replacement Algorithms \u2014 FIFO, LRU, Optimal",
+            "links": [
+              {
+                "text": "Page Replacement Algorithms",
+                "url": "https://www.geeksforgeeks.org/operating-systems/page-replacement-algorithms-in-operating-systems/"
+              }
+            ],
+            "tip": "Practice tracing FIFO vs LRU vs Optimal on the same reference string by hand \u2014 near-guaranteed OA numeric question.",
+            "is_trap": false
+          },
+          {
+            "name": "Belady's Anomaly",
+            "links": [
+              {
+                "text": "Belady's Anomaly",
+                "url": "https://www.geeksforgeeks.org/operating-systems/beladys-anomaly-in-page-replacement-algorithms/"
+              }
+            ],
+            "tip": "Trap:Belady's Anomaly (more frames \u2192 more page faults) happens with FIFO, but never with LRU or Optimal. This exact fact is a recurring MCQ.",
+            "is_trap": true
+          },
+          {
+            "name": "Optimal Page Replacement Algorithm (deep dive)",
+            "links": [
+              {
+                "text": "Optimal Page Replacement",
+                "url": "https://www.geeksforgeeks.org/dsa/optimal-page-replacement-algorithm/"
+              }
+            ],
+            "tip": "",
+            "is_trap": false
+          }
+        ],
+        "useful_links": []
+      }
+    ]
+  },
+  {
+    "tag": "CN",
+    "subject": "Computer Networks",
+    "intro": "Less frequent in pure SDE rounds, but a few basic networking MCQs show up in most OAs, and it's core for network/infra-adjacent roles. Focus breadth over depth here.",
+    "days": [
+      {
+        "day": "D13",
+        "title": "Basics of Computer Networks",
+        "meta": "6 topics",
+        "topics": [
+          {
+            "name": "Basics of Computer Networking",
+            "links": [
+              {
+                "text": "Basics of Networking",
+                "url": "https://www.geeksforgeeks.org/computer-networks/basics-computer-networking/"
+              }
+            ],
+            "tip": "",
+            "is_trap": false
+          },
+          {
+            "name": "Network Topologies \u2014 star, bus, ring, mesh, hybrid",
+            "links": [
+              {
+                "text": "Network Topologies",
+                "url": "https://www.geeksforgeeks.org/computer-networks/types-of-network-topology/"
+              }
+            ],
+            "tip": "",
+            "is_trap": false
+          },
+          {
+            "name": "Basic Networking Terminology",
+            "links": [
+              {
+                "text": "Networking Terminology",
+                "url": "https://www.geeksforgeeks.org/computer-networks/introduction-to-basic-networking-terminology/"
+              }
+            ],
+            "tip": "",
+            "is_trap": false
+          },
+          {
+            "name": "LAN, MAN, WAN",
+            "links": [
+              {
+                "text": "LAN vs MAN vs WAN",
+                "url": "https://www.geeksforgeeks.org/types-of-area-networks-lan-man-and-wan/"
+              }
+            ],
+            "tip": "",
+            "is_trap": false
+          },
+          {
+            "name": "TCP/IP Model",
+            "links": [
+              {
+                "text": "TCP/IP Model",
+                "url": "https://www.geeksforgeeks.org/computer-networks/tcp-ip-model/"
+              }
+            ],
+            "tip": "",
+            "is_trap": false
+          },
+          {
+            "name": "OSI Model (7 layers)",
+            "links": [
+              {
+                "text": "OSI Model",
+                "url": "https://www.geeksforgeeks.org/computer-networks/open-systems-interconnection-model-osi/"
+              }
+            ],
+            "tip": "Trap:OSI has 7 layers, TCP/IP has 4-5 (models vary). Know \"Please Do Not Throw Sausage Pizza Away\" (Physical\u2013Data Link\u2013Network\u2013Transport\u2013Session\u2013Presentation\u2013Application) cold \u2014 asked as a rapid-fire MCQ constantly.",
+            "is_trap": true
+          }
+        ],
+        "useful_links": []
+      },
+      {
+        "day": "D14",
+        "title": "Data Link Layer",
+        "meta": "7 topics",
+        "topics": [
+          {
+            "name": "Ethernet (LAN Technologies)",
+            "links": [
+              {
+                "text": "Ethernet",
+                "url": "https://www.geeksforgeeks.org/computer-networks/what-is-ethernet/"
+              }
+            ],
+            "tip": "",
+            "is_trap": false
+          },
+          {
+            "name": "MAC Address",
+            "links": [
+              {
+                "text": "MAC Address",
+                "url": "https://www.geeksforgeeks.org/computer-networks/mac-address-in-computer-network/"
+              }
+            ],
+            "tip": "Trap:MAC address = physical/hardware, fixed to NIC, works at Data Link layer. IP address = logical, changes, works at Network layer. Classic MCQ pair.",
+            "is_trap": true
+          },
+          {
+            "name": "CSMA (Carrier Sense Multiple Access)",
+            "links": [
+              {
+                "text": "CSMA",
+                "url": "https://www.geeksforgeeks.org/computer-networks/carrier-sense-multiple-access-csma/"
+              }
+            ],
+            "tip": "",
+            "is_trap": false
+          },
+          {
+            "name": "Basics of Wi-Fi",
+            "links": [
+              {
+                "text": "Basics of Wi-Fi",
+                "url": "https://www.geeksforgeeks.org/computer-networks/basics-of-wi-fi/"
+              }
+            ],
+            "tip": "",
+            "is_trap": false
+          },
+          {
+            "name": "Virtual LAN (VLAN)",
+            "links": [
+              {
+                "text": "VLAN",
+                "url": "https://www.geeksforgeeks.org/computer-networks/virtual-lan-vlan/"
+              }
+            ],
+            "tip": "",
+            "is_trap": false
+          },
+          {
+            "name": "Stop-and-Wait ARQ",
+            "links": [
+              {
+                "text": "Stop-and-Wait ARQ",
+                "url": "https://www.geeksforgeeks.org/computer-networks/stop-and-wait-arq/"
+              }
+            ],
+            "tip": "",
+            "is_trap": false
+          },
+          {
+            "name": "Sliding Window Protocol",
+            "links": [
+              {
+                "text": "Sliding Window Protocol",
+                "url": "https://www.geeksforgeeks.org/computer-networks/sliding-window-protocol-set-1/"
+              }
+            ],
+            "tip": "",
+            "is_trap": false
+          }
+        ],
+        "useful_links": []
+      },
+      {
+        "day": "D15",
+        "title": "Network Layer",
+        "meta": "8 topics",
+        "topics": [
+          {
+            "name": "IPv4 Datagram Header",
+            "links": [
+              {
+                "text": "IPv4 Datagram Header",
+                "url": "https://www.geeksforgeeks.org/computer-networks/introduction-and-ipv4-datagram-header/"
+              }
+            ],
+            "tip": "",
+            "is_trap": false
+          },
+          {
+            "name": "IP Addressing \u2014 classful addressing",
+            "links": [
+              {
+                "text": "Classful IP Addressing",
+                "url": "https://www.geeksforgeeks.org/computer-networks/introduction-of-classful-ip-addressing/"
+              }
+            ],
+            "tip": "Know how to compute network/host bits and subnet count from a given subnet mask \u2014 common OA calculation question.",
+            "is_trap": false
+          },
+          {
+            "name": "Types of Routing \u2014 static, default, dynamic",
+            "links": [
+              {
+                "text": "Types of Routing",
+                "url": "https://www.geeksforgeeks.org/computer-networks/types-of-routing/"
+              }
+            ],
+            "tip": "",
+            "is_trap": false
+          },
+          {
+            "name": "Unicast Routing \u2014 Link State Routing",
+            "links": [
+              {
+                "text": "Link State Routing",
+                "url": "https://www.geeksforgeeks.org/computer-networks/unicast-routing-link-state-routing/"
+              }
+            ],
+            "tip": "",
+            "is_trap": false
+          },
+          {
+            "name": "Wi-Fi Protected Access (WPA)",
+            "links": [
+              {
+                "text": "WPA",
+                "url": "https://www.geeksforgeeks.org/computer-networks/wifi-protected-access-wpa/"
+              }
+            ],
+            "tip": "",
+            "is_trap": false
+          },
+          {
+            "name": "Wi-Fi Protected Setup (WPS)",
+            "links": [
+              {
+                "text": "WPS",
+                "url": "https://www.geeksforgeeks.org/computer-networks/wifi-protected-setup-wps/"
+              }
+            ],
+            "tip": "",
+            "is_trap": false
+          },
+          {
+            "name": "LiFi vs WiFi",
+            "links": [
+              {
+                "text": "LiFi vs WiFi",
+                "url": "https://www.geeksforgeeks.org/computer-networks/difference-between-lifi-and-wifi/"
+              }
+            ],
+            "tip": "",
+            "is_trap": false
+          },
+          {
+            "name": "IPv4 vs IPv6",
+            "links": [
+              {
+                "text": "IPv4 vs IPv6",
+                "url": "https://www.geeksforgeeks.org/computer-networks/differences-between-ipv4-and-ipv6/"
+              }
+            ],
+            "tip": "Trap:IPv4 = 32-bit (~4.3B addresses), IPv6 = 128-bit. IPv6 removes the need for NAT and has no built-in checksum field (relies on lower/upper layers) \u2014 a detail interviewers use to check real understanding vs rote memorization.",
+            "is_trap": true
+          }
+        ],
+        "useful_links": []
+      },
+      {
+        "day": "D16",
+        "title": "Transport & Application Layer",
+        "meta": "13 topics",
+        "topics": [
+          {
+            "name": "TCP Connection Establishment \u2014 3-way handshake",
+            "links": [
+              {
+                "text": "TCP 3-Way Handshake",
+                "url": "https://www.geeksforgeeks.org/computer-networks/tcp-connection-establishment/"
+              }
+            ],
+            "tip": "Highest-frequency CN question:SYN \u2192 SYN-ACK \u2192 ACK. Also know 4-way termination (FIN, ACK, FIN, ACK) and why TIME_WAIT state exists.",
+            "is_trap": true
+          },
+          {
+            "name": "Transport Layer Responsibilities",
+            "links": [
+              {
+                "text": "Transport Layer Responsibilities",
+                "url": "https://www.geeksforgeeks.org/computer-networks/transport-layer-responsibilities/"
+              }
+            ],
+            "tip": "",
+            "is_trap": false
+          },
+          {
+            "name": "Multiplexing & Demultiplexing",
+            "links": [
+              {
+                "text": "Multiplexing / Demultiplexing",
+                "url": "https://www.geeksforgeeks.org/computer-networks/multiplexing-and-demultiplexing-in-transport-layer/"
+              }
+            ],
+            "tip": "",
+            "is_trap": false
+          },
+          {
+            "name": "UDP \u2014 connectionless transport",
+            "links": [
+              {
+                "text": "UDP",
+                "url": "https://www.geeksforgeeks.org/computer-networks/user-datagram-protocol-udp/"
+              }
+            ],
+            "tip": "Trap:TCP is reliable/ordered/connection-oriented (handshake, ACKs); UDP is unreliable/unordered/connectionless but lower latency (used for DNS, video streaming, gaming). Always asked as \"why would you use UDP over TCP?\"",
+            "is_trap": true
+          },
+          {
+            "name": "P2P File Sharing",
+            "links": [
+              {
+                "text": "P2P File Sharing",
+                "url": "https://www.geeksforgeeks.org/computer-networks/p2p-peer-to-peer-file-sharing/"
+              }
+            ],
+            "tip": "",
+            "is_trap": false
+          },
+          {
+            "name": "Congestion Control \u2014 general concept",
+            "links": [
+              {
+                "text": "Congestion Control",
+                "url": "https://www.geeksforgeeks.org/computer-networks/congestion-control-in-computer-networks/"
+              }
+            ],
+            "tip": "",
+            "is_trap": false
+          },
+          {
+            "name": "TCP Congestion Control \u2014 slow start, congestion avoidance",
+            "links": [
+              {
+                "text": "TCP Congestion Control",
+                "url": "https://www.geeksforgeeks.org/computer-networks/tcp-congestion-control/"
+              }
+            ],
+            "tip": "",
+            "is_trap": false
+          },
+          {
+            "name": "Congestion Control Techniques",
+            "links": [
+              {
+                "text": "Congestion Control Techniques",
+                "url": "https://www.geeksforgeeks.org/computer-networks/congestion-control-techniques-in-computer-networks/"
+              }
+            ],
+            "tip": "",
+            "is_trap": false
+          },
+          {
+            "name": "Application Layer Protocols overview",
+            "links": [
+              {
+                "text": "Application Layer Protocols",
+                "url": "https://www.geeksforgeeks.org/computer-networks/protocols-application-layer/"
+              }
+            ],
+            "tip": "",
+            "is_trap": false
+          },
+          {
+            "name": "SMTP (Simple Mail Transfer Protocol)",
+            "links": [
+              {
+                "text": "SMTP",
+                "url": "https://www.geeksforgeeks.org/computer-networks/simple-mail-transfer-protocol-smtp/"
+              }
+            ],
+            "tip": "",
+            "is_trap": false
+          },
+          {
+            "name": "DNS (Domain Name System)",
+            "links": [
+              {
+                "text": "DNS",
+                "url": "https://www.geeksforgeeks.org/computer-networks/domain-name-system-dns-in-application-layer/"
+              }
+            ],
+            "tip": "Be ready to explain the DNS resolution chain: browser cache \u2192 OS cache \u2192 resolver \u2192 root \u2192 TLD \u2192 authoritative server.",
+            "is_trap": false
+          },
+          {
+            "name": "HTTP vs HTTPS",
+            "links": [
+              {
+                "text": "HTTP vs HTTPS",
+                "url": "https://www.geeksforgeeks.org/computer-networks/difference-between-http-and-https/"
+              }
+            ],
+            "tip": "",
+            "is_trap": false
+          },
+          {
+            "name": "FTP, ATM, DHCP",
+            "links": [
+              {
+                "text": "FTP",
+                "url": "https://www.geeksforgeeks.org/computer-networks/file-transfer-protocol-ftp-in-application-layer/"
+              },
+              {
+                "text": "ATM",
+                "url": "https://www.geeksforgeeks.org/computer-networks/asynchronous-transfer-mode-atm-in-computer-network/"
+              },
+              {
+                "text": "DHCP",
+                "url": "https://www.geeksforgeeks.org/computer-networks/dynamic-host-configuration-protocol-dhcp/"
+              }
+            ],
+            "tip": "",
+            "is_trap": false
+          }
+        ],
+        "useful_links": []
+      }
+    ]
+  },
+  {
+    "tag": "SE",
+    "subject": "Software Engineering",
+    "intro": "SDLC models, Agile, COCOMO, requirements, and testing types. Interviewers expect you to know why Agile fits real product teams \u2014 connect this back to your own project workflow (DigiFlute internship, hackathons) for a stronger answer.",
+    "days": [
+      {
+        "day": "D17",
+        "title": "Introduction to Software Engineering",
+        "meta": "2 topics",
+        "topics": [
+          {
+            "name": "Introduction to Software Engineering",
+            "links": [
+              {
+                "text": "Intro to SE",
+                "url": "https://www.geeksforgeeks.org/software-engineering/software-engineering-introduction-to-software-engineering/"
+              }
+            ],
+            "tip": "",
+            "is_trap": false
+          },
+          {
+            "name": "Classification of Software",
+            "links": [
+              {
+                "text": "Classification of Software",
+                "url": "https://www.geeksforgeeks.org/software-engineering/software-engineering-classification-software/"
+              }
+            ],
+            "tip": "",
+            "is_trap": false
+          }
+        ],
+        "useful_links": []
+      },
+      {
+        "day": "D18",
+        "title": "SDLC Models",
+        "meta": "8 topics",
+        "topics": [
+          {
+            "name": "Classical Waterfall Model",
+            "links": [
+              {
+                "text": "Waterfall Model",
+                "url": "https://www.geeksforgeeks.org/software-engineering/waterfall-model/"
+              }
+            ],
+            "tip": "",
+            "is_trap": false
+          },
+          {
+            "name": "Iterative Waterfall Model",
+            "links": [
+              {
+                "text": "Iterative Waterfall",
+                "url": "https://www.geeksforgeeks.org/software-engineering/software-engineering-iterative-waterfall-model/"
+              }
+            ],
+            "tip": "",
+            "is_trap": false
+          },
+          {
+            "name": "Spiral Model",
+            "links": [
+              {
+                "text": "Spiral Model",
+                "url": "https://www.geeksforgeeks.org/software-engineering/software-engineering-spiral-model/"
+              }
+            ],
+            "tip": "",
+            "is_trap": false
+          },
+          {
+            "name": "Rapid Application Development (RAD) Model",
+            "links": [
+              {
+                "text": "RAD Model",
+                "url": "https://www.geeksforgeeks.org/software-engineering/software-engineering-rapid-application-development-model-rad/"
+              }
+            ],
+            "tip": "",
+            "is_trap": false
+          },
+          {
+            "name": "RAD vs Traditional SDLC",
+            "links": [
+              {
+                "text": "RAD vs Traditional SDLC",
+                "url": "https://www.geeksforgeeks.org/software-engineering/software-engineering-rad-model-vs-traditional-sdlc/"
+              }
+            ],
+            "tip": "",
+            "is_trap": false
+          },
+          {
+            "name": "Agile Development Models \u2014 Scrum, Kanban, XP",
+            "links": [
+              {
+                "text": "Agile Development Models",
+                "url": "https://www.geeksforgeeks.org/software-engineering/software-engineering-agile-development-models/"
+              }
+            ],
+            "tip": "Most-asked SE topic:know the 4 Agile Manifesto values, what a sprint/standup/retro is, and be ready to contrast Scrum (fixed sprints, roles) vs Kanban (continuous flow, WIP limits).",
+            "is_trap": true
+          },
+          {
+            "name": "Comparison of Life Cycle Models",
+            "links": [
+              {
+                "text": "Comparison of Life Cycle Models",
+                "url": "https://www.geeksforgeeks.org/software-engineering/software-engineering-comparison-of-different-life-cycle-models/"
+              }
+            ],
+            "tip": "",
+            "is_trap": false
+          },
+          {
+            "name": "Coupling and Cohesion",
+            "links": [
+              {
+                "text": "Coupling and Cohesion",
+                "url": "https://www.geeksforgeeks.org/software-engineering/software-engineering-coupling-and-cohesion/"
+              }
+            ],
+            "tip": "Trap:good design = LOW coupling + HIGH cohesion. People sometimes flip this under pressure \u2014 say it out loud twice before the interview.",
+            "is_trap": true
+          }
+        ],
+        "useful_links": []
+      },
+      {
+        "day": "D19",
+        "title": "Software Project Management",
+        "meta": "4 topics",
+        "topics": [
+          {
+            "name": "Project Management Process phases",
+            "links": [
+              {
+                "text": "Project Management Process",
+                "url": "https://www.geeksforgeeks.org/software-engineering/phases-project-management-processes/"
+              }
+            ],
+            "tip": "",
+            "is_trap": false
+          },
+          {
+            "name": "COCOMO Model \u2014 effort/cost estimation",
+            "links": [
+              {
+                "text": "COCOMO Model",
+                "url": "https://www.geeksforgeeks.org/software-engineering/software-engineering-cocomo-model/"
+              }
+            ],
+            "tip": "Know the 3 modes: Organic (small, simple), Semi-detached (medium), Embedded (complex, tight constraints) \u2014 asked as a straight definitional MCQ.",
+            "is_trap": false
+          },
+          {
+            "name": "Risk Management in SDLC",
+            "links": [
+              {
+                "text": "Risk Management in SDLC",
+                "url": "https://www.geeksforgeeks.org/software-engineering/integrating-risk-management-in-sdlc-set-1/"
+              }
+            ],
+            "tip": "",
+            "is_trap": false
+          },
+          {
+            "name": "Role & Responsibilities of a Software Project Manager",
+            "links": [
+              {
+                "text": "Software Project Manager Role",
+                "url": "https://www.geeksforgeeks.org/software-engineering/software-engineering-role-and-responsibilities-of-a-software-project-manager/"
+              }
+            ],
+            "tip": "",
+            "is_trap": false
+          }
+        ],
+        "useful_links": []
+      },
+      {
+        "day": "D20",
+        "title": "Software Requirements",
+        "meta": "4 topics",
+        "topics": [
+          {
+            "name": "Classification of Software Requirements \u2014 functional vs non-functional",
+            "links": [
+              {
+                "text": "Classification of Requirements",
+                "url": "https://www.geeksforgeeks.org/software-engineering/software-engineering-classification-of-software-requirements/"
+              }
+            ],
+            "tip": "",
+            "is_trap": false
+          },
+          {
+            "name": "How to Write a Good SRS",
+            "links": [
+              {
+                "text": "Writing a Good SRS",
+                "url": "https://www.geeksforgeeks.org/software-engineering/how-to-write-a-good-srs-for-your-project/"
+              }
+            ],
+            "tip": "",
+            "is_trap": false
+          },
+          {
+            "name": "Quality Characteristics of a Good SRS",
+            "links": [
+              {
+                "text": "Quality Characteristics of SRS",
+                "url": "https://www.geeksforgeeks.org/software-engineering/software-engineering-quality-characteristics-of-a-good-srs/"
+              }
+            ],
+            "tip": "",
+            "is_trap": false
+          },
+          {
+            "name": "Requirements Elicitation",
+            "links": [
+              {
+                "text": "Requirements Elicitation",
+                "url": "https://www.geeksforgeeks.org/software-engineering/software-engineering-requirements-elicitation/"
+              }
+            ],
+            "tip": "",
+            "is_trap": false
+          }
+        ],
+        "useful_links": []
+      },
+      {
+        "day": "D21",
+        "title": "Software Testing & Debugging",
+        "meta": "6 topics",
+        "topics": [
+          {
+            "name": "Seven Principles of Software Testing",
+            "links": [
+              {
+                "text": "7 Principles of Testing",
+                "url": "https://www.geeksforgeeks.org/software-engineering/software-engineering-seven-principles-of-software-testing/"
+              }
+            ],
+            "tip": "",
+            "is_trap": false
+          },
+          {
+            "name": "Testing Guidelines",
+            "links": [
+              {
+                "text": "Testing Guidelines",
+                "url": "https://www.geeksforgeeks.org/software-engineering/software-engineering-testing-guidelines/"
+              }
+            ],
+            "tip": "",
+            "is_trap": false
+          },
+          {
+            "name": "Black Box Testing",
+            "links": [
+              {
+                "text": "Black Box Testing",
+                "url": "https://www.geeksforgeeks.org/software-testing/software-engineering-black-box-testing/"
+              }
+            ],
+            "tip": "Trap:Black box = tests functionality without knowing internal code (you did this for PackSage's 90 endpoints). White box = tests internal logic/paths with code visibility. Don't mix them up under pressure.",
+            "is_trap": true
+          },
+          {
+            "name": "White Box Testing",
+            "links": [
+              {
+                "text": "White Box Testing",
+                "url": "https://www.geeksforgeeks.org/software-testing/software-engineering-white-box-testing/"
+              }
+            ],
+            "tip": "",
+            "is_trap": false
+          },
+          {
+            "name": "Debugging strategies",
+            "links": [
+              {
+                "text": "Debugging",
+                "url": "https://www.geeksforgeeks.org/software-engineering/software-engineering-debugging/"
+              }
+            ],
+            "tip": "",
+            "is_trap": false
+          },
+          {
+            "name": "Integration Testing \u2014 big bang, top-down, bottom-up",
+            "links": [
+              {
+                "text": "Integration Testing",
+                "url": "https://www.geeksforgeeks.org/software-testing/software-engineering-integration-testing/"
+              }
+            ],
+            "tip": "",
+            "is_trap": false
+          }
+        ],
+        "useful_links": []
+      }
+    ]
+  }
+]
