@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SDE Interview Defense | Aman Verma</title>
+<style>
+  :root{
+    --bg:#0a0e14; --card:#131a26; --card-border:#1f2937;
+    --cyan:#22d3ee; --cyan-dim:#0e7490;
+    --text:#e2e8f0; --text-dim:#93a1b5; --text-faint:#5b6a80;
+    --trap:#f87171; --trap-bg:#2a1414;
+    --ref:#38bdf8; --ref-bg:#0f1e2c;
+    --resume:#34d399; --resume-bg:#0f231b;
+    --followup:#c084fc; --followup-bg:#1e1526;
+    --amber:#fbbf24; --amber-bg:#241d0d;
+    --code-bg:#0d1117; --radius:14px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{margin:0;background:var(--bg);background-image:radial-gradient(circle at 15% 0%, rgba(34,211,238,0.07), transparent 40%),radial-gradient(circle at 85% 20%, rgba(192,132,252,0.05), transparent 35%);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.55;padding-bottom:60px;}
+  a{color:var(--cyan);text-decoration:none;}
+  a:hover{text-decoration:underline;}
+
+  .topbar{position:sticky;top:0;z-index:50;background:rgba(10,14,20,0.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--card-border);padding:12px 16px;}
+  .topbar-inner{max-width:900px;margin:0 auto;display:flex;align-items:center;gap:10px;}
+  .topbar-title{font-size:13px;font-weight:700;color:var(--cyan);letter-spacing:0.03em;white-space:nowrap;display:flex;align-items:center;gap:6px;}
+  .topbar-title .dot{width:7px;height:7px;border-radius:50%;background:var(--cyan);box-shadow:0 0 8px var(--cyan);}
+  select.jumpnav{flex:1;background:var(--card);color:var(--text);border:1px solid var(--card-border);border-radius:9px;padding:9px 10px;font-size:14px;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%2322d3ee'><path d='M5.5 7.5l4.5 4.5 4.5-4.5z'/></svg>");background-repeat:no-repeat;background-position:right 10px center;background-size:16px;padding-right:32px;}
+  select.jumpnav:focus{outline:2px solid var(--cyan-dim);}
+
+  .wrap{max-width:900px;margin:0 auto;padding:0 16px;}
+  .hero{padding:28px 4px 10px;}
+  .hero h1{font-size:22px;margin:0 0 6px;color:#fff;}
+  .hero p{color:var(--text-dim);font-size:14px;margin:0 0 8px;}
+  .hero .badges{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;}
+  .badge{font-size:11px;font-weight:600;color:var(--cyan);border:1px solid var(--cyan-dim);background:rgba(34,211,238,0.06);padding:4px 9px;border-radius:99px;}
+
+  section{margin-top:28px;scroll-margin-top:70px;}
+  .section-head{display:flex;align-items:baseline;gap:10px;margin-bottom:10px;}
+  .section-head h2{font-size:18px;margin:0;color:#fff;padding-left:10px;border-left:3px solid var(--cyan);}
+  .section-note{color:var(--text-dim);font-size:13px;padding-left:13px;margin:0 0 10px;}
+
+  .bullet-card{background:var(--card);border:1px solid var(--card-border);border-radius:var(--radius);padding:16px 16px 18px;margin-bottom:16px;}
+  .bullet-quote{background:rgba(255,255,255,0.03);border-left:3px solid var(--text-faint);border-radius:8px;padding:10px 13px;margin-bottom:12px;font-size:13.5px;font-style:italic;color:var(--text-dim);}
+  .bullet-card h3{font-size:13px;margin:16px 0 8px;color:var(--cyan);text-transform:uppercase;letter-spacing:0.03em;}
+  .bullet-card h3:first-of-type{margin-top:4px;}
+  .bullet-card p{margin:6px 0;color:var(--text);font-size:14px;}
+  .bullet-card p.dim{color:var(--text-dim);}
+  code.inline{background:rgba(34,211,238,0.08);color:var(--cyan);padding:1px 6px;border-radius:5px;font-size:12.5px;font-family:"SF Mono",Consolas,Monaco,monospace;}
+
+  .plain-first{background:rgba(52,211,153,0.07);border:1px solid rgba(52,211,153,0.3);border-radius:9px;padding:11px 13px;margin:10px 0;font-size:13.5px;}
+  .plain-first .pf-label{font-size:10.5px;font-weight:800;color:var(--resume);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:5px;}
+  .plain-first p{margin:0;color:var(--text);font-style:italic;}
+
+  .qa{background:var(--ref-bg);border:1px solid rgba(56,189,248,0.22);border-left:3px solid var(--ref);border-radius:10px;padding:13px 15px;margin:11px 0;}
+  .qa .q{font-size:13.5px;font-weight:700;color:#fff;margin-bottom:7px;display:flex;gap:8px;}
+  .qa .q .qtag{flex-shrink:0;font-size:10px;font-weight:800;color:var(--ref);background:rgba(56,189,248,0.13);border-radius:5px;padding:2px 7px;height:fit-content;letter-spacing:0.03em;}
+  .qa .a{font-size:13.5px;color:var(--text-dim);padding-left:2px;}
+  .qa .a strong{color:var(--text);}
+  .qa .a + .a{margin-top:8px;}
+
+  .metric{background:var(--followup-bg);border:1px solid rgba(192,132,252,0.28);border-left:3px solid var(--followup);border-radius:10px;padding:12px 14px;margin:11px 0;font-size:13.5px;}
+  .metric .m-label{font-size:10.5px;font-weight:800;color:var(--followup);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px;}
+  .metric p{margin:4px 0;color:var(--text);}
+
+  .flag{background:var(--trap-bg);border:1px solid rgba(248,113,113,0.3);border-left:3px solid var(--trap);border-radius:10px;padding:12px 14px;margin:11px 0;font-size:13.5px;}
+  .flag .f-label{font-size:10.5px;font-weight:800;color:var(--trap);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px;}
+  .flag p{margin:4px 0;color:var(--text);}
+
+  .repo{background:rgba(251,191,36,0.06);border:1px solid rgba(251,191,36,0.28);border-left:3px solid var(--amber);border-radius:10px;padding:12px 14px;margin:11px 0;font-size:13.5px;}
+  .repo .r-label{font-size:10.5px;font-weight:800;color:var(--amber);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px;}
+  .repo p{margin:4px 0;color:var(--text);}
+  .repo code{background:var(--code-bg);color:var(--amber);padding:1px 6px;border-radius:5px;font-size:12.5px;font-family:"SF Mono",Consolas,Monaco,monospace;}
+
+  .verified{display:inline-block;font-size:10px;font-weight:800;letter-spacing:0.03em;text-transform:uppercase;color:var(--resume);border:1px solid rgba(52,211,153,0.4);background:rgba(52,211,153,0.08);padding:2px 8px;border-radius:99px;margin-bottom:8px;}
+  .unverifiable{display:inline-block;font-size:10px;font-weight:800;letter-spacing:0.03em;text-transform:uppercase;color:var(--text-faint);border:1px solid var(--card-border);padding:2px 8px;border-radius:99px;margin-bottom:8px;}
+  .needs-care{display:inline-block;font-size:10px;font-weight:800;letter-spacing:0.03em;text-transform:uppercase;color:var(--trap);border:1px solid rgba(248,113,113,0.4);background:rgba(248,113,113,0.08);padding:2px 8px;border-radius:99px;margin-bottom:8px;}
+
+  .alertbox{background:linear-gradient(180deg, rgba(248,113,113,0.12), rgba(248,113,113,0.04));border:1px solid rgba(248,113,113,0.4);border-radius:var(--radius);padding:18px;margin-bottom:16px;}
+  .alertbox h2{margin:0 0 10px;font-size:17px;color:#fff;}
+  .alertbox ol{margin:8px 0 0;padding-left:20px;color:var(--text);font-size:14px;}
+  .alertbox li{margin-bottom:9px;}
+
+  ul.tight{margin:6px 0;padding-left:20px;color:var(--text-dim);font-size:13.5px;}
+  ul.tight li{margin-bottom:5px;}
+  ul.tight strong{color:var(--text);}
+
+  footer{max-width:900px;margin:36px auto 0;padding:16px;text-align:center;color:var(--text-faint);font-size:12px;}
+  @media (min-width:640px){ .hero h1{font-size:26px;} }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-inner">
+    <span class="topbar-title"><span class="dot"></span>SDE</span>
+    <select class="jumpnav" onchange="if(this.value) window.location.hash = this.value;">
+      <option value="">Jump to a bullet...</option>
+      <optgroup label="Before anything else">
+        <option value="#alert">The three things that can sink this</option>
+      </optgroup>
+      <optgroup label="Experience: DigiFlute Media Lab">
+        <option value="#exp1">20+ REST endpoints, PHP + MongoDB Atlas</option>
+        <option value="#exp2">JWT, RBAC across 5 tiers, multi-tenant</option>
+        <option value="#exp3">Workflow states, versioning, soft deletes</option>
+      </optgroup>
+      <optgroup label="Chessify AI">
+        <option value="#ch1">Room-based Socket.IO, server-side validation</option>
+        <option value="#ch2">Flask AI service, Stockfish 1800, minimax depth 3</option>
+        <option value="#ch3">Deep dive: the questions that go three levels down</option>
+      </optgroup>
+      <optgroup label="StudySync">
+        <option value="#ss1">Flutter on Android, iOS, web; v3.0.0</option>
+        <option value="#ss2">Offline-first layer, Express + MongoDB admin</option>
+      </optgroup>
+      <optgroup label="SahYatri">
+        <option value="#sy0">Read this before you say a word about SahYatri</option>
+        <option value="#sy1">YOLOv5n on the Pi at 15 FPS</option>
+        <option value="#sy2">PostgreSQL telemetry, React dashboard, 4-person team</option>
+      </optgroup>
+      <optgroup label="Achievements">
+        <option value="#ach1">LeetCode Knight, 2094 peak, 863 solved</option>
+        <option value="#ach2">BitBox 5.0, Innovate 3.0, certifications</option>
+      </optgroup>
+      <optgroup label="Cross-cutting">
+        <option value="#cross1">"You're ECE. Why software?"</option>
+        <option value="#cross2">System design they will actually ask you</option>
+        <option value="#cross3">Your questions for them</option>
+      </optgroup>
+    </select>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <div class="hero">
+    <h1>SDE Interview Defense</h1>
+    <p>Every bullet on the SDE resume, with the follow-ups you should expect, an answer you can say out loud in 20 to 40 seconds, and an honest check of each claim against what is actually in the repos.</p>
+    <p>Written for an interviewer who has your resume open in one tab and your GitHub in another. That second tab is the one most prep docs ignore.</p>
+    <div class="badges">
+      <span class="badge">Read against real code</span>
+      <span class="badge">Spoken answers</span>
+      <span class="badge">Claims stress-tested</span>
+    </div>
+  </div>
+
+  <section id="alert">
+    <div class="alertbox">
+      <h2>The three things that can sink this interview</h2>
+      <p style="color:var(--text-dim);font-size:13.5px;margin:0;">Everything else on the resume holds up. These three do not, or not fully, and all three are visible to anyone who opens the repo.</p>
+      <ol>
+        <li><strong>SahYatri does not run inference on the Raspberry Pi.</strong> The detection service is a separate FastAPI app that loads <code class="inline">yolov5xu.pt</code> and takes an uploaded image over HTTP. The resume says YOLOv5n on the Pi with no video leaving the vehicle. Full breakdown and a fixed bullet are in the SahYatri section. Fix the line before you send the resume anywhere else.</li>
+        <li><strong>Your cheating claim is only half true.</strong> Move validation is genuinely server-side in Chessify, and that is a real strength. Clocks are not. A modified client can still lie about time. Say this yourself before they find it.</li>
+        <li><strong>Nothing you built persists state.</strong> Chessify keeps rooms in a plain JavaScript object, StudySync caches to shared_preferences, RecrutAI uses an in-memory map. Individually fine. If an interviewer notices the pattern across all three, they will ask whether you have ever thought about durability. Have the answer ready.</li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ================= EXPERIENCE ================= -->
+  <section id="exp-head">
+    <div class="section-head"><h2>Experience: DigiFlute Media Lab</h2></div>
+    <p class="section-note">Packspec has no public repo, so nothing here can be checked against code. That cuts both ways. Nobody can catch you out, and nobody can back you up, so precision and consistency are what carry it. Interviewers trust specific over impressive every time.</p>
+  </section>
+
+  <section id="exp1">
+    <div class="bullet-card">
+      <span class="unverifiable">No public repo: be specific, not grand</span>
+      <div class="bullet-quote">"Engineered 20+ RESTful API endpoints in PHP with MongoDB Atlas for Packspec, designing document schemas and query patterns for multi-tenant, company-scoped data isolation."</div>
+
+      <h3>Say this first</h3>
+      <div class="plain-first">
+        <div class="pf-label">Plain-English version</div>
+        <p>"Packspec is a tool where companies write up packaging specifications and route them through approvals. I built the backend API for it, so roughly twenty-odd endpoints covering the products, the components inside them, the specs themselves, and the users."</p>
+      </div>
+
+      <h3>Likely follow-ups</h3>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>Name me eight of those endpoints.</div>
+        <div class="a"><strong>Say:</strong> "Create a specification, list specs for a company, fetch one by ID, update a spec revision, submit for approval, approve or reject, create a product, attach a component to a product, invite a user, change a user's role. Most resources needed the standard five, and specifications needed extra ones for the workflow steps, which is how you get to twenty quickly."</div>
+        <div class="a">Have this list memorised. Being able to rattle off actual endpoint names is the single strongest signal that the work was real, and it costs you five minutes to prepare.</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>Why MongoDB and not a relational database for something this structured?</div>
+        <div class="a"><strong>Say:</strong> "It was already the stack when I joined, so I did not pick it. It fits reasonably well though, because a packaging spec has a different shape for every client, and modelling that relationally means either a very wide sparse table or an entity-attribute-value mess. A document per spec lets each one carry its own field set. The cost is that I gave up joins and had to be deliberate about denormalising."</div>
+        <div class="a">Answering "I did not choose it" honestly and then defending it anyway is a much better look than pretending you made an architecture decision you did not make.</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>What does "designing query patterns" mean concretely?</div>
+        <div class="a"><strong>Say:</strong> "Mainly that every query is scoped by company ID first, and that field is indexed, so a lookup never scans across tenants. And for the list views I kept the fields the UI actually renders on the parent document rather than fanning out to fetch each child, because that turns one round trip into twenty."</div>
+      </div>
+
+      <h3>Stress-testing "20+"</h3>
+      <div class="metric">
+        <div class="m-label">Where this number came from</div>
+        <p>20+ is the figure on your own portfolio, which makes it the safe one to quote. An earlier draft said 30+. Pick one and never say the other number out loud again, because the fastest way to lose a panel is to give two different figures for the same thing across two rounds.</p>
+        <p>If pressed on exactness: "Somewhere north of twenty. I did not keep a running count while I was building, so I would rather say twenty than invent a precise number."</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="exp2">
+    <div class="bullet-card">
+      <span class="unverifiable">No public repo: be specific, not grand</span>
+      <div class="bullet-quote">"Implemented JWT authentication and RBAC across 5 tenant tiers over a multi-tenant, company-scoped data model with invite-based onboarding, workspace provisioning, and plan-based quota enforcement."</div>
+
+      <h3>Say this first</h3>
+      <div class="plain-first">
+        <div class="pf-label">Plain-English version</div>
+        <p>"Several client companies share the same running application and the same database. My job was making sure one company can never see another's data, and that within a company an ordinary user cannot do admin things."</p>
+      </div>
+
+      <h3>Likely follow-ups</h3>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>Where exactly do you enforce the tenant boundary?</div>
+        <div class="a"><strong>Say:</strong> "In middleware, before the route handler runs. The JWT carries the company ID, the middleware pulls it out and puts it on the request, and every query builds its filter from that value rather than from anything in the request body. So a handler cannot accidentally forget, because it never sees a company ID it could have got wrong."</div>
+        <div class="a">This is the correct answer and it is worth rehearsing until it is smooth. The wrong answer, the one that loses points, is "I check it in each controller." That means one forgotten check is a data leak.</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>What are the five tiers?</div>
+        <div class="a"><strong>Say:</strong> Name them. Something like super admin, company admin, manager, editor, viewer. <strong>Confirm the real names with your team lead before the interview.</strong> "Five" is a claim you have made in writing and being unable to list them is worse than never having said it.</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>What is in your JWT payload, and how do you handle a user whose role changes?</div>
+        <div class="a"><strong>Say:</strong> "User ID, company ID, role, expiry. The honest weakness is that a role change does not take effect until the token expires, because the role is baked into the token rather than looked up per request. For a tool used by a few hundred people that was an acceptable trade. If it mattered more I would keep a short-lived access token with a refresh token, or check a revocation list on sensitive routes."</div>
+        <div class="a">Volunteering the weakness here is a strong move. Every interviewer knows this trade-off, and naming it yourself puts you on the right side of it.</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>You mention atomic transactions. In MongoDB?</div>
+        <div class="a"><strong>Say:</strong> "Single document writes are atomic in MongoDB by default, and I leaned on that heavily by keeping things that must change together inside one document. Multi-document transactions need a replica set, which Atlas gives you, and I used those for the flows that genuinely spanned collections, like provisioning a workspace and creating the owner record."</div>
+        <div class="a"><strong>Careful.</strong> If you did not actually use multi-document transactions, do not claim you did. Say: "Mostly I relied on single-document atomicity and shaped the schema so that was enough." That is a real design answer and it is safer than a claim that unravels in one follow-up.</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="exp3">
+    <div class="bullet-card">
+      <span class="unverifiable">No public repo: be specific, not grand</span>
+      <div class="bullet-quote">"Designed workflow-state transitions, revision versioning, and cascading soft-deletes so every specification change stays auditable and recoverable; validated the API surface with Postman collections and PHPUnit suites."</div>
+
+      <h3>Say this first</h3>
+      <div class="plain-first">
+        <div class="pf-label">Plain-English version</div>
+        <p>"Nothing gets destroyed. Editing a spec writes a new revision instead of overwriting the old one, deleting flags a record rather than removing it, and every spec moves through a fixed set of states so you can always see who changed what and when."</p>
+      </div>
+
+      <h3>Likely follow-ups</h3>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>Draw me the state machine.</div>
+        <div class="a"><strong>Say:</strong> "Draft, submitted, under review, approved or rejected, then archived. Draft to submitted is the author. Submitted to approved or rejected is a reviewer. Rejected goes back to draft. The transitions are checked server-side, so you cannot jump from draft straight to approved by calling the endpoint directly."</div>
+        <div class="a">Ask for the whiteboard or just talk through it with your hands. Interviewers like candidates who reach for a diagram.</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>Soft deletes sound tidy but they cause problems. Which ones did you hit?</div>
+        <div class="a"><strong>Say:</strong> "Every query needs the deleted filter, and forgetting it once means deleted records reappear in a list. I handled it in the shared query layer rather than per endpoint. The other one is uniqueness, because a soft-deleted record still occupies a unique name, so creating a new spec with the same name as a deleted one fails in a confusing way."</div>
+        <div class="a">Naming a real problem you hit is worth more than describing the feature. This is the answer that separates people who built it from people who read about it.</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>What did your PHPUnit tests actually cover?</div>
+        <div class="a"><strong>Say:</strong> "Mostly the auth and permission paths, because that is where a bug is expensive, plus the workflow transitions, so the invalid ones actually get rejected. It was not full coverage. It was the parts where a silent failure would have been worst."</div>
+        <div class="a">Do not claim a coverage percentage. If you have one, use it; if not, "not full coverage, deliberately targeted" is a mature answer.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= CHESSIFY ================= -->
+  <section id="chess-head">
+    <div class="section-head"><h2>Projects: Chessify AI</h2></div>
+    <p class="section-note">Repo: <a href="https://github.com/AmanVerma1067/Chessify-WebApp">AmanVerma1067/Chessify-WebApp</a> &nbsp;|&nbsp; Live: <a href="http://chessify.aman1067.xyz/">chessify.aman1067.xyz</a><br>This is your strongest SDE project by a distance. Real concurrency, real client-server trust boundary, three deployed services. Expect the deepest questioning here, and be glad of it.</p>
+  </section>
+
+  <section id="ch1">
+    <div class="bullet-card">
+      <span class="verified">Verified in Chess-PvP/server.js</span>
+      <div class="bullet-quote">"Engineered a room-based real-time multiplayer server on Node.js and Socket.IO that assigns white, black and spectator roles per game, replays board state to late joiners and detects opponent disconnects; moved all move validation server-side so a tampered client cannot submit an illegal move."</div>
+
+      <h3>Say this first</h3>
+      <div class="plain-first">
+        <div class="pf-label">Plain-English version</div>
+        <p>"Two people share a link and play chess in real time, and anyone else who opens the link watches. The important bit is that the server decides whether a move is legal, not the browser, so you cannot cheat by editing the page."</p>
+      </div>
+
+      <div class="repo">
+        <div class="r-label">What the code actually shows</div>
+        <p><code>let rooms = {}</code> is a plain object keyed by room ID. Each room holds <code>fen</code>, a <code>players</code> object with white and black socket IDs, and a <code>spectators</code> array.</p>
+        <p>On a move the server runs <code>new Chess(room.fen)</code>, applies the move, and only then updates the room and broadcasts. That is a genuine server-side validation path, not a claim.</p>
+        <p>Events are all there: <code>join-room</code>, <code>move</code>, <code>chat</code> inbound; <code>role</code>, <code>sync-board</code>, <code>move-confirmed</code>, <code>opponent-move</code>, <code>spectator-count</code>, <code>opponent-disconnected</code> outbound.</p>
+      </div>
+
+      <h3>Likely follow-ups</h3>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>Walk me through everything that happens when I drag a piece.</div>
+        <div class="a"><strong>Say:</strong> "The client emits a move event with the room ID, the from square, the to square and a promotion piece if there is one. The server looks up the room, builds a chess.js board from the stored FEN, and tries the move. If chess.js rejects it, nothing happens and the client's optimistic update gets reverted. If it is legal, the server writes the new FEN back into the room, sends move-confirmed to the mover and opponent-move to everyone else in the room."</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>You rebuild a Chess object from FEN on every single move. Why not keep one board in memory per room?</div>
+        <div class="a"><strong>Say:</strong> "FEN is the whole state in one string, so storing that instead of a live object keeps the room record simple and serialisable, which would matter the moment I moved rooms into Redis. The cost is real though. FEN carries the halfmove clock but not the position history, so I cannot detect threefold repetition, and I would need to keep the move list alongside it to do that properly."</div>
+        <div class="a">This is the best answer in the whole document. Almost nobody spots the threefold repetition consequence, and volunteering it marks you as someone who thinks past the happy path. Rehearse it.</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>Your server restarts. What happens to games in progress?</div>
+        <div class="a"><strong>Say:</strong> "They are gone. Rooms live in a process-local object, so a restart wipes everything. For a hobby project on a free tier that was the right call, and moving room state to Redis is the obvious fix. That also unblocks running more than one instance, which is the other thing this design cannot do today."</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>How would you run this on ten servers?</div>
+        <div class="a"><strong>Say:</strong> "Two problems. Sockets in the same game can land on different instances, so I would add the Socket.IO Redis adapter to make broadcasts cross instances. And room state has to move out of process memory into Redis so any instance can serve any move. Sticky sessions help with reconnects but they are not sufficient on their own."</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>Your disconnect handler loops over every room in the server. Is that a problem?</div>
+        <div class="a"><strong>Say:</strong> "Yes, it is a linear scan on every disconnect. With a handful of concurrent games it is invisible, but it is the wrong shape. The fix is a map from socket ID to room ID so a disconnect is a single lookup. I would take that in review."</div>
+        <div class="a">They can see this in the code, so having already noticed it yourself is worth more than the fix itself.</div>
+      </div>
+
+      <h3>The trap in this bullet</h3>
+      <div class="flag">
+        <div class="f-label">Do not oversell "cannot cheat"</div>
+        <p>Move legality is server-authoritative. Good. But the clocks are not. The README lists Blitz, Rapid and Unlimited timers, and there is no timer logic in the server, which means time is tracked in the browser and a modified client can claim it has more of it than it does.</p>
+        <p><strong>Say it before they ask:</strong> "Move validation is server-side, so illegal moves are impossible. Clocks are not, and that is the honest gap. A patched client could lie about its remaining time. Making that airtight means the server owns the clock and the client only renders it, which is what I would do next."</p>
+        <p>There is a second one. There is no auth, so anyone with the link can take an open seat. That is a deliberate design choice for a share-a-link game, so say it as a choice rather than letting them find it as an oversight.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="ch2">
+    <div class="bullet-card">
+      <span class="verified">Verified in Chess-AI/</span>
+      <div class="bullet-quote">"Built a decoupled Flask AI microservice that plays book openings from a Polyglot database, delegates search to the Stockfish engine (ELO 1800), and degrades to a custom minimax with alpha-beta pruning at depth 3 when the engine binary is unavailable; deployed three services independently."</div>
+
+      <h3>Say this first</h3>
+      <div class="plain-first">
+        <div class="pf-label">Plain-English version</div>
+        <p>"The bot is its own Python service. Early moves come out of a real opening book, the middle game goes to Stockfish, and if the Stockfish binary will not start on the host I fall back to a search algorithm I wrote myself so the bot still plays instead of erroring out."</p>
+      </div>
+
+      <div class="repo">
+        <div class="r-label">What the code actually shows</div>
+        <p>Files line up exactly with the claim: <code>bot/minimax.py</code>, <code>bot/evaluation.py</code>, <code>bot/stockfish_bot.py</code>, <code>bot/opening_book.py</code>, plus a bundled Stockfish binary and <code>assets/openings.pgn</code>.</p>
+        <p>One endpoint, <code>POST /get_bot_move</code>, takes a FEN and returns a move and the new FEN. Clean, stateless, easy to describe.</p>
+      </div>
+
+      <h3>Likely follow-ups</h3>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>What does "Stockfish ELO 1800" mean? Stockfish is stronger than 3500.</div>
+        <div class="a"><strong>Say:</strong> "It is the strength limiter, not the engine's real rating. Stockfish has a setting that caps how well it plays so it is a reasonable opponent for a human, and I set that to 1800. If I said the bot plays at Stockfish's actual level nobody would ever beat it."</div>
+        <div class="a">This question is close to guaranteed if the interviewer plays chess. Getting it right is easy points; getting it wrong makes the number look copy-pasted.</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>Why depth 3? That is shallow.</div>
+        <div class="a"><strong>Say:</strong> "Latency. It is a fallback path running on a free Render instance, and chess branches around 35 moves wide, so depth 3 is roughly forty thousand positions before pruning. Alpha-beta cuts that a long way when the move ordering is decent, but going deeper made the bot take long enough that the game felt broken. It is meant to keep playing, not to play well."</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>Explain alpha-beta to me.</div>
+        <div class="a"><strong>Say:</strong> "You carry two bounds through the search, the best score the maximising side can already guarantee and the best the minimising side can. The moment a branch proves worse for the player to move than something they have already secured, you stop looking at that branch, because they would never choose it. It gives the same answer as plain minimax and just skips work. How much it skips depends almost entirely on move ordering, since good moves first means more cuts."</div>
+        <div class="a">Expect this. It is the most natural DSA question your own resume invites, and answering it fluently pays for the whole project.</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>What is in your evaluation function?</div>
+        <div class="a"><strong>Say:</strong> "Material weights plus piece-square tables, so a knight in the centre scores higher than one on the rim. It is a standard simple evaluation. No pawn structure, no king safety term, no mobility. Those are the things I would add next and each one costs search speed."</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>Why a separate Python service instead of doing the AI in Node?</div>
+        <div class="a"><strong>Say:</strong> "Stockfish is a binary you talk to over UCI and python-chess wraps that well, so Python was the path of least resistance. It also means the bot can go down without touching multiplayer, which has actually happened, because the two deploy independently."</div>
+        <div class="a">The second half is the better half. Fault isolation is a real architectural benefit and it is stronger than "Python has nicer libraries."</div>
+      </div>
+
+      <h3>Stress-testing "three services deployed independently"</h3>
+      <div class="metric">
+        <div class="m-label">Verified, and worth more than it sounds</div>
+        <p>Next.js frontend on Vercel, Flask AI on Render, Node PvP on Render. Three deploy targets, environment-scoped config, CORS across origins. That is genuinely more operational surface than most student projects have, so do not undersell it as "I deployed it."</p>
+        <p>Have the failure story ready: free Render instances sleep, so the first request after idle is slow. If a panel opens the live link and the bot hangs, that is why. Saying it upfront turns an embarrassment into a cold-start conversation.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="ch3">
+    <div class="bullet-card">
+      <h3>Deep dive: where this project goes three levels down</h3>
+      <p class="dim">If an interviewer likes Chessify they will keep pulling. These are the next questions after the obvious ones.</p>
+
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>Two players move at the same instant. What happens?</div>
+        <div class="a"><strong>Say:</strong> "Node is single threaded, so the two move events are handled one after the other, not concurrently. The first one validates against the current FEN and updates it. The second one then validates against the new FEN and chess.js rejects it, because it is not that player's turn. So the race resolves itself, but by luck of the runtime model rather than by anything I designed. In a multi-instance setup with shared state I would need an actual lock or a compare-and-set on the FEN."</div>
+        <div class="a">Excellent answer, because it is honest about why it works.</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>A player's wifi drops for ten seconds and comes back. What do they see?</div>
+        <div class="a"><strong>Say:</strong> "Socket.IO reconnects with a new socket ID, so as far as the room is concerned they are a new person. They rejoin, and since both seats are taken they come back as a spectator of their own game. That is the bug I would fix first. The right shape is a game token in local storage that lets a returning player reclaim their seat."</div>
+        <div class="a">Do not hide this. It is a well-known hard problem and having diagnosed it correctly is the point.</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>How do you stop me joining a random room ID and interfering?</div>
+        <div class="a"><strong>Say:</strong> "You cannot interfere, because a third connection is assigned spectator and the move handler checks that the socket ID matches the seat whose turn it is. You could watch a stranger's game if you guessed their room ID, which is a privacy leak rather than an integrity one. Longer, random IDs and an optional private flag would close it."</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>How would you add matchmaking against a stranger?</div>
+        <div class="a"><strong>Say:</strong> "A waiting queue in Redis. A player joins the queue, and if someone is already waiting you pop them, create a room ID and push both clients into it. Once you want rating-based matching you need buckets and a widening search window over time, so somebody waiting thirty seconds gets matched more loosely."</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= STUDYSYNC ================= -->
+  <section id="ss-head">
+    <div class="section-head"><h2>Projects: StudySync</h2></div>
+    <p class="section-note">Repos: <a href="https://github.com/AmanVerma1067/StudySync">StudySync</a> (Flutter app) and <a href="https://github.com/AmanVerma1067/StudySync-Server">StudySync-Server</a> (API and admin panel) &nbsp;|&nbsp; Live: <a href="https://studysync.aman1067.xyz/">studysync.aman1067.xyz</a><br>This is your "I shipped something people use" project. Its value is not technical depth, it is that it exists in the world and has versions.</p>
+  </section>
+
+  <section id="ss1">
+    <div class="bullet-card">
+      <span class="needs-care">One claim here needs a careful answer</span>
+      <div class="bullet-quote">"Shipped a cross-platform timetable and academic-calendar app to Android, iOS and web from a single Flutter codebase, released through 3 tagged versions to v3.0.0 and in daily use by students at JIIT."</div>
+
+      <h3>Say this first</h3>
+      <div class="plain-first">
+        <div class="pf-label">Plain-English version</div>
+        <p>"It is the timetable app my batch uses. One Flutter codebase builds the Android app, the iOS app and the website, and it has been through three releases as I added things like the academic calendar and semester switching."</p>
+      </div>
+
+      <h3>Likely follow-ups</h3>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>How many users?</div>
+        <div class="a"><strong>Say:</strong> "I do not have a number, because I never wired up analytics. It is used across my batch and the web version is public, but I would rather tell you I do not measure it than give you a figure I made up."</div>
+        <div class="a"><strong>This is the single most important line in this section.</strong> "In daily use by students" is a claim that invites exactly one question, and a fabricated number here is unrecoverable if they probe. The honest answer is genuinely a good look. Nobody expects a student project to have a dashboard.</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>What actually changed between versions to reach 3.0.0?</div>
+        <div class="a"><strong>Say:</strong> "The academic calendar view and semester switching were the big one, and web support was the other. Plus dark mode, pull-to-refresh and the splash screen along the way. I bumped the major version when the app stopped being only a weekly timetable."</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>Why Flutter over React Native?</div>
+        <div class="a"><strong>Say:</strong> "I wanted one codebase that also builds for web, and Flutter's web target was less painful for me than the React Native equivalent at the time. Flutter also draws its own widgets, so the app looks identical on both phones, which for a timetable is what I wanted."</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="ss2">
+    <div class="bullet-card">
+      <span class="verified">Verified across both repos</span>
+      <div class="bullet-quote">"Designed an offline-first data layer that renders the full weekly schedule from local cache with zero network before reconciling on pull-to-refresh; backed by an Express and MongoDB REST API and an authenticated admin panel so schedule corrections reach every installed client without shipping a new build."</div>
+
+      <h3>Say this first</h3>
+      <div class="plain-first">
+        <div class="pf-label">Plain-English version</div>
+        <p>"Open the app in a basement with no signal and the timetable is still there, because the last copy is stored on the phone. When there is a network it quietly refreshes. And when the college changes a class, I edit it in an admin panel and every phone picks it up, without anyone downloading an update."</p>
+      </div>
+
+      <div class="repo">
+        <div class="r-label">What the code actually shows</div>
+        <p>Caching is <code>shared_preferences</code>, with <code>utils/local_storage.dart</code> and <code>services/api_service.dart</code> as the two halves. So the cache is a serialised blob in key-value storage, not a local database.</p>
+        <p>The server side is real: JWT plus bcrypt, an <code>/admin/login</code> and <code>/admin/update</code> pair behind auth, a public <code>GET /api/timetable</code>, helmet and CORS, and a health endpoint. The admin panel is deployed at admin-studysync.vercel.app.</p>
+      </div>
+
+      <h3>Likely follow-ups</h3>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>Define offline-first. What is your cache invalidation strategy?</div>
+        <div class="a"><strong>Say:</strong> "In my case it is cache-then-network. On launch I render whatever is in shared_preferences immediately, so there is no spinner, and I fetch in the background and swap in the new data if the call succeeds. There is no TTL, because a stale timetable is still a correct timetable for most of a semester, and pull-to-refresh gives the user a manual way to force it."</div>
+        <div class="a">Being precise that it is cache-then-network rather than a full sync engine is what makes this answer credible. Claiming more invites the next question, which you cannot win.</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>Why shared_preferences and not SQLite or Hive?</div>
+        <div class="a"><strong>Say:</strong> "The entire payload is one small JSON document for a batch's week. There is nothing to query, nothing to join, no partial updates. A local database would have been ceremony for a single blob. If I had per-user notes or attendance history I would move to a real store."</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>What about writes? What happens if a user edits something offline?</div>
+        <div class="a"><strong>Say:</strong> "Students cannot write. The app is read-only for them, and the only writer is the admin panel over the network. That is why I never needed a write queue or conflict resolution, which is the hard part of offline sync and I would not want to claim I solved it."</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>Your timetable endpoint is public. Is that a problem?</div>
+        <div class="a"><strong>Say:</strong> "It is deliberate. A class timetable is public information on a noticeboard, so there is nothing to protect on the read path, and keeping it unauthenticated meant the web version works with no login. Writes are the part that matters and those are behind JWT."</div>
+        <div class="a">Framing it as a decision, not an omission, is the whole game here.</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>How is the admin password stored?</div>
+        <div class="a"><strong>Say:</strong> "bcrypt hashed, with the JWT secret and the credentials in environment variables rather than the repo."</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= SAHYATRI ================= -->
+  <section id="sy-head">
+    <div class="section-head"><h2>Projects: SahYatri</h2></div>
+    <p class="section-note">Your repo: <a href="https://github.com/AmanVerma1067/SahYatri">AmanVerma1067/SahYatri</a>. The canonical team repo, which your README links through to, is <a href="https://github.com/yasharth-0910/SahYatri">yasharth-0910/SahYatri</a>. Four-person build, first place at BitBox 5.0.</p>
+  </section>
+
+  <section id="sy0">
+    <div class="bullet-card">
+      <div class="alertbox" style="margin:0;">
+        <h2>Read this before you say a word about SahYatri</h2>
+        <p style="color:var(--text);font-size:14px;margin:8px 0;">The resume bullet says YOLOv5n runs on the Raspberry Pi at 15 FPS and that raw video never leaves the vehicle. The code says something different, and the code is public.</p>
+        <p style="color:var(--text);font-size:14px;margin:8px 0;">In <code class="inline">SahYatri-DetectionAI/main.py</code>, detection is a FastAPI service that loads <code class="inline">YOLO('yolov5xu.pt')</code> and exposes <code class="inline">POST /detect</code> taking an uploaded image as multipart form data. Its own README describes it as accepting a bus camera image and returning an occupancy count. It then forwards the result to a Bus API at an onrender.com URL.</p>
+        <p style="color:var(--text);font-size:14px;margin:8px 0;">So three parts of the bullet are wrong. The model is yolov5xu, the extra-large variant, not the nano one. Inference runs in a hosted service, not on the Pi. And images do leave the vehicle, since that is how they reach the detector.</p>
+        <p style="color:var(--text);font-size:14px;margin:8px 0;"><strong>The top-level SahYatri README says YOLOv5n at 15 FPS on the edge unit, so you did not invent this.</strong> The README overstates it and the resume inherited the overstatement. That is a fine thing to say out loud. It is not a fine thing to be caught on.</p>
+      </div>
+
+      <h3 style="color:var(--resume);margin-top:18px;">Fix the bullet</h3>
+      <div class="plain-first">
+        <div class="pf-label">Replace it with this</div>
+        <p>"Built the vision pipeline for an in-bus occupancy monitor: a Raspberry Pi 4 unit captures frames and posts them to a FastAPI detection service running Ultralytics YOLO, which counts passengers, compares against vehicle capacity and pushes occupancy plus GPS telemetry downstream, triggering an alert when a bus goes over capacity."</p>
+      </div>
+      <p class="dim">Same project, same work, no claim that falls over. It also reads as more architecturally interesting, because a two-tier edge-plus-service split is a real design decision rather than a spec-sheet boast.</p>
+
+      <div class="flag">
+        <div class="f-label">If you have already sent the old version out</div>
+        <p>Do not panic and do not correct it unprompted in the interview. If they ask about on-device inference, answer with what the system actually does and add: "The line on my resume compresses that too far. The Pi is the capture node, the model runs in a service alongside it." Owning it in one sentence costs you almost nothing. Being caught defending it costs you the round.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="sy1">
+    <div class="bullet-card">
+      <span class="needs-care">Rewrite before using: see above</span>
+      <div class="bullet-quote">"Deployed YOLOv5n on a Raspberry Pi 4 at 15 FPS with adaptive thresholding for varying in-bus lighting, computing occupancy density on-device so raw video never leaves the vehicle."</div>
+
+      <h3>Likely follow-ups, answered honestly</h3>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>Walk me through the pipeline end to end.</div>
+        <div class="a"><strong>Say:</strong> "A Raspberry Pi 4 with a Camera 3 Wide sits in the bus, along with a GPS module, an accelerometer and a small LCD for local display. It captures a frame and posts it with a camera ID to the detection service. That service runs YOLO, counts person detections, compares the count against the configured capacity of forty, and returns occupancy. It also forwards the reading to the bus API, and fires a warning call if the bus is over capacity. From there a Node and PostgreSQL backend stores it and serves it to a React dashboard for operators and a Flutter app for riders."</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>Why not run the model on the Pi? That is the obvious design.</div>
+        <div class="a"><strong>Say:</strong> "Because the model we got the accuracy we wanted from is the extra-large YOLOv5 variant, and a Pi 4 CPU cannot run that at any useful rate. The choice was a small model on the device or a big model off it, and for a prototype we took accuracy. Doing it properly for a real deployment means a quantised nano model on the Pi, or a Coral or Jetson accelerator, and then the privacy story gets much better too because frames stop leaving the bus."</div>
+        <div class="a">This turns the weakness into a considered trade-off, which is what it actually was.</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>What accuracy did you get?</div>
+        <div class="a"><strong>Say:</strong> "We benchmarked on COCO128 rather than footage we collected ourselves, so what I have is a standard benchmark number and not a measurement of how it performs in an actual bus. Those are different things and I would not want to present one as the other. Real in-bus validation was the next step."</div>
+        <div class="a"><strong>Do not quote a percentage from the bus.</strong> An audit of this codebase established the benchmarking used COCO128. If you claim real-world accuracy and they ask for the test set, there is nowhere to go.</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>People overlap in a crowded bus. How does counting survive occlusion?</div>
+        <div class="a"><strong>Say:</strong> "It does not, fully. A person detector counts what it can see, so a packed bus undercounts, which is exactly when the number matters most. A wide-angle camera high in the corner helps, and the honest mitigations are either multiple cameras or treating output as a band, like light, moderate or full, rather than an exact headcount."</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>Privacy. You are filming passengers.</div>
+        <div class="a"><strong>Say:</strong> "The system only stores a count, never an image, and the frame is discarded after inference. The weak point in the current build is that the frame travels to the detection service to get there, which is exactly the argument for moving inference onto the vehicle."</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="sy2">
+    <div class="bullet-card">
+      <span class="verified">Verified in SahYatri-BusApi and the team repo</span>
+      <div class="bullet-quote">"Node.js and PostgreSQL backend ingests occupancy and GPS telemetry from deployed units and serves load history to a React operator dashboard and a Flutter rider app; built by a 4-person team."</div>
+
+      <h3>Likely follow-ups</h3>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>Four people built it. What was yours?</div>
+        <div class="a"><strong>Answer this precisely and do not inflate it.</strong> The team was you, Yasharth Singh, Rakshit Suneja and Shivam Kashyap, and the canonical repo sits under Yasharth's account, which an interviewer who clicks through your README will notice. Get ahead of it: "It was a four-person build for BitBox and the main repo is under a teammate's account. My part was [state it plainly]." Then say what you personally wrote.</div>
+        <div class="a"><strong>Decide this before the interview and write it down.</strong> Hesitating on "what did you do" for a team project reads as though you did less than you did.</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>Why PostgreSQL here when you used MongoDB elsewhere?</div>
+        <div class="a"><strong>Say:</strong> "The data is the opposite shape. Telemetry is one fixed row repeated forever, timestamp, bus, occupancy, coordinates, so a relational table with an index on time and bus ID is exactly right, and the queries are all aggregations over time windows. Packspec was the opposite, every document a different shape."</div>
+        <div class="a">Being able to justify two different database choices on their merits is a strong signal. Interviewers ask this specifically to see whether you just use whatever is trendy.</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>How often does a bus report, and does that scale?</div>
+        <div class="a"><strong>Say:</strong> "In the prototype it is a periodic push per unit, which is trivial at our scale. A city fleet is thousands of buses reporting continuously, and then you want a queue in front of the database instead of writing on the request path, plus partitioning by time and downsampling old data. We did not need any of that for a demo and I would not pretend we built it."</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>Capacity is hardcoded to 40 and images are capped at 5MB. Comment?</div>
+        <div class="a"><strong>Say:</strong> "Both are constants in the detection service and both should be configuration. Capacity in particular belongs per vehicle, because a minibus and a city bus are not the same number. It is the kind of thing that is fine in a hackathon build and is the first thing you fix afterwards."</div>
+        <div class="a">They may well have the file open. Knowing your own constants is a small thing that reads very well.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= ACHIEVEMENTS ================= -->
+  <section id="ach-head">
+    <div class="section-head"><h2>Achievements &amp; Certifications</h2></div>
+  </section>
+
+  <section id="ach1">
+    <div class="bullet-card">
+      <span class="verified">Publicly checkable: they will look</span>
+      <div class="bullet-quote">"LeetCode Knight: peak contest rating 2094, top 2.04% globally; 863 problems solved (417 medium, 117 hard) across 222 active coding days this year."</div>
+
+      <h3>What this does to your interview</h3>
+      <div class="metric">
+        <div class="m-label">This raises the bar on you</div>
+        <p>A 2094 peak is a strong number and it sets expectations. Interviewers who see Knight on a resume ask harder DSA questions and are less forgiving of a fumbled medium. That is the trade you have already made by putting it there, and it is the right trade, but go in knowing it.</p>
+        <p>Warm up before the interview. Nothing looks worse than a Knight badge and a shaky two-pointer.</p>
+      </div>
+
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>Your peak is 2094. What is your current rating?</div>
+        <div class="a"><strong>Say the real number.</strong> If it has dropped, say so plainly: "Peak was 2094, I am around X now, I have been contesting less since placements started." Ratings are public and one click away. There is no version of hiding this that ends well.</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>What is a problem that took you a long time to get?</div>
+        <div class="a"><strong>Have one ready.</strong> Pick a hard problem you genuinely struggled with, and tell it as a story: what you tried first, why it failed, what changed. This is a favourite question because it separates people who solved problems from people who read editorials. A vague "I found DP hard at first" is a wasted answer.</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>417 medium and 117 hard. What is your weakest topic?</div>
+        <div class="a"><strong>Say:</strong> Name a real one and what you are doing about it. Segment trees, string algorithms, whatever it actually is. Claiming no weak area at 863 problems is not believable to anyone who has solved 863 problems.</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="ach2">
+    <div class="bullet-card">
+      <span class="verified">Certificates linked on the resume</span>
+      <div class="bullet-quote">"1st Place, BitBox 5.0 Hackathon (Google Developer Groups) for SahYatri. Finalist, Innovate 3.0 (Jan 2026) for Drive-Sure. Letter of Appreciation from JIIT. Udemy certifications in Data Science, Deep Learning &amp; NLP and Generative AI with LangChain &amp; Hugging Face."</div>
+
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>Tell me about Drive-Sure. It is on here but there is no repo.</div>
+        <div class="a"><strong>Say:</strong> "An AI and IoT telematics build that scores driving safety off live sensor streams, accelerometer and GPS mainly, so harsh braking, sharp cornering and speeding roll into a score. We were finalists at Innovate 3.0. It is not on GitHub because it never got past the hackathon build."</div>
+        <div class="a">Have two sentences ready for anything on the resume without a link. Hesitating on your own achievement is worse than not listing it.</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>What did you actually build in a weekend at BitBox?</div>
+        <div class="a"><strong>Say:</strong> Be honest about hackathon scope. A working demo, not a deployed product. Interviewers respect "we got a Pi, a camera and a live dashboard talking to each other in thirty-six hours" a lot more than an implied production system.</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>Udemy certificates. What did you build with them?</div>
+        <div class="a"><strong>Say:</strong> Point at Nutri-Vision and the RAG PDF query engine on Hugging Face Spaces. A certificate on its own is worth very little and everyone in the room knows it. A certificate you can attach to a thing you built is worth something.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= CROSS-CUTTING ================= -->
+  <section id="cross-head">
+    <div class="section-head"><h2>The questions that are not about any one bullet</h2></div>
+  </section>
+
+  <section id="cross1">
+    <div class="bullet-card">
+      <h3>"You are an ECE student. Why software?"</h3>
+      <p class="dim">You will get this, probably in the first five minutes, at almost every company. Branch-mismatch is the standard opening probe for non-CSE candidates in SDE roles and a weak answer here colours everything after it.</p>
+
+      <div class="plain-first">
+        <div class="pf-label">Say this</div>
+        <p>"I picked ECE and then found the software half more interesting, so I went and did the work. My core CS is coursework plus what I taught myself, my DSA is 863 problems and a Knight rating, and I have shipped a real-time multiplayer platform and an app my batch actually uses. I would rather be judged on that than on the name of my branch."</p>
+      </div>
+
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>Have you done operating systems and DBMS formally?</div>
+        <div class="a"><strong>Say:</strong> They are on your coursework line, so say yes and be ready to prove it. Expect processes versus threads, deadlock conditions, paging, normal forms, indexing, ACID, and isolation levels. An ECE candidate gets these asked more thoroughly than a CSE one, not less. Revise them.</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>Does your ECE background help at all?</div>
+        <div class="a"><strong>Say:</strong> "For SahYatri it did directly, since somebody had to make the Pi, the camera, the GPS module and the I2C display behave before any of the software mattered. Most SDE candidates have never had to debug something where the bug might be in the wiring."</div>
+        <div class="a">Turn it into a differentiator instead of an apology. You have hardware experience that CSE candidates do not.</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="cross2">
+    <div class="bullet-card">
+      <h3>System design they will actually ask you</h3>
+      <p class="dim">At intern and fresher level this is not distributed-systems trivia. It is "can you reason about a system you have not seen." Your resume points them at two obvious prompts.</p>
+
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>Design a real-time multiplayer game backend.</div>
+        <div class="a"><strong>You have lived this, so lead with it.</strong> Walk through rooms, role assignment, server-authoritative state, the client's optimistic update and rollback, reconnection with a resume token, then scale it out with a Redis adapter and shared room state. Naming what your own build does not do yet, clocks and persistence, is what makes it a design discussion rather than a project summary.</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>Design a system that collects sensor readings from ten thousand vehicles.</div>
+        <div class="a"><strong>Say:</strong> Devices push to an ingest endpoint, which writes to a queue rather than straight to the database. Workers batch-insert into a time-partitioned table. Recent data stays hot, older data gets downsampled or rolled up. Reads go through an aggregation layer or a cache, because dashboards ask the same questions repeatedly. Then talk about what happens when a bus loses signal for an hour and reports late, which is the interesting part.</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>How do you handle a service that depends on something unreliable?</div>
+        <div class="a"><strong>Say:</strong> You have two real examples. Stockfish falling back to your own minimax, and RecrutAI's timeout and retry layer with deterministic fallbacks. Use them. "Timeout, bounded retries with backoff, and a degraded path that still returns something usable" is the answer, and you have shipped it twice.</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="cross3">
+    <div class="bullet-card">
+      <h3>What to ask them</h3>
+      <p class="dim">Have three. Not one, because the first might get answered during the interview.</p>
+      <ul class="tight">
+        <li><strong>"What does the first three months look like for someone joining this team?"</strong> Tells you whether onboarding exists.</li>
+        <li><strong>"How does code get from a branch to production here? Who reviews, what has to pass?"</strong> Sounds like curiosity, actually tells you their engineering maturity.</li>
+        <li><strong>"What is the part of the codebase everyone is slightly afraid of?"</strong> Gets a real answer surprisingly often, and interviewers enjoy the question.</li>
+      </ul>
+      <div class="flag">
+        <div class="f-label">Do not ask</div>
+        <p>Anything you could have found on the careers page. Compensation in a first round. "Do you have work-life balance." All three land badly.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="final">
+    <div class="bullet-card">
+      <h3>The night before</h3>
+      <ul class="tight">
+        <li>Fix the SahYatri bullet if the resume has not gone out yet. If it has, rehearse the correction sentence.</li>
+        <li>Confirm with DigiFlute: the endpoint count, the five role tier names, the team size. Three quick questions and every one of them is something you claimed in writing.</li>
+        <li>Write down your slice of SahYatri in one sentence and read it out loud once.</li>
+        <li>Open your own repos and read your own code for twenty minutes. Interviewers ask about lines you wrote eight months ago.</li>
+        <li>Pick your one number for endpoints and never say the other.</li>
+        <li>Warm up on two mediums so the DSA round does not start cold.</li>
+      </ul>
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  Built from AmanVerma1067/Chessify-WebApp, StudySync, StudySync-Server, SahYatri and the yasharth-0910/SahYatri team repo.<br>
+  Every claim marked verified was checked against source. Everything marked otherwise needs your confirmation before you say it out loud.
+</footer>
+
+</body>
+</html>

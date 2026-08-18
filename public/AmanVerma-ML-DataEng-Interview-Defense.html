@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DE / ML / AI Interview Defense | Aman Verma</title>
+<style>
+  :root{
+    --bg:#0a0e14; --card:#131a26; --card-border:#1f2937;
+    --cyan:#a78bfa; --cyan-dim:#6d28d9;
+    --text:#e2e8f0; --text-dim:#93a1b5; --text-faint:#5b6a80;
+    --trap:#f87171; --trap-bg:#2a1414;
+    --ref:#38bdf8; --ref-bg:#0f1e2c;
+    --resume:#34d399; --resume-bg:#0f231b;
+    --followup:#c084fc; --followup-bg:#1e1526;
+    --amber:#fbbf24; --amber-bg:#241d0d;
+    --code-bg:#0d1117; --radius:14px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{margin:0;background:var(--bg);background-image:radial-gradient(circle at 15% 0%, rgba(167,139,250,0.08), transparent 40%),radial-gradient(circle at 85% 20%, rgba(56,189,248,0.05), transparent 35%);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.55;padding-bottom:60px;}
+  a{color:var(--cyan);text-decoration:none;}
+  a:hover{text-decoration:underline;}
+
+  .topbar{position:sticky;top:0;z-index:50;background:rgba(10,14,20,0.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--card-border);padding:12px 16px;}
+  .topbar-inner{max-width:900px;margin:0 auto;display:flex;align-items:center;gap:10px;}
+  .topbar-title{font-size:13px;font-weight:700;color:var(--cyan);letter-spacing:0.03em;white-space:nowrap;display:flex;align-items:center;gap:6px;}
+  .topbar-title .dot{width:7px;height:7px;border-radius:50%;background:var(--cyan);box-shadow:0 0 8px var(--cyan);}
+  select.jumpnav{flex:1;background:var(--card);color:var(--text);border:1px solid var(--card-border);border-radius:9px;padding:9px 10px;font-size:14px;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%23a78bfa'><path d='M5.5 7.5l4.5 4.5 4.5-4.5z'/></svg>");background-repeat:no-repeat;background-position:right 10px center;background-size:16px;padding-right:32px;}
+  select.jumpnav:focus{outline:2px solid var(--cyan-dim);}
+
+  .wrap{max-width:900px;margin:0 auto;padding:0 16px;}
+  .hero{padding:28px 4px 10px;}
+  .hero h1{font-size:22px;margin:0 0 6px;color:#fff;}
+  .hero p{color:var(--text-dim);font-size:14px;margin:0 0 8px;}
+  .hero .badges{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;}
+  .badge{font-size:11px;font-weight:600;color:var(--cyan);border:1px solid var(--cyan-dim);background:rgba(167,139,250,0.07);padding:4px 9px;border-radius:99px;}
+
+  section{margin-top:28px;scroll-margin-top:70px;}
+  .section-head{display:flex;align-items:baseline;gap:10px;margin-bottom:10px;}
+  .section-head h2{font-size:18px;margin:0;color:#fff;padding-left:10px;border-left:3px solid var(--cyan);}
+  .section-note{color:var(--text-dim);font-size:13px;padding-left:13px;margin:0 0 10px;}
+
+  .bullet-card{background:var(--card);border:1px solid var(--card-border);border-radius:var(--radius);padding:16px 16px 18px;margin-bottom:16px;}
+  .bullet-quote{background:rgba(255,255,255,0.03);border-left:3px solid var(--text-faint);border-radius:8px;padding:10px 13px;margin-bottom:12px;font-size:13.5px;font-style:italic;color:var(--text-dim);}
+  .bullet-card h3{font-size:13px;margin:16px 0 8px;color:var(--cyan);text-transform:uppercase;letter-spacing:0.03em;}
+  .bullet-card h3:first-of-type{margin-top:4px;}
+  .bullet-card p{margin:6px 0;color:var(--text);font-size:14px;}
+  .bullet-card p.dim{color:var(--text-dim);}
+  code.inline{background:rgba(167,139,250,0.1);color:var(--cyan);padding:1px 6px;border-radius:5px;font-size:12.5px;font-family:"SF Mono",Consolas,Monaco,monospace;}
+
+  .plain-first{background:rgba(52,211,153,0.07);border:1px solid rgba(52,211,153,0.3);border-radius:9px;padding:11px 13px;margin:10px 0;font-size:13.5px;}
+  .plain-first .pf-label{font-size:10.5px;font-weight:800;color:var(--resume);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:5px;}
+  .plain-first p{margin:0;color:var(--text);font-style:italic;}
+
+  .qa{background:var(--ref-bg);border:1px solid rgba(56,189,248,0.22);border-left:3px solid var(--ref);border-radius:10px;padding:13px 15px;margin:11px 0;}
+  .qa .q{font-size:13.5px;font-weight:700;color:#fff;margin-bottom:7px;display:flex;gap:8px;}
+  .qa .q .qtag{flex-shrink:0;font-size:10px;font-weight:800;color:var(--ref);background:rgba(56,189,248,0.13);border-radius:5px;padding:2px 7px;height:fit-content;letter-spacing:0.03em;}
+  .qa .a{font-size:13.5px;color:var(--text-dim);padding-left:2px;}
+  .qa .a strong{color:var(--text);}
+  .qa .a + .a{margin-top:8px;}
+
+  .metric{background:var(--followup-bg);border:1px solid rgba(192,132,252,0.28);border-left:3px solid var(--followup);border-radius:10px;padding:12px 14px;margin:11px 0;font-size:13.5px;}
+  .metric .m-label{font-size:10.5px;font-weight:800;color:var(--followup);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px;}
+  .metric p{margin:4px 0;color:var(--text);}
+
+  .flag{background:var(--trap-bg);border:1px solid rgba(248,113,113,0.3);border-left:3px solid var(--trap);border-radius:10px;padding:12px 14px;margin:11px 0;font-size:13.5px;}
+  .flag .f-label{font-size:10.5px;font-weight:800;color:var(--trap);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px;}
+  .flag p{margin:4px 0;color:var(--text);}
+
+  .repo{background:rgba(251,191,36,0.06);border:1px solid rgba(251,191,36,0.28);border-left:3px solid var(--amber);border-radius:10px;padding:12px 14px;margin:11px 0;font-size:13.5px;}
+  .repo .r-label{font-size:10.5px;font-weight:800;color:var(--amber);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px;}
+  .repo p{margin:4px 0;color:var(--text);}
+  .repo code{background:var(--code-bg);color:var(--amber);padding:1px 6px;border-radius:5px;font-size:12.5px;font-family:"SF Mono",Consolas,Monaco,monospace;}
+
+  .verified{display:inline-block;font-size:10px;font-weight:800;letter-spacing:0.03em;text-transform:uppercase;color:var(--resume);border:1px solid rgba(52,211,153,0.4);background:rgba(52,211,153,0.08);padding:2px 8px;border-radius:99px;margin-bottom:8px;}
+  .unverifiable{display:inline-block;font-size:10px;font-weight:800;letter-spacing:0.03em;text-transform:uppercase;color:var(--text-faint);border:1px solid var(--card-border);padding:2px 8px;border-radius:99px;margin-bottom:8px;}
+  .needs-care{display:inline-block;font-size:10px;font-weight:800;letter-spacing:0.03em;text-transform:uppercase;color:var(--trap);border:1px solid rgba(248,113,113,0.4);background:rgba(248,113,113,0.08);padding:2px 8px;border-radius:99px;margin-bottom:8px;}
+
+  .alertbox{background:linear-gradient(180deg, rgba(248,113,113,0.12), rgba(248,113,113,0.04));border:1px solid rgba(248,113,113,0.4);border-radius:var(--radius);padding:18px;margin-bottom:16px;}
+  .alertbox h2{margin:0 0 10px;font-size:17px;color:#fff;}
+  .alertbox ol{margin:8px 0 0;padding-left:20px;color:var(--text);font-size:14px;}
+  .alertbox li{margin-bottom:9px;}
+
+  ul.tight{margin:6px 0;padding-left:20px;color:var(--text-dim);font-size:13.5px;}
+  ul.tight li{margin-bottom:5px;}
+  ul.tight strong{color:var(--text);}
+
+  footer{max-width:900px;margin:36px auto 0;padding:16px;text-align:center;color:var(--text-faint);font-size:12px;}
+  @media (min-width:640px){ .hero h1{font-size:26px;} }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-inner">
+    <span class="topbar-title"><span class="dot"></span>DE / ML / AI</span>
+    <select class="jumpnav" onchange="if(this.value) window.location.hash = this.value;">
+      <option value="">Jump to a bullet...</option>
+      <optgroup label="Before anything else">
+        <option value="#alert">Four claims that need handling</option>
+      </optgroup>
+      <optgroup label="Experience: DigiFlute Media Lab">
+        <option value="#exp1">20+ endpoints, document schema, query patterns</option>
+        <option value="#exp2">JWT, RBAC 5 tiers, atomic transactions</option>
+        <option value="#exp3">Revision versioning, soft deletes, auditability</option>
+      </optgroup>
+      <optgroup label="Nutri-Vision AI">
+        <option value="#nv1">Custom spaCy NER, hybrid extractor, USDA lookup</option>
+        <option value="#nv2">ResNet-50 transfer learning, Git LFS, FastAPI</option>
+        <option value="#nv3">The LogMeal question</option>
+      </optgroup>
+      <optgroup label="RecrutAI">
+        <option value="#ra1">Prompt-chaining state machine, 5 rubric dimensions</option>
+        <option value="#ra2">Timeouts, backoff, deterministic fallbacks</option>
+        <option value="#ra3">The hard questions: validity, bias, state</option>
+      </optgroup>
+      <optgroup label="SahYatri">
+        <option value="#sy0">Read this before you say a word about SahYatri</option>
+        <option value="#sy1">Edge CV pipeline</option>
+        <option value="#sy2">PostgreSQL time-series, telemetry ingest</option>
+      </optgroup>
+      <optgroup label="Achievements">
+        <option value="#ach1">LeetCode Knight, hackathons, certifications</option>
+      </optgroup>
+      <optgroup label="Cross-cutting">
+        <option value="#cross1">ML fundamentals they will ask</option>
+        <option value="#cross2">Data engineering and SQL round</option>
+        <option value="#cross3">LLM and RAG questions</option>
+        <option value="#cross4">"You're ECE" and your questions for them</option>
+      </optgroup>
+    </select>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <div class="hero">
+    <h1>DE / ML / AI Interview Defense</h1>
+    <p>Every bullet on the ML and Data Engineering resume, with the follow-ups, a spoken answer, and an honest check against the actual repos under AmanVerma1067 and the Nutri-Vision org.</p>
+    <p>ML interviews probe differently from SDE ones. They want your numbers, your baseline, your evaluation method, and what you would do if the model were wrong. Most of what follows is preparing for that shape of question.</p>
+    <div class="badges">
+      <span class="badge">Read against real code</span>
+      <span class="badge">Spoken answers</span>
+      <span class="badge">Numbers stress-tested</span>
+    </div>
+  </div>
+
+  <section id="alert">
+    <div class="alertbox">
+      <h2>Four claims that need handling before you interview</h2>
+      <ol>
+        <li><strong>SahYatri does not run inference on the Pi.</strong> Detection is a FastAPI service loading <code class="inline">yolov5xu.pt</code>, the extra-large variant, taking uploaded images over HTTP. The resume says YOLOv5n on-device with no video leaving the vehicle. Fixed bullet is in the SahYatri section. This is the most exposed claim on the page.</li>
+        <li><strong>Nutri-Vision's shipped image path uses LogMeal, a third-party API.</strong> Your own ResNet-50 is real and lives in Model_Image, but the unified API documents LogMeal for image recognition. If an interviewer reads Food_Logging first, "I trained a food classifier" and "the product calls an API" look like they contradict. They do not, but you have to be the one to explain that.</li>
+        <li><strong>"5 rubric dimensions" needs the five names.</strong> RecrutAI's README lists four in the score matrix: technical depth, system design, problem solving, communication. Know what the fifth is, or change the number to four.</li>
+        <li><strong>None of the scoring has been validated against humans.</strong> There is no labelled dataset and no measured agreement with real interviewers. For an AI or data role this is the question, so have the honest answer ready rather than improvising it.</li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ================= EXPERIENCE ================= -->
+  <section id="exp-head">
+    <div class="section-head"><h2>Experience: DigiFlute Media Lab</h2></div>
+    <p class="section-note">No public repo, so precision replaces evidence. For a data-flavoured role the interesting parts are the schema decisions and the isolation guarantees, not the endpoint count, so steer there when you can.</p>
+  </section>
+
+  <section id="exp1">
+    <div class="bullet-card">
+      <span class="unverifiable">No public repo: be specific, not grand</span>
+      <div class="bullet-quote">"Engineered 20+ RESTful API endpoints in PHP with MongoDB Atlas for Packspec, designing document schemas and query patterns for multi-tenant, company-scoped data isolation."</div>
+
+      <h3>Say this first</h3>
+      <div class="plain-first">
+        <div class="pf-label">Plain-English version</div>
+        <p>"Packspec lets companies write packaging specifications and push them through approvals. I built the API and did the data modelling, which mattered more than usual because several client companies share one database and none of them can be allowed to see each other's records."</p>
+      </div>
+
+      <h3>Likely follow-ups</h3>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>How did you model the documents? Embed or reference?</div>
+        <div class="a"><strong>Say:</strong> "Mixed, based on how each thing is read. A specification's revisions and its field values are embedded, because they are always fetched with the spec and never queried on their own. Products, components and users are separate collections referenced by ID, because they are shared across many specs and duplicating them would mean updating in twenty places. The rule I used was embed what is read together and owned by one parent, reference what is shared."</div>
+        <div class="a">This is the single most important answer in the section for a data role. Learn it properly, because "embed versus reference" is the MongoDB schema question and a vague answer here reads as though someone else did the modelling.</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>What did you index and why?</div>
+        <div class="a"><strong>Say:</strong> "Company ID first, on every collection, because it is in the filter of literally every query. Then compound indexes where the list views sort, so company plus status plus updated-at for the spec list, since that is the exact shape of the main screen. The rule is that the index prefix should match how the query filters and sorts, or it does not get used."</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>Did you ever look at a query plan?</div>
+        <div class="a"><strong>Say:</strong> If you did, say what <code class="inline">explain()</code> showed you, ideally a collection scan you turned into an index scan. If you did not, say so: "Not systematically. I indexed on the access patterns rather than in response to measured slow queries, because at our data volume nothing was slow enough to force it." Honest and defensible. Inventing a profiling story is not.</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>Embedding revisions inside the spec document. What breaks eventually?</div>
+        <div class="a"><strong>Say:</strong> "The 16MB document limit. A spec edited hundreds of times with the full field set stored each time would eventually hit it, and every read gets heavier along the way even when you only wanted the current version. The fix is a separate revisions collection with the current version denormalised onto the parent."</div>
+        <div class="a">Knowing the 16MB limit and the unbounded-array antipattern is a strong signal for a data role.</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="exp2">
+    <div class="bullet-card">
+      <span class="unverifiable">No public repo: confirm the specifics with your lead</span>
+      <div class="bullet-quote">"Implemented JWT authentication and RBAC across 5 tenant tiers with atomic transactions, workspace provisioning, and plan-based quota enforcement to prevent cross-tenant leakage."</div>
+
+      <h3>Likely follow-ups</h3>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>Where is the tenant filter applied?</div>
+        <div class="a"><strong>Say:</strong> "In middleware, before any handler runs. The company ID comes off the JWT, goes onto the request, and every query builds its filter from that value, never from the request body. A handler cannot forget it because it never gets a chance to supply one."</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>Atomic transactions in MongoDB. Which kind?</div>
+        <div class="a"><strong>Say:</strong> "Single-document writes are atomic by default, and I leaned on that by keeping things that change together in one document. Multi-document transactions need a replica set, which Atlas provides, and I used them where a flow genuinely spanned collections."</div>
+        <div class="a"><strong>This is a trap question.</strong> Interviewers ask it to see whether you know multi-document transactions are not free and require a replica set. If you did not actually use them, say: "Mostly single-document atomicity, and I shaped the schema so that covered it." That answer is stronger than a claim you cannot support.</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>Name the five tiers.</div>
+        <div class="a"><strong>Confirm these with your team lead before the interview.</strong> You put a number in writing and being unable to enumerate it is a bad thirty seconds. If you cannot confirm, drop the number and say "several role tiers."</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="exp3">
+    <div class="bullet-card">
+      <span class="unverifiable">No public repo</span>
+      <div class="bullet-quote">"Built revision versioning and workflow-state transitions with cascading soft-deletes so every record change stays auditable; validated data consistency with Postman and PHPUnit suites."</div>
+
+      <h3>Likely follow-ups</h3>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>Why does auditability matter here?</div>
+        <div class="a"><strong>Say:</strong> "A packaging specification is a document a client signs off on, so if it changes after approval somebody needs to see who changed it and when. Overwriting in place destroys that. Every edit writes a new revision and deletes are flags rather than removals, so the history survives."</div>
+        <div class="a">This is the most data-governance-flavoured thing on your resume, which makes it valuable for analytics and data roles. Audit trails, lineage and immutability are the vocabulary of that world, so use it.</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>Soft deletes make querying harder. How did you avoid the obvious bug?</div>
+        <div class="a"><strong>Say:</strong> "By putting the deleted filter in the shared query layer rather than in each endpoint. If it is per-handler, you only need to forget once for deleted records to show up in a list. The other problem is uniqueness, since a soft-deleted record still holds its unique name."</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= NUTRI-VISION ================= -->
+  <section id="nv-head">
+    <div class="section-head"><h2>Projects: Nutri-Vision AI</h2></div>
+    <p class="section-note">Org: <a href="https://github.com/Nutri-Vision">github.com/Nutri-Vision</a>, split across Backend, Food_Logging, Frontend, Model_Image and Model_Text-Voice. This is your most genuinely ML project, because you trained things rather than calling things.</p>
+  </section>
+
+  <section id="nv1">
+    <div class="bullet-card">
+      <span class="verified">Trained model committed at models/food_ner</span>
+      <div class="bullet-quote">"Trained a custom spaCy NER model on an annotated food corpus and paired it with a rule-based quantity/unit parser in a hybrid extractor, converting free-form meal text into structured entities resolved against the USDA FoodData Central database with confidence scoring and portion scaling."</div>
+
+      <h3>Say this first</h3>
+      <div class="plain-first">
+        <div class="pf-label">Plain-English version</div>
+        <p>"You type 'two slices of bread and an apple' and it works out that there are two foods, how much of each, and what that is nutritionally. A model I trained finds the food names, a set of rules pulls out the quantities and units, and then each food gets looked up in the USDA database and scaled to the portion."</p>
+      </div>
+
+      <div class="repo">
+        <div class="r-label">What the code actually shows</div>
+        <p><code>models/food_ner/meta.json</code> is committed and real. It is a blank English pipeline with a single component, <code>ner</code>, and exactly one label, <code>FOOD</code>. No word vectors.</p>
+        <p><code>nlp/spacy_model.py</code> loads it from disk and returns <code>None</code> if the directory is missing. <code>nlp/hybrid_extractor.py</code> then combines model output with <code>rule_based_extraction</code> and uses <code>difflib.SequenceMatcher</code> for fuzzy matching.</p>
+        <p>Structure is clean: <code>rules.py</code>, <code>spacy_model.py</code>, <code>preprocessing.py</code>, <code>hybrid_extractor.py</code>. That separation reads well.</p>
+      </div>
+
+      <h3>Likely follow-ups</h3>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>How much data did you annotate, and what F1 did you get?</div>
+        <div class="a"><strong>Go and get these numbers before the interview.</strong> This is the first question any ML interviewer asks about a trained model and there is no good improvisation. You need the number of annotated sentences, the train and test split, and precision, recall and F1 on the FOOD entity.</div>
+        <div class="a">If the numbers do not exist, run the evaluation. It is an afternoon. Walking into an ML interview with "I trained a NER model" and no metric is the single most common way candidates lose these rounds.</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>Why train from a blank pipeline instead of fine-tuning en_core_web_sm?</div>
+        <div class="a"><strong>Say:</strong> "FOOD is not a category the pretrained models have, and I only needed that one entity type, so a blank pipeline with a single label kept it small and fast. The trade-off is no pretrained word vectors, so the model has less to generalise from and needs more examples to reach the same place. With a bigger corpus I would start from a transformer base instead."</div>
+        <div class="a">This is exactly right and it shows you understood what you were giving up. Say the vectors part, since <code class="inline">meta.json</code> shows zero vectors and an interviewer reading it will notice.</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>Why hybrid? Why not let the model extract quantities too?</div>
+        <div class="a"><strong>Say:</strong> "Because quantities are a regular language and food names are not. 'Two', '2', 'a couple of', 'half a cup' is a small closed set you can enumerate, and rules get it right every time with no training data. Food names are open vocabulary, new ones appear constantly, and that is where a model earns its keep. Using the right tool for each half meant I needed far less annotation."</div>
+        <div class="a">Strong answer. Knowing when not to use ML is something interviewers explicitly look for.</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>What happens if the NER model fails to load?</div>
+        <div class="a"><strong>Say:</strong> "The loader returns None and the extractor falls back to the rule-based path alone. Recall drops, since rules only catch foods in the known list, but the service keeps returning results instead of erroring. That is deliberate, and the same pattern shows up in the other systems I have built."</div>
+        <div class="a">This is a real code path, not a story. Very good answer.</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>How do you match an extracted string to a USDA entry? "Chicken" matches hundreds of rows.</div>
+        <div class="a"><strong>Say:</strong> "Fuzzy string similarity with difflib, and the similarity ratio becomes the confidence score I return alongside the match, so downstream can see how sure the lookup was. It is the honest weak point of the pipeline. 'Chicken' really does match dozens of USDA entries with different nutrition, and picking the highest string similarity is not the same as picking the right food. Embedding the food names and matching on vector similarity would be the upgrade, and better still would be surfacing the top three and letting the user pick."</div>
+        <div class="a">Naming this yourself is much better than having it found. String matching against a food database is a known hard problem.</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>What is portion scaling?</div>
+        <div class="a"><strong>Say:</strong> "USDA gives nutrition per 100g, so everything has to be converted. Grams are direct. Units like cups and slices need a per-food conversion, since a cup of rice and a cup of spinach are wildly different weights, so those come from a lookup table. Where I have no conversion I fall back to a default serving size and lower the confidence."</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="nv2">
+    <div class="bullet-card">
+      <span class="verified">Verified in Model_Image/main.py</span>
+      <div class="bullet-quote">"Fine-tuned a ResNet-50 food classifier in PyTorch via transfer learning, versioning checkpoints with Git LFS, and served both models behind a FastAPI inference API returning a unified JSON schema with per-item macros and deterministic fallbacks on upstream failure."</div>
+
+      <div class="repo">
+        <div class="r-label">What the code actually shows</div>
+        <p><code>build_model()</code> calls <code>models.resnet50(weights=ResNet50_Weights.IMAGENET1K_V1)</code>, then replaces the final layer with <code>nn.Sequential(nn.Dropout(p=0.5), nn.Linear(in_features, num_classes))</code>. Textbook transfer learning, confirmed.</p>
+        <p>Preprocessing is standard ImageNet: resize to 1.14x, centre crop 224, normalise with ImageNet mean and std. Checkpoints load from <code>runs/exp_combined_small/best_model.pth</code> with a <code>class_mapping.json</code> beside them. Training ran on Apple MPS.</p>
+        <p>Prediction returns softmax confidence alongside the class, and pulls nutrition from the class mapping file.</p>
+      </div>
+
+      <h3>Likely follow-ups</h3>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>What did you freeze, and what did you actually train?</div>
+        <div class="a"><strong>Say what you did.</strong> The standard two-phase answer: freeze the backbone and train only the new classifier head first, then unfreeze the last block or two and continue at a much lower learning rate. If you only trained the head, say only that. Whichever it was, know it, because "fine-tuned" without knowing which layers moved is the tell that someone ran a script they did not read.</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>How many classes, what dataset, what accuracy?</div>
+        <div class="a"><strong>Get all three before the interview.</strong> The class count is in <code class="inline">class_mapping.json</code>. The run is called <code class="inline">exp_combined_small</code>, which suggests a combined dataset, so know which datasets and how many images. And you need validation accuracy, top-1 at minimum. There is a <code class="inline">best_model.pth</code>, which means something was being selected on, so the number exists somewhere.</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>Why dropout 0.5 on the head?</div>
+        <div class="a"><strong>Say:</strong> "Regularisation. The backbone has ImageNet features and the head is the only thing learning my classes on a fairly small dataset, so it overfits easily. Dropout on the head was the cheapest thing that helped. Augmentation on the training set was the other lever."</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>Why ResNet-50 and not something newer and lighter?</div>
+        <div class="a"><strong>Say:</strong> "It is a well-understood baseline with reliable pretrained weights, and I wanted the variable to be my data, not my architecture. EfficientNet or a ViT would likely do better on accuracy per parameter, and if this were going on a phone I would want something mobile-shaped instead. For establishing whether the idea worked at all, ResNet-50 was the boring correct choice."</div>
+        <div class="a">"Boring correct choice, deliberately" is a good look. Reaching for the newest architecture without a reason is not.</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>Why Git LFS?</div>
+        <div class="a"><strong>Say:</strong> "Model checkpoints are large binaries and Git stores a full copy of every version, so committing them normally bloats the repo permanently and clones get painful. LFS keeps a pointer in Git and the blob elsewhere. It is the minimum viable version control for model artifacts. A proper setup would use a model registry with metrics attached to each version."</div>
+      </div>
+
+      <div class="flag">
+        <div class="f-label">Tighten the wording on "behind a FastAPI inference API"</div>
+        <p>The unified service in <code class="inline">Food_Logging</code> is FastAPI. But <code class="inline">Model_Image</code> serves the ResNet through a Flask app. So "both models behind a FastAPI API" is loose.</p>
+        <p><strong>Say it accurately:</strong> "The unified analysis API is FastAPI and it is what the product calls. The image model had its own Flask service while I was developing it. Both return the same JSON shape, which was the point, so the client does not care which input type it used."</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="nv3">
+    <div class="bullet-card">
+      <span class="needs-care">Prepare this one specifically</span>
+      <h3>The LogMeal question</h3>
+      <p class="dim">The Food_Logging README documents LogMeal, a commercial food recognition API, as the image path in the unified service. Your resume says you trained a food classifier. Both are true. An interviewer who reads one and then the other will think one of them is not.</p>
+
+      <div class="plain-first">
+        <div class="pf-label">Say this before they ask</div>
+        <p>"There are two image paths in that project. I trained a ResNet-50 classifier on a fixed set of food classes, which is in the Model_Image repo. The unified API also integrates LogMeal, because a commercial model covers far more classes and does multi-item segmentation on a plate, which mine does not. So the trained model is my work and the API is the pragmatic option for coverage. I would rather tell you which is which than let it look like one thing."</p>
+      </div>
+
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>So why train your own at all if the API is better?</div>
+        <div class="a"><strong>Say:</strong> "Cost and control. Every LogMeal call is a paid request and a network dependency, and for a fixed set of common foods a small local model handles it for free with lower latency. The sensible design is the local model first and the API as the fallback for anything it is not confident about, which is where I was heading."</div>
+        <div class="a">This is a genuinely good ML systems answer. Model cascades by cost and confidence are a real production pattern.</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>Your image path reads nutrition from a JSON file, not USDA. Why the inconsistency?</div>
+        <div class="a"><strong>Say:</strong> "The class mapping carries nutrition per class so image predictions resolve without a second network call, which was fine for a fixed class list. It does mean two sources of truth for nutrition, mine and USDA, and they can drift. Both paths should hit USDA and the class mapping should only map to a food ID."</div>
+        <div class="a">Spotting your own two-sources-of-truth problem is exactly the instinct a data role wants.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= RECRUTAI ================= -->
+  <section id="ra-head">
+    <div class="section-head"><h2>Projects: RecrutAI</h2></div>
+    <p class="section-note">Repo: <a href="https://github.com/AmanVerma1067/RecrutAI">AmanVerma1067/RecrutAI</a>. Turborepo monorepo, Next.js 15, Gemini 2.5 Flash. This is the most interesting engineering on the resume and also the one with the most oversell in its README. Know the difference between the two.</p>
+  </section>
+
+  <section id="ra1">
+    <div class="bullet-card">
+      <span class="verified">Architecture verified in README and package layout</span>
+      <div class="bullet-quote">"Designed an adaptive prompt-chaining state machine on Gemini 2.5 Flash that scores each response across 5 rubric dimensions and branches the interview at runtime (probe deeper, simplify, pivot topic) instead of replaying a fixed script."</div>
+
+      <h3>Say this first</h3>
+      <div class="plain-first">
+        <div class="pf-label">Plain-English version</div>
+        <p>"It runs a technical screening interview. After every answer it scores what the candidate said, and that score decides the next question. If the answer was thin it digs into the same topic, if the candidate is struggling it makes the question easier, and once a topic is covered it moves on. So two candidates get two different interviews."</p>
+      </div>
+
+      <div class="repo">
+        <div class="r-label">What the code actually shows</div>
+        <p>Branch actions are exactly as claimed: <code>PROBE_DEEPER</code>, <code>SIMPLIFY</code>, <code>PIVOT_TOPIC</code>, plus <code>PROCEED</code> for normal progression.</p>
+        <p>The monorepo split is clean: <code>packages/ai-service</code> for the prompt chains and Gemini pipes, <code>packages/proctoring-service</code> for client telemetry, <code>packages/shared</code> for TypeScript contracts.</p>
+        <p>The README's score matrix lists four dimensions: technical depth, system design, problem solving, communication. Scoring methods are described as keyword density, domain vocabulary hits, and structure checks.</p>
+      </div>
+
+      <h3>Likely follow-ups</h3>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>Name the five dimensions.</div>
+        <div class="a"><strong>Resolve this before you interview.</strong> The README documents four. If the fifth is coding or code quality from the Monaco sandbox, say all five and be consistent. If there are genuinely only four, change the resume to four. A number you cannot enumerate is worse than a smaller number you can.</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>How is technical depth actually scored?</div>
+        <div class="a"><strong>Say it straight:</strong> "Keyword and vocabulary density against the expected domain terms for the role, plus structural checks on the answer. It is heuristic, not semantic, and I will be honest that it is the weakest part of the system. It is gameable, since a candidate who lists technologies without understanding them scores well, and it under-rewards someone who explains a concept correctly in plain language. Moving the scoring itself into the model with a structured rubric prompt and a fixed output schema is the fix."</div>
+        <div class="a"><strong>Rehearse this one.</strong> An ML interviewer will get to it, and the difference between "I know it is heuristic and here is why that is a problem" and being caught having implied semantic scoring is the whole round.</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>Why a state machine rather than just giving the model the whole conversation?</div>
+        <div class="a"><strong>Say:</strong> "Control and auditability. If you hand the whole transcript back every turn you get drift, the model wanders off the rubric and you cannot explain afterwards why it asked what it asked. With explicit states and one decision per turn, the branching is inspectable, which matters a lot for hiring, and each call has a small focused prompt instead of a growing one, so it is cheaper and more consistent."</div>
+        <div class="a">Cost, drift and auditability. Three good reasons, and the auditability one is the strongest for a hiring product.</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>Why Gemini 2.5 Flash rather than a larger model?</div>
+        <div class="a"><strong>Say:</strong> "Latency and cost. A live interview means multiple calls per turn and a candidate sitting there waiting, so a slow model makes the product unusable regardless of quality. Flash is the small fast tier. The scoring step is the one place a bigger model might be worth the wait, and I would test that rather than assume it."</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="ra2">
+    <div class="bullet-card">
+      <span class="verified">Numbers match the README exactly</span>
+      <div class="bullet-quote">"Hardened the inference path with 6s timeouts, exponential-backoff retries, and deterministic regex/template fallbacks so no model failure blocks a session; surfaced the full score matrix and branching log in a recruiter audit dashboard."</div>
+
+      <div class="repo">
+        <div class="r-label">What the code actually shows</div>
+        <p>Timeout 6000ms, max 2 retries, backoff at 1000ms then 2000ms. Three named fallback paths: <code>fallback-resume-parser.ts</code> using regex, pre-written interview scripts in <code>agents/interviewer.ts</code>, and a curated challenge bank in <code>lib/challenges.ts</code>.</p>
+        <p>Dashboard lives at <code>/admin/reports/[id]</code> and exposes the score breakdown and the branching decisions.</p>
+      </div>
+
+      <h3>Likely follow-ups</h3>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>Why six seconds? Why two retries?</div>
+        <div class="a"><strong>Say:</strong> "Worst case a candidate waits six seconds, then one, then six, then two, then six. That is roughly twenty-one seconds before the fallback fires, which is already at the edge of what someone will sit through in a live interview. More retries makes the worst case worse for the person waiting, and the failures I actually saw were rate limits, which a third retry a second later does not fix anyway."</div>
+        <div class="a">Do the arithmetic out loud. Being able to state your own worst-case latency is a small thing that reads as though you designed it rather than copied it.</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>What does the candidate experience when the fallback fires?</div>
+        <div class="a"><strong>Say:</strong> "They get a question from the pre-written script for their role instead of a generated one, so the interview continues and they never see an error. The honest cost is that the adaptive part stops for that turn, since a scripted question does not respond to what they just said. It degrades to a fixed interview rather than to nothing."</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>Your README says the fallbacks guarantee 100% platform uptime. Do you believe that?</div>
+        <div class="a"><strong>Say:</strong> "No, and I would not write that line again. Fallbacks mean a Gemini outage does not take the interview down, which is a real property worth having. Uptime depends on my own service, the host and the network too, and no fallback protects against those. It should say the system degrades gracefully when the model provider fails."</div>
+        <div class="a">Someone will read that README. Getting there first turns an overclaim into evidence that you have calibrated since writing it.</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>Timeout plus retry on a non-idempotent call. Any risk?</div>
+        <div class="a"><strong>Say:</strong> "A timeout does not mean the call did not happen, it means I stopped waiting. Since these are generation calls with no side effects beyond cost, a duplicate is wasted money rather than corrupted state. If the call wrote something I would need an idempotency key so the retry is recognised as the same request."</div>
+        <div class="a">Excellent answer if they go there. Most candidates have never thought about it.</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="ra3">
+    <div class="bullet-card">
+      <h3>The hard questions</h3>
+      <p class="dim">RecrutAI is an AI system that judges people. Any serious ML or data interviewer will push on validity, fairness and state. These are the ones that actually decide the round.</p>
+
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>How do you know the scores are any good?</div>
+        <div class="a"><strong>Say:</strong> "I do not, in a measured sense, and that is the biggest gap in the project. There is no labelled set of interviews with human scores to compare against, so I cannot tell you agreement with a real interviewer. Validating it properly means collecting a few hundred transcripts scored by humans and measuring correlation, then checking test-retest consistency by running the same transcript through twice and seeing whether the score moves."</div>
+        <div class="a"><strong>This is the answer that wins or loses the ML round.</strong> The instinct they are testing is whether you know that a model producing output is not the same as a model being right. Naming the exact validation you would run turns a gap into evidence of judgement.</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>An AI screening candidates. What about bias?</div>
+        <div class="a"><strong>Say:</strong> "It is a real risk and I did not test for it. Keyword density scoring will favour candidates who use the vocabulary the model expects, which correlates with a particular kind of background, and the communication dimension measures fluency, which disadvantages non-native speakers on something that is not the skill being hired for. Testing it means the same answer content phrased different ways and checking whether the score moves when it should not. In production I would want it as a signal for a human reviewer, never an automatic reject."</div>
+        <div class="a">Never say "the AI is objective." It is the wrong answer and it is the one they are listening for.</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>Where does session state live?</div>
+        <div class="a"><strong>Say:</strong> "In a global in-memory map keyed by session ID, and users sit in a JSON file hashed with scrypt, with tokens held in memory on a fourteen-day TTL. It is the right amount of infrastructure for a demo and completely wrong for production. A restart loses every interview in progress, and you cannot run a second instance because the two would not share sessions. Postgres for users and sessions, Redis for the live state."</div>
+        <div class="a">Say it before they find it. The README states it plainly, so pretending otherwise is not an option.</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>Why scrypt and not bcrypt?</div>
+        <div class="a"><strong>Say:</strong> "It is in Node's standard crypto module, so no dependency, and it is memory-hard, which makes GPU-parallel cracking more expensive than with bcrypt. Either is a defensible choice. What matters is that it is not a bare hash and not something homegrown."</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>Your proctoring deducts 8 points for a high-severity event. Where did 8 come from?</div>
+        <div class="a"><strong>Say:</strong> "I picked it. There is no empirical basis for eight versus five and I would not pretend otherwise. What I can defend is the structure, which is that integrity penalties are subtracted from the base score rather than blended into it, so a recruiter can see the two separately and disagree with the penalty without losing the assessment. The weights should be configurable, and they are not."</div>
+        <div class="a">"I picked it, here is what I can defend instead" is a much better answer than inventing a justification.</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>Tab-switching detection. Does that not punish honest behaviour?</div>
+        <div class="a"><strong>Say:</strong> "Yes, sometimes. A notification steals focus and that looks identical to looking something up. It is why the dashboard shows the events and the timeline rather than just a number, so a human can look at three focus losses in the last minute of a hard question and decide for themselves. Treating it as evidence rather than a verdict is the only defensible way to use it."</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= SAHYATRI ================= -->
+  <section id="sy-head">
+    <div class="section-head"><h2>Projects: SahYatri</h2></div>
+    <p class="section-note">Your repo: <a href="https://github.com/AmanVerma1067/SahYatri">AmanVerma1067/SahYatri</a>. Canonical team repo: <a href="https://github.com/yasharth-0910/SahYatri">yasharth-0910/SahYatri</a>. Four-person build, first place at BitBox 5.0.</p>
+  </section>
+
+  <section id="sy0">
+    <div class="bullet-card">
+      <div class="alertbox" style="margin:0;">
+        <h2>Read this before you say a word about SahYatri</h2>
+        <p style="color:var(--text);font-size:14px;margin:8px 0;">The bullet claims YOLOv5n on the Raspberry Pi at 15 FPS, occupancy computed on-device, no raw video leaving the vehicle. The code says otherwise, and the code is public.</p>
+        <p style="color:var(--text);font-size:14px;margin:8px 0;"><code class="inline">SahYatri-DetectionAI/main.py</code> is a FastAPI service that loads <code class="inline">YOLO('yolov5xu.pt')</code> and exposes <code class="inline">POST /detect</code> taking an uploaded image. Its README describes it as accepting a bus camera image, counting people, and forwarding the payload to a Bus API. Both downstream URLs are onrender.com.</p>
+        <p style="color:var(--text);font-size:14px;margin:8px 0;">Three things are wrong: the model is yolov5xu and not the nano variant, inference runs in a hosted service and not on the Pi, and images do leave the vehicle because that is how they reach the detector.</p>
+        <p style="color:var(--text);font-size:14px;margin:8px 0;"><strong>The project's own top-level README makes the same claim,</strong> so you inherited it rather than invented it. That is worth saying. It is not worth defending.</p>
+      </div>
+
+      <h3 style="color:var(--resume);margin-top:18px;">Fix the bullet</h3>
+      <div class="plain-first">
+        <div class="pf-label">Replace it with this</div>
+        <p>"Built the vision pipeline for an in-bus occupancy monitor: a Raspberry Pi 4 capture unit posts frames to a FastAPI detection service running Ultralytics YOLO, which counts passengers per frame, compares against configured vehicle capacity, and pushes occupancy plus GPS telemetry into a PostgreSQL time-series store, firing an alert when a bus goes over capacity."</p>
+      </div>
+      <p class="dim">This survives contact with the repo and it reads as a better system, because a two-tier capture-and-infer split is an architectural decision rather than a spec claim.</p>
+    </div>
+  </section>
+
+  <section id="sy1">
+    <div class="bullet-card">
+      <span class="needs-care">Rewrite before using: see above</span>
+      <div class="bullet-quote">"Deployed YOLOv5n on a Raspberry Pi 4 at 15 FPS with adaptive thresholding, computing occupancy density on-device so raw video never leaves the vehicle."</div>
+
+      <h3>Likely follow-ups, answered honestly</h3>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>What is your detection accuracy?</div>
+        <div class="a"><strong>Say:</strong> "Benchmarked on COCO128, not on footage we collected. So what I have is a standard-benchmark number and not a measurement of in-bus performance, and those are very different claims. Real validation would mean labelling our own frames from actual buses, which is the step we did not get to."</div>
+        <div class="a"><strong>Do not quote a real-world accuracy figure.</strong> An audit of this codebase established the benchmarking used COCO128. Claiming field accuracy and then being asked for the test set has no recovery.</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>Why not run the model on the Pi? That is the whole point of edge AI.</div>
+        <div class="a"><strong>Say:</strong> "Because we used the extra-large YOLOv5 variant for accuracy, and a Pi 4 CPU cannot run that usefully. The real choice was a small model on the device or a large one off it, and for a prototype we took accuracy. Doing it properly means a quantised nano model on-device, or a Coral or Jetson accelerator, and that also fixes the privacy story since frames stop leaving the bus."</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>Counting people is object detection, not counting. How do you get from boxes to a number?</div>
+        <div class="a"><strong>Say:</strong> "Per frame it is just the count of person-class detections above a confidence threshold, compared against a capacity constant. There is no tracking across frames, so it is a per-frame snapshot rather than a count of distinct people, which is fine for occupancy and would be wrong if you wanted boardings and alightings. That needs a tracker like ByteTrack or DeepSORT and a line-crossing rule."</div>
+        <div class="a">Knowing the difference between counting and tracking is a real computer vision distinction and this question is likely.</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>Occlusion in a packed bus?</div>
+        <div class="a"><strong>Say:</strong> "It undercounts, and it undercounts worst exactly when the number matters most. A wide-angle camera mounted high helps, and honestly the right output is a band, light, moderate, full, rather than a precise headcount that we cannot support."</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="sy2">
+    <div class="bullet-card">
+      <span class="verified">Verified in the team repo</span>
+      <div class="bullet-quote">"Streamed occupancy and GPS telemetry into a PostgreSQL time-series store behind a Node.js/Express API, exposing historical load patterns to a React dashboard; built by a 4-person team."</div>
+
+      <h3>Likely follow-ups</h3>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>What was your slice of a four-person build?</div>
+        <div class="a"><strong>Decide this now and write it down.</strong> The team was you, Yasharth Singh, Rakshit Suneja and Shivam Kashyap, and the canonical repo is under Yasharth's account, which an interviewer following your README will land on. Get there first: "Four of us built it for BitBox, the main repo is under a teammate's account, my part was [state it]." Hesitating here reads as though you did less than you did.</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>How would you design the telemetry table?</div>
+        <div class="a"><strong>Say:</strong> "Narrow and append-only. Timestamp, bus ID, occupancy, latitude, longitude. Primary key on bus and timestamp, and partitioned by time so old partitions can be dropped or rolled up without touching hot data. Every read is a time-window aggregation, so the index has to lead with the fields the window filters on."</div>
+        <div class="a">Time-series partitioning is bread-and-butter data engineering. Have this ready.</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>A thousand buses reporting every few seconds. Does your design hold?</div>
+        <div class="a"><strong>Say:</strong> "No, not as built. Writing on the request path is fine at demo scale and wrong at that one. You want a queue in front, workers batching inserts, and downsampling so you keep per-second data for a day and per-minute rollups after that. Dashboards read the rollups, not the raw table."</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>A bus loses signal for an hour and then uploads everything. What breaks?</div>
+        <div class="a"><strong>Say:</strong> "Late-arriving data, which is the classic time-series problem. If dashboards compute on event time you get gaps that fill in later, and anything already aggregated over that window is now wrong. You need idempotent writes keyed on bus and timestamp so replays do not duplicate, and either recompute affected windows or accept a watermark past which you stop correcting."</div>
+        <div class="a">Event time versus processing time, watermarks, idempotent replay. This is exactly the vocabulary a data engineering interviewer wants to hear, and your project gives you a natural reason to use it.</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>Why PostgreSQL here and MongoDB at DigiFlute?</div>
+        <div class="a"><strong>Say:</strong> "Opposite data shapes. Telemetry is one fixed row forever and every query is an aggregation over time, which is exactly relational. Packspec documents had a different shape per client and were always read whole. Choosing the same store for both would have meant fighting one of them."</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= ACHIEVEMENTS ================= -->
+  <section id="ach-head">
+    <div class="section-head"><h2>Achievements &amp; Certifications</h2></div>
+  </section>
+
+  <section id="ach1">
+    <div class="bullet-card">
+      <span class="verified">Publicly checkable</span>
+      <div class="bullet-quote">"LeetCode Knight, peak 2094, top 2.04%, 863 solved. 1st Place BitBox 5.0 for SahYatri. Finalist Innovate 3.0 for Drive-Sure. RAG-based PDF Query Engine on Hugging Face Spaces with LangChain and CrewAI. Udemy bootcamps in Data Science, Deep Learning &amp; NLP and Generative AI with LangChain &amp; Hugging Face."</div>
+
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>Tell me about the RAG PDF query engine.</div>
+        <div class="a"><strong>Be ready with the specifics:</strong> chunking strategy and chunk size, which embedding model, which vector store, whether retrieval is dense only or hybrid, and how many chunks you pass to the model. "I built a RAG app" with no retrieval details is the weakest possible answer for an AI role, and RAG is the thing everyone is hiring for right now.</div>
+        <div class="a">Also have the honest evaluation answer: "I did not measure retrieval quality. Doing it properly means a set of questions with known source passages, then measuring whether the right chunk was retrieved at all before you judge the generated answer."</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>What did CrewAI actually give you over plain calls?</div>
+        <div class="a"><strong>Say:</strong> Be honest. If it was orchestration convenience, say that. Multi-agent frameworks are frequently more ceremony than value on small projects, and an interviewer who has used them knows it. "It gave me the agent and task abstraction so I did not hand-roll the loop, though for what I built plain calls would have worked" is a confident answer.</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>Your peak is 2094. Current rating?</div>
+        <div class="a"><strong>Say the real number.</strong> It is one click away. If it has dropped, say so and why.</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>Drive-Sure has no repo. What was it?</div>
+        <div class="a"><strong>Say:</strong> "An AI and IoT telematics build scoring driving safety from live accelerometer and GPS streams, so harsh braking, cornering and speeding roll into a driver score. Finalist at Innovate 3.0. It never went past the hackathon build, which is why there is no repo."</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= CROSS-CUTTING ================= -->
+  <section id="cross-head">
+    <div class="section-head"><h2>The rounds that are not about your projects</h2></div>
+  </section>
+
+  <section id="cross1">
+    <div class="bullet-card">
+      <h3>ML fundamentals</h3>
+      <p class="dim">Your resume claims PyTorch, TensorFlow, scikit-learn, transfer learning and NER. Expect the basics tested properly, because a resume with model names on it gets checked.</p>
+      <ul class="tight">
+        <li><strong>Overfitting.</strong> What it looks like in the curves, and four ways to attack it. You have a live example in the dropout on your ResNet head.</li>
+        <li><strong>Precision, recall, F1.</strong> Not the formulas, the judgement. Which one matters for your NER, and which for occupancy detection. Undercounting a bus is a recall problem and it is the one that hurts.</li>
+        <li><strong>Class imbalance.</strong> Why accuracy lies, and what to do. Class weights, resampling, threshold tuning, and reporting per-class metrics.</li>
+        <li><strong>Transfer learning.</strong> Why frozen ImageNet features work on food, and when they stop working. Domain distance is the answer.</li>
+        <li><strong>Train, validation and test.</strong> Especially what a validation set is for and why tuning on the test set invalidates it. Your <code class="inline">best_model.pth</code> means you selected on something, so know what.</li>
+        <li><strong>Bias and variance.</strong> The one question that reveals whether someone understands what they are doing when they add data versus add capacity.</li>
+      </ul>
+      <div class="flag">
+        <div class="f-label">The question you must not fumble</div>
+        <p>"How do you know your model is good?" It comes in some form in every ML interview. The answer always involves a baseline, a held-out set, and a metric chosen to match what going wrong actually costs. If the answer starts with an accuracy number and stops there, that is a fail.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="cross2">
+    <div class="bullet-card">
+      <h3>Data engineering and the SQL round</h3>
+      <p class="dim">A DE role means a SQL screen, usually written and usually harder than people expect. Your resume lists SQL, PostgreSQL, MySQL, ETL and schema design, so all of it is fair game.</p>
+      <ul class="tight">
+        <li><strong>Joins.</strong> Inner, left, and what happens to row counts when the join key is not unique. This catches more people than anything else.</li>
+        <li><strong>Window functions.</strong> ROW_NUMBER, RANK, LAG, and running totals. The classic is "second highest per group," which is a window function question dressed up.</li>
+        <li><strong>GROUP BY and HAVING.</strong> Why HAVING is not WHERE.</li>
+        <li><strong>Normalisation.</strong> Up to 3NF, and when you would deliberately denormalise. Your SahYatri telemetry table is a fine example of when normalising further is pointless.</li>
+        <li><strong>ETL versus ELT.</strong> Why warehouses pushed transformation after loading.</li>
+        <li><strong>Batch versus streaming.</strong> You have a natural answer via SahYatri, since the current design is per-request writes and you know what a queued design would look like.</li>
+        <li><strong>Idempotency and late data.</strong> Covered in the SahYatri section. It is the most senior-sounding thing you can say in a DE interview.</li>
+      </ul>
+      <div class="metric">
+        <div class="m-label">Practise, do not just read</div>
+        <p>SQL is the one round where knowing the concept does not save you. Write twenty queries with window functions before the interview. The screen is usually timed and syntax you half-remember will cost you the question.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="cross3">
+    <div class="bullet-card">
+      <h3>LLM and RAG questions</h3>
+      <p class="dim">You have LangChain, Hugging Face, RAG pipelines, prompt chaining and the Gemini API on the skills line, plus two LLM projects. This is the most fashionable part of your resume and it will get the most attention.</p>
+
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>Explain RAG to someone non-technical.</div>
+        <div class="a"><strong>Say:</strong> "The model does not know your documents, so before asking it anything you search your own documents for the passages most likely to contain the answer and paste those into the question. The model answers from what you gave it rather than from memory, which is what stops it making things up and lets you point at where the answer came from."</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>Your RAG gives a wrong answer. How do you debug it?</div>
+        <div class="a"><strong>Say:</strong> "Separate retrieval from generation first, because they fail differently. Look at what chunks came back. If the right passage was never retrieved, the problem is chunking or embeddings or the query, and no amount of prompt work fixes it. If the right passage was retrieved and the answer is still wrong, then it is the prompt or the model. Most RAG failures I have seen are retrieval failures that people try to fix with prompting."</div>
+        <div class="a">This is a genuinely strong answer and it is the one people who have actually built RAG give.</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>How do you chunk?</div>
+        <div class="a"><strong>Say what you did,</strong> with the size and overlap, and why. The reasoning that matters: chunks too small lose the context that makes a passage meaningful, too large and the embedding averages over several topics so it matches nothing well. Overlap stops an answer that straddles a boundary from being lost. Splitting on structure, paragraphs and sections, beats splitting on character count.</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>How do you get structured output from an LLM reliably?</div>
+        <div class="a"><strong>Say:</strong> "Ask for a fixed schema, validate what comes back, and have something to do when it does not parse. In RecrutAI that is exactly the fallback layer, since the branching decision has to be one of a fixed set of actions, and if the response is not one of those the system takes the default rather than crashing. Constrained decoding or a JSON mode helps, but you still validate."</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qtag">Q</span>How do you evaluate an LLM feature at all?</div>
+        <div class="a"><strong>Say:</strong> "Build a small set of inputs with known good outputs and run it every time the prompt changes, because otherwise you are tuning by vibes and every fix silently breaks something else. For anything where correctness is fuzzy you need either human ratings on a sample or a model judging against a rubric, and the judge needs checking against humans before you trust it."</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="cross4">
+    <div class="bullet-card">
+      <h3>"You are ECE. Why data and ML?"</h3>
+      <div class="plain-first">
+        <div class="pf-label">Say this</div>
+        <p>"ECE gave me signals, statistics and the hardware side, which is why I ended up building a computer vision system on a Raspberry Pi rather than only in a notebook. The ML I went and learned, and I would rather be judged on a trained NER model, a fine-tuned classifier and a working LLM pipeline than on my branch name."</p>
+      </div>
+
+      <h3>What to ask them</h3>
+      <ul class="tight">
+        <li><strong>"How do models get from a notebook into production here, and who owns them afterwards?"</strong> Tells you instantly whether they have real ML infrastructure or a research team throwing things over a wall.</li>
+        <li><strong>"What does the data look like when it arrives? How much time goes into cleaning it?"</strong> Every honest data person has feelings about this and it is a good conversation.</li>
+        <li><strong>"How do you decide a model is good enough to ship?"</strong> Reveals whether they have an evaluation culture.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="final">
+    <div class="bullet-card">
+      <h3>Before the interview</h3>
+      <ul class="tight">
+        <li>Fix the SahYatri bullet, or rehearse the correction sentence if the resume has already gone out.</li>
+        <li>Get your NER numbers: corpus size, split, precision, recall, F1 on FOOD. Run the evaluation if it does not exist.</li>
+        <li>Get your ResNet numbers: class count from <code class="inline">class_mapping.json</code>, which datasets went into <code class="inline">exp_combined_small</code>, validation accuracy.</li>
+        <li>Resolve the fifth rubric dimension, or change the number to four.</li>
+        <li>Write your RAG project's chunk size, embedding model and vector store on a card.</li>
+        <li>Decide your slice of SahYatri in one sentence.</li>
+        <li>Write twenty SQL queries with window functions.</li>
+        <li>Reread your own code for twenty minutes. You wrote some of this a while ago.</li>
+      </ul>
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  Built from AmanVerma1067/RecrutAI and SahYatri, the Nutri-Vision org repos, and the yasharth-0910/SahYatri team repo.<br>
+  Verified claims were checked against source. Everything else needs your confirmation before you say it out loud.
+</footer>
+
+</body>
+</html>

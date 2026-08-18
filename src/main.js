@@ -10,6 +10,7 @@ let previousView = null;
 let previousRoadmap = null;
 let targetHashOnLoad = null;
 let isFullscreenReading = false;
+let activeResumeRole = 'all'; // 'all' | 'sde' | 'mldataeng'
 
 function topicId(rmId, phase, topicName) {
   return `${rmId}::${phase}::${topicName}`;
@@ -401,13 +402,15 @@ function renderTipsView() {
         <h3>🎯 Recommended Study Order</h3>
         <ol class="priority-list">
           <li><strong>Tech Fundamentals</strong> — build the vocabulary first (language comparisons, API paradigms, cloud basics)</li>
-          <li><strong>React & Next.js + Flutter</strong> — cover frontend/mobile to defend your resume projects</li>
+          <li><strong>CS Core 21-Day Sprint</strong> — DBMS, OS, Computer Networks & Software Engineering OAs/Interviews</li>
+          <li><strong>React & Next.js + Flutter</strong> — cover frontend/mobile to defend your full-stack projects</li>
           <li><strong>Node & Express</strong> — backend deep-dive: event loop, middleware, JWT, Socket.IO</li>
-          <li><strong>Packspec Architecture</strong> — prepare to walk through your internship endpoints and design decisions</li>
-          <li><strong>Flask & FastAPI</strong> — Python backends + Chessify minimax engine defense</li>
-          <li><strong>AI/ML Stack</strong> — ML fundamentals, RAG, LangChain, YOLOv5 for SahYatri</li>
+          <li><strong>Packspec Architecture Defense</strong> — prepare to walk through your internship endpoints, MongoDB schemas & ACID transactions</li>
+          <li><strong>Flask & FastAPI</strong> — Python backends + Chessify minimax engine & Nutri-Vision inference defense</li>
+          <li><strong>AI/ML Stack & Deep Dives</strong> — ML fundamentals, RAG, LangChain, CrewAI, YOLOv5 for SahYatri & RecrutAI</li>
           <li><strong>Databases & Cloud</strong> — SQL vs NoSQL, Docker, CI/CD, Git, Postman workflow</li>
-          <li><strong>Resume Defense Rehearsal</strong> — Final interview prep for all your experiences and projects</li>
+          <li><strong>SDE Resume Defense Rehearsal</strong> — Bullet-by-bullet code-tested defense for SDE & Systems roles</li>
+          <li><strong>ML & Data Eng Resume Defense</strong> — Bullet-by-bullet defense for ML, NLP, Vision, LLM & Data Engineering roles</li>
         </ol>
         <p class="tip-note">This matches the sidebar ordering. Work top-to-bottom, checking off topics as you go.</p>
       </div>
@@ -418,7 +421,7 @@ function renderTipsView() {
           <div class="routine-row"><span class="routine-time">Morning 2-3h</span><span>New topic learning + read notes in Focus Mode</span></div>
           <div class="routine-row"><span class="routine-time">Afternoon 2-3h</span><span>Timed problem solving (LeetCode mediums)</span></div>
           <div class="routine-row"><span class="routine-time">Evening 1-2h</span><span>Revision — re-read checked topics, retry failed problems</span></div>
-          <div class="routine-row"><span class="routine-time">Night 30min</span><span>Mock interview or behavioral prep</span></div>
+          <div class="routine-row"><span class="routine-time">Night 30min</span><span>Mock interview or defense rehearsal</span></div>
         </div>
         <p class="tip-note">Target 6-8 focused hours/day. Quality beats quantity — take real breaks.</p>
       </div>
@@ -525,41 +528,63 @@ function renderTipsView() {
         <div class="guide-grid">
           <div class="guide-item">
             <strong>Before the Call</strong>
-            <p>Review your resume deep-dives using the "My Resume" tab. Re-read the Packspec and Chessify notes. Have your template notebook open. Test your mic, camera, and screen share.</p>
+            <p>Review your resume deep-dives using the "My Resume" tab. Re-read the SDE or ML/Data Eng defense sheets. Have your template notebook open. Test your mic, camera, and screen share.</p>
           </div>
           <div class="guide-item">
             <strong>During DSA Round</strong>
             <p>Clarify constraints FIRST. Think out loud. Start with brute force, then optimize. Trace through an example before coding. Handle edge cases. Analyze time/space complexity.</p>
           </div>
           <div class="guide-item">
-            <strong>During Tech/System Design</strong>
-            <p>Use the STAR method for experience questions. For system design: start with requirements → high-level design → deep-dive into components → discuss trade-offs and scaling.</p>
+            <strong>During Tech/System Design & ML Rounds</strong>
+            <p>Use the STAR method for experience questions. For SDE: requirements → API → architecture → scaling. For ML: problem formulation → data & baseline → model architecture → metrics & evaluation trade-offs.</p>
           </div>
           <div class="guide-item">
             <strong>Behavioral Tips</strong>
-            <p>"Tell me about yourself" — 90-second pitch max. Lead with your strongest project. Every answer should have: situation, action, metric/result. Ask thoughtful questions about the team.</p>
+            <p>"Tell me about yourself" — 90-second pitch max. Lead with your strongest project matching the applied role (SDE or ML/Data Eng). Every answer should have: situation, action, metric/result.</p>
           </div>
         </div>
       </div>
 
       <div class="tip-card wide skillset">
-        <h3>🛠️ Required Skillset for SDE Interviews</h3>
+        <h3>🛠️ Dual-Track Skillsets for Aman Verma</h3>
         <div class="skill-cols">
           <div>
-            <h4>DSA & Problem Solving</h4>
-            <ul><li>Medium-level LeetCode fluency</li><li>Pattern recognition under time pressure</li><li>Clean code with proper edge cases</li><li>Time/space complexity analysis</li></ul>
+            <h4>⚡ SDE & Systems Track</h4>
+            <ul>
+              <li>High-concurrency Node.js & Socket.IO</li>
+              <li>PHP & MongoDB Atlas multi-tenant SaaS</li>
+              <li>Offline-first Flutter mobile apps</li>
+              <li>PostgreSQL time-series & relational schema</li>
+              <li>Minimax with alpha-beta game tree search</li>
+            </ul>
           </div>
           <div>
-            <h4>CS Fundamentals</h4>
-            <ul><li>OS: processes, threads, scheduling, memory</li><li>DBMS: SQL, normalization, ACID transactions</li><li>Networks: TCP/IP, HTTP, DNS, TLS</li><li>OOP: SOLID, design patterns, polymorphism</li></ul>
+            <h4>🤖 ML & Data Engineering Track</h4>
+            <ul>
+              <li>PyTorch transfer learning (ResNet-50) & Git LFS</li>
+              <li>Custom spaCy NER & hybrid quantity parsing</li>
+              <li>Gemini 2.5 Flash prompt-chaining state machine</li>
+              <li>RAG Multi-Agent retrieval (LangChain & CrewAI)</li>
+              <li>Edge CV detection (YOLOv5) & telemetry ETL</li>
+            </ul>
           </div>
           <div>
-            <h4>System Design (Basics)</h4>
-            <ul><li>Client-server architecture</li><li>Database choice (SQL vs NoSQL)</li><li>Caching, load balancing, CDNs</li><li>REST API design & rate limiting</li></ul>
+            <h4>🎯 Problem Solving & Core CS</h4>
+            <ul>
+              <li>LeetCode Knight (Peak Rating: 2094)</li>
+              <li>1000+ DSA problems solved across platforms</li>
+              <li>250-day continuous algorithmic coding streak</li>
+              <li>OS, DBMS, Networks, OOP & System Design</li>
+            </ul>
           </div>
           <div>
-            <h4>Projects & Experience</h4>
-            <ul><li>Walk through architecture decisions</li><li>Defend tech stack choices with trade-offs</li><li>Explain scaling strategies you implemented</li><li>Discuss what you'd do differently today</li></ul>
+            <h4>🏆 Hackathon Honors & Impact</h4>
+            <ul>
+              <li>1st Place BitBox 5.0 (Google Developer Groups)</li>
+              <li>Finalist Innovate 3.0 Hackathon (Drive-Sure)</li>
+              <li>Letter of Appreciation (JIIT, 8.6 CGPA)</li>
+              <li>Udemy Bootcamps in ML, Deep Learning & GenAI</li>
+            </ul>
           </div>
         </div>
       </div>
@@ -568,58 +593,228 @@ function renderTipsView() {
 }
 
 function renderResumeView() {
+  const currentRoleData = activeResumeRole === 'sde' 
+    ? resumeData.roles.sde 
+    : activeResumeRole === 'mldataeng' 
+    ? resumeData.roles.mldataeng 
+    : null;
+
+  // Filter projects based on active role
+  const displayedProjects = activeResumeRole === 'sde'
+    ? resumeData.projects.filter(p => p.id === 'chessify' || p.id === 'studysync' || p.id === 'sahyatri-sde')
+    : activeResumeRole === 'mldataeng'
+    ? resumeData.projects.filter(p => p.id === 'nutrivision' || p.id === 'recrutai' || p.id === 'sahyatri-ml')
+    : resumeData.projects;
+
   return `
   <div class="fade-in resume-container">
     ${renderBackButton()}
+    
     <div class="resume-header">
-      <h1 class="resume-title">${resumeData.name}</h1>
-      <p class="resume-subtitle">Backend & Systems Developer · Interactive Deep Dives</p>
-    </div>
+      <div class="resume-profile-top">
+        <h1 class="resume-title">${resumeData.name}</h1>
+        <div class="resume-meta-chips">
+          <span class="meta-chip">📍 ${resumeData.location}</span>
+          <span class="meta-chip">🎓 JIIT B.Tech ECE (${resumeData.education.cgpa}) · 2023–2027</span>
+          <a href="${resumeData.linkedin}" target="_blank" rel="noopener noreferrer" class="meta-chip link">🔗 LinkedIn</a>
+          <a href="${resumeData.github}" target="_blank" rel="noopener noreferrer" class="meta-chip link">💻 GitHub</a>
+          <a href="${resumeData.website}" target="_blank" rel="noopener noreferrer" class="meta-chip link">🌐 Portfolio</a>
+        </div>
+      </div>
+      <p class="resume-subtitle">
+        ${currentRoleData ? currentRoleData.subtitle : 'Dual-Specialization: Software Development Engineer & Machine Learning / Data Engineering'}
+      </p>
 
-    <!-- Technical Skills -->
-    <div class="resume-section-card">
-      <h2 class="resume-section-title">Technical Skills</h2>
-      <div class="resume-skills-grid">
-        <div class="resume-skill-cat">
-          <h4>Languages</h4>
-          <div class="resume-skills-list">
-            ${resumeData.skills.languages.map(s => `<span class="resume-skill-pill">${s}</span>`).join('')}
+      <!-- Role Switcher Tabs -->
+      <div class="resume-role-selector-wrap">
+        <div class="resume-role-selector">
+          <button class="resume-role-tab ${activeResumeRole === 'all' ? 'active' : ''}" data-role="all">
+            <span class="role-icon">🌐</span>
+            <span>All / Unified Portfolio</span>
+          </button>
+          <button class="resume-role-tab ${activeResumeRole === 'sde' ? 'active' : ''}" data-role="sde">
+            <span class="role-icon">⚡</span>
+            <span>Software Development Engineer (SDE)</span>
+          </button>
+          <button class="resume-role-tab ${activeResumeRole === 'mldataeng' ? 'active' : ''}" data-role="mldataeng">
+            <span class="role-icon">🤖</span>
+            <span>ML & Data Engineering</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Quick Launch Defense Action Banners -->
+      <div class="defense-banner-grid">
+        <div class="defense-banner sde-banner">
+          <div class="db-left">
+            <span class="db-icon">🛡️</span>
+            <div>
+              <div class="db-title">SDE Resume Interview Defense</div>
+              <div class="db-desc">Spoken 20-40s answers, real code checks, concurrency & system design defenses.</div>
+            </div>
+          </div>
+          <div class="db-actions">
+            <button class="resume-action-btn primary" data-jump-roadmap="sde-defense" data-jump-hash="#alert">
+              Open SDE Defense Guide
+            </button>
+            <a href="/AmanVerma-SDE-Interview-Defense.html" target="_blank" rel="noopener noreferrer" class="defense-ext-link" title="Open full HTML document in new tab">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+              View Doc
+            </a>
           </div>
         </div>
-        <div class="resume-skill-cat">
-          <h4>Backend & APIs</h4>
-          <div class="resume-skills-list">
-            ${resumeData.skills.backend.map(s => `<span class="resume-skill-pill">${s}</span>`).join('')}
+
+        <div class="defense-banner ml-banner">
+          <div class="db-left">
+            <span class="db-icon">🤖</span>
+            <div>
+              <div class="db-title">ML & Data Eng Interview Defense</div>
+              <div class="db-desc">Model baselines, spaCy NER, ResNet-50, Gemini state machine & SQL rounds.</div>
+            </div>
           </div>
-        </div>
-        <div class="resume-skill-cat">
-          <h4>Frontend & Mobile</h4>
-          <div class="resume-skills-list">
-            ${resumeData.skills.frontendMobile.map(s => `<span class="resume-skill-pill">${s}</span>`).join('')}
-          </div>
-        </div>
-        <div class="resume-skill-cat">
-          <h4>AI & ML Stack</h4>
-          <div class="resume-skills-list">
-            ${resumeData.skills.aiml.map(s => `<span class="resume-skill-pill">${s}</span>`).join('')}
-          </div>
-        </div>
-        <div class="resume-skill-cat">
-          <h4>Databases & Cloud</h4>
-          <div class="resume-skills-list">
-            ${resumeData.skills.dbCloudTools.map(s => `<span class="resume-skill-pill">${s}</span>`).join('')}
-          </div>
-        </div>
-        <div class="resume-skill-cat">
-          <h4>Core Computer Science</h4>
-          <div class="resume-skills-list">
-            ${resumeData.skills.coreCS.map(s => `<span class="resume-skill-pill">${s}</span>`).join('')}
+          <div class="db-actions">
+            <button class="resume-action-btn primary ml" data-jump-roadmap="ml-dataeng-defense" data-jump-hash="#alert">
+              Open ML/DE Defense Guide
+            </button>
+            <a href="/AmanVerma-ML-DataEng-Interview-Defense.html" target="_blank" rel="noopener noreferrer" class="defense-ext-link ml" title="Open full HTML document in new tab">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+              View Doc
+            </a>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Experience -->
+    <!-- Technical Skills Section -->
+    <div class="resume-section-card">
+      <div class="resume-section-head-wrap">
+        <h2 class="resume-section-title">
+          ${activeResumeRole === 'sde' ? 'SDE Technical Skills' : activeResumeRole === 'mldataeng' ? 'ML & Data Engineering Skills' : 'Technical Skills & Core Stack'}
+        </h2>
+        <span class="section-badge">${activeResumeRole === 'sde' ? 'SDE Focused' : activeResumeRole === 'mldataeng' ? 'ML/DE Focused' : 'Master Overview'}</span>
+      </div>
+
+      ${activeResumeRole === 'sde' ? `
+        <div class="resume-skills-grid">
+          <div class="resume-skill-cat">
+            <h4>Languages</h4>
+            <div class="resume-skills-list">
+              ${resumeData.roles.sde.skills.languages.map(s => `<span class="resume-skill-pill">${s}</span>`).join('')}
+            </div>
+          </div>
+          <div class="resume-skill-cat">
+            <h4>Backend & APIs</h4>
+            <div class="resume-skills-list">
+              ${resumeData.roles.sde.skills.backend.map(s => `<span class="resume-skill-pill">${s}</span>`).join('')}
+            </div>
+          </div>
+          <div class="resume-skill-cat">
+            <h4>Frontend & Mobile</h4>
+            <div class="resume-skills-list">
+              ${resumeData.roles.sde.skills.frontendMobile.map(s => `<span class="resume-skill-pill">${s}</span>`).join('')}
+            </div>
+          </div>
+          <div class="resume-skill-cat">
+            <h4>Databases & Cloud</h4>
+            <div class="resume-skills-list">
+              ${resumeData.roles.sde.skills.databasesCloud.map(s => `<span class="resume-skill-pill">${s}</span>`).join('')}
+            </div>
+          </div>
+          <div class="resume-skill-cat">
+            <h4>Core Computer Science</h4>
+            <div class="resume-skills-list">
+              ${resumeData.roles.sde.skills.coreCS.map(s => `<span class="resume-skill-pill">${s}</span>`).join('')}
+            </div>
+          </div>
+          <div class="resume-skill-cat">
+            <h4>AI/ML Stack</h4>
+            <div class="resume-skills-list">
+              ${resumeData.roles.sde.skills.aiml.map(s => `<span class="resume-skill-pill">${s}</span>`).join('')}
+            </div>
+          </div>
+        </div>
+      ` : activeResumeRole === 'mldataeng' ? `
+        <div class="resume-skills-grid">
+          <div class="resume-skill-cat">
+            <h4>Languages & Querying</h4>
+            <div class="resume-skills-list">
+              ${resumeData.roles.mldataeng.skills.languages.map(s => `<span class="resume-skill-pill ml">${s}</span>`).join('')}
+            </div>
+          </div>
+          <div class="resume-skill-cat">
+            <h4>ML & Deep Learning</h4>
+            <div class="resume-skills-list">
+              ${resumeData.roles.mldataeng.skills.mlDeepLearning.map(s => `<span class="resume-skill-pill ml">${s}</span>`).join('')}
+            </div>
+          </div>
+          <div class="resume-skill-cat">
+            <h4>NLP, Vision & LLM Systems</h4>
+            <div class="resume-skills-list">
+              ${resumeData.roles.mldataeng.skills.nlpVisionLLM.map(s => `<span class="resume-skill-pill ml">${s}</span>`).join('')}
+            </div>
+          </div>
+          <div class="resume-skill-cat">
+            <h4>Data Engineering & Backend</h4>
+            <div class="resume-skills-list">
+              ${resumeData.roles.mldataeng.skills.dataEngBackend.map(s => `<span class="resume-skill-pill ml">${s}</span>`).join('')}
+            </div>
+          </div>
+          <div class="resume-skill-cat">
+            <h4>Tools & Core CS</h4>
+            <div class="resume-skills-list">
+              ${resumeData.roles.mldataeng.skills.toolsCoreCS.map(s => `<span class="resume-skill-pill ml">${s}</span>`).join('')}
+            </div>
+          </div>
+        </div>
+      ` : `
+        <div class="resume-skills-grid">
+          <div class="resume-skill-cat">
+            <h4>Languages & Querying</h4>
+            <div class="resume-skills-list">
+              ${resumeData.skills.languages.map(s => `<span class="resume-skill-pill">${s}</span>`).join('')}
+            </div>
+          </div>
+          <div class="resume-skill-cat">
+            <h4>Core Computer Science</h4>
+            <div class="resume-skills-list">
+              ${resumeData.skills.coreCS.map(s => `<span class="resume-skill-pill">${s}</span>`).join('')}
+            </div>
+          </div>
+          <div class="resume-skill-cat">
+            <h4>ML & Deep Learning</h4>
+            <div class="resume-skills-list">
+              ${resumeData.skills.mlDeepLearning.map(s => `<span class="resume-skill-pill ml">${s}</span>`).join('')}
+            </div>
+          </div>
+          <div class="resume-skill-cat">
+            <h4>NLP, Vision & LLM Systems</h4>
+            <div class="resume-skills-list">
+              ${resumeData.skills.nlpVisionLLM.map(s => `<span class="resume-skill-pill ml">${s}</span>`).join('')}
+            </div>
+          </div>
+          <div class="resume-skill-cat">
+            <h4>Backend & Data Engineering</h4>
+            <div class="resume-skills-list">
+              ${resumeData.skills.backendDataEng.map(s => `<span class="resume-skill-pill">${s}</span>`).join('')}
+            </div>
+          </div>
+          <div class="resume-skill-cat">
+            <h4>Frontend & Mobile</h4>
+            <div class="resume-skills-list">
+              ${resumeData.skills.frontendMobile.map(s => `<span class="resume-skill-pill">${s}</span>`).join('')}
+            </div>
+          </div>
+          <div class="resume-skill-cat">
+            <h4>Databases, Cloud & DevOps</h4>
+            <div class="resume-skills-list">
+              ${resumeData.skills.cloudDevOpsTools.map(s => `<span class="resume-skill-pill">${s}</span>`).join('')}
+            </div>
+          </div>
+        </div>
+      `}
+    </div>
+
+    <!-- Work Experience Section -->
     <div class="resume-section-card">
       <h2 class="resume-section-title">Work Experience</h2>
       ${resumeData.experience.map(exp => `
@@ -628,103 +823,76 @@ function renderResumeView() {
           <div class="resume-exp-header">
             <div>
               <div class="resume-exp-company">${exp.company}</div>
-              <div class="resume-exp-role">${exp.role}</div>
+              <div class="resume-exp-role">${exp.role} · ${exp.location}</div>
             </div>
             <div class="resume-exp-period">${exp.period}</div>
           </div>
           <ul class="resume-points">
             ${exp.points.map(pt => `<li>${pt}</li>`).join('')}
           </ul>
-          <button class="resume-action-btn" data-jump-roadmap="packspec" data-jump-hash="#overview">
-            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-            Review Packspec Architecture Interview Notes
-          </button>
+          <div class="resume-btn-group">
+            ${exp.defenseJumps.map(j => `
+              <button class="resume-action-btn" data-jump-roadmap="${j.roadmap}" data-jump-hash="${j.hash}">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                ${j.label}
+              </button>
+            `).join('')}
+          </div>
         </div>
       `).join('')}
     </div>
 
-    <!-- Projects -->
+    <!-- Projects Section -->
     <div class="resume-section-card">
-      <h2 class="resume-section-title">Academic & Technical Projects</h2>
+      <div class="resume-section-head-wrap">
+        <h2 class="resume-section-title">Academic & Technical Projects</h2>
+        <span class="section-badge">${displayedProjects.length} Projects Displayed</span>
+      </div>
       <div class="resume-projects-grid">
-        <!-- Chessify AI -->
-        <div class="resume-project-card">
-          <div class="resume-proj-header">
-            <div class="resume-proj-title">Chessify AI</div>
-            <span class="resume-proj-tech">Next.js, Node, Socket.io, Flask, Python</span>
+        ${displayedProjects.map(proj => `
+          <div class="resume-project-card">
+            <div class="resume-proj-header">
+              <div>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <span class="resume-proj-title">${proj.title}</span>
+                  <span class="proj-role-badge ${proj.roleTag.includes('ML') || proj.roleTag.includes('LLM') ? 'ml' : 'sde'}">${proj.roleTag}</span>
+                </div>
+                <div class="resume-proj-subtitle">${proj.subtitle}</div>
+              </div>
+            </div>
+            <div class="resume-proj-tech">${proj.tech}</div>
+            <ul class="resume-points">
+              ${proj.points.map(pt => `<li>${pt}</li>`).join('')}
+            </ul>
+            <div class="resume-btn-group">
+              ${proj.defenseJumps.map(j => `
+                <button class="resume-action-btn" data-jump-roadmap="${j.roadmap}" data-jump-hash="${j.hash}">
+                  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                  ${j.label}
+                </button>
+              `).join('')}
+            </div>
           </div>
-          <ul class="resume-points">
-            <li>Developed a multiplayer chess platform with real-time room-based board synchronization and spectator mode supporting 100+ concurrent players.</li>
-            <li>Built a custom minimax game engine with alpha-beta pruning (depth 3) and integrated Python Flask-based Stockfish ELO 1800 engine as a fallback.</li>
-          </ul>
-          <div style="display: flex; gap: 10px; margin-top: 10px;">
-            <button class="resume-action-btn" data-jump-roadmap="flask-fastapi" data-jump-hash="#chessify">
-              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-              Chessify Flask/Minimax Notes
-            </button>
-            <button class="resume-action-btn" data-jump-roadmap="react-nextjs" data-jump-hash="#repo-overview">
-              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-              Next.js Frontend Notes
-            </button>
-          </div>
-        </div>
-
-        <!-- StudySync -->
-        <div class="resume-project-card">
-          <div class="resume-proj-header">
-            <div class="resume-proj-title">StudySync</div>
-            <span class="resume-proj-tech">Flutter, Express.js, MongoDB, JWT</span>
-          </div>
-          <ul class="resume-points">
-            <li>Built a cross-platform academic timetable application utilizing offline-first local caching and seamless server synchronization.</li>
-            <li>Created an authenticated admin panel for centralized timetable updates, serving sub-second updates to active student devices.</li>
-          </ul>
-          <div style="display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap;">
-            <button class="resume-action-btn" data-jump-roadmap="node-express" data-jump-hash="#study-overview">
-              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-              StudySync Express/MongoDB Notes
-            </button>
-            <button class="resume-action-btn" data-jump-roadmap="flutter" data-jump-hash="#ss-overview">
-              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-              StudySync Flutter Notes
-            </button>
-          </div>
-        </div>
-
-        <!-- SahYatri -->
-        <div class="resume-project-card">
-          <div class="resume-proj-header">
-            <div class="resume-proj-title">SahYatri</div>
-            <span class="resume-proj-tech">React.js, FastAPI, YOLOv5n, PostgreSQL, Raspberry Pi 4</span>
-          </div>
-          <ul class="resume-points">
-            <li>Deployed a passenger count detection pipeline inside public transit using a Raspberry Pi camera module, achieving 90%+ occupancy accuracy.</li>
-            <li>Managed time-series data using PostgreSQL pooling to record transit history, streaming live occupancy analytics to an operator dashboard.</li>
-          </ul>
-          <div style="display: flex; gap: 10px; margin-top: 10px;">
-            <button class="resume-action-btn" data-jump-roadmap="aiml-stack" data-jump-hash="#sy-overview">
-              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-              SahYatri YOLOv5n Notes
-            </button>
-            <button class="resume-action-btn" data-jump-roadmap="databases-cloud" data-jump-hash="#sahyatri-choice">
-              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-              SahYatri PostgreSQL Notes
-            </button>
-          </div>
-        </div>
+        `).join('')}
       </div>
     </div>
 
-    <!-- Achievements -->
+    <!-- Achievements Section -->
     <div class="resume-section-card">
-      <h2 class="resume-section-title">Achievements & Core Competencies</h2>
+      <h2 class="resume-section-title">Achievements, Honors & Certifications</h2>
       <ul class="resume-achievements-list">
-        <li><strong>1st Place - BitBox 5.0 (SahYatri):</strong> Developed real-time hardware-software solution for transit analytics.</li>
-        <li><strong>Finalist - Innovate 3.0 (Drive-Sure):</strong> Created smart system for vehicle health monitoring.</li>
-        <li class="lc"><strong>LeetCode Knight (Rating: 2036):</strong> Solved 1000+ problems, active 250+ days consecutive algorithmic coding streak.</li>
-        <li class="agent"><strong>PDF Query Engine:</strong> Built a multi-agent retrieval system (LangChain, CrewAI) to synthesize answers from complex documents.</li>
-        <li class="bootcamp"><strong>Bootcamps:</strong> Completed Udemy courses in Data Science, Machine Learning, Deep Learning, NLP, and Generative AI.</li>
-        <li class="bootcamp"><strong>Academic:</strong> Received JIIT Letter of Appreciation for academic performance in core engineering subjects.</li>
+        ${resumeData.achievements.map(ach => `
+          <li class="${ach.type}">
+            <div class="ach-row">
+              <div>
+                <strong>${ach.title}:</strong> ${ach.desc}
+              </div>
+              <button class="ach-jump-btn" data-jump-roadmap="${ach.jump.roadmap}" data-jump-hash="${ach.jump.hash}">
+                ${ach.badge} →
+              </button>
+            </div>
+          </li>
+        `).join('')}
       </ul>
     </div>
   </div>`;
@@ -742,7 +910,15 @@ function attachEvents() {
 
   document.getElementById('backBtn')?.addEventListener('click', goBack);
 
-  // Jump from resume directly to deep dive notes and auto-scroll
+  // Resume role switcher tabs event handler
+  document.querySelectorAll('.resume-role-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      activeResumeRole = tab.dataset.role;
+      renderApp();
+    });
+  });
+
+  // Jump from resume directly to deep dive notes or defense guides and auto-scroll
   document.querySelectorAll('[data-jump-roadmap]').forEach(btn => {
     btn.addEventListener('click', () => {
       const rmId = btn.dataset.jumpRoadmap;
@@ -913,3 +1089,4 @@ if (hasFirebaseConfig()) {
 }
 
 renderApp();
+

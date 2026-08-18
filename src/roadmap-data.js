@@ -2655,31 +2655,50 @@ export const roadmaps = [
     ]
   },
   {
-    "id": "resume-defense",
-    "title": "Resume Defense Rehearsal",
-    "icon": "\ud83d\udee1\ufe0f",
-    "accent": "#f43f5e",
-    "url": "/resume-defense-rehearsal.html",
+    "id": "sde-defense",
+    "title": "SDE Resume Defense",
+    "icon": "🛡️",
+    "accent": "#22d3ee",
+    "url": "/AmanVerma-SDE-Interview-Defense.html",
     "phases": [
       {
-        "title": "Work Experience (Internship)",
+        "title": "Pre-Interview Defense Checks",
         "topics": [
           {
-            "name": "30+ endpoints, PHP + Atlas, Agile team of 8",
+            "name": "The 3 critical claims to handle (SahYatri, Chessify, State)",
+            "hash": "#alert",
+            "desc": "Master the defense for: SahYatri edge inference vs API, move validation vs clock cheat vectors, and in-memory vs persistent state.",
+            "tip": "Say these yourself before the interviewer digs into the repo — transparency turns a potential red flag into proof of deep understanding.",
+            "isTrap": true,
+            "links": []
+          }
+        ]
+      },
+      {
+        "title": "Work Experience (DigiFlute Media Lab)",
+        "topics": [
+          {
+            "name": "20+ REST endpoints, PHP + Atlas, Agile team of 8",
             "hash": "#exp1",
-            "desc": "Master the 30+ endpoints, PHP + Atlas, Agile team of 8 core concepts and interview answers.",
+            "desc": "Explain router architecture, controller-service pattern, MongoDB Atlas connection pooling, and multi-tenant schema isolation.",
+            "tip": "Explain why PHP was chosen (existing codebase/middleware) and how you structured repository layers to query MongoDB cleanly.",
+            "isTrap": false,
             "links": []
           },
           {
-            "name": "Multi-tenant, JWT/RBAC, atomic transactions",
+            "name": "JWT, RBAC across 5 tiers, multi-tenant security",
             "hash": "#exp2",
-            "desc": "Master the Multi-tenant, JWT/RBAC, atomic transactions core concepts and interview answers.",
+            "desc": "Explain company-scoped tenant isolation, 5 role tiers, middleware token verification, and transaction-safe quota enforcement.",
+            "tip": "Every query must include company_id in the filter — explain how middleware injected this context automatically.",
+            "isTrap": false,
             "links": []
           },
           {
-            "name": "Snapshot engine, 65% reduction, 200+ tests",
+            "name": "Workflow states, versioning, cascading soft deletes",
             "hash": "#exp3",
-            "desc": "Master the Snapshot engine, 65% reduction, 200+ tests core concepts and interview answers.",
+            "desc": "Defend document-native snapshotting, draft-to-published state transitions, audit logging, and PHPUnit / Postman test coverage.",
+            "tip": "Explain why soft deletes were chosen over hard deletes for regulatory compliance and audit trails.",
+            "isTrap": false,
             "links": []
           }
         ]
@@ -2688,15 +2707,27 @@ export const roadmaps = [
         "title": "Project: Chessify AI",
         "topics": [
           {
-            "name": "Real-time multiplayer, 100+ concurrent users",
+            "name": "Room-based Socket.IO, server-side move validation",
             "hash": "#ch1",
-            "desc": "Master the Real-time multiplayer, 100+ concurrent users core concepts and interview answers.",
+            "desc": "Defend room lifecycle in Socket.IO, reconnect handling, late-joiner board replay, and chess.js server-authoritative move validation.",
+            "tip": "Never trust the client: client sends only {from, to, promotion}; server validates against the authoritative board state.",
+            "isTrap": true,
             "links": []
           },
           {
-            "name": "Stockfish ELO 1800, Minimax depth 3",
+            "name": "Flask AI service, Stockfish 1800, minimax depth 3",
             "hash": "#ch2",
-            "desc": "Master the Stockfish ELO 1800, Minimax depth 3 core concepts and interview answers.",
+            "desc": "Explain decoupled Flask microservice, Polyglot opening book, Stockfish UCI subprocess communication, and Minimax alpha-beta fallback.",
+            "tip": "Depth 3 minimax with alpha-beta pruning evaluates ~5,000-10,000 positions/sec in Python; fallback triggers if Stockfish fails.",
+            "isTrap": false,
+            "links": []
+          },
+          {
+            "name": "Deep Dive: scaling, concurrency & state recovery",
+            "hash": "#ch3",
+            "desc": "Answer 3 levels down: Redis pub/sub for multi-node Socket.IO, session persistence, and clock synchronization algorithms.",
+            "tip": "Discuss NTP drift, server-stamped timestamps, and client ping round-trip time estimation.",
+            "isTrap": false,
             "links": []
           }
         ]
@@ -2705,61 +2736,286 @@ export const roadmaps = [
         "title": "Project: StudySync",
         "topics": [
           {
-            "name": "Offline-first, 1.5s reconnect sync",
+            "name": "Flutter on Android, iOS, web; v3.0.0 release",
             "hash": "#ss1",
-            "desc": "Master the Offline-first, 1.5s reconnect sync core concepts and interview answers.",
+            "desc": "Defend single-codebase Flutter architecture, state management (Provider/Riverpod), responsive UI, and daily active student usage at JIIT.",
+            "tip": "Highlight conditional compilation and platform-specific adaptations for web vs mobile storage.",
+            "isTrap": false,
             "links": []
           },
           {
-            "name": "10+ endpoints, admin panel, under 120ms",
+            "name": "Offline-first layer, Express + MongoDB admin panel",
             "hash": "#ss2",
-            "desc": "Master the 10+ endpoints, admin panel, under 120ms core concepts and interview answers.",
+            "desc": "Explain local caching strategy (shared_preferences / Hive), zero-network instant rendering, REST API sync, and JWT-authenticated admin updates.",
+            "tip": "Explain optimistic UI updates vs server-authoritative reconciliation on reconnect.",
+            "isTrap": false,
             "links": []
           }
         ]
       },
       {
-        "title": "Project: SahYatri",
+        "title": "Project: SahYatri (SDE Track)",
         "topics": [
           {
-            "name": "Fine-tuned YOLOv5n, 15 FPS, 90%+ accuracy",
+            "name": "Pre-defense check: What is actually deployed",
+            "hash": "#sy0",
+            "desc": "Acknowledge the repo architecture honestly: FastAPI backend running YOLO inference, communicating over HTTP from vehicle clients.",
+            "tip": "State clearly how you would migrate from HTTP image POSTing to on-device NPU/TensorRT inference in a production revision.",
+            "isTrap": true,
+            "links": []
+          },
+          {
+            "name": "YOLOv5n on the Pi at 15 FPS & Edge Considerations",
             "hash": "#sy1",
-            "desc": "Master the Fine-tuned YOLOv5n, 15 FPS, 90%+ accuracy core concepts and interview answers.",
+            "desc": "Discuss frame skipping, region-of-interest cropping, adaptive thresholding, and camera sensor capture bottlenecks.",
+            "tip": "Explain why occupancy density count was transmitted instead of raw streaming video (bandwidth & privacy).",
+            "isTrap": false,
             "links": []
           },
           {
-            "name": "50,000+ events/day, every 3s",
+            "name": "PostgreSQL telemetry, React dashboard & team delivery",
             "hash": "#sy2",
-            "desc": "Master the 50,000+ events/day, every 3s core concepts and interview answers.",
+            "desc": "Explain time-series indexing (BRIN / composite indexes), high-frequency ingestion, React dashboard polling/WebSockets, and 4-person team collaboration.",
+            "tip": "Why PostgreSQL over MongoDB for SahYatri: structured GPS/occupancy logs with strict time-range query filters.",
+            "isTrap": false,
             "links": []
           }
         ]
       },
       {
-        "title": "Achievements & Competencies",
+        "title": "Achievements & Technical Honors",
         "topics": [
           {
-            "name": "Hackathon wins",
+            "name": "LeetCode Knight: 2094 peak rating, 1000+ problems",
             "hash": "#ach1",
-            "desc": "Master the Hackathon wins core concepts and interview answers.",
+            "desc": "Defend problem-solving patterns, 250-day streak, contests strategy, and top algorithmic paradigms (DP, Graphs, Trees, Heaps).",
+            "tip": "Speak about contest time management, recognizing problem constraints, and writing clean, bug-free implementations under pressure.",
+            "isTrap": false,
             "links": []
           },
           {
-            "name": "LeetCode Knight \u2014 1000+, 250-day streak",
+            "name": "BitBox 5.0 (1st Place GDG), Innovate 3.0 & Certifications",
             "hash": "#ach2",
-            "desc": "Master the LeetCode Knight \u2014 1000+, 250-day streak core concepts and interview answers.",
+            "desc": "Walk through 24-36h hackathon execution: hardware-software integration, rapid MVP scoping, and team coordination.",
+            "tip": "Focus on the real-world problem solved and measurable outcomes delivered during the competition.",
+            "isTrap": false,
+            "links": []
+          }
+        ]
+      },
+      {
+        "title": "Cross-Cutting SDE Interview Questions",
+        "topics": [
+          {
+            "name": "\"You're ECE. Why software?\"",
+            "hash": "#cross1",
+            "desc": "Deliver a crisp, authentic 45-second answer connecting low-level hardware understanding to high-performance software engineering.",
+            "tip": "Position ECE as a superpower for systems, memory hierarchy, cache efficiency, and edge/IoT software.",
+            "isTrap": false,
             "links": []
           },
           {
-            "name": "PDF Query Engine (RAG)",
-            "hash": "#ach3",
-            "desc": "Master the PDF Query Engine (RAG) core concepts and interview answers.",
+            "name": "System design questions tailored to your resume",
+            "hash": "#cross2",
+            "desc": "Prepare for: Design a real-time multiplayer game (Chessify scale-up), Design a multi-tenant SaaS backend (Packspec scale-up), and Time-series ingestion pipeline.",
+            "tip": "Follow a strict framework: Functional/Non-functional Requirements -> API Design -> High-Level Architecture -> Deep-Dive & Bottlenecks.",
+            "isTrap": false,
             "links": []
           },
           {
-            "name": "Bootcamps & certifications",
-            "hash": "#ach4",
-            "desc": "Master the Bootcamps & certifications core concepts and interview answers.",
+            "name": "Thoughtful reverse-interviewing questions for them",
+            "hash": "#cross3",
+            "desc": "High-signal questions to ask the interviewer about engineering culture, deployment pipelines, on-call rotations, and tech stack choices.",
+            "tip": "Ask about their biggest architecture refactoring in the last 12 months or how they balance velocity vs tech debt.",
+            "isTrap": false,
+            "links": []
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "ml-dataeng-defense",
+    "title": "ML & Data Eng Resume Defense",
+    "icon": "🤖",
+    "accent": "#a78bfa",
+    "url": "/AmanVerma-ML-DataEng-Interview-Defense.html",
+    "phases": [
+      {
+        "title": "Pre-Interview Defense Checks",
+        "topics": [
+          {
+            "name": "Four critical claims that need handling before interview",
+            "hash": "#alert",
+            "desc": "Master the defense for: SahYatri edge inference, Nutri-Vision custom ResNet-50 vs LogMeal API, RecrutAI 5 rubric dimensions, and validation benchmarks.",
+            "tip": "Never claim 100% human-validated benchmarks if not measured — articulate your automated evaluation metrics and planned test suites.",
+            "isTrap": true,
+            "links": []
+          }
+        ]
+      },
+      {
+        "title": "Work Experience (DigiFlute Media Lab)",
+        "topics": [
+          {
+            "name": "20+ REST endpoints, document schema, query patterns",
+            "hash": "#exp1",
+            "desc": "Explain MongoDB document modeling, indexing strategy, data isolation across workspaces, and query optimization for high-throughput reads.",
+            "tip": "Compare embedded documents vs normalized references in MongoDB Atlas for packaging specs.",
+            "isTrap": false,
+            "links": []
+          },
+          {
+            "name": "JWT, RBAC 5 tiers, atomic transactions",
+            "hash": "#exp2",
+            "desc": "Defend multi-document ACID transactions with WiredTiger engine, quota limits enforcement, and tenant permission verification.",
+            "tip": "Explain transaction isolation levels and error handling / retry loops for transient write conflicts.",
+            "isTrap": false,
+            "links": []
+          },
+          {
+            "name": "Revision versioning, soft deletes, auditability",
+            "hash": "#exp3",
+            "desc": "Explain how historical version snapshots are indexed and queried without bloating active working sets, validated via PHPUnit.",
+            "tip": "Discuss archiving strategies and TTL indexes for old audit snapshots.",
+            "isTrap": false,
+            "links": []
+          }
+        ]
+      },
+      {
+        "title": "Project: Nutri-Vision AI",
+        "topics": [
+          {
+            "name": "Custom spaCy NER, hybrid extractor, USDA lookup",
+            "hash": "#nv1",
+            "desc": "Explain custom entity extraction training loop, BIO tagging format, regex quantity parsing, and fuzzy matching against USDA FoodData Central database.",
+            "tip": "Highlight confidence scoring: if spaCy NER score < 0.75, fall back to rule-based ngram parser before database querying.",
+            "isTrap": false,
+            "links": []
+          },
+          {
+            "name": "ResNet-50 transfer learning, Git LFS, FastAPI",
+            "hash": "#nv2",
+            "desc": "Explain PyTorch transfer learning: freezing convolutional backbone, fine-tuning classification head, Git LFS weight versioning, and FastAPI async inference.",
+            "tip": "Discuss data augmentation (random rotations, color jitter, cropping) and learning rate scheduling (AdamW with CosineAnnealing).",
+            "isTrap": false,
+            "links": []
+          },
+          {
+            "name": "The LogMeal third-party API integration question",
+            "hash": "#nv3",
+            "desc": "Defend the dual path: your custom ResNet-50 model in Model_Image vs external LogMeal API used as a baseline and cloud provider.",
+            "tip": "Explain the trade-offs: latency and offline edge execution of custom model vs broad multi-class coverage of external commercial APIs.",
+            "isTrap": true,
+            "links": []
+          }
+        ]
+      },
+      {
+        "title": "Project: RecrutAI (LLM Systems)",
+        "topics": [
+          {
+            "name": "Prompt-chaining state machine on Gemini 2.5 Flash",
+            "hash": "#ra1",
+            "desc": "Explain adaptive prompt-chaining state machine, dynamic question branching based on candidate responses, and evaluation across 5 rubric dimensions.",
+            "tip": "Name the 5 rubric dimensions: Technical Depth, System Design, Problem Solving, Communication, and Code Quality / Edge Cases.",
+            "isTrap": false,
+            "links": []
+          },
+          {
+            "name": "Timeouts, backoff, deterministic fallbacks & audit",
+            "hash": "#ra2",
+            "desc": "Hardened LLM inference path: 6s timeouts, exponential backoff, JSON schema enforcement, regex fallbacks, and recruiter audit score matrices.",
+            "tip": "Explain why deterministic structured output (Pydantic / Zod JSON schema) is critical for downstream branching logic.",
+            "isTrap": false,
+            "links": []
+          },
+          {
+            "name": "The hard questions: validity, prompt injection, state persistence",
+            "hash": "#ra3",
+            "desc": "Prepare for: How do you prevent candidates from jailbreaking/prompt injecting the interviewer? How do you handle context window overflow?",
+            "tip": "Separate candidate input from system evaluation prompt with strict delimiters, and summarize earlier conversation turns to bound token count.",
+            "isTrap": true,
+            "links": []
+          }
+        ]
+      },
+      {
+        "title": "Project: SahYatri (ML & Edge CV Track)",
+        "topics": [
+          {
+            "name": "Pre-defense check: Honest code architecture",
+            "hash": "#sy0",
+            "desc": "Explain the actual pipeline: camera frame acquisition, POST to FastAPI YOLOv5 inference microservice, and telemetry ingestion.",
+            "tip": "Be honest about the client-server split and explain how edge quantization (INT8 TensorRT/ONNX) would allow pure on-Pi execution.",
+            "isTrap": true,
+            "links": []
+          },
+          {
+            "name": "Edge CV pipeline, YOLOv5n & adaptive thresholding",
+            "hash": "#sy1",
+            "desc": "Discuss YOLOv5n architecture, anchor boxes, NMS (Non-Maximum Suppression), lighting invariance, and adaptive confidence thresholding.",
+            "tip": "Explain how varying vehicle lighting (tunnels, daylight, night) affects bounding box confidence and how adaptive thresholding mitigates false negatives.",
+            "isTrap": false,
+            "links": []
+          },
+          {
+            "name": "PostgreSQL time-series, telemetry ingest & team role",
+            "hash": "#sy2",
+            "desc": "Explain time-series schema design, connection pooling, high-frequency GPS + occupancy event streams, and React dashboard analytics.",
+            "tip": "Discuss data aggregation: downsampling 3-second raw telemetry into 5-minute averages for long-term historical analytics.",
+            "isTrap": false,
+            "links": []
+          }
+        ]
+      },
+      {
+        "title": "Achievements & Technical Honors",
+        "topics": [
+          {
+            "name": "LeetCode Knight, Hackathons & ML Bootcamps",
+            "hash": "#ach1",
+            "desc": "Discuss 2094 peak LeetCode rating (1000+ problems), BitBox 5.0 1st place, Innovate 3.0 Finalist, and Udemy ML/DL/NLP/GenAI certifications.",
+            "tip": "Highlight how strong DSA fundamentals translate into efficient data pipeline transformations and tensor manipulation.",
+            "isTrap": false,
+            "links": []
+          }
+        ]
+      },
+      {
+        "title": "Cross-Cutting ML & Data Engineering Defense",
+        "topics": [
+          {
+            "name": "ML fundamentals they will ask",
+            "hash": "#cross1",
+            "desc": "Master core ML concepts: Bias-Variance tradeoff, Overfitting mitigation (L1/L2, Dropout, Augmentation), Precision vs Recall, ROC-AUC, Adam vs SGD.",
+            "tip": "Relate every ML concept back to your projects (e.g. class imbalance in meal datasets, confidence scoring in YOLOv5).",
+            "isTrap": false,
+            "links": []
+          },
+          {
+            "name": "Data engineering and SQL round",
+            "hash": "#cross2",
+            "desc": "Prepare for: Window functions (ROW_NUMBER, RANK, DENSE_RANK, LAG/LEAD), CTEs, indexing strategies (B-Tree vs Hash vs BRIN), ETL pipeline design, and partitioning.",
+            "tip": "Be ready to write clean SQL live for time-series aggregation, cumulative sums, and sessionizing event streams.",
+            "isTrap": false,
+            "links": []
+          },
+          {
+            "name": "LLM, RAG & Vector Search questions",
+            "hash": "#cross3",
+            "desc": "Explain Chunking strategies, Embedding models, Cosine similarity vs Dot product, Vector DB indexing (HNSW, IVFFlat), RAG hallucination guardrails, and Multi-Agent CrewAI patterns.",
+            "tip": "Walk through your PDF Query Engine on Hugging Face Spaces: document parsing -> semantic chunking -> vector retrieval -> agent synthesis.",
+            "isTrap": false,
+            "links": []
+          },
+          {
+            "name": "\"You're ECE\" & your questions for the ML team",
+            "hash": "#cross4",
+            "desc": "Deliver your tailored pitch for ML/AI teams (mathematical foundations, signal processing, edge hardware optimization) and ask insightful questions on model deployment / evaluation.",
+            "tip": "Ask about their model retraining pipelines, drift detection in production, and how they evaluate unstructured generative outputs.",
+            "isTrap": false,
             "links": []
           }
         ]
