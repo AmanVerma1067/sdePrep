@@ -4,51 +4,211 @@ export const roadmaps = [
     "title": "Tech Fundamentals",
     "icon": "\ud83d\udcbb",
     "accent": "#38bdf8",
-    "url": "/tech_fundamentals_comparisons.html",
+    "url": "/tech-fundamentals-comparisons.html",
     "phases": [
       {
-        "title": "Sections",
+        "title": "00 Repo reality check",
         "topics": [
           {
-            "name": "1 \u00b7 Language Comparisons",
+            "name": "00 Repo reality check",
+            "hash": "#verify",
+            "desc": "I opened all five repos. Most of your resume holds up. These four points don't quite match \u2014 fix your story before an interviewer finds them.",
+            "links": []
+          }
+        ]
+      },
+      {
+        "title": "01 Languages & runtimes",
+        "topics": [
+          {
+            "name": "The Python GIL, explained without jargon",
             "hash": "#c1",
-            "desc": "Master the 1 \u00b7 Language Comparisons core concepts and interview answers.",
-            "links": []
+            "desc": "Python allows only one thread to run Python code at a time. Threads still help when you're waiting \u2014 on a network call, a disk read \u2014 because a waiting thread releases the lock. Threads do not help when you're computing , because only one gets the lock anyway.",
+            "links": [],
+            "tip": "\ud83d\udea8 Interview trap \"You used Python for a chess engine \u2014 isn't that slow?\" Don't defend Python. Say: the engine isn't Python. Stockfish is a compiled C++ binary; Flask only shells out to it and returns the move. The pure-Python minimax at depth 3 exists as a fallback for when the binary won't start, and depth 3 is exactly the depth Python can search ",
+            "isTrap": true
           },
           {
-            "name": "2 \u00b7 Frontend Framework Evolution",
+            "name": "TypeScript vs plain JavaScript",
+            "hash": "#c1",
+            "desc": "TypeScript is JavaScript plus a type checker that runs before you ship. It compiles away \u2014 at runtime there is zero TypeScript left. You get: mistakes caught at build time, autocomplete that knows your data shapes, and safer refactors.",
+            "links": [],
+            "tip": "\ud83d\udea8 Interview trap \"Does TypeScript make your API safe?\" No. Types are erased at build. A malformed JSON body from a client is still any at runtime. That's exactly why RecrutAI uses Zod \u2014 Zod validates the actual payload at runtime and hands back a properly typed object. TypeScript guards your code; Zod guards your boundary.",
+            "isTrap": true
+          },
+          {
+            "name": "Bash \u2014 and when to stop using it",
+            "hash": "#c1",
+            "desc": "Bash wins where the job is the OS: chain existing tools, move files, schedule things. Chessify's build command is literally chmod +x on the Stockfish binary.",
+            "links": []
+          }
+        ]
+      },
+      {
+        "title": "02 Backend frameworks & server concurrency",
+        "topics": [
+          {
+            "name": "Why Chessify is split into two backends",
             "hash": "#c2",
-            "desc": "Master the 2 \u00b7 Frontend Framework Evolution core concepts and interview answers.",
-            "links": []
+            "desc": "Two servers because the two jobs are opposites:",
+            "links": [],
+            "tip": "\ud83d\udea8 Interview trap \"Isn't two backends over-engineering for a student project?\" Have the counterfactual ready: \"Single Node process, one user requests a bot move, Stockfish takes 800 ms of CPU \u2014 every other game's moves queue behind it. The split isn't about scale, it's about not letting a CPU task sit on an I/O event loop.\" That's a real reason, not",
+            "isTrap": true
           },
           {
-            "name": "3 \u00b7 Backend Framework/Runtime",
+            "name": "Monolith vs microservices vs serverless",
+            "hash": "#c2",
+            "desc": "Master Monolith vs microservices vs serverless core concepts and defense.",
+            "links": [],
+            "tip": "\ud83d\udca1 Senior insight Ask \"why not serverless for the ML inference?\" and answer it yourself: a ResNet-50 checkpoint plus PyTorch blows past typical Lambda package limits, and a cold start reloading weights costs seconds. Model serving wants a warm container. Serverless suits short, spiky, small-dependency work.",
+            "isTrap": false
+          }
+        ]
+      },
+      {
+        "title": "03 Databases & data engineering",
+        "topics": [
+          {
+            "name": "Normalization, in one pass",
             "hash": "#c3",
-            "desc": "Master the 3 \u00b7 Backend Framework/Runtime core concepts and interview answers.",
+            "desc": "Denormalize on purpose when reads dominate and the copied value rarely changes \u2014 a cached bus_route_name on a telemetry row saves a join on every dashboard query. The cost you accept: you must update it in two places.",
+            "links": [],
+            "tip": "\ud83d\udea8 Interview trap The 16 MB document limit . Any unbounded embedded array \u2014 an append-only audit log, an infinite comment thread \u2014 will hit it eventually, and the failure arrives in production at the worst moment. Correct instinct: unbounded growth means a separate collection, or the bucket pattern (group N entries per document).",
+            "isTrap": true
+          },
+          {
+            "name": "OLTP vs OLAP / time-series",
+            "hash": "#c3",
+            "desc": "Master OLTP vs OLAP / time-series core concepts and defense.",
             "links": []
           },
           {
-            "name": "4 \u00b7 Database Landscape",
+            "name": "Indexes \u2014 pick the right one",
+            "hash": "#c3",
+            "desc": "Master Indexes \u2014 pick the right one core concepts and defense.",
+            "links": [],
+            "tip": "\ud83d\udea8 Interview trap \"Index everything?\" No. Every index has to be updated on every write. On an ingest-heavy table that's a direct throughput tax. Also, a composite index on (bus_id, recorded_at) can serve queries on bus_id alone, but not on recorded_at alone \u2014 leftmost prefix rule.",
+            "isTrap": true
+          },
+          {
+            "name": "ETL vs ELT",
+            "hash": "#c3",
+            "desc": "ETL = clean it, then store it. ELT = store the raw thing, clean it later inside the warehouse.",
+            "links": []
+          }
+        ]
+      },
+      {
+        "title": "04 AI, ML, computer vision & LLM systems",
+        "topics": [
+          {
+            "name": "Minimax + alpha-beta pruning",
             "hash": "#c4",
-            "desc": "Master the 4 \u00b7 Database Landscape core concepts and interview answers.",
+            "desc": "Minimax assumes both sides play their best move: you maximise, the opponent minimises, down to a fixed depth. Alpha-beta skips branches that can't change the answer \u2014 once one reply already refutes a move, you don't need the other replies.",
+            "links": [],
+            "tip": "\ud83d\udea8 Interview trap \"Does pruning change the move it picks?\" No. Alpha-beta is provably identical to plain minimax at the same depth \u2014 it only skips work that couldn't affect the result. The one thing that does vary is speed, which depends heavily on move ordering: best-first ordering prunes hard, worst-first prunes nothing. Follow-up: \"why depth 3?\" ",
+            "isTrap": true
+          },
+          {
+            "name": "The Nutri-Vision hybrid extractor",
+            "hash": "#c4",
+            "desc": "Free text like \"2 medium apples, 150g grilled chicken breast\" has two very different problems in one sentence:",
             "links": []
           },
           {
-            "name": "5 \u00b7 API Paradigms",
+            "name": "Edge inference vs cloud GPU",
+            "hash": "#c4",
+            "desc": "Master Edge inference vs cloud GPU core concepts and defense.",
+            "links": [],
+            "tip": "\ud83d\udca1 Senior insight Know why the \"n\" in YOLOv5n matters: it's the nano variant, ~1.9M parameters against YOLOv5x's ~87M. On an ARM CPU with no GPU that's the difference between 15 FPS and a slideshow. You bought speed with accuracy \u2014 and for counting people , \"roughly how full is the bus\" tolerates that trade completely. A model choice is a product de",
+            "isTrap": false
+          },
+          {
+            "name": "LLM strategies",
+            "hash": "#c4",
+            "desc": "Master LLM strategies core concepts and defense.",
+            "links": [],
+            "tip": "\ud83d\udea8 Interview trap \"Fine-tune it to stop hallucinating.\" Fine-tuning teaches behaviour and format , not facts . Training on your documents makes the model sound like them \u2014 it does not make it recall them reliably, and it will still invent confidently. Facts belong in the context window: that's RAG. Say this and you're ahead of most candidates.",
+            "isTrap": true
+          }
+        ]
+      },
+      {
+        "title": "05 API protocols",
+        "topics": [
+          {
+            "name": "05 API protocols",
             "hash": "#c5",
-            "desc": "Master the 5 \u00b7 API Paradigms core concepts and interview answers.",
+            "desc": "\u2190 swipe the table sideways",
             "links": []
-          },
+          }
+        ]
+      },
+      {
+        "title": "06 Frontend & rendering",
+        "topics": [
           {
-            "name": "6 \u00b7 Cloud/Infra Fundamentals",
+            "name": "Flutter vs React Native vs web",
             "hash": "#c6",
-            "desc": "Master the 6 \u00b7 Cloud/Infra Fundamentals core concepts and interview answers.",
+            "desc": "Master Flutter vs React Native vs web core concepts and defense.",
+            "links": [],
+            "tip": "\ud83d\udee1\ufe0f SDE track defense Flutter for StudySync, with a reason specific to the product: a timetable is a dense custom grid . Flutter paints it directly, so it's pixel-identical on Android, iOS and web from one codebase \u2014 and StudySync genuinely ships to all three from one repo ( android/ ios/ web/ lib/ ), across three tagged releases. React Native would",
+            "isTrap": false
+          }
+        ]
+      },
+      {
+        "title": "07 DevOps, cloud & Linux",
+        "topics": [
+          {
+            "name": "VM vs container",
+            "hash": "#c7",
+            "desc": "A VM virtualises hardware and boots a whole guest OS \u2014 heavy, slow to start, strongly isolated. A container is just a normal Linux process that's been given a restricted view of the system \u2014 starts in milliseconds, shares the host kernel, weaker isolation.",
+            "links": [],
+            "tip": "\ud83d\udea8 Interview trap \"Is a container a security boundary?\" Weaker than a VM \u2014 containers share the host kernel, so a kernel exploit escapes. For untrusted code (say, running a candidate's submitted solution) you want a VM, gVisor, or Firecracker. Worth flagging for RecrutAI's Monaco editor: it's an editor, not a sandboxed executor, and knowing that dis",
+            "isTrap": true
+          },
+          {
+            "name": "Git LFS",
+            "hash": "#c7",
+            "desc": "Git stores a full copy of every version of every file forever. A 100 MB .pth checkpoint committed ten times is a gigabyte of history that every clone downloads. LFS replaces the file with a small text pointer and stores the real bytes separately \u2014 Model_Image uses this, and .gitattributes is where t",
             "links": []
           },
           {
-            "name": "7 \u00b7 \"Why X over Y\" Q&A Bank",
+            "name": "AWS vs Azure \u2014 the mapping",
             "hash": "#c7",
-            "desc": "Master the 7 \u00b7 \"Why X over Y\" Q&A Bank core concepts and interview answers.",
+            "desc": "Don't oversell cloud depth. Your deployments are Render (Flask + Node) and Vercel (Next.js, Flutter web) \u2014 say that plainly; PaaS is a legitimate choice and pretending otherwise is a fast way to get caught.",
+            "links": []
+          },
+          {
+            "name": "Testing & CI",
+            "hash": "#c7",
+            "desc": "Master Testing & CI core concepts and defense.",
+            "links": [],
+            "tip": "\ud83d\udee1\ufe0f SDE track defense Packspec's multi-tenant isolation is exactly the thing unit tests miss and integration tests catch. The question \"can tenant A read tenant B's spec?\" can only be answered by a real request with A's real token hitting B's real ID and getting a 403. That's a Postman test, and it's the one that matters most \u2014 data leakage between ",
+            "isTrap": false
+          },
+          {
+            "name": "Linux you'll be asked to type",
+            "hash": "#c7",
+            "desc": "0 > stdin, 1 > stdout, 2 > stderr. So 2>&1 means \"send errors wherever output is going,\" and > file 2>&1 captures both. Pipes connect one program's stdout to the next one's stdin.",
+            "links": []
+          }
+        ]
+      },
+      {
+        "title": "08 \"Why X over Y\" \u2014 Q&A bank",
+        "topics": [
+          {
+            "name": "SDE Track A",
+            "hash": "#c8",
+            "desc": "Master SDE Track A core concepts and defense.",
+            "links": []
+          },
+          {
+            "name": "ML/DE Track B",
+            "hash": "#c8",
+            "desc": "Master ML/DE Track B core concepts and defense.",
             "links": []
           }
         ]
@@ -1664,168 +1824,139 @@ export const roadmaps = [
     "title": "React & Next.js",
     "icon": "\u269b\ufe0f",
     "accent": "#61dafb",
-    "url": "/react-nextjs-interview-notes.html",
+    "url": "/react-nextjs-frontend.html",
     "phases": [
       {
-        "title": "React Fundamentals",
+        "title": "01 React internals, Fiber & reconciliation",
         "topics": [
           {
-            "name": "JSX",
-            "hash": "#jsx",
-            "desc": "Master the JSX core concepts and interview answers.",
-            "links": []
+            "name": "The Virtual DOM and its two assumptions",
+            "hash": "#c1",
+            "desc": "React builds a tree of plain objects describing the UI, diffs the new tree against the old, and applies the minimum set of real DOM changes. A general tree diff is O(n\u00b3), which is unusable \u2014 so React makes two assumptions to get to O(n):",
+            "links": [],
+            "tip": "\ud83d\udea8 Interview Trap Why key={index} corrupts stateful lists. Keys are React's identity mechanism. With index keys, deleting the first of three items means the item previously at index 1 now claims key 0 \u2014 so React thinks item 0 merely changed its props rather than being removed. DOM state that React doesn't control comes along for the ride: typed inpu",
+            "isTrap": true
           },
           {
-            "name": "Components \u00b7 Props vs State",
-            "hash": "#components-props-state",
-            "desc": "Master the Components \u00b7 Props vs State core concepts and interview answers.",
-            "links": []
+            "name": "Fiber: render vs commit",
+            "hash": "#c1",
+            "desc": "Fiber rewrote reconciliation as a linked list of units of work instead of a recursive tree walk \u2014 which is what makes it interruptible .",
+            "links": [],
+            "tip": "\ud83d\udca1 Senior Insight \"Render must be pure\" stops being an abstract rule once you know the render phase can be discarded and re-run . If you mutate a ref, fire an analytics event or push to an external store during render, that side effect happens once for work React threw away and again for the work it kept \u2014 a double-count with no error. This is also ",
+            "isTrap": false
           },
           {
-            "name": "Hooks (useState/useEffect/useContext/useMemo/useCallback)",
-            "hash": "#hooks",
-            "desc": "Master the Hooks (useState/useEffect/useContext/useMemo/useCallback) core concepts and interview answers.",
-            "links": []
-          },
-          {
-            "name": "Custom Hooks",
-            "hash": "#custom-hooks",
-            "desc": "Master the Custom Hooks core concepts and interview answers.",
-            "links": []
-          },
-          {
-            "name": "Virtual DOM & Reconciliation / Keys",
-            "hash": "#vdom",
-            "desc": "Master the Virtual DOM & Reconciliation / Keys core concepts and interview answers.",
-            "links": []
-          },
-          {
-            "name": "Controlled vs Uncontrolled",
-            "hash": "#controlled",
-            "desc": "Master the Controlled vs Uncontrolled core concepts and interview answers.",
-            "links": []
-          },
-          {
-            "name": "Lifting State Up",
-            "hash": "#lifting-state",
-            "desc": "Master the Lifting State Up core concepts and interview answers.",
-            "links": []
-          },
-          {
-            "name": "Context API vs Redux/Zustand",
-            "hash": "#context-vs-redux",
-            "desc": "Master the Context API vs Redux/Zustand core concepts and interview answers.",
-            "links": []
+            "name": "React 18 concurrent features",
+            "hash": "#c1",
+            "desc": "Master React 18 concurrent features core concepts and defense.",
+            "links": [],
+            "tip": "\ud83d\udcca ML / Data Eng Defense These are the right tools for a data-heavy dashboard. On SahYatri, changing a date range triggers re-aggregating and re-charting thousands of telemetry points. Wrapped in startTransition , the filter control updates instantly and stays clickable while the chart recomputes in the background \u2014 React will even abandon that work",
+            "isTrap": false
           }
         ]
       },
       {
-        "title": "Next.js Fundamentals",
+        "title": "02 Hooks & state architecture",
         "topics": [
           {
-            "name": "SSR vs SSG vs ISR vs CSR",
-            "hash": "#rendering",
-            "desc": "Master the SSR vs SSG vs ISR vs CSR core concepts and interview answers.",
-            "links": []
-          },
-          {
-            "name": "App Router vs Pages Router",
-            "hash": "#app-vs-pages",
-            "desc": "Master the App Router vs Pages Router core concepts and interview answers.",
-            "links": []
-          },
-          {
-            "name": "Routing",
-            "hash": "#routing",
-            "desc": "Master the Routing core concepts and interview answers.",
-            "links": []
-          },
-          {
-            "name": "API Routes",
-            "hash": "#api-routes",
-            "desc": "Master the API Routes core concepts and interview answers.",
-            "links": []
-          },
-          {
-            "name": "Middleware",
-            "hash": "#middleware",
-            "desc": "Master the Middleware core concepts and interview answers.",
-            "links": []
-          },
-          {
-            "name": "Data Fetching Patterns",
-            "hash": "#data-fetching",
-            "desc": "Master the Data Fetching Patterns core concepts and interview answers.",
-            "links": []
-          },
-          {
-            "name": "Image & Font Optimization",
-            "hash": "#optimization",
-            "desc": "Master the Image & Font Optimization core concepts and interview answers.",
-            "links": []
-          }
-        ]
-      },
-      {
-        "title": "Comparisons",
-        "topics": [
-          {
-            "name": "React vs Next.js",
-            "hash": "#react-vs-next",
-            "desc": "Master the React vs Next.js core concepts and interview answers.",
-            "links": []
+            "name": "The stale closure \u2014 the single most-tested bug",
+            "hash": "#c2",
+            "desc": "Every render creates new functions that capture that render's values . If a function outlives its render \u2014 inside a setInterval , a socket handler, a debounce \u2014 it keeps looking at the old value forever.",
+            "links": [],
+            "tip": "\ud83d\udea8 Interview Trap \"Just remove it from the dependency array to stop the re-runs.\" This is the wrong instinct and interviewers listen for it. The lint warning isn't noise \u2014 it's telling you the effect reads something it hasn't subscribed to. Silencing it converts a visible re-render problem into an invisible stale-data problem, which is far harder to",
+            "isTrap": true
           },
           {
             "name": "useEffect vs useLayoutEffect",
-            "hash": "#effect-vs-layouteffect",
-            "desc": "Master the useEffect vs useLayoutEffect core concepts and interview answers.",
+            "hash": "#c2",
+            "desc": "Default to useEffect . Reach for useLayoutEffect only when you measure the DOM and immediately change it based on the measurement \u2014 otherwise the user sees one frame of the wrong position before it corrects.",
             "links": []
           },
           {
-            "name": "memo vs useMemo vs useCallback",
-            "hash": "#memo-comparison",
-            "desc": "Master the memo vs useMemo vs useCallback core concepts and interview answers.",
+            "name": "Memoization: when it's worth it",
+            "hash": "#c2",
+            "desc": "Master Memoization: when it's worth it core concepts and defense.",
+            "links": [],
+            "tip": "\ud83d\udea8 Interview Trap useCallback without React.memo on the child usually does nothing. The stable reference only matters if something compares it. An unmemoized child re-renders when the parent does, regardless of prop identity \u2014 so you've paid the memo cost and bought nothing. The inverse trap too: React.memo on a child that receives style={{...}} or ",
+            "isTrap": true
+          },
+          {
+            "name": "Context vs an external store",
+            "hash": "#c2",
+            "desc": "Controlled \u2014 React state is the source of truth, re-renders on every keystroke. Needed for live validation or interdependent fields. Uncontrolled \u2014 the DOM holds the value, read via useRef on submit, zero re-renders. Right for large simple forms where per-keystroke state is pure overhead.",
+            "links": [],
+            "tip": "\ud83d\udca1 Senior Insight Context has no selector. When the context value changes, every consumer re-renders \u2014 even one reading a field that didn't change. So a single context holding { user, theme, notifications, socketStatus } re-renders the entire consuming subtree whenever a notification arrives. Zustand solves exactly this: useStore(s => s.user.name) s",
+            "isTrap": false
+          }
+        ]
+      },
+      {
+        "title": "03 Next.js & rendering lifecycles",
+        "topics": [
+          {
+            "name": "Server Components and the serialization boundary",
+            "hash": "#c3",
+            "desc": "A Server Component runs on the server only and ships zero JavaScript to the browser. It can read a database or filesystem directly with no API layer. Anything interactive \u2014 state, effects, event handlers, browser APIs \u2014 needs 'use client' .",
+            "links": [],
+            "tip": "\ud83d\udea8 Interview Trap The serialization boundary. Props crossing from a Server Component into a Client Component must be serializable \u2014 plain objects, arrays, strings, numbers, dates, Promises. You cannot pass a function, a class instance, or a Map. Try it and you get a runtime error many people misread as a bundler problem. The related misconception: '",
+            "isTrap": true
+          },
+          {
+            "name": "Hydration mismatches",
+            "hash": "#c3",
+            "desc": "Hydration is React attaching event listeners to server-rendered HTML while assuming its own render produces identical markup. When it doesn't, you get the mismatch error and React discards the server HTML.",
+            "links": []
+          },
+          {
+            "name": "Streaming, Suspense and Server Actions",
+            "hash": "#c3",
+            "desc": "loading.tsx or a <Suspense> boundary lets the server flush the shell immediately and stream slow sections in as they resolve \u2014 TTFB stops being hostage to the slowest query on the page.",
             "links": []
           }
         ]
       },
       {
-        "title": "Repo Deep-Dive: Chessify",
+        "title": "04 Real-time UI, optimistic updates & charting",
         "topics": [
           {
-            "name": "Architecture Overview",
-            "hash": "#repo-overview",
-            "desc": "Master the Architecture Overview core concepts and interview answers.",
+            "name": "The socket hook",
+            "hash": "#c4",
+            "desc": "Master The socket hook core concepts and defense.",
+            "links": [],
+            "tip": "\ud83d\udea8 Interview Trap Duplicate listeners in StrictMode. React 18 development mounts, unmounts and remounts every component to surface missing cleanup. Without the socket.off teardown, you now have two handlers for 'state' , and each server event fires your setState twice. In production it's worse and subtler: every navigation back to the board stacks a",
+            "isTrap": true
+          },
+          {
+            "name": "Optimistic updates with rollback",
+            "hash": "#c4",
+            "desc": "Master Optimistic updates with rollback core concepts and defense.",
+            "links": [],
+            "tip": "\ud83d\udee1\ufe0f SDE Defense The framing that matters: the client-side chess.js check is a UX optimization, never a security control. It exists so an obviously illegal drag doesn't cost a round trip. The server runs its own independent validation against its own board, and its broadcast is authoritative \u2014 so a modified client that skips the local check gains not",
+            "isTrap": false
+          },
+          {
+            "name": "High-frequency dashboards",
+            "hash": "#c4",
+            "desc": "Telemetry arriving every few seconds will re-render the whole dashboard tree unless you stop it. Four techniques, in order of payoff:",
+            "links": [],
+            "tip": "\ud83d\udcca ML / Data Eng Defense Canvas vs SVG is the choice that decides whether the dashboard survives. SVG (Recharts, D3-with-DOM) creates a real DOM node per data point \u2014 beautiful, inspectable, and it collapses somewhere around a few thousand points because the browser is laying out thousands of elements every frame. Canvas (Chart.js, uPlot) paints pix",
+            "isTrap": false
+          }
+        ]
+      },
+      {
+        "title": "05 Interview defense bank",
+        "topics": [
+          {
+            "name": "Track A \u2014 SDE",
+            "hash": "#c5",
+            "desc": "Master Track A \u2014 SDE core concepts and defense.",
             "links": []
           },
           {
-            "name": "Live Board State & Socket Sync",
-            "hash": "#repo-state",
-            "desc": "Master the Live Board State & Socket Sync core concepts and interview answers.",
-            "links": []
-          },
-          {
-            "name": "Socket Event Handling",
-            "hash": "#repo-events",
-            "desc": "Master the Socket Event Handling core concepts and interview answers.",
-            "links": []
-          },
-          {
-            "name": "Board Rendering & Re-renders",
-            "hash": "#repo-render",
-            "desc": "Master the Board Rendering & Re-renders core concepts and interview answers.",
-            "links": []
-          },
-          {
-            "name": "Optimistic vs Authoritative Moves",
-            "hash": "#repo-authority",
-            "desc": "Master the Optimistic vs Authoritative Moves core concepts and interview answers.",
-            "links": []
-          },
-          {
-            "name": "App Router + Pages API Quirk",
-            "hash": "#repo-router-quirk",
-            "desc": "Master the App Router + Pages API Quirk core concepts and interview answers.",
+            "name": "Track B \u2014 ML / AI / Data Engineering",
+            "hash": "#c5",
+            "desc": "Master Track B \u2014 ML / AI / Data Engineering core concepts and defense.",
             "links": []
           }
         ]
@@ -1949,212 +2080,151 @@ export const roadmaps = [
     "title": "Node & Express",
     "icon": "\ud83d\udfe2",
     "accent": "#339933",
-    "url": "/node-express-backend-interview-notes.html",
+    "url": "/nodejs-express-websockets.html",
     "phases": [
       {
-        "title": "Node.js Fundamentals",
+        "title": "01 Node internals & the event loop",
         "topics": [
           {
-            "name": "Event Loop & libuv",
-            "hash": "#event-loop",
-            "desc": "Master the Event Loop & libuv core concepts and interview answers.",
+            "name": "The phases, in order",
+            "hash": "#c1",
+            "desc": "libuv runs a loop with fixed phases. Each tick walks through them:",
             "links": []
           },
           {
-            "name": "Non-blocking I/O & Single Thread",
-            "hash": "#nonblocking",
-            "desc": "Master the Non-blocking I/O & Single Thread core concepts and interview answers.",
-            "links": []
+            "name": "Microtasks jump the queue",
+            "hash": "#c1",
+            "desc": "Between every phase (and after each callback), Node drains two queues before continuing:",
+            "links": [],
+            "tip": "\ud83d\udea8 Interview Trap Recursive process.nextTick starves the loop. Because the nextTick queue drains completely before the loop advances, a nextTick that schedules another nextTick never lets I/O run. Your server accepts no connections and shows no error \u2014 it just goes silent at 100% CPU. This is why setImmediate is the safe choice for \"run after the cu",
+            "isTrap": true
           },
           {
-            "name": "Callbacks vs Promises vs async/await",
-            "hash": "#async-patterns",
-            "desc": "Master the Callbacks vs Promises vs async/await core concepts and interview answers.",
-            "links": []
+            "name": "V8 vs the libuv threadpool",
+            "hash": "#c1",
+            "desc": "\"Single-threaded\" describes your JavaScript , not the process. Node has background threads \u2014 they're just not running your code.",
+            "links": [],
+            "tip": "\ud83d\udca1 Senior Insight The threadpool defaults to 4 threads ( UV_THREADPOOL_SIZE ). That number matters more than people expect: bcrypt hashing runs there, so five concurrent logins mean the fifth waits for a free thread even though the event loop is idle. Sockets don't touch the pool at all \u2014 the kernel handles them. So the mental split is: network scal",
+            "isTrap": false
           },
           {
-            "name": "Streams",
-            "hash": "#streams",
-            "desc": "Master the Streams core concepts and interview answers.",
-            "links": []
+            "name": "Scaling past one core",
+            "hash": "#c1",
+            "desc": "Master Scaling past one core core concepts and defense.",
+            "links": [],
+            "tip": "\ud83d\udea8 Interview Trap \"Just add cluster mode to scale Chessify.\" That breaks it instantly. Room state lives in a plain object in one process's memory. Fork four workers and player A lands on worker 1, player B on worker 3 \u2014 different objects, so they're in different games with the same room code. Clustering a stateless REST API is free; clustering a sta",
+            "isTrap": true
           },
           {
-            "name": "Clustering",
-            "hash": "#clustering",
-            "desc": "Master the Clustering core concepts and interview answers.",
-            "links": []
+            "name": "Streams & backpressure",
+            "hash": "#c1",
+            "desc": "Four types: Readable (source), Writable (sink), Duplex (both \u2014 a TCP socket), Transform (duplex that modifies \u2014 gzip).",
+            "links": [],
+            "tip": "\ud83d\udcca ML / Data Eng Defense Backpressure is the concept that makes an ingestion service survive. If SahYatri's Node layer accepted telemetry faster than PostgreSQL could absorb it, the excess would sit in process memory and the container would OOM \u2014 the failure looks like a random crash, not a database problem, which makes it miserable to debug. Stream",
+            "isTrap": false
           }
         ]
       },
       {
-        "title": "Express.js",
+        "title": "02 Express, middleware & error handling",
         "topics": [
           {
-            "name": "Middleware",
-            "hash": "#middleware",
-            "desc": "Master the Middleware core concepts and interview answers.",
-            "links": []
+            "name": "The middleware pipeline",
+            "hash": "#c2",
+            "desc": "Express is a list of functions run in order. Each gets (req, res, next) . Call next() to continue, send a response to stop, or call next(err) to jump to error handling. Registration order is execution order \u2014 that's the source of most Express bugs.",
+            "links": [],
+            "tip": "\ud83d\udea8 Interview Trap Express identifies error middleware by arity \u2014 it counts the function's parameters . Write (err, req, res) with three params and Express treats it as normal middleware, so your error handler silently never fires. Same class of bug: register the error handler before your routes and it can never catch them, because it's already run.",
+            "isTrap": true
           },
           {
-            "name": "Routing",
-            "hash": "#routing",
-            "desc": "Master the Routing core concepts and interview answers.",
-            "links": []
+            "name": "Async errors \u2014 the one that bites",
+            "hash": "#c2",
+            "desc": "Express 4 catches thrown errors in synchronous handlers only. An async handler that rejects produces an unhandled rejection: the client hangs until timeout, and nothing reaches your error middleware.",
+            "links": [],
+            "tip": "\ud83d\udca1 Senior Insight Distinguish operational errors (bad input, missing record, expired token \u2014 expected, handle and continue) from programmer errors (undefined property, blown invariant \u2014 a bug, state is now suspect). On uncaughtException , the correct move is to log and exit , letting PM2 or the container restart you. Continuing after an unknown cras",
+            "isTrap": false
           },
           {
-            "name": "Error Handling",
-            "hash": "#error-handling",
-            "desc": "Master the Error Handling core concepts and interview answers.",
-            "links": []
+            "name": "REST design that survives review",
+            "hash": "#c2",
+            "desc": "Idempotency: GET, PUT and DELETE produce the same end state when repeated; POST doesn't. This isn't trivia \u2014 it's exactly why a client can safely retry a GET on a flaky mobile connection but must use an idempotency key to retry a POST.",
+            "links": [],
+            "tip": "\ud83d\udcca ML / Data Eng Defense For SahYatri's telemetry history, cursor pagination isn't a preference \u2014 it's required. Rows arrive continuously, so between page 1 and page 2 the offsets have already shifted and a user paging backwards through history sees the same reading twice while missing another. Keyset on (recorded_at, id) is stable under concurrent ",
+            "isTrap": false
           }
         ]
       },
       {
-        "title": "Realtime",
+        "title": "03 Real-time communication & Socket.IO",
         "topics": [
           {
-            "name": "WebSocket vs Polling vs Socket.IO",
-            "hash": "#ws-vs-polling",
-            "desc": "Master the WebSocket vs Polling vs Socket.IO core concepts and interview answers.",
-            "links": []
+            "name": "Pick the lightest thing that works",
+            "hash": "#c3",
+            "desc": "Master Pick the lightest thing that works core concepts and defense.",
+            "links": [],
+            "tip": "\ud83d\udca1 Senior Insight Ask who initiates. Only the server pushes \u2192 SSE , and it's underrated: it runs over plain HTTP, reconnects automatically, and needs no special proxy config. Both sides push \u2192 WebSocket. Chess qualifies genuinely \u2014 both players send moves, and the server also emits join, disconnect and spectator events unprompted. A dashboard that o",
+            "isTrap": false
           },
           {
-            "name": "Rooms & Namespaces",
-            "hash": "#rooms-namespaces",
-            "desc": "Master the Rooms & Namespaces core concepts and interview answers.",
-            "links": []
+            "name": "How Socket.IO actually connects",
+            "hash": "#c3",
+            "desc": "Engine.IO starts with HTTP long-polling , then attempts an upgrade to WebSocket once the connection is proven. That's why it works behind corporate proxies that block ws:// \u2014 it degrades instead of failing.",
+            "links": [],
+            "tip": "\ud83d\udea8 Interview Trap Socket memory leaks. Two versions worth knowing. Server-side: never removing a room from rooms after both players leave \u2014 the object grows forever, and it looks like a slow memory climb with no obvious cause. Client-side: registering socket.on('state', ...) inside a React component without removing it on unmount, so every remount s",
+            "isTrap": true
           },
           {
-            "name": "Reconnection Handling",
-            "hash": "#reconnection",
-            "desc": "Master the Reconnection Handling core concepts and interview answers.",
-            "links": []
+            "name": "Scaling real-time horizontally",
+            "hash": "#c3",
+            "desc": "The moment you run two instances, rooms = {} becomes a bug: instance A has no idea a socket on instance B joined the same game. Two things must change.",
+            "links": [],
+            "tip": "\ud83d\udca1 Senior Insight Be honest that single-instance is the right choice for a project at this scale \u2014 and then show you know the exact upgrade path. \"The adapter solves message routing; it does not solve shared state. If two instances both hold a board in local memory, they diverge. Redis has to become the single source of truth for the FEN, and then t",
+            "isTrap": false
           }
         ]
       },
       {
-        "title": "JWT Auth",
+        "title": "04 Auth, JWT & access control",
         "topics": [
           {
-            "name": "Token Structure",
-            "hash": "#jwt-structure",
-            "desc": "Master the Token Structure core concepts and interview answers.",
-            "links": []
+            "name": "Anatomy of a token",
+            "hash": "#c4",
+            "desc": "Three base64url segments joined by dots: header (algorithm), payload (claims \u2014 sub , role , tenantId , exp , iat ), signature .",
+            "links": [],
+            "tip": "\ud83d\udea8 Interview Trap A JWT is signed, not encrypted. Anyone can decode the payload \u2014 paste it into jwt.io and read it. Signing proves it wasn't altered ; it hides nothing. So never put anything sensitive in the claims. Related classic: the alg: none attack, where a client submits an unsigned token hoping the server trusts the header. Always verify agai",
+            "isTrap": true
           },
           {
-            "name": "Access vs Refresh Tokens",
-            "hash": "#access-refresh",
-            "desc": "Master the Access vs Refresh Tokens core concepts and interview answers.",
-            "links": []
+            "name": "Access + refresh token rotation",
+            "hash": "#c4",
+            "desc": "The problem: a stateless JWT stays valid until it expires, so you can't really log someone out. The standard resolution is two tokens with different jobs.",
+            "links": [],
+            "tip": "\ud83d\udca1 Senior Insight Reuse detection is elegant because it turns theft into a detectable event rather than a silent one. A refresh token is single-use, so if the server ever sees one presented twice, exactly one of the two holders is an attacker \u2014 and since you can't tell which, you kill the whole family and force a re-login. The user is mildly inconve",
+            "isTrap": false
           },
           {
-            "name": "Storage Security",
-            "hash": "#token-storage",
-            "desc": "Master the Storage Security core concepts and interview answers.",
-            "links": []
-          },
-          {
-            "name": "RBAC",
-            "hash": "#rbac",
-            "desc": "Master the RBAC core concepts and interview answers.",
-            "links": []
+            "name": "RBAC and tenant isolation",
+            "hash": "#c4",
+            "desc": "Master RBAC and tenant isolation core concepts and defense.",
+            "links": [],
+            "tip": "\ud83d\udee1\ufe0f SDE Defense Two rules that make multi-tenancy actually safe. First: the tenant ID comes only from the verified token \u2014 never from a request body, query string or header. If a client can send tenantId , a client can send someone else's. Second: make isolation structural, not disciplined. Relying on every developer to remember a tenantId filter gu",
+            "isTrap": false
           }
         ]
       },
       {
-        "title": "REST API Design",
+        "title": "05 Interview defense bank",
         "topics": [
           {
-            "name": "Statelessness",
-            "hash": "#statelessness",
-            "desc": "Master the Statelessness core concepts and interview answers.",
+            "name": "Track A \u2014 SDE",
+            "hash": "#c5",
+            "desc": "Master Track A \u2014 SDE core concepts and defense.",
             "links": []
           },
           {
-            "name": "Idempotency",
-            "hash": "#idempotency",
-            "desc": "Master the Idempotency core concepts and interview answers.",
-            "links": []
-          },
-          {
-            "name": "Status Codes",
-            "hash": "#status-codes",
-            "desc": "Master the Status Codes core concepts and interview answers.",
-            "links": []
-          },
-          {
-            "name": "Versioning",
-            "hash": "#versioning",
-            "desc": "Master the Versioning core concepts and interview answers.",
-            "links": []
-          }
-        ]
-      },
-      {
-        "title": "Deep-Dive: Chessify PvP",
-        "topics": [
-          {
-            "name": "Socket Room Architecture",
-            "hash": "#chess-overview",
-            "desc": "Master the Socket Room Architecture core concepts and interview answers.",
-            "links": []
-          },
-          {
-            "name": "Server-Authoritative Moves",
-            "hash": "#chess-auth-moves",
-            "desc": "Master the Server-Authoritative Moves core concepts and interview answers.",
-            "links": []
-          },
-          {
-            "name": "Disconnect & Cleanup",
-            "hash": "#chess-disconnect",
-            "desc": "Master the Disconnect & Cleanup core concepts and interview answers.",
-            "links": []
-          }
-        ]
-      },
-      {
-        "title": "Deep-Dive: StudySync-Server",
-        "topics": [
-          {
-            "name": "Express + MongoDB Setup",
-            "hash": "#study-overview",
-            "desc": "Master the Express + MongoDB Setup core concepts and interview answers.",
-            "links": []
-          },
-          {
-            "name": "JWT Login & Middleware",
-            "hash": "#study-jwt",
-            "desc": "Master the JWT Login & Middleware core concepts and interview answers.",
-            "links": []
-          },
-          {
-            "name": "Public REST Endpoint",
-            "hash": "#study-public",
-            "desc": "Master the Public REST Endpoint core concepts and interview answers.",
-            "links": []
-          }
-        ]
-      },
-      {
-        "title": "Deep-Dive: SahYatri BusApi",
-        "topics": [
-          {
-            "name": "PostgreSQL + Pooling",
-            "hash": "#sahyatri-overview",
-            "desc": "Master the PostgreSQL + Pooling core concepts and interview answers.",
-            "links": []
-          },
-          {
-            "name": "REST Endpoints & Queries",
-            "hash": "#sahyatri-endpoints",
-            "desc": "Master the REST Endpoints & Queries core concepts and interview answers.",
-            "links": []
-          },
-          {
-            "name": "Scaling to 50k Events/Day",
-            "hash": "#sahyatri-scale",
-            "desc": "Master the Scaling to 50k Events/Day core concepts and interview answers.",
+            "name": "Track B \u2014 ML / AI / Data Engineering",
+            "hash": "#c5",
+            "desc": "Master Track B \u2014 ML / AI / Data Engineering core concepts and defense.",
             "links": []
           }
         ]
@@ -2304,63 +2374,121 @@ export const roadmaps = [
     "title": "Flask & FastAPI",
     "icon": "\u26a1",
     "accent": "#009688",
-    "url": "/flask-fastapi-interview-notes.html",
+    "url": "/python-flask-fastapi.html",
     "phases": [
       {
-        "title": "Sections",
+        "title": "01 WSGI vs ASGI & concurrency models",
         "topics": [
           {
-            "name": "Flask",
-            "hash": "#flask",
-            "desc": "Master the Flask core concepts and interview answers.",
+            "name": "The two interfaces",
+            "hash": "#c1",
+            "desc": "WSGI (Flask) is a synchronous contract: one callable takes a request, returns a response, and owns its worker for the entire duration . Wait 200 ms on a database and that worker does nothing else for 200 ms.",
+            "links": [],
+            "tip": "\ud83d\udca1 Senior Insight Async does not make anything faster \u2014 it makes waiting cheaper. A route that spends 200 ms in a matrix multiply takes 200 ms either way; async can't parallelize it, because there's still one thread and one GIL. A route that spends 200 ms waiting on the USDA API can overlap with hundreds of others. The correct question is never \"is ",
+            "isTrap": false
+          },
+          {
+            "name": "Workers, threads and the GIL",
+            "hash": "#c1",
+            "desc": "The GIL allows one thread to execute Python bytecode at a time per process . Two consequences that decide your deployment:",
+            "links": [],
+            "tip": "\ud83d\udea8 Interview Trap The 4 GB arithmetic. \"Set --workers 8 for throughput\" is the wrong instinct for ML serving. Gunicorn workers are separate processes with separate memory \u2014 a 500 MB model loaded in 8 workers is 4 GB of RAM for eight identical copies. In a container with a 2 GB limit, the OOM killer takes workers down and the failures look random. Fo",
+            "isTrap": true
+          }
+        ]
+      },
+      {
+        "title": "02 FastAPI, Pydantic & dependency injection",
+        "topics": [
+          {
+            "name": "Pydantic V2 does three jobs",
+            "hash": "#c2",
+            "desc": "Master Pydantic V2 does three jobs core concepts and defense.",
+            "links": [],
+            "tip": "\ud83d\udca1 Senior Insight The underrated win isn't validation \u2014 it's that the schema is the contract, the docs and the types simultaneously. One BaseModel generates the OpenAPI spec, so the frontend integrates without you writing a spec by hand and without the spec drifting from reality. Pydantic V2's core is written in Rust, which is why it's fast enough t",
+            "isTrap": false
+          },
+          {
+            "name": "File uploads: UploadFile vs bytes",
+            "hash": "#c2",
+            "desc": "Master File uploads: UploadFile vs bytes core concepts and defense.",
+            "links": [],
+            "tip": "\ud83d\udea8 Interview Trap Declaring image: bytes = File(...) looks harmless and is a memory bomb \u2014 FastAPI reads the entire body into RAM before your function starts, so ten concurrent 20 MB uploads is 200 MB with no upper bound you control. UploadFile spools to disk past a threshold (~1 MB) and keeps memory flat. And neither enforces a size limit \u2014 a clien",
+            "isTrap": true
+          },
+          {
+            "name": "Dependency injection with Depends",
+            "hash": "#c2",
+            "desc": "Master Dependency injection with Depends core concepts and defense.",
+            "links": [],
+            "tip": "\ud83d\udee1\ufe0f SDE Defense Across 20+ routes the pattern that scales is router-level dependencies plus dependency factories . Attach require_role(\"admin\") once to the admin router and every route under it inherits the check \u2014 you cannot forget it on a new endpoint, because you'd have to actively register the route somewhere else. That's the same principle as a",
+            "isTrap": false
+          },
+          {
+            "name": "The async def vs def rule",
+            "hash": "#c2",
+            "desc": "Master The async def vs def rule core concepts and defense.",
+            "links": [],
+            "tip": "\ud83d\udea8 Interview Trap This is the counter-intuitive one, and it's a favourite: the \"modern\" choice is wrong. Writing async def around a synchronous model call blocks the entire event loop \u2014 every other request on that worker stalls for the full inference. Writing plain def lets FastAPI run it in a threadpool and the loop stays free. So for CPU-bound inf",
+            "isTrap": true
+          }
+        ]
+      },
+      {
+        "title": "03 Flask architecture & contexts",
+        "topics": [
+          {
+            "name": "The two contexts",
+            "hash": "#c3",
+            "desc": "Both are thread-local proxies . request is a global you can import anywhere, yet it resolves to this thread's request \u2014 which is exactly why Flask's synchronous, thread-per-request model is the assumption baked into its design.",
+            "links": [],
+            "tip": "\ud83d\udea8 Interview Trap \"Working outside of application context.\" Everyone hits it; few can explain it. It means you touched current_app or g when no context was pushed \u2014 typically in a background thread, a CLI command, or at import time. Fix: with app.app_context(): . The deeper version: g is not global state despite the name. It's per-context, so a valu",
+            "isTrap": true
+          },
+          {
+            "name": "Blueprints",
+            "hash": "#c3",
+            "desc": "Master Blueprints core concepts and defense.",
+            "links": [],
+            "tip": "\ud83d\udee1\ufe0f SDE Defense Flask was the right call for Chess-AI precisely because the workload is CPU-bound and stateless. FastAPI's async advantage is worth nothing when the endpoint never waits on I/O \u2014 it computes a move and returns. Meanwhile Flask's synchronous per-worker model gives clean isolation: one slow search occupies one worker, and Gunicorn's --",
+            "isTrap": false
+          }
+        ]
+      },
+      {
+        "title": "04 Serving ML models in production",
+        "topics": [
+          {
+            "name": "Load once, at startup",
+            "hash": "#c4",
+            "desc": "The single most common ML-serving bug is loading the model inside the request handler. A ResNet-50 checkpoint is seconds of disk read and hundreds of MB \u2014 per request that's catastrophic, and it usually ships because it works fine with one test user.",
+            "links": [],
+            "tip": "\ud83d\udea8 Interview Trap Two one-line bugs that both produce silently wrong or slowly dying services: Forgetting model.eval() \u2014 dropout stays active at inference, so the same image returns different predictions on each call. Nothing errors. You just have a randomly wrong model. Forgetting torch.no_grad() / inference_mode() \u2014 PyTorch builds an autograd grap",
+            "isTrap": true
+          },
+          {
+            "name": "Fallback cascades",
+            "hash": "#c4",
+            "desc": "Every ML service should degrade rather than fail. The pattern across all your projects is the same three tiers:",
+            "links": [],
+            "tip": "\ud83d\udca1 Senior Insight Retries make things worse when the upstream is overloaded rather than flaky \u2014 three clients each retrying twice is triple the load on a service already struggling. That's what a circuit breaker fixes: after N consecutive failures the breaker opens and calls fail instantly for a cooldown, going straight to the fallback without touch",
+            "isTrap": false
+          }
+        ]
+      },
+      {
+        "title": "05 Interview defense bank",
+        "topics": [
+          {
+            "name": "Track A \u2014 SDE",
+            "hash": "#c5",
+            "desc": "Master Track A \u2014 SDE core concepts and defense.",
             "links": []
           },
           {
-            "name": "FastAPI",
-            "hash": "#fastapi",
-            "desc": "Master the FastAPI core concepts and interview answers.",
-            "links": []
-          },
-          {
-            "name": "Flask vs FastAPI",
-            "hash": "#comparison",
-            "desc": "Master the Flask vs FastAPI core concepts and interview answers.",
-            "links": []
-          },
-          {
-            "name": "Chessify Backend",
-            "hash": "#chessify",
-            "desc": "Master the Chessify Backend core concepts and interview answers.",
-            "links": []
-          },
-          {
-            "name": "Production Chain",
-            "hash": "#prodchain",
-            "desc": "Master the Production Chain core concepts and interview answers.",
-            "links": []
-          },
-          {
-            "name": "Minimax + \u03b1-\u03b2",
-            "hash": "#minimax",
-            "desc": "Master the Minimax + \u03b1-\u03b2 core concepts and interview answers.",
-            "links": []
-          },
-          {
-            "name": "Testing / GUI Harness",
-            "hash": "#testing",
-            "desc": "Master the Testing / GUI Harness core concepts and interview answers.",
-            "links": []
-          },
-          {
-            "name": "Resume Tie-Ins",
-            "hash": "#resume",
-            "desc": "Master the Resume Tie-Ins core concepts and interview answers.",
-            "links": []
-          },
-          {
-            "name": "Follow-Ups",
-            "hash": "#followups",
-            "desc": "Master the Follow-Ups core concepts and interview answers.",
+            "name": "Track B \u2014 ML / AI / Data Engineering",
+            "hash": "#c5",
+            "desc": "Master Track B \u2014 ML / AI / Data Engineering core concepts and defense.",
             "links": []
           }
         ]
@@ -2372,160 +2500,228 @@ export const roadmaps = [
     "title": "AI/ML Stack",
     "icon": "\ud83e\udde0",
     "accent": "#a855f7",
-    "url": "/aiml-stack-interview-notes.html",
+    "url": "/ai-ml-cv-llm-stack.html",
     "phases": [
       {
-        "title": "Core ML/DL",
+        "title": "01 ML & Deep Learning Foundations",
         "topics": [
           {
-            "name": "Overfitting/Underfitting \u00b7 Bias-Variance",
-            "hash": "#overfit",
-            "desc": "Master the Overfitting/Underfitting \u00b7 Bias-Variance core concepts and interview answers.",
+            "name": "Loss Functions",
+            "hash": "#m1",
+            "desc": "A loss function is just the definition of \"wrong.\" Pick the one whose shape matches your output.",
+            "links": [],
+            "tip": "\ud83d\udea8 Interview Trap \"Why not MSE for classification?\" Two reasons, and they want both: (1) MSE with a sigmoid gives you a non-convex surface with flat regions, so gradients vanish exactly when the model is confidently wrong. (2) Cross-entropy's gradient through softmax simplifies to (prediction \u2212 target) \u2014 clean, proportional to the error, no saturati",
+            "isTrap": true
+          },
+          {
+            "name": "Gradient Descent & Optimizers",
+            "hash": "#m1",
+            "desc": "Master Gradient Descent & Optimizers core concepts and defense.",
+            "links": [],
+            "tip": "\ud83d\udca1 CP Intuition Backprop is memoized DP on a DAG. The computational graph is your DAG, each node's gradient is a subproblem, and the chain rule is the transition. Forward pass = fill the table with activations. Backward pass = one reverse topological sweep reusing every stored value. Without memoization you'd recompute shared subpaths exponentially ",
+            "isTrap": false
+          },
+          {
+            "name": "Bias\u2013Variance",
+            "hash": "#m1",
+            "desc": "Master Bias\u2013Variance core concepts and defense.",
             "links": []
           },
           {
-            "name": "Gradient Descent",
-            "hash": "#gd",
-            "desc": "Master the Gradient Descent core concepts and interview answers.",
-            "links": []
+            "name": "Regularization",
+            "hash": "#m1",
+            "desc": "Master Regularization core concepts and defense.",
+            "links": [],
+            "tip": "\ud83d\udea8 Interview Trap Inverted dropout. \"What does dropout do at inference?\" Nothing \u2014 it's off. The follow-up is the real question: why doesn't turning it off change the activation scale? Because PyTorch scales surviving activations up by 1/(1\u2212p) during training , so expected output already matches inference. That's inverted dropout. If you forget mode",
+            "isTrap": true
           },
           {
-            "name": "Backpropagation",
-            "hash": "#backprop",
-            "desc": "Master the Backpropagation core concepts and interview answers.",
-            "links": []
+            "name": "CNNs & ResNet",
+            "hash": "#m1",
+            "desc": "Output size, the formula they ask you to derive on a whiteboard:",
+            "links": [],
+            "tip": "\ud83d\udca1 Senior Insight Why skip connections fix vanishing gradients, stated precisely: differentiating F(x) + x gives F'(x) + 1 . That +1 is a gradient highway \u2014 even if F'(x) collapses toward zero, the gradient still reaches earlier layers at full strength instead of being multiplied down through 50 layers. It also makes identity easy to learn: if a blo",
+            "isTrap": false
           },
           {
-            "name": "CNN Basics",
-            "hash": "#cnn",
-            "desc": "Master the CNN Basics core concepts and interview answers.",
-            "links": []
+            "name": "Transfer Learning \u2014 the Nutri-Vision lifecycle",
+            "hash": "#m1",
+            "desc": "Master Transfer Learning \u2014 the Nutri-Vision lifecycle core concepts and defense.",
+            "links": [],
+            "tip": "\ud83d\udea8 Interview Trap \"Why must you use ImageNet's normalization stats \u2014 mean=[0.485,0.456,0.406] , std=[0.229,0.224,0.225] ?\" Because the frozen filters were trained on inputs in that exact distribution. Feed them differently-scaled pixels and every early activation shifts, so the features you're relying on are subtly wrong. Silent accuracy loss with n",
+            "isTrap": true
           }
         ]
       },
       {
-        "title": "NLP / LLMs",
+        "title": "02 NLP, Custom NER & Entity Resolution",
         "topics": [
           {
-            "name": "Embeddings",
-            "hash": "#embeddings",
-            "desc": "Master the Embeddings core concepts and interview answers.",
+            "name": "The classical pipeline",
+            "hash": "#m2",
+            "desc": "Both are sparse and order-blind \u2014 which is exactly the gap dense embeddings fill.",
             "links": []
           },
           {
-            "name": "Transformers Overview",
-            "hash": "#transformers",
-            "desc": "Master the Transformers Overview core concepts and interview answers.",
+            "name": "spaCy NER vs Transformer NER",
+            "hash": "#m2",
+            "desc": "Master spaCy NER vs Transformer NER core concepts and defense.",
+            "links": [],
+            "tip": "\ud83d\udca1 CP Intuition spaCy's hash embeddings are a Bloom filter trick you already understand from hashing problems: instead of a vocabulary-sized lookup table, hash each word into a small fixed table with a few hash functions. Memory is constant regardless of vocabulary size, and there's no out-of-vocabulary cliff \u2014 a food word it never saw still gets a ",
+            "isTrap": false
+          },
+          {
+            "name": "Training a custom FOOD entity",
+            "hash": "#m2",
+            "desc": "Annotations are character offsets, not tokens:",
             "links": []
           },
           {
-            "name": "Attention Mechanism",
-            "hash": "#attention",
-            "desc": "Master the Attention Mechanism core concepts and interview answers.",
-            "links": []
+            "name": "Precision, Recall, F1 \u2014 say it in product terms",
+            "hash": "#m2",
+            "desc": "Master Precision, Recall, F1 \u2014 say it in product terms core concepts and defense.",
+            "links": [],
+            "tip": "\ud83d\udcca ML Track Defense Which one do you optimize? Have an opinion, and tie it to the product. For a food logger I'd favour recall at the NER stage \u2014 a missed item silently undercounts calories, while a false positive gets filtered downstream when the USDA fuzzy match returns a low confidence score. That's the real defense: my pipeline has a second filt",
+            "isTrap": false
+          },
+          {
+            "name": "Hybrid extraction \u2014 the core design decision",
+            "hash": "#m2",
+            "desc": "One sentence, two problems with opposite requirements:",
+            "links": [],
+            "tip": "\ud83d\udea8 Interview Trap \"Why not one LLM call for the whole sentence?\" Don't say \"it's slower.\" Say: a nutrition app must never invent a number. An LLM will happily return a confident, wrong gram value with no signal that it guessed. My regex returns None when it doesn't recognize a format \u2014 a visible failure the UI can handle \u2014 and every macro number com",
+            "isTrap": true
+          },
+          {
+            "name": "Entity resolution: fuzzy string vs embeddings",
+            "hash": "#m2",
+            "desc": "Master Entity resolution: fuzzy string vs embeddings core concepts and defense.",
+            "links": [],
+            "tip": "\ud83d\udee1\ufe0f SDE Defense The honest framing of why string similarity was the right call: the USDA search endpoint already returns a candidate shortlist . So resolution isn't \"search 300k foods\" \u2014 it's \"rank 10 candidates.\" At that size, SequenceMatcher costs microseconds and needs no extra infrastructure in the request path. Embeddings would add a model load",
+            "isTrap": false
           }
         ]
       },
       {
-        "title": "RAG",
+        "title": "03 Computer Vision & Edge Inference",
         "topics": [
           {
-            "name": "Retrieval + Generation Pipeline",
-            "hash": "#rag-pipeline",
-            "desc": "Master the Retrieval + Generation Pipeline core concepts and interview answers.",
+            "name": "One-stage vs two-stage detectors",
+            "hash": "#m3",
+            "desc": "Master One-stage vs two-stage detectors core concepts and defense.",
             "links": []
           },
           {
-            "name": "Vector Databases",
-            "hash": "#vector-db",
-            "desc": "Master the Vector Databases core concepts and interview answers.",
+            "name": "YOLO internals",
+            "hash": "#m3",
+            "desc": "The image is divided into a grid. Each cell predicts boxes as (x, y, w, h, objectness) plus class probabilities. Anchor boxes are prior shapes \u2014 the network predicts an offset from an anchor rather than absolute coordinates, which is a far easier regression target.",
+            "links": [],
+            "tip": "\ud83d\udea8 Interview Trap These are two different thresholds and interviewers love watching people conflate them. Confidence threshold decides whether a box exists at all. IoU/NMS threshold decides whether two surviving boxes are duplicates of the same object. Turning down confidence gives you more detections; turning down NMS IoU gives you fewer duplicates",
+            "isTrap": true
+          },
+          {
+            "name": "Model size trade-off",
+            "hash": "#m3",
+            "desc": "Master Model size trade-off core concepts and defense.",
             "links": []
           },
           {
-            "name": "Chunking Strategies",
-            "hash": "#chunking",
-            "desc": "Master the Chunking Strategies core concepts and interview answers.",
-            "links": []
-          },
-          {
-            "name": "Why RAG over Fine-Tuning",
-            "hash": "#rag-vs-ft",
-            "desc": "Master the Why RAG over Fine-Tuning core concepts and interview answers.",
-            "links": []
+            "name": "Making it work on a Raspberry Pi 4",
+            "hash": "#m3",
+            "desc": "A Pi 4 has an ARM Cortex-A72 CPU and no discrete GPU . Every millisecond is bought deliberately:",
+            "links": [],
+            "tip": "\ud83d\udca1 Senior Insight Why INT8 barely hurts accuracy: trained weights cluster in a narrow range around zero, so 256 well-placed levels represent them nearly as well as 4 billion. The trick is calibration \u2014 run a few hundred representative images through, record the actual min/max activation range per layer, and map that range to INT8 rather than a guess",
+            "isTrap": false
           }
         ]
       },
       {
-        "title": "LangChain / CrewAI",
+        "title": "04 Generative AI, Prompt Chaining & RAG",
         "topics": [
           {
-            "name": "Chains",
-            "hash": "#chains",
-            "desc": "Master the Chains core concepts and interview answers.",
-            "links": []
+            "name": "Self-attention, without the math anxiety",
+            "hash": "#m4",
+            "desc": "Every token emits three vectors: a Query (\"what am I looking for?\"), a Key (\"what do I offer?\"), and a Value (\"here's my content\"). Dot every query against every key to get relevance scores, softmax them into weights, and take a weighted sum of values.",
+            "links": [],
+            "tip": "\ud83d\udca1 CP Intuition Attention is a soft hash-map lookup . A dictionary returns the value for the one key that matches exactly. Attention returns a blend of all values, weighted by how well each key matches \u2014 differentiable, so it can be learned. And the cost is the thing to remember: every token attends to every token, so it's O(n\u00b2) in sequence length. ",
+            "isTrap": false
           },
           {
-            "name": "Agents",
-            "hash": "#agents",
-            "desc": "Master the Agents core concepts and interview answers.",
-            "links": []
+            "name": "Adaptation strategies",
+            "hash": "#m4",
+            "desc": "LoRA freezes the base model and trains two thin matrices whose product is added to a weight matrix \u2014 training a fraction of a percent of parameters, and adapters swap in and out without touching the base. QLoRA adds a 4-bit quantized base so it fits on one consumer GPU.",
+            "links": [],
+            "tip": "\ud83d\udea8 Interview Trap \"Fine-tune it so it stops hallucinating.\" Fine-tuning teaches behaviour and format , not facts . Training on your documents makes the model sound like them; it does not make it recall them reliably, and it will still invent confidently. Facts belong in the context window \u2014 that's RAG. Say this cleanly and you're ahead of most candi",
+            "isTrap": true
           },
           {
-            "name": "Multi-Agent Orchestration",
-            "hash": "#multiagent",
-            "desc": "Master the Multi-Agent Orchestration core concepts and interview answers.",
-            "links": []
+            "name": "RecrutAI: the prompt-chaining state machine",
+            "hash": "#m4",
+            "desc": "The insight to lead with: the hard part was control flow, not the model's writing ability. Each answer is scored, and the score decides the next state:",
+            "links": [],
+            "tip": "\ud83d\udee1\ufe0f SDE Defense The reliability story, which is the actually impressive part. Gemini is a third-party API subject to rate limits, timeouts and regional blocks \u2014 so it's treated as an unreliable dependency, not a function call: 6-second timeout \u2014 a hard ceiling, because a hung request is worse than a degraded answer. 2 retries, exponential backoff (1",
+            "isTrap": false
+          },
+          {
+            "name": "RAG pipeline",
+            "hash": "#m4",
+            "desc": "Ingest \u2192 chunk \u2192 embed \u2192 index \u2192 retrieve \u2192 generate. Chunking is where most RAG systems are quietly won or lost.",
+            "links": [],
+            "tip": "\ud83d\udcca ML Track Defense Chunk size and overlap, with the reasoning attached. For multi-page PDFs I used recursive character splitting at roughly [1000] characters with [150\u2013200] overlap. The logic, which matters more than the number: Too small \u2192 a chunk retrieves without the context that makes it meaningful (\"it must be renewed annually\" \u2014 what must?). ",
+            "isTrap": false
+          },
+          {
+            "name": "Multi-agent orchestration (LangChain + CrewAI)",
+            "hash": "#m4",
+            "desc": "Splitting one large task into specialized agents with a shared state:",
+            "links": [],
+            "tip": "\ud83d\udea8 Interview Trap \"So agents are better?\" No \u2014 agents multiply your failure modes: loops, drift, compounding errors from step one, and cost that's hard to predict. State your default plainly: single-pass RAG unless I can name the specific step single-pass cannot do. Multi-hop questions and cross-document comparison are real cases. \"Summarize this co",
+            "isTrap": true
           }
         ]
       },
       {
-        "title": "YOLOv5",
+        "title": "05 Search AI & Deterministic Game Engines",
         "topics": [
           {
-            "name": "Object Detection Basics",
-            "hash": "#od-basics",
-            "desc": "Master the Object Detection Basics core concepts and interview answers.",
-            "links": []
+            "name": "Minimax",
+            "hash": "#m5",
+            "desc": "Two-player zero-sum with perfect information. You maximise, the opponent minimises, recursively down to a depth limit, then a heuristic scores the leaf.",
+            "links": [],
+            "tip": "\ud83d\udea8 Interview Trap \"Does pruning change the move it picks?\" No. Alpha-beta is provably identical to plain minimax at the same depth \u2014 it only skips work that could not affect the result. What does vary is speed, and it varies enormously: best-move-first ordering approaches the b^(d/2) bound, worst-first prunes essentially nothing. That's why move ord",
+            "isTrap": true
           },
           {
-            "name": "Anchor Boxes",
-            "hash": "#anchors",
-            "desc": "Master the Anchor Boxes core concepts and interview answers.",
-            "links": []
+            "name": "Evaluation function",
+            "hash": "#m5",
+            "desc": "A leaf isn't a finished game, so you score it with a heuristic \u2014 two parts:",
+            "links": [],
+            "tip": "\ud83d\udcca ML Track Defense Why hand-crafted heuristics rather than a learned evaluator? Because chess rules are fully known and enumerable, so search gives you correctness that learning would only approximate \u2014 and a PST is inspectable, so a wrong move is debuggable. Learned evaluation (AlphaZero-style) wins only at scale: enormous self-play compute, and y",
+            "isTrap": false
           },
           {
-            "name": "Non-Max Suppression",
-            "hash": "#nms",
-            "desc": "Master the Non-Max Suppression core concepts and interview answers.",
-            "links": []
-          },
-          {
-            "name": "Fine-Tuning vs From Scratch",
-            "hash": "#finetune",
-            "desc": "Master the Fine-Tuning vs From Scratch core concepts and interview answers.",
-            "links": []
+            "name": "Integrating Stockfish",
+            "hash": "#m5",
+            "desc": "Master Integrating Stockfish core concepts and defense.",
+            "links": [],
+            "tip": "\ud83d\udee1\ufe0f SDE Defense The three-tier degradation is the design worth naming: opening book \u2192 Stockfish \u2192 in-process minimax. Each tier is faster-but-dumber than the one before, and every tier is local, so an AI move never depends on a third-party network call. The failure mode of a missing Stockfish binary is a weaker opponent, not a broken game. That's th",
+            "isTrap": false
           }
         ]
       },
       {
-        "title": "Deep-Dive: SahYatri",
+        "title": "06 Interview Defense Bank",
         "topics": [
           {
-            "name": "Detection Pipeline \u2014 Actual Code",
-            "hash": "#sy-overview",
-            "desc": "Master the Detection Pipeline \u2014 Actual Code core concepts and interview answers.",
+            "name": "Track A \u2014 SDE (integration & performance)",
+            "hash": "#m6",
+            "desc": "Master Track A \u2014 SDE (integration & performance) core concepts and defense.",
             "links": []
           },
           {
-            "name": "\u26a0\ufe0f Reconcile Before Interview",
-            "hash": "#sy-reconcile",
-            "desc": "Master the \u26a0\ufe0f Reconcile Before Interview core concepts and interview answers.",
-            "links": []
-          },
-          {
-            "name": "Adaptive Thresholding & Accuracy Validation",
-            "hash": "#sy-concepts",
-            "desc": "Master the Adaptive Thresholding & Accuracy Validation core concepts and interview answers.",
+            "name": "Track B \u2014 ML / AI / Data Engineering",
+            "hash": "#m6",
+            "desc": "Master Track B \u2014 ML / AI / Data Engineering core concepts and defense.",
             "links": []
           }
         ]
@@ -2537,117 +2733,156 @@ export const roadmaps = [
     "title": "Databases & Cloud",
     "icon": "\u2601\ufe0f",
     "accent": "#f59e0b",
-    "url": "/databases-cloud-devops-interview-notes.html",
+    "url": "/databases-data-eng-cloud.html",
     "phases": [
       {
-        "title": "Databases \u2014 Practical",
+        "title": "01 Engines & practical data modeling",
         "topics": [
           {
-            "name": "PostgreSQL vs MySQL vs MongoDB",
-            "hash": "#db-choice",
-            "desc": "Master the PostgreSQL vs MySQL vs MongoDB core concepts and interview answers.",
+            "name": "Embed or reference?",
+            "hash": "#c1",
+            "desc": "Master Embed or reference? core concepts and defense.",
+            "links": [],
+            "tip": "\ud83d\udea8 Interview Trap The 16 MB BSON ceiling and the unbounded array anti-pattern. Embedding a revision history inside a spec document feels natural \u2014 until a heavily-edited spec accumulates hundreds of revisions and the document approaches 16 MB. The write then fails , in production, on your most active customer, which is the worst possible discovery p",
+            "isTrap": true
+          },
+          {
+            "name": "Normalization vs pragmatic denormalization",
+            "hash": "#c1",
+            "desc": "When to break it deliberately: strict 3NF forces joins on every read. On a dashboard aggregating millions of telemetry rows, joining to routes on each one is measurable cost for a value that changes almost never. Copying route_name onto the row is a real optimization \u2014 you accept updating it in two ",
+            "links": [],
+            "tip": "\ud83d\udee1\ufe0f SDE Defense If asked \"could Packspec have been Postgres?\" \u2014 say yes, honestly, and show the design: strict columns for tenant_id , role , workflow state and timestamps; a JSONB column for the variable spec body; GIN index for field queries. That would have given stronger relational reporting. Mongo Atlas was the team's existing stack, which is a",
+            "isTrap": false
+          }
+        ]
+      },
+      {
+        "title": "02 Transactions, concurrency & storage internals",
+        "topics": [
+          {
+            "name": "MVCC \u2014 the idea both engines share",
+            "hash": "#c2",
+            "desc": "Multi-Version Concurrency Control: an update writes a new version rather than overwriting in place. Readers see the version that was current when their transaction started. The payoff is the line worth memorizing: readers never block writers, and writers never block readers.",
+            "links": [],
+            "tip": "\ud83d\udea8 Interview Trap Long-running transactions are a silent killer in Postgres. An idle-in-transaction session holds a snapshot, which means VACUUM cannot reclaim dead tuples newer than it \u2014 for the whole database . Tables bloat, indexes bloat, queries slow down, and the cause is one forgotten open transaction in a debug console. Related in Mongo: the ",
+            "isTrap": true
+          },
+          {
+            "name": "Multi-tenant isolation patterns",
+            "hash": "#c2",
+            "desc": "Master Multi-tenant isolation patterns core concepts and defense.",
+            "links": [],
+            "tip": "\ud83d\udee1\ufe0f SDE Defense writeConcern: majority is the clause to explain rather than recite: it means the write is acknowledged only once a majority of replica-set members have it, so a primary failover cannot roll your commit back. Combined with readConcern: snapshot , the transaction reads one consistent point-in-time view and either every document lands o",
+            "isTrap": false
+          }
+        ]
+      },
+      {
+        "title": "03 Indexing & query optimization",
+        "topics": [
+          {
+            "name": "Compound indexes: ESR and the prefix rule",
+            "hash": "#c3",
+            "desc": "ESR \u2014 order columns as E quality, then S ort, then R ange. Equality narrows to a contiguous block, sort is then already satisfied, range scans within it.",
+            "links": [],
+            "tip": "\ud83d\udea8 Interview Trap The leftmost prefix rule. An index on (bus_id, recorded_at) serves queries on bus_id and on bus_id + recorded_at \u2014 but not on recorded_at alone. You cannot skip a prefix column, because the index is sorted by the first column first. People add a compound index, watch one query stay slow, and can't see why. Two more that cost real i",
+            "isTrap": true
+          },
+          {
+            "name": "Reading a query plan",
+            "hash": "#c3",
+            "desc": "The single most useful signal in either engine: compare rows examined to rows returned. Close together is healthy; orders apart means you're scanning and discarding.",
             "links": []
           },
           {
-            "name": "Resume tie-in: SahYatri \u2192 PostgreSQL",
-            "hash": "#sahyatri-choice",
-            "desc": "Master the Resume tie-in: SahYatri \u2192 PostgreSQL core concepts and interview answers.",
-            "links": []
-          },
-          {
-            "name": "Resume tie-in: StudySync \u2192 MongoDB",
-            "hash": "#studysync-choice",
-            "desc": "Master the Resume tie-in: StudySync \u2192 MongoDB core concepts and interview answers.",
+            "name": "Connection pooling",
+            "hash": "#c3",
+            "desc": "Postgres forks a process per connection \u2014 roughly 5\u201310 MB each, plus scheduling cost. So connections are a scarce resource, not a free one.",
             "links": []
           }
         ]
       },
       {
-        "title": "Docker",
+        "title": "04 Ingestion, telemetry & pipelines",
         "topics": [
           {
-            "name": "Images vs Containers, Dockerfile",
-            "hash": "#docker-basics",
-            "desc": "Master the Images vs Containers, Dockerfile core concepts and interview answers.",
+            "name": "Synchronous writes vs a queue",
+            "hash": "#c4",
+            "desc": "Start simple and honest: at SahYatri's real volume, direct writes were correct. The queue is what you reach for when a database slowdown starts causing data loss rather than just slowness.",
+            "links": [],
+            "tip": "\ud83d\udcca ML / Data Eng Defense Batching is the highest-leverage change and it costs almost nothing. Every commit is an fsync; 1,000 single-row inserts is 1,000 fsyncs plus 1,000 round trips plus 1,000 index updates. Buffer for a couple of seconds and write one multi-row INSERT \u2014 or COPY for real volume, which skips per-row parsing entirely \u2014 and you routi",
+            "isTrap": false
+          },
+          {
+            "name": "Late data, retries and idempotency",
+            "hash": "#c4",
+            "desc": "A bus loses signal for two hours and uploads a backlog. Three things must hold:",
+            "links": [],
+            "tip": "\ud83d\udca1 Senior Insight Partitioning pays three separate dividends and it's worth naming all three: query pruning (a last-7-days query skips every other partition without reading it), small hot indexes (writes only touch the current partition, so the index that must stay in cache is one month's worth, not five years'), and instant retention \u2014 dropping old",
+            "isTrap": false
+          },
+          {
+            "name": "ETL vs ELT",
+            "hash": "#c4",
+            "desc": "ETL transforms before loading; ELT lands raw and transforms in the warehouse.",
+            "links": []
+          }
+        ]
+      },
+      {
+        "title": "05 Cloud, Docker & CI/CD",
+        "topics": [
+          {
+            "name": "Service mapping",
+            "hash": "#c5",
+            "desc": "Object vs block: S3 is HTTP, effectively infinite, no filesystem \u2014 right for model weights, uploads, backups. EBS is a disk attached to one instance \u2014 right for a database's data directory. Model weights go in object storage; a Postgres volume does not.",
             "links": []
           },
           {
-            "name": "Why Containerize",
-            "hash": "#docker-why",
-            "desc": "Master the Why Containerize core concepts and interview answers.",
+            "name": "Multi-stage Dockerfile",
+            "hash": "#c5",
+            "desc": "Master Multi-stage Dockerfile core concepts and defense.",
+            "links": [],
+            "tip": "\ud83d\udea8 Interview Trap Docker layers are immutable, so a deleted secret is still in the image. COPY .env . && RUN use-it && RUN rm .env leaves the secret permanently readable in the earlier layer \u2014 anyone who pulls the image can extract it with docker history . Deleting a file in a later layer hides it from the filesystem, not from the image. Real fixes:",
+            "isTrap": true
+          },
+          {
+            "name": "Git LFS for model artifacts",
+            "hash": "#c5",
+            "desc": "Git stores a full copy of every version forever, and binary .pth files don't delta-compress. A 100 MB checkpoint committed ten times is a gigabyte in history that every clone downloads forever \u2014 and rewriting history to remove it is painful. LFS replaces the file with a pointer; .gitattributes holds",
+            "links": [],
+            "tip": "\ud83d\udcca ML / Data Eng Defense The distinction worth stating: LFS gives versioning tied to code; object storage gives scale. With LFS, checking out the commit that produced a result also checks out the exact weights that produced it \u2014 reproducibility with zero manual bookkeeping, versus an S3 bucket where matching model_v3_final_FINAL.pth to a commit is s",
+            "isTrap": false
+          },
+          {
+            "name": "CI/CD and API test automation",
+            "hash": "#c5",
+            "desc": "Master CI/CD and API test automation core concepts and defense.",
+            "links": [],
+            "tip": "\ud83d\udee1\ufe0f SDE Defense Multi-tenant isolation is exactly the property unit tests cannot verify. \"Can tenant A read tenant B's spec?\" is only answerable by a real request carrying A's real token against B's real resource ID, expecting 403. That's an integration test, and it's the highest-value one in the suite \u2014 it guards the failure with actual consequence",
+            "isTrap": false
+          },
+          {
+            "name": "Linux diagnostics",
+            "hash": "#c5",
+            "desc": "2>&1 means \"send stderr wherever stdout is going,\" so > out.log 2>&1 captures both.",
             "links": []
           }
         ]
       },
       {
-        "title": "CI/CD",
+        "title": "06 Interview defense bank",
         "topics": [
           {
-            "name": "Pipeline Stages & What It Solves",
-            "hash": "#cicd",
-            "desc": "Master the Pipeline Stages & What It Solves core concepts and interview answers.",
-            "links": []
-          }
-        ]
-      },
-      {
-        "title": "AWS / Azure",
-        "topics": [
-          {
-            "name": "Core Services for a Backend Dev",
-            "hash": "#cloud-basics",
-            "desc": "Master the Core Services for a Backend Dev core concepts and interview answers.",
-            "links": []
-          }
-        ]
-      },
-      {
-        "title": "Git",
-        "topics": [
-          {
-            "name": "Branching Strategies",
-            "hash": "#git-branching",
-            "desc": "Master the Branching Strategies core concepts and interview answers.",
+            "name": "Track A \u2014 SDE",
+            "hash": "#c6",
+            "desc": "Master Track A \u2014 SDE core concepts and defense.",
             "links": []
           },
           {
-            "name": "Rebase vs Merge",
-            "hash": "#git-rebase-merge",
-            "desc": "Master the Rebase vs Merge core concepts and interview answers.",
-            "links": []
-          },
-          {
-            "name": "Resolving Conflicts",
-            "hash": "#git-conflicts",
-            "desc": "Master the Resolving Conflicts core concepts and interview answers.",
-            "links": []
-          }
-        ]
-      },
-      {
-        "title": "Postman",
-        "topics": [
-          {
-            "name": "API Testing Workflow & Environments",
-            "hash": "#postman-workflow",
-            "desc": "Master the API Testing Workflow & Environments core concepts and interview answers.",
-            "links": []
-          },
-          {
-            "name": "What 200+ Test Cases Implies",
-            "hash": "#postman-scale",
-            "desc": "Master the What 200+ Test Cases Implies core concepts and interview answers.",
-            "links": []
-          }
-        ]
-      },
-      {
-        "title": "Linux",
-        "topics": [
-          {
-            "name": "Command-Line Awareness",
-            "hash": "#linux-basics",
-            "desc": "Master the Command-Line Awareness core concepts and interview answers.",
+            "name": "Track B \u2014 ML / AI / Data Engineering",
+            "hash": "#c6",
+            "desc": "Master Track B \u2014 ML / AI / Data Engineering core concepts and defense.",
             "links": []
           }
         ]
@@ -2657,7 +2892,7 @@ export const roadmaps = [
   {
     "id": "sde-defense",
     "title": "SDE Resume Defense",
-    "icon": "🛡️",
+    "icon": "\ud83d\udee1\ufe0f",
     "accent": "#22d3ee",
     "url": "/AmanVerma-SDE-Interview-Defense.html",
     "phases": [
@@ -2668,7 +2903,7 @@ export const roadmaps = [
             "name": "The 3 critical claims to handle (SahYatri, Chessify, State)",
             "hash": "#alert",
             "desc": "Master the defense for: SahYatri edge inference vs API, move validation vs clock cheat vectors, and in-memory vs persistent state.",
-            "tip": "Say these yourself before the interviewer digs into the repo — transparency turns a potential red flag into proof of deep understanding.",
+            "tip": "Say these yourself before the interviewer digs into the repo \u2014 transparency turns a potential red flag into proof of deep understanding.",
             "isTrap": true,
             "links": []
           }
@@ -2689,7 +2924,7 @@ export const roadmaps = [
             "name": "JWT, RBAC across 5 tiers, multi-tenant security",
             "hash": "#exp2",
             "desc": "Explain company-scoped tenant isolation, 5 role tiers, middleware token verification, and transaction-safe quota enforcement.",
-            "tip": "Every query must include company_id in the filter — explain how middleware injected this context automatically.",
+            "tip": "Every query must include company_id in the filter \u2014 explain how middleware injected this context automatically.",
             "isTrap": false,
             "links": []
           },
@@ -2837,7 +3072,7 @@ export const roadmaps = [
   {
     "id": "ml-dataeng-defense",
     "title": "ML & Data Eng Resume Defense",
-    "icon": "🤖",
+    "icon": "\ud83e\udd16",
     "accent": "#a78bfa",
     "url": "/AmanVerma-ML-DataEng-Interview-Defense.html",
     "phases": [
@@ -2848,7 +3083,7 @@ export const roadmaps = [
             "name": "Four critical claims that need handling before interview",
             "hash": "#alert",
             "desc": "Master the defense for: SahYatri edge inference, Nutri-Vision custom ResNet-50 vs LogMeal API, RecrutAI 5 rubric dimensions, and validation benchmarks.",
-            "tip": "Never claim 100% human-validated benchmarks if not measured — articulate your automated evaluation metrics and planned test suites.",
+            "tip": "Never claim 100% human-validated benchmarks if not measured \u2014 articulate your automated evaluation metrics and planned test suites.",
             "isTrap": true,
             "links": []
           }

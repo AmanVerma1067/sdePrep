@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tech Fundamentals &amp; Cross-Technology Comparisons</title>
+<style>
+:root{
+  --bg:#0d1117; --card:#161b22; --border:#232a35; --text:#c9d1d9;
+  --dim:#8b949e; --head:#e6edf3;
+  --red:#f85149; --green:#3fb950; --cyan:#39c5cf; --purple:#a371f7; --amber:#d29922;
+  --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth; scroll-padding-top:104px}
+body{
+  margin:0; background:var(--bg); color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  font-size:15.5px; line-height:1.62; -webkit-text-size-adjust:100%;
+}
+.wrap{max-width:940px; margin:0 auto; padding:0 14px 72px}
+
+/* ---------- header ---------- */
+.hero{padding:34px 0 20px; border-bottom:1px solid var(--border)}
+.eyebrow{font-family:var(--mono); font-size:11px; letter-spacing:.16em; text-transform:uppercase; color:var(--cyan); margin-bottom:10px}
+h1{font-size:clamp(23px,5.4vw,34px); line-height:1.2; margin:0 0 10px; color:var(--head); font-weight:700; letter-spacing:-.5px}
+.sub{color:var(--dim); font-size:14.5px; margin:0}
+
+/* ---------- sticky nav ---------- */
+nav{
+  position:sticky; top:0; z-index:50; background:rgba(13,17,23,.94);
+  backdrop-filter:blur(10px); border-bottom:1px solid var(--border);
+  padding:9px 0; margin-bottom:26px;
+}
+.navin{max-width:940px; margin:0 auto; padding:0 14px; display:flex; gap:8px; flex-wrap:wrap; align-items:center}
+select{
+  flex:1 1 190px; min-width:0; background:var(--card); color:var(--text);
+  border:1px solid var(--border); border-radius:8px; padding:9px 10px;
+  font-size:13.5px; font-family:inherit; -webkit-appearance:none; appearance:none;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'><path d='M2 4l4 4 4-4' fill='none' stroke='%238b949e' stroke-width='1.6'/></svg>");
+  background-repeat:no-repeat; background-position:right 10px center;
+}
+select:focus,button:focus-visible{outline:2px solid var(--cyan); outline-offset:1px}
+.track-btns{display:flex; gap:6px}
+.tb{
+  background:var(--card); color:var(--dim); border:1px solid var(--border);
+  border-radius:8px; padding:9px 11px; font-size:12.5px; font-family:var(--mono);
+  cursor:pointer; white-space:nowrap;
+}
+.tb[aria-pressed="true"]{color:var(--head); border-color:var(--cyan); background:#132a2e}
+
+/* track filtering */
+body[data-track="sde"] .callout.ml{display:none}
+body[data-track="ml"]  .callout.sde{display:none}
+
+/* ---------- sections ---------- */
+section{margin-bottom:44px; scroll-margin-top:104px}
+h2{
+  font-size:19.5px; color:var(--head); margin:0 0 4px; font-weight:700; letter-spacing:-.2px;
+  display:flex; gap:10px; align-items:baseline;
+}
+h2 .num{font-family:var(--mono); font-size:12px; color:var(--cyan); flex:none}
+.lede{color:var(--dim); font-size:14px; margin:0 0 16px}
+h3{font-size:15.5px; color:var(--head); margin:24px 0 9px; font-weight:650}
+h4{font-size:14px; color:var(--head); margin:16px 0 6px; font-weight:650}
+p{margin:0 0 11px}
+ul{margin:0 0 11px; padding-left:19px}
+li{margin-bottom:5px}
+strong{color:var(--head); font-weight:650}
+code{font-family:var(--mono); font-size:.88em; background:#1c2230; padding:1.5px 5px; border-radius:4px; color:#9dd6e0; word-break:break-word}
+
+.card{background:var(--card); border:1px solid var(--border); border-radius:11px; padding:15px 16px; margin:14px 0}
+.card > :last-child{margin-bottom:0}
+
+/* ---------- tables ---------- */
+.tw{overflow-x:auto; -webkit-overflow-scrolling:touch; margin:13px 0; border:1px solid var(--border); border-radius:10px}
+table{border-collapse:collapse; width:100%; min-width:560px; font-size:13.3px}
+th,td{padding:9px 11px; text-align:left; border-bottom:1px solid var(--border); vertical-align:top}
+th{background:#1b2230; color:var(--head); font-weight:650; font-size:12.2px; letter-spacing:.02em; position:sticky; top:0}
+tr:last-child td{border-bottom:none}
+td:first-child{color:var(--head); font-weight:600; white-space:nowrap}
+.scrollhint{font-size:11.5px; color:var(--dim); font-family:var(--mono); margin:-6px 0 13px}
+
+/* ---------- callouts ---------- */
+.callout{border-left:3px solid; border-radius:0 9px 9px 0; padding:12px 14px; margin:13px 0; background:var(--card); font-size:14.2px}
+.callout > :last-child{margin-bottom:0}
+.callout .lbl{display:block; font-family:var(--mono); font-size:11px; letter-spacing:.09em; text-transform:uppercase; margin-bottom:6px; font-weight:600}
+.trap{border-color:var(--red)}      .trap .lbl{color:var(--red)}
+.insight{border-color:var(--green)} .insight .lbl{color:var(--green)}
+.sde{border-color:var(--cyan)}      .sde .lbl{color:var(--cyan)}
+.ml{border-color:var(--purple)}     .ml .lbl{color:var(--purple)}
+.verify{border-color:var(--amber)}  .verify .lbl{color:var(--amber)}
+
+/* ---------- details / code ---------- */
+details{background:#12171f; border:1px solid var(--border); border-radius:9px; margin:12px 0; overflow:hidden}
+summary{padding:10px 13px; cursor:pointer; font-family:var(--mono); font-size:12.6px; color:var(--cyan); list-style:none}
+summary::-webkit-details-marker{display:none}
+summary::before{content:"▸ "; color:var(--dim)}
+details[open] summary::before{content:"▾ "}
+details[open] summary{border-bottom:1px solid var(--border)}
+.body{padding:12px 13px}
+.body > :last-child{margin-bottom:0}
+pre{margin:0; overflow-x:auto; background:#0b0f16; border:1px solid var(--border); border-radius:7px; padding:11px 12px}
+pre code{background:none; padding:0; color:#c8d5e0; font-size:12.4px; line-height:1.55; white-space:pre; word-break:normal}
+
+/* ---------- misc ---------- */
+.qa{border:1px solid var(--border); border-radius:11px; margin:13px 0; overflow:hidden; background:var(--card)}
+.q{padding:13px 15px; font-weight:650; color:var(--head); font-size:14.6px; line-height:1.45; border-bottom:1px solid var(--border); background:#1a212c}
+.a{padding:13px 15px; font-size:14.2px}
+.a > :last-child{margin-bottom:0}
+.tag{display:inline-block; font-family:var(--mono); font-size:10.5px; padding:2px 7px; border-radius:20px; border:1px solid; margin-right:6px; vertical-align:middle}
+.t-sde{color:var(--cyan); border-color:var(--cyan)}
+.t-ml{color:var(--purple); border-color:var(--purple)}
+.pill{display:inline-block; font-family:var(--mono); font-size:11px; color:var(--dim); background:#1b2230; border:1px solid var(--border); border-radius:20px; padding:2px 9px; margin:0 5px 5px 0}
+.oneline{font-family:var(--mono); font-size:12.6px; color:var(--green); background:#101a13; border:1px solid #1c3b23; border-radius:7px; padding:9px 11px; margin:10px 0}
+footer{border-top:1px solid var(--border); padding-top:20px; color:var(--dim); font-size:13px}
+a{color:var(--cyan)}
+@media (max-width:560px){
+  body{font-size:15px}
+  .card,.callout,.a,.q{padding-left:13px; padding-right:13px}
+  .tb{padding:8px 9px; font-size:12px}
+}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+</style>
+</head>
+<body data-track="all">
+
+<nav>
+  <div class="navin">
+    <select id="jump" aria-label="Jump to section">
+      <option value="">Jump to section…</option>
+      <option value="#verify">Repo reality check (read first)</option>
+      <option value="#c1">1 · Languages &amp; runtimes</option>
+      <option value="#c2">2 · Backend &amp; concurrency</option>
+      <option value="#c3">3 · Databases &amp; data engineering</option>
+      <option value="#c4">4 · AI, ML, CV &amp; LLM systems</option>
+      <option value="#c5">5 · API protocols</option>
+      <option value="#c6">6 · Frontend &amp; rendering</option>
+      <option value="#c7">7 · DevOps, cloud &amp; Linux</option>
+      <option value="#c8">8 · "Why X over Y" Q&amp;A bank</option>
+    </select>
+    <div class="track-btns" role="group" aria-label="Filter by track">
+      <button class="tb" data-t="all" aria-pressed="true">All</button>
+      <button class="tb" data-t="sde" aria-pressed="false">SDE</button>
+      <button class="tb" data-t="ml" aria-pressed="false">ML/DE</button>
+    </div>
+  </div>
+</nav>
+
+<div class="wrap">
+
+<header class="hero">
+  <div class="eyebrow">Interview prep · Aman Verma</div>
+  <h1>Tech Fundamentals &amp; Cross-Technology Comparisons</h1>
+  <p class="sub">Every comparison is tied back to code you actually shipped. Simple language, straight answers, and the follow-up questions that usually come next.</p>
+</header>
+
+<!-- ============ VERIFY ============ -->
+<section id="verify">
+  <h2><span class="num">00</span> Repo reality check</h2>
+  <p class="lede">I opened all five repos. Most of your resume holds up. These four points don't quite match — fix your story before an interviewer finds them.</p>
+
+  <div class="callout verify">
+    <span class="lbl">⚠️ Fix 1 — Nutri-Vision image path</span>
+    <p>Your resume says the ResNet-50 and the NER model are both served behind one FastAPI API. The repos say something different: <code>Food_Logging</code> (the FastAPI service) sends <strong>images to the LogMeal third-party API</strong>, while your own ResNet-50 lives in a <strong>separate repo</strong> (<code>Model_Image</code>) behind a small <strong>Flask</strong> app.</p>
+    <p><strong>Safe wording:</strong> "The FastAPI service handles text end-to-end with my own NER model plus USDA lookup. For images I trained a ResNet-50 classifier separately and also wired in LogMeal as a managed alternative, so the image path has two options." That is honest and still impressive.</p>
+  </div>
+
+  <div class="callout verify">
+    <span class="lbl">⚠️ Fix 2 — RecrutAI has no database</span>
+    <p>Sessions, transcripts and proctoring data sit in an <strong>in-memory Map</strong> (<code>interview-memory-store.ts</code>); users live in a <code>.data/users.json</code> file hashed with <code>scryptSync</code>. If the server restarts, everything is gone.</p>
+    <p><strong>Say it first, before they ask:</strong> "State is in-memory by design for the demo. Persisting it means swapping the store interface for Postgres — sessions and transcripts as rows, keyed by session ID. I kept the store behind one module so that's a single-file change."</p>
+  </div>
+
+  <div class="callout verify">
+    <span class="lbl">⚠️ Fix 3 — small version details</span>
+    <ul>
+      <li><strong>Chessify runs Next.js 13</strong>, not 15. RecrutAI is the Next.js 15 / React 19 / TypeScript 5.6 one.</li>
+      <li>The RecrutAI README names <strong>four</strong> scoring dimensions (Technical Depth, System Design, Problem Solving, Communication) plus an integrity penalty. Your resume says "5 rubric dimensions." Either count integrity as the fifth and say so, or change the number.</li>
+    </ul>
+  </div>
+
+  <div class="callout verify">
+    <span class="lbl">⚠️ Fix 4 — StudySync "offline-first"</span>
+    <p>Caching is done with <code>shared_preferences</code> and the <code>http</code> package — a simple key-value cache, not a local database like Hive, Drift or SQLite. It genuinely renders the full week offline, so the claim is true, but don't imply a sync engine.</p>
+    <p><strong>Safe wording:</strong> "Read-only offline. The last good schedule is cached as JSON in shared_preferences and rendered instantly; the network fetch refreshes it in the background. There are no local writes, so there's no conflict resolution to do."</p>
+  </div>
+
+  <div class="card">
+    <h4 style="margin-top:0">What the repos confirm (use these freely)</h4>
+    <span class="pill">Chessify · Flask <code>POST /get_bot_move</code></span>
+    <span class="pill">Stockfish ELO 1800</span>
+    <span class="pill">Minimax depth 3 + α-β</span>
+    <span class="pill">Polyglot opening book</span>
+    <span class="pill">chess.js server-side validation</span>
+    <span class="pill">RecrutAI 6000 ms timeout</span>
+    <span class="pill">2 retries · 1s then 2s backoff</span>
+    <span class="pill">PROBE_DEEPER / SIMPLIFY / PIVOT_TOPIC / PROCEED</span>
+    <span class="pill">Turborepo + pnpm monorepo</span>
+    <span class="pill">SahYatri YOLOv5n @ 15 FPS on Pi 4</span>
+    <span class="pill">MPU6050 + GPS + I2C LCD</span>
+    <span class="pill">Node/Express + PostgreSQL</span>
+    <span class="pill">ResNet-50 + Git LFS <code>.pth</code></span>
+    <span class="pill">USDA FoodData Central</span>
+    <span class="pill">StudySync 3 tagged releases</span>
+  </div>
+</section>
+
+<!-- ============ C1 ============ -->
+<section id="c1">
+  <h2><span class="num">01</span> Languages &amp; runtimes</h2>
+  <p class="lede">You list six languages. Expect "why this one here?" for each.</p>
+
+  <div class="tw"><table>
+    <tr><th>&nbsp;</th><th>C++</th><th>Python</th><th>JavaScript</th><th>TypeScript</th><th>PHP</th><th>Bash</th></tr>
+    <tr><td>Typing</td><td>Static, strong</td><td>Dynamic, strong</td><td>Dynamic, weak</td><td>Static at compile time only</td><td>Dynamic, weak (optional hints)</td><td>Everything is a string</td></tr>
+    <tr><td>Memory</td><td>Manual / RAII / smart pointers</td><td>Refcount + cycle GC</td><td>Generational GC (V8)</td><td>Same as JS</td><td>Refcount + GC, freed per request</td><td>Not your problem</td></tr>
+    <tr><td>Concurrency</td><td>Real threads, shared memory</td><td>GIL — one thread runs bytecode at a time</td><td>One thread + libuv event loop</td><td>Same as JS</td><td>One process per request (FPM)</td><td>Pipes and background jobs</td></tr>
+    <tr><td>Speed</td><td>Fastest</td><td>Slow, but calls fast C/CUDA kernels</td><td>Fast for I/O</td><td>Same as JS at runtime</td><td>Moderate</td><td>Fine for glue</td></tr>
+    <tr><td>Where you used it</td><td>DSA / competitive</td><td>ML, spaCy, Flask, YOLO</td><td>Express, Socket.IO</td><td>RecrutAI, Chessify frontend</td><td>Packspec at DigiFlute</td><td>Pi scripts, deploy, cron</td></tr>
+  </table></div>
+  <p class="scrollhint">← swipe the table sideways</p>
+
+  <h3>The Python GIL, explained without jargon</h3>
+  <p>Python allows only one thread to run Python code at a time. Threads still help when you're <strong>waiting</strong> — on a network call, a disk read — because a waiting thread releases the lock. Threads do <strong>not</strong> help when you're <strong>computing</strong>, because only one gets the lock anyway.</p>
+
+  <div class="callout insight">
+    <span class="lbl">💡 Intuition</span>
+    <p>Python is a great <em>steering wheel</em> and a poor <em>engine</em>. PyTorch and YOLO are fast because the heavy loops run in C++/CUDA with the GIL released. Your slow part is rarely Python — it's the tensor math underneath. So "Python is slow" is only an argument against Python doing the math itself.</p>
+  </div>
+
+  <div class="callout trap">
+    <span class="lbl">🚨 Interview trap</span>
+    <p>"You used Python for a chess engine — isn't that slow?" Don't defend Python. Say: <strong>the engine isn't Python.</strong> Stockfish is a compiled C++ binary; Flask only shells out to it and returns the move. The pure-Python minimax at depth 3 exists as a fallback for when the binary won't start, and depth 3 is exactly the depth Python can search without a visible delay. GitHub even reports the Chessify repo as ~79% C++ — that's the Stockfish source sitting in it.</p>
+  </div>
+
+  <h3>TypeScript vs plain JavaScript</h3>
+  <p>TypeScript is JavaScript plus a type checker that runs before you ship. It compiles away — at runtime there is zero TypeScript left. You get: mistakes caught at build time, autocomplete that knows your data shapes, and safer refactors.</p>
+
+  <div class="callout sde">
+    <span class="lbl">🛡️ SDE track defense</span>
+    <p>RecrutAI is the argument. It's a Turborepo monorepo where <code>packages/shared</code> holds the TypeScript contracts. The web app, the AI service and the proctoring service all import the same types. Change the score object's shape in one place and every consumer that no longer matches fails to compile. In plain JS that same change ships silently and breaks the dashboard in production.</p>
+  </div>
+
+  <div class="callout trap">
+    <span class="lbl">🚨 Interview trap</span>
+    <p>"Does TypeScript make your API safe?" No. Types are erased at build. A malformed JSON body from a client is still <code>any</code> at runtime. That's exactly why RecrutAI uses <strong>Zod</strong> — Zod validates the actual payload at runtime and hands back a properly typed object. TypeScript guards your code; Zod guards your boundary.</p>
+  </div>
+
+  <h3>Bash — and when to stop using it</h3>
+  <p>Bash wins where the job <em>is</em> the OS: chain existing tools, move files, schedule things. Chessify's build command is literally <code>chmod +x</code> on the Stockfish binary.</p>
+  <details><summary>Bash you should be able to write on a whiteboard</summary><div class="body">
+<pre><code># biggest 5 files under a directory
+du -ah /var/log | sort -rh | head -5
+
+# is the Pi's inference process alive?
+ps aux | grep '[y]olo_detect.py'
+
+# log stdout, keep stderr on screen, run detached
+python detect.py &gt; run.log 2&gt;&amp;1 &amp;
+
+# retry a flaky upload 3 times
+for i in 1 2 3; do curl -sf -X POST "$API/telemetry" -d @batch.json &amp;&amp; break; sleep 5; done
+
+# every 5 min, push occupancy (crontab -e)
+*/5 * * * * /home/pi/venv/bin/python /home/pi/push.py &gt;&gt; /home/pi/cron.log 2&gt;&amp;1</code></pre>
+  </div></details>
+  <p><strong>Switch to Python when</strong> you need JSON parsing, retries with real error handling, or anything past ~50 lines. Bash has no types, no exceptions, and quoting bugs that bite silently.</p>
+</section>
+
+<!-- ============ C2 ============ -->
+<section id="c2">
+  <h2><span class="num">02</span> Backend frameworks &amp; server concurrency</h2>
+  <p class="lede">You've shipped on all four models. That's rare — use it.</p>
+
+  <div class="tw"><table>
+    <tr><th>&nbsp;</th><th>Node + Express</th><th>FastAPI (ASGI)</th><th>Flask (WSGI)</th><th>PHP-FPM</th></tr>
+    <tr><td>Model</td><td>1 thread, event loop</td><td>Async event loop</td><td>1 request per worker, blocking</td><td>1 process per request</td></tr>
+    <tr><td>Holds a connection open?</td><td>Yes — built for it</td><td>Yes (WebSocket/SSE)</td><td>Not really</td><td>No</td></tr>
+    <tr><td>Slow CPU task</td><td>Blocks <em>everyone</em></td><td>Blocks the loop unless offloaded</td><td>Blocks that one worker only</td><td>Blocks that one process only</td></tr>
+    <tr><td>Validation</td><td>Manual / Zod</td><td>Pydantic, automatic</td><td>Manual</td><td>Manual</td></tr>
+    <tr><td>Free docs</td><td>No</td><td>Yes — OpenAPI + Swagger UI</td><td>No</td><td>No</td></tr>
+    <tr><td>Your usage</td><td>Chessify PvP, SahYatri API, StudySync server</td><td>Nutri-Vision food-logging API</td><td>Chessify AI, ResNet-50 app</td><td>Packspec</td></tr>
+  </table></div>
+  <p class="scrollhint">← swipe the table sideways</p>
+
+  <div class="callout insight">
+    <span class="lbl">💡 Intuition</span>
+    <p>One question decides the framework: <strong>is this request waiting, or working?</strong> Waiting (network, DB, another API) → event loop, one thread serves thousands. Working (CPU: minimax, a CNN forward pass) → the event loop is the worst possible place for it, because one long computation freezes every other user.</p>
+  </div>
+
+  <h3>Why Chessify is split into two backends</h3>
+  <p>Two servers because the two jobs are opposites:</p>
+  <ul>
+    <li><strong>Chess-PvP (Node + Socket.IO)</strong> — hundreds of open sockets doing almost nothing. Pure waiting. Perfect for the event loop.</li>
+    <li><strong>Chess-AI (Flask + Stockfish)</strong> — one request that burns CPU for a second or more. Pure working.</li>
+  </ul>
+  <p>If both lived in Node, one bot move would freeze every live game on the server. Split, an AI slowdown only makes bot moves slower; multiplayer keeps flowing. They're also deployed separately on Render, so you can scale or restart one without touching the other.</p>
+
+  <details><summary>The boundary in code (Chessify)</summary><div class="body">
+<pre><code>// Node — validate first, then broadcast. Never trust the client.
+socket.on('move', ({ roomId, from, to, promotion }) =&gt; {
+  const game = rooms[roomId].chess;              // chess.js on the server
+  const legal = game.move({ from, to, promotion });
+  if (!legal) return;                            // tampered client, drop it
+  socket.to(roomId).emit('opponent-move', { from, to, promotion });
+  socket.emit('move-confirmed', { fen: game.fen() });
+});</code></pre>
+<pre><code># Flask — stateless. Board in, move out. No session to keep.
+@app.post("/get_bot_move")
+def get_bot_move():
+    fen = request.json["fen"]
+    move = opening_book(fen) or stockfish(fen) or minimax(fen, depth=3)
+    return {"move": move.uci(), "new_fen": push(fen, move)}</code></pre>
+  </div></details>
+
+  <div class="callout trap">
+    <span class="lbl">🚨 Interview trap</span>
+    <p>"Isn't two backends over-engineering for a student project?" Have the counterfactual ready: <em>"Single Node process, one user requests a bot move, Stockfish takes 800 ms of CPU — every other game's moves queue behind it. The split isn't about scale, it's about not letting a CPU task sit on an I/O event loop."</em> That's a real reason, not a resume flourish.</p>
+  </div>
+
+  <div class="callout ml">
+    <span class="lbl">📊 ML / AI / DE track defense</span>
+    <p><strong>FastAPI over Flask for Nutri-Vision.</strong> Three concrete wins: (1) the food-logging endpoint mostly <em>waits</em> on USDA and LogMeal — async lets one worker handle many concurrent requests instead of one; (2) Pydantic validates and coerces the request body, so a bad payload returns a clean 422 instead of exploding inside the NLP pipeline; (3) auto-generated OpenAPI docs meant the frontend team could integrate without me writing a spec.</p>
+    <p><strong>And know the catch:</strong> if you ever load the ResNet-50 into that same FastAPI process, a synchronous forward pass blocks the whole loop. Correct answer: run inference in a threadpool (<code>def</code> not <code>async def</code> lets FastAPI do this for you) or keep it as a separate service — which is what you actually did.</p>
+  </div>
+
+  <h3>Monolith vs microservices vs serverless</h3>
+  <div class="tw"><table>
+    <tr><th>Shape</th><th>Good</th><th>Bad</th><th>Your example</th></tr>
+    <tr><td>Monolith</td><td>One deploy, easy local dev, no network between parts</td><td>One bad module can take down everything</td><td>Packspec, StudySync-Server</td></tr>
+    <tr><td>Microservices</td><td>Scale and fail independently, different languages per job</td><td>Network calls, more deploys, harder debugging</td><td>Chessify, Nutri-Vision</td></tr>
+    <tr><td>Serverless</td><td>Zero cost idle, auto scale</td><td>Cold starts, size limits — bad for big models</td><td>Not used (and you can say why)</td></tr>
+  </table></div>
+
+  <div class="callout insight">
+    <span class="lbl">💡 Senior insight</span>
+    <p>Ask "why <em>not</em> serverless for the ML inference?" and answer it yourself: a ResNet-50 checkpoint plus PyTorch blows past typical Lambda package limits, and a cold start reloading weights costs seconds. Model serving wants a warm container. Serverless suits short, spiky, small-dependency work.</p>
+  </div>
+</section>
+
+<!-- ============ C3 ============ -->
+<section id="c3">
+  <h2><span class="num">03</span> Databases &amp; data engineering</h2>
+  <p class="lede">You have Postgres, MongoDB and MySQL on the resume and picked different ones on purpose. Make the reasoning explicit.</p>
+
+  <div class="tw"><table>
+    <tr><th>&nbsp;</th><th>PostgreSQL</th><th>MySQL</th><th>MongoDB Atlas</th></tr>
+    <tr><td>Shape</td><td>Rows + strict schema</td><td>Rows + strict schema</td><td>Flexible JSON documents</td></tr>
+    <tr><td>Joins</td><td>Excellent</td><td>Good</td><td>$lookup — works, but not the point</td></tr>
+    <tr><td>Transactions</td><td>ACID, mature</td><td>ACID (InnoDB)</td><td>ACID since 4.0; multi-doc costs more</td></tr>
+    <tr><td>Standout</td><td>Window funcs, CTEs, BRIN, JSONB, extensions</td><td>Simple, everywhere</td><td>Schema evolves without migrations</td></tr>
+    <tr><td>Best at</td><td>Analytics, time-series, anything you'll aggregate</td><td>Plain CRUD</td><td>Documents read as a whole unit</td></tr>
+    <tr><td>Your usage</td><td>SahYatri telemetry</td><td>Coursework</td><td>Packspec, StudySync</td></tr>
+  </table></div>
+  <p class="scrollhint">← swipe the table sideways</p>
+
+  <h3>Normalization, in one pass</h3>
+  <ul>
+    <li><strong>1NF</strong> — one value per cell, no lists stuffed in a column.</li>
+    <li><strong>2NF</strong> — no column depends on only part of a composite key.</li>
+    <li><strong>3NF</strong> — no column depends on another non-key column. (Don't store <code>city</code> next to <code>pincode</code> in the same row.)</li>
+  </ul>
+  <p><strong>Denormalize on purpose</strong> when reads dominate and the copied value rarely changes — a cached <code>bus_route_name</code> on a telemetry row saves a join on every dashboard query. The cost you accept: you must update it in two places.</p>
+
+  <h4>MongoDB: embed or reference?</h4>
+  <ul>
+    <li><strong>Embed</strong> when the child is always read with the parent, only ever belongs to that parent, and the array is bounded. Packspec's revision list per spec is a good embed.</li>
+    <li><strong>Reference</strong> when the child is shared, queried on its own, or grows without limit. Users belong to many workspaces → reference.</li>
+  </ul>
+
+  <div class="callout trap">
+    <span class="lbl">🚨 Interview trap</span>
+    <p>The <strong>16 MB document limit</strong>. Any unbounded embedded array — an append-only audit log, an infinite comment thread — will hit it eventually, and the failure arrives in production at the worst moment. Correct instinct: unbounded growth means a separate collection, or the bucket pattern (group N entries per document).</p>
+  </div>
+
+  <h3>OLTP vs OLAP / time-series</h3>
+  <div class="tw"><table>
+    <tr><th>&nbsp;</th><th>OLTP</th><th>OLAP / time-series</th></tr>
+    <tr><td>Query</td><td>"Give me this one row"</td><td>"Average occupancy per hour, last 30 days"</td></tr>
+    <tr><td>Writes</td><td>Insert, update, delete</td><td>Append only — data never changes</td></tr>
+    <tr><td>Layout</td><td>Row-oriented</td><td>Column-oriented / partitioned by time</td></tr>
+    <tr><td>Your case</td><td>Packspec spec edits</td><td>SahYatri GPS + occupancy stream</td></tr>
+  </table></div>
+
+  <div class="callout ml">
+    <span class="lbl">📊 ML / AI / DE track defense</span>
+    <p>SahYatri telemetry is the textbook time-series shape: <strong>append-only, always queried by time range, never updated.</strong> Three things follow, and interviewers want all three:</p>
+    <ul>
+      <li><strong>Partition by time</strong> — one table per day or month. Query last week and Postgres skips every other partition entirely. Dropping old data becomes <code>DROP TABLE</code>, which is instant, instead of a <code>DELETE</code> that leaves dead rows behind.</li>
+      <li><strong>Roll up</strong> — nobody needs per-second readings from six months ago. Downsample to hourly averages, keep raw data hot for a week.</li>
+      <li><strong>Batch the inserts</strong> — one row per second per bus is a lot of round-trips. Buffer on the Pi, send every N seconds, insert with <code>COPY</code> or a multi-row insert.</li>
+    </ul>
+  </div>
+
+  <h3>Indexes — pick the right one</h3>
+  <div class="tw"><table>
+    <tr><th>Type</th><th>Good for</th><th>Bad for</th><th>Use it on</th></tr>
+    <tr><td>B-Tree</td><td><code>=</code>, <code>&lt;</code>, <code>&gt;</code>, <code>BETWEEN</code>, <code>ORDER BY</code></td><td>Bigger; slows writes</td><td><code>(bus_id, recorded_at)</code></td></tr>
+    <tr><td>Hash</td><td>Exact match only</td><td>No ranges, no sorting</td><td>Rarely worth it in Postgres</td></tr>
+    <tr><td>BRIN</td><td>Huge tables already sorted on disk by that column</td><td>Randomly ordered data</td><td><code>recorded_at</code> on telemetry — tiny index, big win</td></tr>
+    <tr><td>Multikey (Mongo)</td><td>Searching inside arrays</td><td>Explodes on large arrays</td><td>Tags on a Packspec doc</td></tr>
+  </table></div>
+
+  <div class="callout insight">
+    <span class="lbl">💡 Senior insight</span>
+    <p>BRIN is the answer that separates you from everyone else in a data-engineering interview. A B-tree on 50 million timestamp rows can run into gigabytes. BRIN stores just min/max per block — kilobytes — and because telemetry arrives in time order, the data is already physically sorted, so it works. Rule: <strong>BRIN when insert order matches sort order.</strong></p>
+  </div>
+
+  <div class="callout trap">
+    <span class="lbl">🚨 Interview trap</span>
+    <p>"Index everything?" No. Every index has to be updated on every write. On an ingest-heavy table that's a direct throughput tax. Also, a composite index on <code>(bus_id, recorded_at)</code> can serve queries on <code>bus_id</code> alone, but not on <code>recorded_at</code> alone — leftmost prefix rule.</p>
+  </div>
+
+  <h3>ETL vs ELT</h3>
+  <p><strong>ETL</strong> = clean it, then store it. <strong>ELT</strong> = store the raw thing, clean it later inside the warehouse.</p>
+  <ul>
+    <li>SahYatri is <strong>ETL</strong>, and it has to be: YOLOv5n turns a frame into a single count <em>on the Pi</em>. The raw frame is discarded before anything leaves the vehicle. You could not do ELT here without breaking the privacy promise.</li>
+    <li>Nutri-Vision is <strong>ETL</strong> too — free text becomes structured items and macros before storage.</li>
+    <li>ELT would suit a warehouse where you don't yet know the questions and storage is cheap.</li>
+  </ul>
+</section>
+
+<!-- ============ C4 ============ -->
+<section id="c4">
+  <h2><span class="num">04</span> AI, ML, computer vision &amp; LLM systems</h2>
+  <p class="lede">Four different AI approaches across your projects, chosen for four different reasons.</p>
+
+  <div class="tw"><table>
+    <tr><th>Approach</th><th>How it decides</th><th>Needs training data?</th><th>Explainable?</th><th>Yours</th></tr>
+    <tr><td>Search heuristic</td><td>Enumerates futures, scores them</td><td>No</td><td>Fully</td><td>Minimax α-β, Chessify</td></tr>
+    <tr><td>Rules / regex</td><td>Patterns you wrote</td><td>No</td><td>Fully</td><td>Quantity parser, Nutri-Vision</td></tr>
+    <tr><td>Trained model</td><td>Learned weights</td><td>Yes, labelled</td><td>Partly</td><td>spaCy NER, ResNet-50, YOLOv5n</td></tr>
+    <tr><td>LLM prompting</td><td>Next-token prediction</td><td>No</td><td>Only via logs</td><td>Gemini 2.5 Flash, RecrutAI</td></tr>
+  </table></div>
+
+  <h3>Minimax + alpha-beta pruning</h3>
+  <p>Minimax assumes both sides play their best move: you maximise, the opponent minimises, down to a fixed depth. Alpha-beta skips branches that <em>can't</em> change the answer — once one reply already refutes a move, you don't need the other replies.</p>
+  <div class="oneline">Perfect ordering: α-β roughly halves the exponent — b<sup>d</sup> becomes ≈ b<sup>d/2</sup>. Same answer, far fewer nodes.</div>
+
+  <div class="callout trap">
+    <span class="lbl">🚨 Interview trap</span>
+    <p>"Does pruning change the move it picks?" <strong>No.</strong> Alpha-beta is provably identical to plain minimax at the same depth — it only skips work that couldn't affect the result. The one thing that <em>does</em> vary is speed, which depends heavily on move ordering: best-first ordering prunes hard, worst-first prunes nothing.</p>
+    <p>Follow-up: "why depth 3?" Because it's the point where a pure-Python search still answers fast enough to feel instant. Depth is a latency budget, not a quality target — and Stockfish handles the strong play anyway.</p>
+  </div>
+
+  <h3>The Nutri-Vision hybrid extractor</h3>
+  <p>Free text like "2 medium apples, 150g grilled chicken breast" has two very different problems in one sentence:</p>
+  <ul>
+    <li><strong>What food is it?</strong> Open-ended, endlessly varied, spelled a hundred ways → <strong>statistical NER</strong> generalises to words it never saw.</li>
+    <li><strong>How much?</strong> A tiny, closed, exact grammar: number + unit → <strong>rules</strong>. And rules are the right call, because "150g" must never become 15 g.</li>
+  </ul>
+
+  <div class="callout ml">
+    <span class="lbl">📊 ML / AI / DE track defense</span>
+    <p>State the principle: <strong>learn the fuzzy part, hard-code the exact part.</strong> An ML model that's 97% accurate on quantities is a <em>worse</em> product than regex that's 100% right on the formats you support and honestly fails on the rest — because a silently wrong calorie count is worse than a "couldn't parse that" message. Then the USDA lookup with confidence scoring is the third layer: it grounds the model's output against a real government database, so the number a user sees never comes from a model's imagination.</p>
+  </div>
+
+  <h3>Edge inference vs cloud GPU</h3>
+  <div class="tw"><table>
+    <tr><th>&nbsp;</th><th>Edge (Pi 4, YOLOv5n)</th><th>Cloud GPU</th></tr>
+    <tr><td>What leaves the device</td><td>A number</td><td>Video of passengers</td></tr>
+    <tr><td>Bandwidth</td><td>Bytes per reading</td><td>Continuous upload, per bus</td></tr>
+    <tr><td>Works offline</td><td>Yes</td><td>No</td></tr>
+    <tr><td>Accuracy</td><td>Lower — nano model</td><td>Higher — full-size model</td></tr>
+    <tr><td>Updating the model</td><td>Push to every device</td><td>One deploy</td></tr>
+  </table></div>
+
+  <div class="callout insight">
+    <span class="lbl">💡 Senior insight</span>
+    <p>Know why the "n" in YOLOv5n matters: it's the nano variant, ~1.9M parameters against YOLOv5x's ~87M. On an ARM CPU with no GPU that's the difference between 15 FPS and a slideshow. You bought speed with accuracy — and for <em>counting people</em>, "roughly how full is the bus" tolerates that trade completely. A model choice is a product decision.</p>
+  </div>
+
+  <h3>LLM strategies</h3>
+  <div class="tw"><table>
+    <tr><th>&nbsp;</th><th>Prompt chaining</th><th>RAG</th><th>Multi-agent</th><th>Fine-tuning</th></tr>
+    <tr><td>Changes weights?</td><td>No</td><td>No</td><td>No</td><td>Yes</td></tr>
+    <tr><td>Fixes</td><td>Complex multi-step flows</td><td>Model doesn't know your data</td><td>Task needs different roles</td><td>Style/format the model won't hold</td></tr>
+    <tr><td>Cost</td><td>Per call</td><td>Per call + vector store</td><td>Highest — many calls</td><td>GPU up front, cheap after</td></tr>
+    <tr><td>Update knowledge</td><td>Edit the prompt</td><td>Re-index a document</td><td>Edit agent prompts</td><td>Retrain</td></tr>
+  </table></div>
+
+  <div class="callout trap">
+    <span class="lbl">🚨 Interview trap</span>
+    <p>"Fine-tune it to stop hallucinating." Fine-tuning teaches <strong>behaviour and format</strong>, not <strong>facts</strong>. Training on your documents makes the model sound like them — it does not make it recall them reliably, and it will still invent confidently. Facts belong in the context window: that's RAG. Say this and you're ahead of most candidates.</p>
+  </div>
+
+  <h4>Fighting hallucination in practice</h4>
+  <ul>
+    <li><strong>Ground it</strong> — Nutri-Vision never lets the model produce a calorie number; USDA does.</li>
+    <li><strong>Constrain the output</strong> — RecrutAI's branch decision is one of four tokens (<code>PROBE_DEEPER</code>, <code>SIMPLIFY</code>, <code>PIVOT_TOPIC</code>, <code>PROCEED</code>). Anything else is invalid and gets rejected, so a hallucination can't become a state transition.</li>
+    <li><strong>Validate the shape</strong> — Zod parses every response; a malformed one triggers the fallback rather than propagating.</li>
+    <li><strong>Show your work</strong> — the recruiter audit dashboard exposes the branching log, so a human can see why the model went where it went.</li>
+  </ul>
+</section>
+
+<!-- ============ C5 ============ -->
+<section id="c5">
+  <h2><span class="num">05</span> API protocols</h2>
+
+  <div class="tw"><table>
+    <tr><th>&nbsp;</th><th>REST</th><th>WebSocket / Socket.IO</th><th>SSE</th><th>GraphQL</th><th>gRPC</th></tr>
+    <tr><td>Direction</td><td>Client asks, server answers</td><td>Both ways, anytime</td><td>Server → client only</td><td>Client asks</td><td>Both ways</td></tr>
+    <tr><td>Connection</td><td>Short-lived</td><td>Stays open</td><td>Stays open</td><td>Short-lived</td><td>Stays open (HTTP/2)</td></tr>
+    <tr><td>Format</td><td>JSON, human readable</td><td>Usually JSON</td><td>Plain text</td><td>JSON</td><td>Protobuf, binary</td></tr>
+    <tr><td>HTTP caching</td><td>Yes — free</td><td>No</td><td>No</td><td>Hard (POST to one URL)</td><td>No</td></tr>
+    <tr><td>Browser support</td><td>Native</td><td>Native</td><td>Native</td><td>Native</td><td>Needs a proxy</td></tr>
+    <tr><td>Yours</td><td>All backends</td><td>Chessify PvP</td><td>—</td><td>—</td><td>—</td></tr>
+  </table></div>
+  <p class="scrollhint">← swipe the table sideways</p>
+
+  <div class="callout insight">
+    <span class="lbl">💡 Intuition</span>
+    <p>Ask who starts the conversation. <strong>Client always starts</strong> → REST. <strong>Server needs to push</strong> → SSE if it's one-way (live scores, progress), WebSocket if it's genuinely two-way (chess moves, chat). Chess needs WebSocket: both players send moves, both receive them, and the server also pushes join/disconnect/spectator events unprompted.</p>
+  </div>
+
+  <div class="callout sde">
+    <span class="lbl">🛡️ SDE track defense</span>
+    <p>Know what Socket.IO adds on top of raw WebSocket, because they'll ask: automatic reconnection, fallback to HTTP long-polling when a proxy blocks WS, <strong>rooms</strong> (which is exactly how one game = one room with two players plus N spectators), and named events instead of parsing a raw message string. On free hosting behind unknown proxies, the polling fallback alone justifies the dependency.</p>
+  </div>
+
+  <div class="callout trap">
+    <span class="lbl">🚨 Interview trap</span>
+    <p>"Why not GraphQL?" Weak answer: "REST is simpler." Strong answer: <strong>your payloads are fixed and your reads are cacheable.</strong> A timetable, a bus's load history, a spec document — every client wants the same shape every time, so there's no over-fetching to solve. Meanwhile REST gets HTTP caching and CDN edge caching for free, and StudySync's whole offline story is "cache the last good response." GraphQL POSTs everything to a single URL, so that free caching disappears and you rebuild it yourself. GraphQL earns its cost when many different clients need many different slices of a deeply nested graph. That isn't your situation — and saying so is a stronger signal than adopting it.</p>
+  </div>
+
+  <h4>REST hygiene they check for</h4>
+  <ul>
+    <li><strong>Verbs</strong> — GET reads, POST creates, PUT replaces, PATCH edits, DELETE removes.</li>
+    <li><strong>Codes</strong> — 200 ok, 201 created, 400 your fault, 401 not logged in, 403 logged in but not allowed, 404 missing, 409 conflict, 422 failed validation, 500 my fault.</li>
+    <li><strong>Idempotent</strong> — GET, PUT, DELETE give the same result if repeated; POST doesn't. This is <em>why</em> retry logic can safely retry a GET.</li>
+    <li><strong>Stateless</strong> — the token travels with each request; any server instance can serve it.</li>
+  </ul>
+
+  <div class="callout trap">
+    <span class="lbl">🚨 Interview trap</span>
+    <p>"You use JWT — how do you log someone out?" You can't, not really: a signed JWT is valid until it expires. Real answers: short expiry plus refresh tokens, or a server-side denylist of revoked token IDs — which quietly reintroduces the state JWT was supposed to remove. Be honest that it's a trade-off. On Packspec with 5 role tiers, also mention that permissions live in the token, so a demotion doesn't take effect until the token refreshes.</p>
+  </div>
+</section>
+
+<!-- ============ C6 ============ -->
+<section id="c6">
+  <h2><span class="num">06</span> Frontend &amp; rendering</h2>
+
+  <div class="tw"><table>
+    <tr><th>&nbsp;</th><th>CSR</th><th>SSR</th><th>SSG</th><th>ISR</th></tr>
+    <tr><td>HTML built</td><td>In the browser</td><td>Per request</td><td>At build time</td><td>At build, refreshed on a timer</td></tr>
+    <tr><td>First paint</td><td>Slowest</td><td>Fast</td><td>Fastest</td><td>Fastest</td></tr>
+    <tr><td>SEO</td><td>Weak</td><td>Strong</td><td>Strong</td><td>Strong</td></tr>
+    <tr><td>Fits</td><td>Dashboards behind login</td><td>Per-user pages</td><td>Docs, marketing</td><td>Content that changes hourly</td></tr>
+    <tr><td>Yours</td><td>Chessify board, StudySync web</td><td>RecrutAI shell</td><td>Landing pages</td><td>—</td></tr>
+  </table></div>
+
+  <div class="callout insight">
+    <span class="lbl">💡 Intuition</span>
+    <p>These aren't app-wide settings any more — they're per-route. RecrutAI can server-render the dashboard shell for a fast first paint while the Monaco editor and the live board stay client-side, because those need browser APIs and constant interaction. "It depends on the route" is the answer that shows you've actually shipped App Router.</p>
+  </div>
+
+  <h4>React Server Components, plainly</h4>
+  <p>A Server Component runs on the server only and ships <strong>no JavaScript</strong> to the browser. It can read a database or a file directly, with no API layer in between. Anything interactive — state, effects, event handlers — needs <code>"use client"</code>. Net effect: less JS downloaded, faster load. Cost: a mental model where you must always know which side a component runs on.</p>
+
+  <div class="callout trap">
+    <span class="lbl">🚨 Interview trap</span>
+    <p>"Should everything be a Server Component?" No. A chessboard with drag-and-drop, a live socket connection, a code editor — all inherently client. The pattern is: server components as the outer shell fetching data, client components as interactive leaves. And note Chessify runs Next.js <strong>13</strong> App Router while RecrutAI runs <strong>15</strong> — if asked, name the right one.</p>
+  </div>
+
+  <h3>Flutter vs React Native vs web</h3>
+  <div class="tw"><table>
+    <tr><th>&nbsp;</th><th>Flutter</th><th>React Native</th><th>Web app</th></tr>
+    <tr><td>Draws UI</td><td>Its own engine (Skia/Impeller) paints every pixel</td><td>Maps to real native widgets</td><td>Browser DOM</td></tr>
+    <tr><td>Language</td><td>Dart, compiled to native ARM</td><td>JavaScript over a bridge/JSI</td><td>JS/TS</td></tr>
+    <tr><td>Looks identical everywhere?</td><td>Yes — by design</td><td>No — follows each OS</td><td>Yes</td></tr>
+    <tr><td>Install needed</td><td>Yes (web build too)</td><td>Yes</td><td>No</td></tr>
+  </table></div>
+
+  <div class="callout sde">
+    <span class="lbl">🛡️ SDE track defense</span>
+    <p>Flutter for StudySync, with a reason specific to the product: a timetable is a <strong>dense custom grid</strong>. Flutter paints it directly, so it's pixel-identical on Android, iOS and web from one codebase — and StudySync genuinely ships to all three from one repo (<code>android/ ios/ web/ lib/</code>), across three tagged releases. React Native would map that grid onto different native primitives per platform, meaning layout divergence to chase on a UI whose whole value is being consistent and glanceable. Flutter's usual downside — larger binary — doesn't matter for a college utility app installed once.</p>
+  </div>
+</section>
+
+<!-- ============ C7 ============ -->
+<section id="c7">
+  <h2><span class="num">07</span> DevOps, cloud &amp; Linux</h2>
+
+  <h3>VM vs container</h3>
+  <p>A VM virtualises <strong>hardware</strong> and boots a whole guest OS — heavy, slow to start, strongly isolated. A container is just a normal Linux process that's been given a restricted view of the system — starts in milliseconds, shares the host kernel, weaker isolation.</p>
+  <ul>
+    <li><strong>Namespaces</strong> = what the process can <em>see</em> (its own PIDs, network, filesystem).</li>
+    <li><strong>cgroups</strong> = what it can <em>use</em> (CPU, memory ceilings).</li>
+    <li><strong>Layers</strong> = each Dockerfile line is a cached layer. Change your code and only the last layers rebuild.</li>
+  </ul>
+
+  <div class="callout insight">
+    <span class="lbl">💡 Senior insight</span>
+    <p>Layer order is the whole optimisation. Copy <code>requirements.txt</code> and install <em>before</em> copying your source — then a code change doesn't reinstall PyTorch. Get this wrong and every build downloads the world.</p>
+  </div>
+
+  <details><summary>Dockerfile for the Nutri-Vision FastAPI service</summary><div class="body">
+<pre><code>FROM python:3.11-slim
+WORKDIR /app
+
+# deps first — this layer is cached until requirements.txt changes
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# source last — changes here rebuild only from this point
+COPY . .
+EXPOSE 8000
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]</code></pre>
+  </div></details>
+
+  <div class="callout trap">
+    <span class="lbl">🚨 Interview trap</span>
+    <p>"Is a container a security boundary?" Weaker than a VM — containers share the host kernel, so a kernel exploit escapes. For untrusted code (say, running a candidate's submitted solution) you want a VM, gVisor, or Firecracker. Worth flagging for RecrutAI's Monaco editor: it's an editor, not a sandboxed executor, and knowing that distinction is the point.</p>
+  </div>
+
+  <h3>Git LFS</h3>
+  <p>Git stores a full copy of every version of every file forever. A 100 MB <code>.pth</code> checkpoint committed ten times is a gigabyte of history that every clone downloads. LFS replaces the file with a small text pointer and stores the real bytes separately — Model_Image uses this, and <code>.gitattributes</code> is where the tracking rules live.</p>
+
+  <div class="callout ml">
+    <span class="lbl">📊 ML / AI / DE track defense</span>
+    <p>The nuance interviewers want: <strong>LFS gives you versioning tied to code; object storage gives you scale.</strong> LFS means checking out the commit that produced a result also checks out the exact weights that produced it — reproducibility, for free, with no manual bookkeeping. But LFS has bandwidth quotas and no model metadata, so past a certain size or team you graduate to S3 or a model registry (MLflow, Hugging Face Hub), keeping only a version pointer in Git. For a student project with a handful of checkpoints, LFS is exactly the right rung on the ladder — and saying <em>when</em> you'd outgrow it is the senior half of the answer.</p>
+  </div>
+
+  <h3>AWS vs Azure — the mapping</h3>
+  <div class="tw"><table>
+    <tr><th>Need</th><th>AWS</th><th>Azure</th></tr>
+    <tr><td>VM</td><td>EC2</td><td>Virtual Machines</td></tr>
+    <tr><td>Serverless function</td><td>Lambda</td><td>Functions</td></tr>
+    <tr><td>File / object storage</td><td>S3</td><td>Blob Storage</td></tr>
+    <tr><td>Managed SQL</td><td>RDS</td><td>Azure SQL / DB for PostgreSQL</td></tr>
+    <tr><td>Containers</td><td>ECS / EKS</td><td>Container Apps / AKS</td></tr>
+    <tr><td>Secrets</td><td>Secrets Manager</td><td>Key Vault</td></tr>
+  </table></div>
+  <p>Don't oversell cloud depth. Your deployments are Render (Flask + Node) and Vercel (Next.js, Flutter web) — say that plainly; PaaS is a legitimate choice and pretending otherwise is a fast way to get caught.</p>
+
+  <h3>Testing &amp; CI</h3>
+  <ul>
+    <li><strong>Unit (PHPUnit)</strong> — one function, no database, milliseconds. Catches logic bugs.</li>
+    <li><strong>Integration (Postman/Newman)</strong> — real HTTP against a running app. Catches wiring bugs: wrong route, broken auth, bad serialisation.</li>
+    <li><strong>In CI</strong> — Newman runs Postman collections headlessly, so the same collection you click through locally becomes a merge gate.</li>
+  </ul>
+
+  <div class="callout sde">
+    <span class="lbl">🛡️ SDE track defense</span>
+    <p>Packspec's multi-tenant isolation is exactly the thing unit tests miss and integration tests catch. The question "can tenant A read tenant B's spec?" can only be answered by a real request with A's real token hitting B's real ID and getting a 403. That's a Postman test, and it's the one that matters most — data leakage between tenants is the failure mode with actual consequences.</p>
+  </div>
+
+  <h3>Linux you'll be asked to type</h3>
+  <div class="tw"><table>
+    <tr><th>Task</th><th>Command</th></tr>
+    <tr><td>Live process view</td><td><code>htop</code> · <code>top</code></td></tr>
+    <tr><td>Find a process</td><td><code>ps aux | grep detect.py</code></td></tr>
+    <tr><td>Kill it</td><td><code>kill -15 PID</code> (polite) → <code>kill -9</code> (forced)</td></tr>
+    <tr><td>Disk / memory</td><td><code>df -h</code> · <code>free -h</code></td></tr>
+    <tr><td>What's on the port</td><td><code>lsof -i :8000</code></td></tr>
+    <tr><td>Follow a log</td><td><code>tail -f app.log</code></td></tr>
+    <tr><td>Permissions</td><td><code>chmod 755 file</code> — owner rwx, others r-x</td></tr>
+  </table></div>
+  <p><code>0 &gt;</code> stdin, <code>1 &gt;</code> stdout, <code>2 &gt;</code> stderr. So <code>2&gt;&amp;1</code> means "send errors wherever output is going," and <code>&gt; file 2&gt;&amp;1</code> captures both. Pipes connect one program's stdout to the next one's stdin.</p>
+</section>
+
+<!-- ============ C8 ============ -->
+<section id="c8">
+  <h2><span class="num">08</span> "Why X over Y" — Q&amp;A bank</h2>
+  <p class="lede">Say the one-line reason first, then one supporting detail, then the trade-off you accepted. Interviewers trust candidates who name the downside.</p>
+
+  <h3><span class="tag t-sde">SDE</span> Track A</h3>
+
+  <div class="qa">
+    <div class="q">Why Node + Socket.IO for real-time multiplayer instead of a threaded Python or Java server?</div>
+    <div class="a">
+      <p><strong>Because chess connections are idle almost all the time.</strong> A game sends a few small messages per minute and waits in between. A thread-per-connection server pays memory for every idle player; the event loop costs one thread total and only wakes when a message arrives.</p>
+      <p>Socket.IO added rooms — one room per game holds two players plus any number of spectators — and long-polling fallback for proxies that block WebSocket. Server-side chess.js validation means a tampered client can't push an illegal move.</p>
+      <p><strong>Trade-off:</strong> one CPU-heavy task would freeze every game. That's precisely why the Stockfish engine lives in a separate Flask service instead of in this process.</p>
+    </div>
+  </div>
+
+  <div class="qa">
+    <div class="q">Why multi-tenant ACID transactions in MongoDB Atlas rather than PostgreSQL for Packspec?</div>
+    <div class="a">
+      <p><strong>Because a spec is a document, and every customer's spec has different fields.</strong> Specs vary by tenant, so a relational schema means either a wide sparse table or a migration per customer. Mongo stores the whole nested spec as one document, and reading it is a single lookup with no joins.</p>
+      <p>Mongo has supported multi-document ACID transactions since 4.0, so the operations that must be atomic — creating a revision while flipping workflow state, cascading soft-deletes — are still safe.</p>
+      <p><strong>Trade-off:</strong> cross-collection reporting is harder than SQL joins, and multi-document transactions cost more than single-document writes. I kept things that change together inside one document so most writes stay atomic for free.</p>
+      <p><em>Honest add-on if pushed:</em> "Postgres with JSONB would also have worked — strict relational columns for tenancy and roles, JSONB for the flexible spec body. Mongo Atlas was already the team's stack, and that's a legitimate reason too."</p>
+    </div>
+  </div>
+
+  <div class="qa">
+    <div class="q">Why Flutter over React Native for StudySync?</div>
+    <div class="a">
+      <p><strong>Because a timetable is a dense custom grid, and Flutter paints it identically everywhere.</strong> Flutter draws every pixel with its own engine, so Android, iOS and web render the same from one codebase — which the repo shows in practice: <code>android/</code>, <code>ios/</code>, <code>web/</code> from one <code>lib/</code>, shipped across three tagged releases.</p>
+      <p>React Native maps components onto each platform's native widgets, so a custom grid needs per-platform tuning — divergence on the exact UI whose value is consistency.</p>
+      <p><strong>Trade-off:</strong> bigger binary and Dart instead of the JS the team already knew. For an app installed once by students, size doesn't matter and one codebase does.</p>
+    </div>
+  </div>
+
+  <div class="qa">
+    <div class="q">Why REST with HTTP caching instead of GraphQL?</div>
+    <div class="a">
+      <p><strong>Because my payloads are fixed and my reads are cacheable, so GraphQL solves a problem I don't have.</strong> Every client wants the whole timetable, the whole spec, the whole load history — there's no over-fetching to eliminate.</p>
+      <p>Meanwhile REST gives HTTP and CDN caching for free, and StudySync's offline mode <em>is</em> a cached response. GraphQL POSTs to one endpoint, which throws that away and makes you rebuild caching yourself.</p>
+      <p><strong>When I'd switch:</strong> many different clients needing many different slices of a deeply nested graph — a mobile app that wants three fields where the web wants thirty.</p>
+    </div>
+  </div>
+
+  <div class="qa">
+    <div class="q">Why Next.js App Router instead of a pure client-side SPA?</div>
+    <div class="a">
+      <p><strong>Because it lets me choose the rendering mode per route instead of once for the whole app.</strong> A recruiter dashboard should server-render for a fast first paint; a live coding editor must be client-side. An SPA forces one answer for both.</p>
+      <p>Server Components also ship zero JavaScript, so data-fetching parts add nothing to the bundle, and colocated route handlers meant no separate API server for RecrutAI.</p>
+      <p><strong>Trade-off:</strong> you must always know which side a component runs on — a real source of bugs. And an SPA is still right for something like the Chessify board, where the entire app is interactive.</p>
+    </div>
+  </div>
+
+  <h3><span class="tag t-ml">ML/DE</span> Track B</h3>
+
+  <div class="qa">
+    <div class="q">Why a hybrid spaCy NER + rule-based parser instead of an end-to-end LLM or pure regex?</div>
+    <div class="a">
+      <p><strong>Because the sentence contains two problems with opposite requirements.</strong> Food names are open-vocabulary and endlessly varied — that needs a model that generalises. Quantities are a tiny exact grammar — that needs rules that are never approximately right. "150g" becoming 15 g is a wrong calorie count shown to a user.</p>
+      <p><strong>Not pure regex:</strong> you'd need a dictionary of every food and every spelling, and it fails silently on anything new.<br>
+      <strong>Not an end-to-end LLM:</strong> network latency and cost on every meal log, non-deterministic output, and it will happily invent a plausible calorie number. My pipeline is local, fast, and grounded — the numbers come from USDA FoodData Central with confidence scoring, never from a model.</p>
+      <p><strong>Trade-off:</strong> the rule parser only handles formats I anticipated. It fails loudly rather than guessing, which for a nutrition app is the correct failure mode.</p>
+    </div>
+  </div>
+
+  <div class="qa">
+    <div class="q">Why prompt-chaining with Gemini 2.5 Flash instead of fine-tuning a smaller local model?</div>
+    <div class="a">
+      <p><strong>Because the hard part was control flow, not the model's writing ability.</strong> The system decides at each turn whether to probe deeper, simplify, pivot, or proceed. That's a state machine I wrote — fine-tuning doesn't give you a state machine.</p>
+      <p>Fine-tuning also needs labelled interview transcripts I didn't have, a GPU budget, and a retrain every time a rubric changes. A prompt change ships in seconds.</p>
+      <p><strong>How I made a hosted API safe to depend on:</strong> 6-second timeout, 2 retries with exponential backoff (1s then 2s), and if it still fails the system degrades to a local regex resume parser and pre-written interview scripts. The user never sees a hang. The branch decision is constrained to four valid tokens, so a hallucination can't corrupt state.</p>
+      <p><strong>Trade-off:</strong> per-call cost and vendor dependency. Fine-tuning wins once volume is high and the task is narrow and stable — none of which was true here.</p>
+    </div>
+  </div>
+
+  <div class="qa">
+    <div class="q">Why YOLOv5n on a Raspberry Pi instead of streaming video to a cloud GPU?</div>
+    <div class="a">
+      <p><strong>Because sending passenger video off the bus is a privacy problem I'd rather not create.</strong> On-device, the frame becomes a count and is discarded — the only thing that leaves is a number. That's privacy by architecture, not by policy.</p>
+      <p>It's also the only thing that works: buses move through patchy connectivity, and continuous video upload per vehicle is a bandwidth bill that doesn't scale. Edge inference keeps counting through a dead zone and syncs later.</p>
+      <p><strong>Trade-off:</strong> YOLOv5n is the nano model — ~1.9M parameters against YOLOv5x's ~87M — so accuracy is lower, and updating the model means pushing to every device. For "how full is this bus," approximate is fine. Adaptive thresholding handles the lighting swings between a tunnel and noon sunlight.</p>
+    </div>
+  </div>
+
+  <div class="qa">
+    <div class="q">Why PostgreSQL for time-series telemetry over a NoSQL document store?</div>
+    <div class="a">
+      <p><strong>Because every question I ask this data is an aggregate over a time range, and that's what SQL is for.</strong> "Average occupancy per hour on route 12 last week" is one query with a window function. Telemetry is also perfectly uniform — bus ID, timestamp, count, lat, lng — so schema flexibility buys nothing while schema enforcement stops a malformed reading from entering the table.</p>
+      <p>Postgres then gives me the time-series toolkit: partition by time so a week's query skips every other partition, BRIN indexes on the timestamp (tiny, because inserts arrive in time order so the table is already physically sorted), and <code>DROP TABLE</code> instead of a slow <code>DELETE</code> for retention.</p>
+      <p><strong>Trade-off:</strong> writes are heavier than an append-optimised store, so I batch inserts rather than writing per reading. At much larger scale I'd move to TimescaleDB or InfluxDB — same query model, purpose-built storage.</p>
+    </div>
+  </div>
+
+  <div class="qa">
+    <div class="q">Why Git LFS for model checkpoints instead of plain Git or object storage?</div>
+    <div class="a">
+      <p><strong>Plain Git is out immediately:</strong> Git keeps every version of every file forever, so a 100 MB checkpoint committed ten times is a gigabyte every clone must download. LFS swaps the file for a pointer and fetches the real bytes on demand.</p>
+      <p><strong>LFS over object storage</strong> because it ties weights to code. Checking out the commit that produced a result also checks out the exact weights that produced it — reproducibility with no manual bookkeeping, versus an S3 bucket where matching <code>model_v3_final_FINAL.pth</code> to a commit is a thing you do by hand and eventually get wrong.</p>
+      <p><strong>When I'd outgrow it:</strong> LFS has bandwidth quotas and stores no metadata. Past a few gigabytes or a real team, S3 or a model registry (MLflow, Hugging Face Hub) with just a version pointer in Git.</p>
+    </div>
+  </div>
+
+  <div class="qa">
+    <div class="q">When would you choose a multi-agent setup (CrewAI) over single-pass RAG?</div>
+    <div class="a">
+      <p><strong>Single-pass RAG when one retrieval answers the question.</strong> "What's the notice period in this contract?" — retrieve, answer, done. Adding agents here just multiplies cost and latency for the same result.</p>
+      <p><strong>Multi-agent when the task genuinely has stages that need different behaviour</strong> — a researcher that gathers across sections, a critic that checks claims against sources, a writer that assembles. Agents help when the output of step one determines what step two should even look for. Cross-document comparison and multi-hop questions are the real cases.</p>
+      <p><strong>Honest caveat:</strong> agents fail in ways single calls don't — loops, drift, compounding errors, and cost that's hard to predict. My default is single-pass RAG, and I add an agent only when I can name the step that single-pass cannot do.</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>All architecture claims here were checked against the live repositories on 21 Aug 2026. Where the resume and the code disagreed, the code won — see the reality check at the top.</p>
+</footer>
+
+</div>
+
+<script>
+document.getElementById('jump').addEventListener('change', function(e){
+  if(e.target.value){ location.hash = e.target.value; e.target.selectedIndex = 0; }
+});
+document.querySelectorAll('.tb').forEach(function(btn){
+  btn.addEventListener('click', function(){
+    document.querySelectorAll('.tb').forEach(function(b){ b.setAttribute('aria-pressed','false'); });
+    btn.setAttribute('aria-pressed','true');
+    document.body.dataset.track = btn.dataset.t;
+  });
+});
+</script>
+</body>
+</html>

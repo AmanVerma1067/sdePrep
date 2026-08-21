@@ -1,0 +1,1054 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5">
+<title>AI/ML, NLP, CV &amp; Agentic LLM Systems — Interview Notes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0e17;
+    --surface: #111827;
+    --surface2: #1a2234;
+    --border: #1e293b;
+    --border-glow: #334155;
+    --text: #cbd5e1;
+    --text-dim: #64748b;
+    --white: #f1f5f9;
+    --accent: #38bdf8;
+    --accent2: #818cf8;
+    --green: #34d399;
+    --orange: #fbbf24;
+    --red: #fb7185;
+    --purple: #a78bfa;
+    --cyan: #22d3ee;
+    --radius: 14px;
+    --maxw: 760px;
+    --font: 'Inter', system-ui, -apple-system, sans-serif;
+    --mono: 'JetBrains Mono', 'SF Mono', Consolas, monospace;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font);
+    font-size: 14.5px;
+    line-height: 1.65;
+    overflow-x: hidden;
+  }
+
+  .scroll-progress {
+    position: fixed; top: 0; left: 0; z-index: 200;
+    height: 3px; width: 0%;
+    background: linear-gradient(90deg, var(--accent), var(--accent2), var(--purple));
+    transition: width 80ms linear;
+    border-radius: 0 2px 2px 0;
+  }
+
+  .topbar {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(10, 14, 23, 0.82);
+    backdrop-filter: blur(16px) saturate(1.6);
+    -webkit-backdrop-filter: blur(16px) saturate(1.6);
+    border-bottom: 1px solid var(--border);
+    padding: 10px 16px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .topbar .logo {
+    display: flex; align-items: center; gap: 8px;
+    font-weight: 800; font-size: 13.5px; color: var(--white);
+    white-space: nowrap; letter-spacing: -0.02em;
+  }
+  .topbar .dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--purple);
+    box-shadow: 0 0 10px var(--purple), 0 0 20px rgba(167, 139, 250, 0.3);
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.6; transform: scale(0.85); }
+  }
+  .topbar select {
+    flex: 1; max-width: 380px;
+    background: var(--surface);
+    color: var(--accent);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 8px 12px;
+    font-family: var(--font);
+    font-size: 12.5px;
+    font-weight: 500;
+    outline: none;
+    cursor: pointer;
+    transition: border-color .2s;
+  }
+  .topbar select:focus { border-color: var(--accent); }
+
+  main { max-width: var(--maxw); margin: 0 auto; padding: 24px 16px 80px; }
+
+  .hero {
+    margin-bottom: 28px;
+    padding: 24px 20px;
+    background: linear-gradient(135deg, rgba(167,139,250,0.07), rgba(56,189,248,0.05), rgba(52,211,153,0.04));
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; top: -40%; right: -20%;
+    width: 260px; height: 260px;
+    background: radial-gradient(circle, rgba(167,139,250,0.09) 0%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+  }
+  .hero h1 {
+    font-size: 22px; font-weight: 800; color: var(--white);
+    letter-spacing: -0.03em; line-height: 1.3; margin-bottom: 6px;
+  }
+  .hero .sub { color: var(--text-dim); font-size: 12.5px; line-height: 1.5; }
+  .badge-row { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 14px; }
+  .badge {
+    font-size: 10px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.06em; padding: 4px 10px; border-radius: 20px;
+    border: 1px solid var(--border);
+    background: rgba(167, 139, 250, 0.07);
+    color: var(--purple); white-space: nowrap;
+  }
+
+  .projects {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 8px; margin-bottom: 20px;
+  }
+  .chip {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; padding: 10px 12px;
+    font-size: 11.5px; color: var(--text-dim);
+    transition: border-color .2s, transform .15s; line-height: 1.4;
+  }
+  .chip:hover { border-color: var(--border-glow); transform: translateY(-1px); }
+  .chip a { color: var(--accent); text-decoration: none; font-weight: 600; }
+  .chip a:hover { text-decoration: underline; }
+  .chip .emoji { margin-right: 4px; }
+
+  /* calibration strip */
+  .calib {
+    background: rgba(251,191,36,0.05);
+    border: 1px solid rgba(251,191,36,0.22);
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-bottom: 26px;
+    font-size: 12px; line-height: 1.55;
+  }
+  .calib b { color: var(--orange); }
+
+  section.cluster {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px 18px; margin-bottom: 16px;
+    scroll-margin-top: 60px;
+    transition: border-color .25s;
+    animation: fadeUp .4s ease both;
+  }
+  section.cluster:hover { border-color: var(--border-glow); }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  section.cluster > h2 {
+    font-size: 16.5px; font-weight: 700; color: var(--white);
+    padding-bottom: 10px; margin-bottom: 14px;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 10px;
+    letter-spacing: -0.01em;
+  }
+  section.cluster > h2 .idx {
+    font-size: 10px; font-weight: 700; color: var(--accent);
+    background: rgba(56,189,248,0.1);
+    border: 1px solid rgba(56,189,248,0.2);
+    border-radius: 6px; padding: 3px 8px; letter-spacing: 0.04em;
+  }
+
+  h3 { font-size: 14px; font-weight: 700; color: var(--cyan); margin: 18px 0 8px; }
+  h4 { font-size: 12.5px; font-weight: 600; color: var(--orange); margin: 14px 0 6px; }
+  p { margin: 7px 0; font-size: 13px; }
+  ul, ol { padding-left: 18px; margin: 6px 0; }
+  li { margin: 3px 0; font-size: 13px; }
+
+  code {
+    background: rgba(30, 41, 59, 0.8); color: var(--green);
+    padding: 2px 6px; border-radius: 5px;
+    font-family: var(--mono); font-size: 11.5px;
+  }
+  .fml {
+    display: block; text-align: center;
+    background: rgba(30,41,59,0.5); border: 1px solid var(--border);
+    border-radius: 8px; padding: 9px 10px; margin: 9px 0;
+    font-family: var(--mono); font-size: 12px; color: var(--cyan);
+    overflow-x: auto; white-space: nowrap;
+  }
+
+  .tw {
+    overflow-x: auto; margin: 10px 0;
+    border: 1px solid var(--border); border-radius: 10px;
+    -webkit-overflow-scrolling: touch;
+  }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; min-width: 420px; }
+  thead th {
+    background: var(--surface2); color: var(--accent);
+    font-size: 10.5px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.05em; padding: 9px 10px; text-align: left;
+    white-space: nowrap; border-bottom: 1px solid var(--border);
+    position: sticky; top: 0;
+  }
+  tbody td {
+    padding: 8px 10px; border-bottom: 1px solid rgba(30, 41, 59, 0.5);
+    vertical-align: top; color: var(--text);
+  }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover { background: rgba(56, 189, 248, 0.03); }
+  tbody td:first-child { color: var(--white); font-weight: 600; white-space: nowrap; }
+
+  .box {
+    border-radius: 10px; padding: 12px 14px; margin: 10px 0;
+    font-size: 12.5px; line-height: 1.55;
+    border-left: 3px solid; position: relative;
+  }
+  .box .label {
+    font-weight: 700; font-size: 10.5px; text-transform: uppercase;
+    letter-spacing: 0.05em; margin-bottom: 5px;
+    display: flex; align-items: center; gap: 5px;
+  }
+  .box p { margin: 3px 0; font-size: 12.5px; }
+  .box ul { margin: 4px 0; }
+  .box li { font-size: 12.5px; }
+
+  .box.trap { background: rgba(251,113,133,0.06); border-color: var(--red); }
+  .box.trap .label { color: var(--red); }
+  .box.insight { background: rgba(52,211,153,0.06); border-color: var(--green); }
+  .box.insight .label { color: var(--green); }
+  .box.sde { background: rgba(56,189,248,0.06); border-color: var(--accent); }
+  .box.sde .label { color: var(--accent); }
+  .box.mlde { background: rgba(167,139,250,0.06); border-color: var(--purple); }
+  .box.mlde .label { color: var(--purple); }
+
+  details.snippet {
+    background: #0c1018; border: 1px solid var(--border);
+    border-radius: 10px; margin: 10px 0; overflow: hidden;
+  }
+  details.snippet summary {
+    cursor: pointer; padding: 9px 14px; color: var(--text-dim);
+    font-size: 12px; font-weight: 600; font-family: var(--font);
+    list-style: none; display: flex; align-items: center; gap: 7px;
+    user-select: none; transition: color .2s;
+  }
+  details.snippet summary:hover { color: var(--accent); }
+  details.snippet summary::-webkit-details-marker { display: none; }
+  details.snippet summary::before {
+    content: "▸"; color: var(--accent);
+    display: inline-block; transition: transform .15s ease;
+  }
+  details.snippet[open] summary::before { transform: rotate(90deg); }
+  details.snippet pre {
+    margin: 0; padding: 12px 14px; overflow-x: auto;
+    font-family: var(--mono); font-size: 12px; line-height: 1.55; color: var(--text);
+  }
+
+  .qa {
+    background: rgba(17, 24, 39, 0.6);
+    border: 1px solid var(--border);
+    border-radius: 10px; padding: 14px; margin: 10px 0;
+    transition: border-color .2s;
+  }
+  .qa:hover { border-color: var(--border-glow); }
+  .qa .q {
+    color: var(--white); font-weight: 600; font-size: 13px;
+    margin-bottom: 7px; line-height: 1.45;
+  }
+  .qa .q .qnum { color: var(--accent); margin-right: 6px; }
+  .track-tag {
+    display: inline-block; font-size: 9.5px; font-weight: 700;
+    letter-spacing: 0.06em; text-transform: uppercase;
+    padding: 3px 8px; border-radius: 6px; margin-bottom: 8px;
+  }
+  .track-a { background: rgba(56,189,248,0.1); color: var(--accent); border: 1px solid rgba(56,189,248,0.25); }
+  .track-b { background: rgba(167,139,250,0.1); color: var(--purple); border: 1px solid rgba(167,139,250,0.25); }
+
+  hr.divider { border: none; border-top: 1px dashed var(--border); margin: 20px 0; }
+
+  footer {
+    max-width: var(--maxw); margin: 0 auto;
+    padding: 20px 16px 40px; color: var(--text-dim);
+    font-size: 11px; text-align: center;
+    border-top: 1px solid var(--border);
+  }
+
+  @media (max-width: 640px) {
+    body { font-size: 14px; }
+    main { padding: 16px 12px 60px; }
+    .hero { padding: 18px 16px; }
+    .hero h1 { font-size: 19px; }
+    section.cluster { padding: 16px 14px; }
+    section.cluster > h2 { font-size: 15px; }
+    .projects { grid-template-columns: 1fr 1fr; gap: 6px; }
+    .chip { padding: 8px 10px; font-size: 10.5px; }
+    .topbar .logo span.full { display: none; }
+    table { font-size: 11px; min-width: 360px; }
+    thead th { font-size: 9.5px; padding: 7px 8px; }
+    tbody td { padding: 7px 8px; }
+    h3 { font-size: 13.5px; }
+    p, li { font-size: 12.5px; }
+    .box { padding: 10px 12px; font-size: 12px; }
+    .box p, .box li { font-size: 12px; }
+    .qa .q { font-size: 12.5px; }
+    .fml { font-size: 11px; }
+  }
+  @media (max-width: 380px) {
+    .projects { grid-template-columns: 1fr; }
+    .hero h1 { font-size: 17px; }
+    .topbar select { font-size: 11.5px; padding: 7px 10px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    section.cluster { animation: none; }
+    .topbar .dot { animation: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="scroll-progress" id="scrollProg"></div>
+
+<div class="topbar">
+  <div class="logo">
+    <span class="dot"></span>
+    <span class="full">ML Notes</span>
+  </div>
+  <select id="jump" aria-label="Jump to section">
+    <option value="">Jump to…</option>
+    <option value="m1">1 · ML &amp; Deep Learning Foundations</option>
+    <option value="m2">2 · NLP, Custom NER &amp; Entity Resolution</option>
+    <option value="m3">3 · Computer Vision &amp; Edge Inference</option>
+    <option value="m4">4 · Generative AI, Prompting &amp; RAG</option>
+    <option value="m5">5 · Search AI &amp; Game Engines</option>
+    <option value="m6">6 · Interview Defense Bank</option>
+  </select>
+</div>
+
+<main>
+
+  <div class="hero">
+    <h1>AI/ML, NLP, Computer Vision &amp; Agentic LLM Systems</h1>
+    <p class="sub">Intuition first, production second. Every concept lands on a system you actually shipped — and every answer survives the follow-up: <em>"okay, but what did that cost you?"</em></p>
+    <div class="badge-row">
+      <span class="badge">6 Modules</span>
+      <span class="badge">SDE + ML Tracks</span>
+      <span class="badge">Project-Grounded</span>
+    </div>
+  </div>
+
+  <div class="projects">
+    <div class="chip"><span class="emoji">🥗</span> <a href="https://github.com/Nutri-Vision" target="_blank" rel="noopener">Nutri-Vision</a> — spaCy NER, ResNet-50, FastAPI</div>
+    <div class="chip"><span class="emoji">🧑‍💼</span> <a href="https://github.com/AmanVerma1067/RecrutAI" target="_blank" rel="noopener">RecrutAI</a> — Gemini 2.5 Flash state machine</div>
+    <div class="chip"><span class="emoji">🚦</span> <a href="https://github.com/AmanVerma1067/SahYatri" target="_blank" rel="noopener">SahYatri</a> — YOLOv5n on Raspberry Pi 4</div>
+    <div class="chip"><span class="emoji">♟️</span> <a href="https://github.com/AmanVerma1067/Chessify-WebApp" target="_blank" rel="noopener">Chessify</a> — Minimax α-β, Stockfish</div>
+    <div class="chip"><span class="emoji">📄</span> RAG PDF Engine — LangChain + CrewAI</div>
+    <div class="chip"><span class="emoji">🚗</span> Drive-Sure — telematics risk scoring</div>
+  </div>
+
+  <div class="calib">
+    <b>Before you revise:</b> anywhere this doc shows a metric in <code>[brackets]</code> — F1, chunk size, epoch count — open your notebook and replace it with your real number. Interviewers rarely check your repo, but they <em>always</em> notice a number you can't explain how you got. A remembered number with a reason beats an impressive number without one.
+  </div>
+
+
+<!-- ================= MODULE 1 ================= -->
+<section class="cluster" id="m1">
+  <h2><span class="idx">01</span> ML &amp; Deep Learning Foundations</h2>
+
+  <h3>Loss Functions</h3>
+  <p>A loss function is just the definition of "wrong." Pick the one whose shape matches your output.</p>
+
+  <div class="tw"><table>
+    <thead><tr><th>Loss</th><th>Output layer</th><th>Use when</th><th>Penalizes</th></tr></thead>
+    <tbody>
+      <tr><td>MSE</td><td>Linear</td><td>Regression (calories, price)</td><td>Squared distance — outliers hurt a lot</td></tr>
+      <tr><td>Binary CE</td><td>Sigmoid</td><td>Yes/no, or multi-label</td><td>Confident wrong answers, harshly</td></tr>
+      <tr><td>Categorical CE</td><td>Softmax</td><td>One class out of N (food classifier)</td><td>Low probability on the true class</td></tr>
+      <tr><td>Focal loss</td><td>Sigmoid</td><td>Heavy class imbalance (detection)</td><td>Down-weights easy examples</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="box trap">
+    <div class="label">🚨 Interview Trap</div>
+    <p>"Why not MSE for classification?" Two reasons, and they want both: (1) MSE with a sigmoid gives you a <strong>non-convex</strong> surface with flat regions, so gradients vanish exactly when the model is confidently wrong. (2) Cross-entropy's gradient through softmax simplifies to <code>(prediction − target)</code> — clean, proportional to the error, no saturation term. CE learns faster because the math is nicer, not because it's "for classification."</p>
+  </div>
+
+  <h3>Gradient Descent &amp; Optimizers</h3>
+  <div class="tw"><table>
+    <thead><tr><th>Variant</th><th>Update after</th><th>Trade-off</th></tr></thead>
+    <tbody>
+      <tr><td>Batch GD</td><td>Whole dataset</td><td>Stable, accurate direction — impossibly slow, huge memory</td></tr>
+      <tr><td>SGD</td><td>One sample</td><td>Fast, noisy; noise can escape shallow local minima</td></tr>
+      <tr><td>Mini-batch</td><td>32–256 samples</td><td>The real-world default — GPU-friendly, decent gradient estimate</td></tr>
+    </tbody>
+  </table></div>
+
+  <ul>
+    <li><strong>Momentum</strong> — keep a running average of past gradients. Rolls through small bumps and ravines instead of zig-zagging across them.</li>
+    <li><strong>Adam</strong> — momentum <em>plus</em> a per-parameter learning rate scaled by recent gradient magnitude. Rare features get bigger steps.</li>
+    <li><strong>AdamW</strong> — the fix that matters. Plain Adam folds L2 into the gradient, where the adaptive scaling then partially cancels it. AdamW applies weight decay <em>separately</em>, so regularization actually regularizes. Use AdamW when fine-tuning.</li>
+  </ul>
+
+  <div class="box insight">
+    <div class="label">💡 CP Intuition</div>
+    <p><strong>Backprop is memoized DP on a DAG.</strong> The computational graph is your DAG, each node's gradient is a subproblem, and the chain rule is the transition. Forward pass = fill the table with activations. Backward pass = one reverse topological sweep reusing every stored value. Without memoization you'd recompute shared subpaths exponentially — that's literally the naive-recursion-vs-DP gap you already know. <code>loss.backward()</code> is a DP solve.</p>
+  </div>
+
+  <h3>Bias–Variance</h3>
+  <div class="tw"><table>
+    <thead><tr><th>Symptom</th><th>Train error</th><th>Val error</th><th>Diagnosis</th><th>Fix</th></tr></thead>
+    <tbody>
+      <tr><td>Underfit</td><td>High</td><td>High</td><td>High bias — model too weak</td><td>Bigger model, better features, train longer</td></tr>
+      <tr><td>Overfit</td><td>Low</td><td>High</td><td>High variance — memorizing</td><td>More data, augment, dropout, L2, early stop</td></tr>
+      <tr><td>Good</td><td>Low</td><td>Low, close to train</td><td>Balanced</td><td>Ship it</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Regularization</h3>
+  <ul>
+    <li><strong>L1 (Lasso)</strong> — adds <code>λ·Σ|w|</code>. Constant gradient pushes weights to exactly zero → sparsity, built-in feature selection.</li>
+    <li><strong>L2 (Ridge / weight decay)</strong> — adds <code>λ·Σw²</code>. Gradient shrinks with the weight, so weights get small but never zero. Spreads influence across correlated features.</li>
+    <li><strong>Dropout</strong> — randomly zero a fraction <code>p</code> of activations each training step. The network can't rely on any single neuron, so it learns redundant paths.</li>
+    <li><strong>Early stopping</strong> — stop when val loss turns upward. Free, and often the strongest regularizer you have.</li>
+    <li><strong>Augmentation</strong> — for food images: random crop, horizontal flip, color jitter. A photo of a plate is still that food rotated 10° or slightly warmer in tone.</li>
+  </ul>
+
+  <div class="box trap">
+    <div class="label">🚨 Interview Trap</div>
+    <p><strong>Inverted dropout.</strong> "What does dropout do at inference?" Nothing — it's off. The follow-up is the real question: <em>why doesn't turning it off change the activation scale?</em> Because PyTorch scales surviving activations up by <code>1/(1−p)</code> <strong>during training</strong>, so expected output already matches inference. That's inverted dropout. If you forget <code>model.eval()</code>, dropout stays on and your predictions become random — the single most common PyTorch inference bug.</p>
+  </div>
+
+  <h3>CNNs &amp; ResNet</h3>
+  <ul>
+    <li><strong>Kernel</strong> — a small learned filter slid across the image. Early layers find edges; deep layers find "this looks like a plate of rice."</li>
+    <li><strong>Padding</strong> — <code>'same'</code> keeps output size equal to input (pad the border); <code>'valid'</code> means no padding, so output shrinks.</li>
+    <li><strong>Stride</strong> — step size. Stride 2 roughly halves spatial dimensions.</li>
+    <li><strong>Pooling</strong> — downsample by taking the max/average over a window. Cheap size reduction and small-shift tolerance.</li>
+  </ul>
+  <p>Output size, the formula they ask you to derive on a whiteboard:</p>
+  <span class="fml">out = floor((in + 2·padding − kernel) / stride) + 1</span>
+
+  <p><strong>ResNet's skip connection:</strong> instead of learning <code>H(x)</code> directly, a block learns the <em>residual</em> <code>F(x)</code> and outputs <code>F(x) + x</code>.</p>
+  <span class="fml">y = F(x, {W}) + x</span>
+
+  <div class="box insight">
+    <div class="label">💡 Senior Insight</div>
+    <p>Why skip connections fix vanishing gradients, stated precisely: differentiating <code>F(x) + x</code> gives <code>F'(x) + 1</code>. That <strong>+1</strong> is a gradient highway — even if <code>F'(x)</code> collapses toward zero, the gradient still reaches earlier layers at full strength instead of being multiplied down through 50 layers. It also makes identity easy to learn: if a block isn't useful, drive <code>F(x) → 0</code> and it passes input through unchanged. Depth stops being a risk.</p>
+  </div>
+
+  <h3>Transfer Learning — the Nutri-Vision lifecycle</h3>
+  <div class="tw"><table>
+    <thead><tr><th>Stage</th><th>What's frozen</th><th>LR</th><th>When</th></tr></thead>
+    <tbody>
+      <tr><td>Feature extraction</td><td>Entire backbone; train new head only</td><td>Normal (e.g. 1e-3)</td><td>Small dataset, first pass, fast baseline</td></tr>
+      <tr><td>Fine-tune top blocks</td><td>Early layers only; unfreeze layer3/layer4</td><td>Low (1e-4 or lower)</td><td>Your domain differs from ImageNet</td></tr>
+      <tr><td>Full fine-tune</td><td>Nothing</td><td>Very low, discriminative per-layer</td><td>Large dataset + compute</td></tr>
+    </tbody>
+  </table></div>
+
+  <details class="snippet">
+    <summary>PyTorch: ResNet-50 transfer head (Nutri-Vision pattern)</summary>
+    <pre>import torch.nn as nn, torchvision.models as models
+
+model = models.resnet50(weights=models.ResNet50_Weights.IMAGENET1K_V2)
+
+# 1. freeze the pretrained feature extractor
+for p in model.parameters():
+    p.requires_grad = False
+
+# 2. replace the 1000-class ImageNet head with our food head
+model.fc = nn.Sequential(
+    nn.Dropout(p=0.5),                    # new head overfits fastest — regularize it
+    nn.Linear(model.fc.in_features, NUM_FOOD_CLASSES)
+)
+
+# 3. only the new head gets gradients
+optimizer = torch.optim.AdamW(model.fc.parameters(), lr=1e-3, weight_decay=1e-2)
+
+# 4. later: unfreeze layer4 at a much lower LR
+for p in model.layer4.parameters():
+    p.requires_grad = True
+optimizer = torch.optim.AdamW([
+    {"params": model.layer4.parameters(), "lr": 1e-5},
+    {"params": model.fc.parameters(),     "lr": 1e-4},
+], weight_decay=1e-2)</pre>
+  </details>
+
+  <div class="box trap">
+    <div class="label">🚨 Interview Trap</div>
+    <p>"Why must you use ImageNet's normalization stats — <code>mean=[0.485,0.456,0.406]</code>, <code>std=[0.229,0.224,0.225]</code>?" Because the frozen filters were trained on inputs in that exact distribution. Feed them differently-scaled pixels and every early activation shifts, so the features you're relying on are subtly wrong. Silent accuracy loss with no error message. Match the preprocessing to the weights, always.</p>
+  </div>
+
+  <div class="box mlde">
+    <div class="label">📊 ML Track Defense</div>
+    <p><strong>Why Dropout(0.5) specifically on the head?</strong> Because the head is where overfitting concentrates. The backbone is frozen and already generalizes — it saw a million ImageNet images. The new <code>Linear</code> layer is the only thing learning, from a comparatively tiny food dataset, so it's the part that will memorize. 0.5 is the standard aggressive setting for a fully-connected layer; convolutional layers use far less (0.1–0.2) because weight sharing already regularizes them. If you'd trained the whole network, 0.5 throughout would have <em>under</em>fit.</p>
+  </div>
+</section>
+
+
+<!-- ================= MODULE 2 ================= -->
+<section class="cluster" id="m2">
+  <h2><span class="idx">02</span> NLP, Custom NER &amp; Entity Resolution</h2>
+
+  <h3>The classical pipeline</h3>
+  <ul>
+    <li><strong>Tokenization</strong> — split text into units. Harder than it looks: <code>"1/2 cup"</code>, <code>"chicken-tikka"</code>, <code>"200g"</code>.</li>
+    <li><strong>Lemmatization</strong> — reduce to dictionary form (<code>"eggs" → "egg"</code>). Unlike stemming, the result is a real word — which matters when you're querying a food database by name.</li>
+    <li><strong>Stop-words</strong> — drop "the", "a", "and". Fine for retrieval, <em>dangerous</em> for NER, where surrounding words are the signal.</li>
+  </ul>
+
+  <div class="tw"><table>
+    <thead><tr><th>&nbsp;</th><th>Bag of Words</th><th>TF-IDF</th></tr></thead>
+    <tbody>
+      <tr><td>Value</td><td>Raw count</td><td>Count × rarity across the corpus</td></tr>
+      <tr><td>Problem it fixes</td><td>—</td><td>Common words stop dominating</td></tr>
+      <tr><td>Word order</td><td>Lost</td><td>Lost</td></tr>
+      <tr><td>Synonyms</td><td>Missed</td><td>Missed</td></tr>
+    </tbody>
+  </table></div>
+  <p>Both are sparse and order-blind — which is exactly the gap dense embeddings fill.</p>
+
+  <h3>spaCy NER vs Transformer NER</h3>
+  <div class="tw"><table>
+    <thead><tr><th>&nbsp;</th><th>spaCy (default pipeline)</th><th>Transformer token classification</th></tr></thead>
+    <tbody>
+      <tr><td>Mechanism</td><td>Transition-based parser over CNN/hash-embedding features</td><td>Per-token classification over contextual embeddings</td></tr>
+      <tr><td>Embeddings</td><td>Hashed (Bloom-style) — fixed table, no OOV misses</td><td>Subword vocabulary</td></tr>
+      <tr><td>Speed on CPU</td><td>Very fast</td><td>Slow without a GPU</td></tr>
+      <tr><td>Data needed</td><td>Hundreds of examples</td><td>Fewer (pretrained), but heavier to run</td></tr>
+      <tr><td>Fit for Nutri-Vision</td><td>✅ CPU inference inside an API request</td><td>Overkill for short meal strings</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="box insight">
+    <div class="label">💡 CP Intuition</div>
+    <p>spaCy's hash embeddings are a Bloom filter trick you already understand from hashing problems: instead of a vocabulary-sized lookup table, hash each word into a small fixed table with a few hash functions. Memory is constant regardless of vocabulary size, and there's no out-of-vocabulary cliff — a food word it never saw still gets <em>a</em> vector. You accept rare collisions in exchange for a tiny, unbounded-vocabulary model. Classic space-vs-precision trade.</p>
+  </div>
+
+  <h3>Training a custom <code>FOOD</code> entity</h3>
+  <p>Annotations are character offsets, not tokens:</p>
+  <details class="snippet">
+    <summary>spaCy: training data format + train loop skeleton</summary>
+    <pre># offsets are (start_char, end_char, LABEL) — end is exclusive
+TRAIN = [
+  ("I had 2 medium apples and 150g grilled chicken breast",
+   {"entities": [(15, 21, "FOOD"), (39, 61, "FOOD")]}),
+]
+
+nlp = spacy.blank("en")
+ner = nlp.add_pipe("ner")
+ner.add_label("FOOD")
+
+optimizer = nlp.begin_training()
+for epoch in range(EPOCHS):
+    random.shuffle(TRAIN)
+    for batch in minibatch(TRAIN, size=compounding(4., 32., 1.001)):
+        examples = [Example.from_dict(nlp.make_doc(t), a) for t, a in batch]
+        nlp.update(examples, drop=0.35, sgd=optimizer)   # drop = dropout
+
+nlp.to_disk("models/food_ner")</pre>
+  </details>
+  <p><strong>BILOU</strong> is the internal tagging scheme spaCy converts those offsets into — <b>B</b>egin, <b>I</b>nside, <b>L</b>ast, <b>O</b>utside, <b>U</b>nit. It's how a multi-word entity like "grilled chicken breast" stays one entity instead of three.</p>
+
+  <h3>Precision, Recall, F1 — say it in product terms</h3>
+  <span class="fml">P = TP/(TP+FP)   ·   R = TP/(TP+FN)   ·   F1 = 2PR/(P+R)</span>
+  <ul>
+    <li><strong>Precision</strong> — of the things I tagged as food, how many really were? Low precision = junk entities reaching the USDA lookup.</li>
+    <li><strong>Recall</strong> — of the real foods present, how many did I catch? Low recall = a missing item and an undercounted meal.</li>
+    <li><strong>F1</strong> — harmonic mean. Harmonic, not arithmetic, because it refuses to reward a lopsided model: predict everything as food and recall hits 1.0 while F1 stays low.</li>
+  </ul>
+
+  <div class="box mlde">
+    <div class="label">📊 ML Track Defense</div>
+    <p><strong>Which one do you optimize?</strong> Have an opinion, and tie it to the product. For a food logger I'd favour <strong>recall</strong> at the NER stage — a missed item silently undercounts calories, while a false positive gets filtered downstream when the USDA fuzzy match returns a low confidence score. That's the real defense: <em>my pipeline has a second filter, so I can afford to be greedy at stage one.</em></p>
+    <p>Also mention the split: entities were annotated then split roughly <code>[70/15/15]</code> train/val/test, <strong>split by sentence, not by entity</strong>, so the same meal string can't appear on both sides and inflate the score.</p>
+  </div>
+
+  <h3>Hybrid extraction — the core design decision</h3>
+  <p>One sentence, two problems with opposite requirements:</p>
+  <div class="tw"><table>
+    <thead><tr><th>Sub-problem</th><th>Vocabulary</th><th>Tool</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td>Food name</td><td>Open, endless spellings</td><td>spaCy NER</td><td>Must generalize to unseen words</td></tr>
+      <tr><td>Quantity + unit</td><td>Closed, tiny grammar</td><td>Regex rules</td><td>Must be exact — "150g" can never become 15g</td></tr>
+    </tbody>
+  </table></div>
+
+  <details class="snippet">
+    <summary>Rule-based quantity parser (the deterministic half)</summary>
+    <pre>UNIT = r"(g|gram|kg|ml|l|cup|tbsp|tsp|slice|piece|bowl|medium|large|small)"
+QTY  = re.compile(rf"(\d+(?:\.\d+)?|\d+/\d+)\s*{UNIT}s?\b", re.I)
+
+def parse_quantity(text):
+    m = QTY.search(text)
+    if not m:
+        return None                    # fail loudly, don't guess
+    raw, unit = m.group(1), m.group(2).lower()
+    val = eval_fraction(raw) if "/" in raw else float(raw)
+    return {"value": val, "unit": normalize_unit(unit)}</pre>
+  </details>
+
+  <div class="box trap">
+    <div class="label">🚨 Interview Trap</div>
+    <p>"Why not one LLM call for the whole sentence?" Don't say "it's slower." Say: <strong>a nutrition app must never invent a number.</strong> An LLM will happily return a confident, wrong gram value with no signal that it guessed. My regex returns <code>None</code> when it doesn't recognize a format — a visible failure the UI can handle — and every macro number comes from USDA FoodData Central, not from a model. <em>Learn the fuzzy part, hard-code the exact part.</em></p>
+  </div>
+
+  <h3>Entity resolution: fuzzy string vs embeddings</h3>
+  <div class="tw"><table>
+    <thead><tr><th>&nbsp;</th><th><code>difflib.SequenceMatcher</code></th><th>Dense embeddings</th></tr></thead>
+    <tbody>
+      <tr><td>Matches on</td><td>Character overlap</td><td>Meaning</td></tr>
+      <tr><td>Catches typos</td><td>✅ "chiken" → "chicken"</td><td>Partly</td></tr>
+      <tr><td>Catches synonyms</td><td>❌ "murgh" ≠ "chicken"</td><td>✅</td></tr>
+      <tr><td>Setup cost</td><td>Zero — stdlib</td><td>Model + vector index</td></tr>
+      <tr><td>Latency</td><td>ms on a shortlist</td><td>Embedding call + ANN search</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="box sde">
+    <div class="label">🛡️ SDE Defense</div>
+    <p>The honest framing of why string similarity was the right call: the USDA search endpoint already returns a <strong>candidate shortlist</strong>. So resolution isn't "search 300k foods" — it's "rank 10 candidates." At that size, <code>SequenceMatcher</code> costs microseconds and needs no extra infrastructure in the request path. Embeddings would add a model load, a vector store, and network latency to re-solve a problem the API narrowed for me. <em>I'd move to embeddings the moment cross-lingual or regional food names ("murgh", "aloo") became a real requirement</em> — and naming that upgrade path is what makes the answer senior rather than lazy.</p>
+  </div>
+</section>
+
+
+<!-- ================= MODULE 3 ================= -->
+<section class="cluster" id="m3">
+  <h2><span class="idx">03</span> Computer Vision &amp; Edge Inference</h2>
+
+  <h3>One-stage vs two-stage detectors</h3>
+  <div class="tw"><table>
+    <thead><tr><th>&nbsp;</th><th>Two-stage (Faster R-CNN)</th><th>One-stage (YOLO, SSD)</th></tr></thead>
+    <tbody>
+      <tr><td>How</td><td>Propose regions, then classify each</td><td>Predict boxes + classes in one forward pass</td></tr>
+      <tr><td>Accuracy</td><td>Higher, especially small objects</td><td>Slightly lower</td></tr>
+      <tr><td>Speed</td><td>Slow</td><td>Real-time</td></tr>
+      <tr><td>Edge viable</td><td>No</td><td>Yes</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>YOLO internals</h3>
+  <p>The image is divided into a grid. Each cell predicts boxes as <code>(x, y, w, h, objectness)</code> plus class probabilities. <strong>Anchor boxes</strong> are prior shapes — the network predicts an <em>offset</em> from an anchor rather than absolute coordinates, which is a far easier regression target.</p>
+
+  <p><strong>IoU</strong> — overlap between two boxes:</p>
+  <span class="fml">IoU = area(A ∩ B) / area(A ∪ B)</span>
+
+  <p><strong>NMS</strong> — the cleanup pass. Sort candidate boxes by confidence; take the top one; delete every remaining box whose IoU with it exceeds a threshold (typically 0.45); repeat.</p>
+
+  <div class="box trap">
+    <div class="label">🚨 Interview Trap</div>
+    <p>These are <strong>two different thresholds</strong> and interviewers love watching people conflate them. <strong>Confidence threshold</strong> decides whether a box exists at all. <strong>IoU/NMS threshold</strong> decides whether two surviving boxes are duplicates of the same object. Turning down confidence gives you more detections; turning down NMS IoU gives you fewer duplicates but risks deleting two genuinely overlapping passengers standing close together. In a crowded bus, <em>NMS is what makes you undercount.</em></p>
+  </div>
+
+  <div class="box mlde">
+    <div class="label">📊 ML Track Defense</div>
+    <p><strong>Why mAP and not accuracy?</strong> Detection has no fixed set of predictions to be "accurate" about — the model outputs a variable number of boxes with confidences. So you sweep the confidence threshold, build a precision-recall curve per class, take the area under it (Average Precision), and average across classes → <strong>mAP</strong>. <code>mAP@0.5</code> counts a detection correct at IoU ≥ 0.5; <code>mAP@0.5:0.95</code> averages across stricter IoU cutoffs and is the harder, more honest number.</p>
+    <p>For passenger counting specifically, mAP is the model metric but not the <em>product</em> metric — I'd report <strong>count error</strong> (predicted vs actual headcount), because a box in slightly the wrong place doesn't matter if the count is right.</p>
+  </div>
+
+  <h3>Model size trade-off</h3>
+  <div class="tw"><table>
+    <thead><tr><th>Model</th><th>Params</th><th>Runs on Pi 4?</th><th>Use</th></tr></thead>
+    <tbody>
+      <tr><td>YOLOv5n</td><td>~1.9M</td><td>✅ real-time</td><td>Edge, embedded</td></tr>
+      <tr><td>YOLOv5s</td><td>~7M</td><td>Marginal</td><td>Small server</td></tr>
+      <tr><td>YOLOv5x</td><td>~87M</td><td>❌</td><td>GPU / offline batch</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Making it work on a Raspberry Pi 4</h3>
+  <p>A Pi 4 has an ARM Cortex-A72 CPU and <strong>no discrete GPU</strong>. Every millisecond is bought deliberately:</p>
+  <ul>
+    <li><strong>Resize aggressively</strong> — inference at 320×320 instead of 640×640 is roughly a 4× reduction in compute. Biggest single win.</li>
+    <li><strong>Skip frames</strong> — passenger counts don't change 30 times a second. Process every Nth frame.</li>
+    <li><strong>Adaptive confidence thresholding</strong> — a bus goes from tunnel dark to noon glare in seconds. A fixed threshold that works at noon silently drops passengers in a tunnel. Sampling frame brightness and shifting the threshold keeps recall stable across lighting.</li>
+    <li><strong>Watch thermals</strong> — a Pi under sustained load throttles, and FPS quietly degrades over a long route. Hence the cooling fan in the enclosure. Mention this; it signals you've actually deployed hardware.</li>
+  </ul>
+
+  <h4>Quantization &amp; export — know it as the next lever</h4>
+  <div class="tw"><table>
+    <thead><tr><th>Precision</th><th>Size</th><th>Speed on CPU</th><th>Accuracy cost</th></tr></thead>
+    <tbody>
+      <tr><td>FP32</td><td>1×</td><td>Baseline</td><td>None</td></tr>
+      <tr><td>FP16</td><td>0.5×</td><td>Helps on GPU, little on ARM CPU</td><td>Negligible</td></tr>
+      <tr><td>INT8</td><td>0.25×</td><td>Large — integer ops are ARM's strength</td><td>Small, needs calibration data</td></tr>
+    </tbody>
+  </table></div>
+  <p><strong>ONNX Runtime</strong> is the portable, framework-agnostic route; <strong>NCNN</strong> is hand-tuned for ARM and usually faster still on a Pi. Be straight about what you did versus what you'd do next: the deployed pipeline hit 15 FPS through resolution and frame-skipping, and INT8 export is the obvious next step if the target moved higher.</p>
+
+  <div class="box insight">
+    <div class="label">💡 Senior Insight</div>
+    <p>Why INT8 barely hurts accuracy: trained weights cluster in a narrow range around zero, so 256 well-placed levels represent them nearly as well as 4 billion. The trick is <strong>calibration</strong> — run a few hundred representative images through, record the actual min/max activation range per layer, and map <em>that</em> range to INT8 rather than a guessed one. Skip calibration and you clip outliers, and accuracy falls off a cliff.</p>
+  </div>
+
+  <div class="box sde">
+    <div class="label">🛡️ SDE Defense</div>
+    <p>The architectural claim worth leading with: <strong>the frame never leaves the vehicle.</strong> The Pi turns a frame into an integer and discards the image. That's privacy enforced by architecture, not by policy — there is no video to leak, subpoena, or misconfigure a bucket for. It also removes a per-bus continuous video upload from the cost model and keeps the system counting through dead zones. Three wins from one placement decision.</p>
+  </div>
+</section>
+
+
+<!-- ================= MODULE 4 ================= -->
+<section class="cluster" id="m4">
+  <h2><span class="idx">04</span> Generative AI, Prompt Chaining &amp; RAG</h2>
+
+  <h3>Self-attention, without the math anxiety</h3>
+  <p>Every token emits three vectors: a <strong>Query</strong> ("what am I looking for?"), a <strong>Key</strong> ("what do I offer?"), and a <strong>Value</strong> ("here's my content"). Dot every query against every key to get relevance scores, softmax them into weights, and take a weighted sum of values.</p>
+  <span class="fml">Attention(Q,K,V) = softmax(QKᵀ / √d_k) · V</span>
+  <ul>
+    <li><strong>Why <code>√d_k</code>?</strong> Without it, dot products grow with dimension, softmax saturates, gradients vanish. It's a scaling fix, not a theoretical flourish.</li>
+    <li><strong>Multi-head</strong> — run several attentions in parallel so different heads can track different relationships (syntax, coreference, topic) at once.</li>
+    <li><strong>Positional encodings</strong> — attention is order-blind by construction, so position must be injected explicitly. Otherwise "chicken with rice" and "rice with chicken" are identical inputs.</li>
+  </ul>
+
+  <div class="box insight">
+    <div class="label">💡 CP Intuition</div>
+    <p>Attention is a <strong>soft hash-map lookup</strong>. A dictionary returns the value for the one key that matches exactly. Attention returns a blend of <em>all</em> values, weighted by how well each key matches — differentiable, so it can be learned. And the cost is the thing to remember: every token attends to every token, so it's <strong>O(n²)</strong> in sequence length. That single fact explains context-window limits, why long prompts get expensive fast, and why chunking exists.</p>
+  </div>
+
+  <h3>Adaptation strategies</h3>
+  <div class="tw"><table>
+    <thead><tr><th>Approach</th><th>Changes weights?</th><th>Cost</th><th>Best for</th></tr></thead>
+    <tbody>
+      <tr><td>In-context / prompting</td><td>No</td><td>Per call</td><td>Fast iteration, changing requirements</td></tr>
+      <tr><td>RAG</td><td>No</td><td>Per call + index</td><td>Model lacks <em>your</em> facts</td></tr>
+      <tr><td>LoRA / QLoRA</td><td>Small adapters only</td><td>Modest GPU</td><td>Domain style on limited compute</td></tr>
+      <tr><td>Full fine-tune</td><td>All</td><td>Heavy GPU</td><td>High volume, narrow, stable task</td></tr>
+    </tbody>
+  </table></div>
+  <p><strong>LoRA</strong> freezes the base model and trains two thin matrices whose product is added to a weight matrix — training a fraction of a percent of parameters, and adapters swap in and out without touching the base. <strong>QLoRA</strong> adds a 4-bit quantized base so it fits on one consumer GPU.</p>
+
+  <div class="box trap">
+    <div class="label">🚨 Interview Trap</div>
+    <p>"Fine-tune it so it stops hallucinating." Fine-tuning teaches <strong>behaviour and format</strong>, not <strong>facts</strong>. Training on your documents makes the model <em>sound</em> like them; it does not make it recall them reliably, and it will still invent confidently. Facts belong in the context window — that's RAG. Say this cleanly and you're ahead of most candidates in the room.</p>
+  </div>
+
+  <h3>RecrutAI: the prompt-chaining state machine</h3>
+  <p>The insight to lead with: <strong>the hard part was control flow, not the model's writing ability.</strong> Each answer is scored, and the score decides the next state:</p>
+  <div class="tw"><table>
+    <thead><tr><th>State</th><th>Triggered when</th></tr></thead>
+    <tbody>
+      <tr><td><code>PROBE_DEEPER</code></td><td>Answer is shallow — thin vocabulary, high latency</td></tr>
+      <tr><td><code>SIMPLIFY</code></td><td>Candidate is struggling with the terminology</td></tr>
+      <tr><td><code>PIVOT_TOPIC</code></td><td>Current rubric dimension is sufficiently covered</td></tr>
+      <tr><td><code>PROCEED</code></td><td>Normal progression</td></tr>
+    </tbody>
+  </table></div>
+  <p>Scoring rubric: Technical Depth, System Design, Problem Solving, Communication — plus an integrity/code-quality dimension, giving the 5-dimension matrix the audit dashboard renders.</p>
+
+  <div class="box sde">
+    <div class="label">🛡️ SDE Defense</div>
+    <p><strong>The reliability story, which is the actually impressive part.</strong> Gemini is a third-party API subject to rate limits, timeouts and regional blocks — so it's treated as an unreliable dependency, not a function call:</p>
+    <ul>
+      <li><strong>6-second timeout</strong> — a hard ceiling, because a hung request is worse than a degraded answer.</li>
+      <li><strong>2 retries, exponential backoff (1s → 2s)</strong> — absorbs transient failures without hammering a rate-limited endpoint.</li>
+      <li><strong>Deterministic fallbacks</strong> — resume parsing degrades to a regex parser, question generation to pre-written role scripts, coding tasks to a curated challenge bank.</li>
+      <li><strong>Constrained output</strong> — the branch decision must be one of four tokens. Anything else is rejected, so a hallucination can't become a state transition.</li>
+    </ul>
+    <p>Net effect: <em>an outage degrades the interview's adaptiveness; it never ends the session.</em></p>
+  </div>
+
+  <h3>RAG pipeline</h3>
+  <p>Ingest → chunk → embed → index → retrieve → generate. Chunking is where most RAG systems are quietly won or lost.</p>
+
+  <div class="tw"><table>
+    <thead><tr><th>Strategy</th><th>How</th><th>Trade-off</th></tr></thead>
+    <tbody>
+      <tr><td>Fixed-size</td><td>Every N characters</td><td>Simple; cuts sentences in half</td></tr>
+      <tr><td>Recursive character</td><td>Split on ¶ → sentence → word until it fits</td><td>Respects structure — the sane default</td></tr>
+      <tr><td>Semantic</td><td>Split where embedding similarity drops</td><td>Best boundaries, costs an embedding pass</td></tr>
+      <tr><td>Document-aware</td><td>Split on headings/sections</td><td>Excellent for structured PDFs</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="box mlde">
+    <div class="label">📊 ML Track Defense</div>
+    <p><strong>Chunk size and overlap, with the reasoning attached.</strong> For multi-page PDFs I used recursive character splitting at roughly <code>[1000]</code> characters with <code>[150–200]</code> overlap. The logic, which matters more than the number:</p>
+    <ul>
+      <li><strong>Too small</strong> → a chunk retrieves without the context that makes it meaningful ("it must be renewed annually" — <em>what</em> must?).</li>
+      <li><strong>Too large</strong> → the embedding averages several topics, so the vector points nowhere specific and retrieval precision collapses. You also burn context window on irrelevant text.</li>
+      <li><strong>Overlap</strong> exists so a fact spanning a boundary survives in at least one chunk intact. ~15% is the usual sweet spot; more is just duplicated storage.</li>
+    </ul>
+    <p>Then say how you'd verify it: <em>build a small set of question–answer pairs from the documents and measure retrieval hit-rate at different chunk sizes.</em> Tuning by measurement beats tuning by vibes, and interviewers notice the difference.</p>
+  </div>
+
+  <h4>Similarity &amp; index types</h4>
+  <ul>
+    <li><strong>Cosine similarity</strong> — angle only, ignores magnitude. The default for text, since document length shouldn't affect topical similarity. (On normalized vectors, cosine and dot product are identical.)</li>
+    <li><strong>Flat</strong> — brute-force compare against everything. Exact, fine up to ~100k vectors.</li>
+    <li><strong>HNSW</strong> — a navigable small-world graph; fast and accurate, higher memory. The common production choice.</li>
+    <li><strong>IVFFlat</strong> — cluster vectors, search only the nearest few clusters. Lower memory, needs training and a tuned probe count.</li>
+  </ul>
+
+  <div class="box insight">
+    <div class="label">💡 CP Intuition</div>
+    <p>HNSW is skip lists in high dimensions. A skip list layers sparse express lanes over a linked list so you cover distance fast and drop down for precision; HNSW layers sparse long-range graph edges over dense local ones and does exactly the same descent. Same logarithmic-navigation idea you'd use for range queries — which is why <strong>approximate</strong> nearest neighbour is a search-structure problem, not an ML problem.</p>
+  </div>
+
+  <h3>Multi-agent orchestration (LangChain + CrewAI)</h3>
+  <p>Splitting one large task into specialized agents with a shared state:</p>
+  <div class="tw"><table>
+    <thead><tr><th>Agent</th><th>Job</th><th>Why separate</th></tr></thead>
+    <tbody>
+      <tr><td>Parser</td><td>Extract structure from the PDF</td><td>Deterministic, cacheable, runs once</td></tr>
+      <tr><td>Retrieval</td><td>Fetch relevant chunks per sub-question</td><td>Only this agent needs the vector store</td></tr>
+      <tr><td>Validator</td><td>Check claims against retrieved sources</td><td>A separate pass catches what generation missed</td></tr>
+    </tbody>
+  </table></div>
+  <p>The real reason to split: <strong>each agent gets a small, focused context window</strong> instead of one prompt trying to hold the whole document, the question, and the instructions at once.</p>
+
+  <div class="box trap">
+    <div class="label">🚨 Interview Trap</div>
+    <p>"So agents are better?" No — agents multiply your failure modes: loops, drift, compounding errors from step one, and cost that's hard to predict. State your default plainly: <strong>single-pass RAG unless I can name the specific step single-pass cannot do.</strong> Multi-hop questions and cross-document comparison are real cases. "Summarize this contract" is not.</p>
+  </div>
+
+  <h4>RAGAS — how to evaluate the thing</h4>
+  <ul>
+    <li><strong>Context relevance</strong> — did retrieval fetch the right chunks? (Retriever's fault if low.)</li>
+    <li><strong>Faithfulness</strong> — is the answer actually supported by those chunks? (Low = hallucination.)</li>
+    <li><strong>Answer relevance</strong> — does it address the question asked?</li>
+  </ul>
+  <p>These three isolate <em>where</em> the pipeline broke. Good context but low faithfulness = a generation problem. Low context relevance = a chunking or embedding problem. That diagnostic split is the whole point of the framework.</p>
+</section>
+
+
+<!-- ================= MODULE 5 ================= -->
+<section class="cluster" id="m5">
+  <h2><span class="idx">05</span> Search AI &amp; Deterministic Game Engines</h2>
+
+  <h3>Minimax</h3>
+  <p>Two-player zero-sum with perfect information. You maximise, the opponent minimises, recursively down to a depth limit, then a heuristic scores the leaf.</p>
+
+  <details class="snippet">
+    <summary>Minimax with alpha-beta pruning</summary>
+    <pre>def minimax(board, depth, alpha, beta, maximizing):
+    if depth == 0 or board.is_game_over():
+        return evaluate(board)
+
+    if maximizing:
+        best = -INF
+        for move in ordered_moves(board):          # ordering drives the pruning
+            board.push(move)
+            best = max(best, minimax(board, depth-1, alpha, beta, False))
+            board.pop()
+            alpha = max(alpha, best)
+            if beta &lt;= alpha:
+                break                              # β cutoff — opponent avoids this line
+        return best
+    else:
+        best = INF
+        for move in ordered_moves(board):
+            board.push(move)
+            best = min(best, minimax(board, depth-1, alpha, beta, True))
+            board.pop()
+            beta = min(beta, best)
+            if beta &lt;= alpha:
+                break                              # α cutoff
+        return best</pre>
+  </details>
+
+  <p><strong>What α and β mean:</strong> α is the best score the maximiser has already guaranteed somewhere; β is the best the minimiser has guaranteed. When <code>β ≤ α</code>, this branch is one the opponent will simply never allow — so exploring it further cannot change the final answer.</p>
+  <span class="fml">O(b^d) → O(b^(d/2)) with perfect move ordering</span>
+
+  <div class="box trap">
+    <div class="label">🚨 Interview Trap</div>
+    <p><strong>"Does pruning change the move it picks?"</strong> No. Alpha-beta is provably identical to plain minimax at the same depth — it only skips work that could not affect the result. What <em>does</em> vary is speed, and it varies enormously: best-move-first ordering approaches the b^(d/2) bound, worst-first prunes essentially nothing. That's why move ordering (captures first, then checks) is where the real engineering goes.</p>
+    <p>Follow-up: <strong>"why depth 3?"</strong> It's a latency budget, not a quality target — depth 3 is where a pure-Python search still responds fast enough to feel instant. Strong play comes from Stockfish; the Python search exists as a fallback when the binary won't start.</p>
+  </div>
+
+  <div class="box insight">
+    <div class="label">💡 CP Intuition</div>
+    <p>Alpha-beta is branch-and-bound, the same pruning you use in backtracking problems like N-Queens or subset-sum: maintain a bound, and abandon any branch that provably cannot beat it. Chess just makes the bound two-sided because two opposed players are optimizing. If you've written a pruned DFS, you've written alpha-beta.</p>
+  </div>
+
+  <h3>Evaluation function</h3>
+  <p>A leaf isn't a finished game, so you score it with a heuristic — two parts:</p>
+  <ul>
+    <li><strong>Material</strong> — pawn 1, knight/bishop 3, rook 5, queen 9.</li>
+    <li><strong>Piece-Square Tables</strong> — a per-piece 64-value grid encoding <em>where</em> a piece is good. A knight on the rim is weak; a central knight is strong. A pawn's value rises as it advances.</li>
+  </ul>
+  <span class="fml">score = Σ(material) + Σ(PST[piece][square])</span>
+
+  <div class="box mlde">
+    <div class="label">📊 ML Track Defense</div>
+    <p><strong>Why hand-crafted heuristics rather than a learned evaluator?</strong> Because chess rules are fully known and enumerable, so search gives you correctness that learning would only approximate — and a PST is inspectable, so a wrong move is debuggable. Learned evaluation (AlphaZero-style) wins only at scale: enormous self-play compute, and you trade explainability for strength. <strong>Use search when you have a computable model of the world; use learned models when you only have examples.</strong> Chess is the former; food images are the latter. Being able to say why the same person chose differently on two projects is the answer they're actually testing.</p>
+  </div>
+
+  <h3>Integrating Stockfish</h3>
+  <ul>
+    <li><strong>UCI</strong> — Universal Chess Interface. You spawn the binary as a subprocess and talk plain text over stdin/stdout: <code>position fen ...</code>, <code>go depth 10</code>, read back <code>bestmove e2e4</code>.</li>
+    <li><strong>ELO limiting</strong> — <code>UCI_LimitStrength</code> + <code>UCI_Elo 1800</code> caps strength so the bot is beatable. Full-strength Stockfish is an unplayable opponent, not a feature.</li>
+    <li><strong>Polyglot opening book</strong> — a <code>.bin</code> of position hashes mapped to known-good moves. Instant, human-like openings with zero search; the engine only starts thinking once you leave the book.</li>
+  </ul>
+
+  <div class="box sde">
+    <div class="label">🛡️ SDE Defense</div>
+    <p>The three-tier degradation is the design worth naming: <strong>opening book → Stockfish → in-process minimax.</strong> Each tier is faster-but-dumber than the one before, and every tier is local, so an AI move never depends on a third-party network call. The failure mode of a missing Stockfish binary is a <em>weaker</em> opponent, not a broken game. That's the same instinct as RecrutAI's fallback chain, applied to a different dependency.</p>
+  </div>
+</section>
+
+
+<!-- ================= MODULE 6 ================= -->
+<section class="cluster" id="m6">
+  <h2><span class="idx">06</span> Interview Defense Bank</h2>
+  <p style="color:var(--text-dim); font-size:12px; margin-bottom:14px;">Lead with the one-line reason. Add one supporting detail. Close with the trade-off you accepted — naming the downside is what makes the rest believable.</p>
+
+  <h3>Track A — SDE (integration &amp; performance)</h3>
+
+  <div class="qa">
+    <span class="track-tag track-a">A · Q1</span>
+    <div class="q"><span class="qnum">1.</span> How do you serve PyTorch and spaCy models behind FastAPI without blocking the event loop?</div>
+    <p>A model forward pass is CPU-bound and synchronous — put it directly in an <code>async def</code> and it stalls every other request on that worker.</p>
+    <p><strong>The fix is small and specific:</strong> declare the inference route as a plain <code>def</code>, not <code>async def</code>. FastAPI automatically runs sync route handlers in a threadpool, so the loop stays free. For anything heavier, <code>run_in_executor</code> with a bounded process pool, or move inference behind its own service.</p>
+    <p><strong>Also:</strong> load the model <strong>once at startup</strong>, not per request — a ResNet-50 load is seconds and hundreds of MB. And cap concurrency deliberately, because N parallel inferences means N copies of activation memory.</p>
+    <p><strong>Trade-off:</strong> threadpool workers are finite, so under load requests queue rather than fail. That's the correct failure mode — a bounded queue beats an OOM.</p>
+  </div>
+
+  <div class="qa">
+    <span class="track-tag track-a">A · Q2</span>
+    <div class="q"><span class="qnum">2.</span> Why decouple the Flask AI service from the Node.js Socket.IO server in Chessify?</div>
+    <p><strong>Because the two jobs have opposite concurrency shapes.</strong> Multiplayer is hundreds of mostly-idle sockets — pure I/O, ideal for an event loop. A Stockfish or minimax search pins a core for hundreds of milliseconds — pure CPU.</p>
+    <p>In one Node process, a single bot move would freeze every live game on the server, because there's one thread executing JavaScript. Split, an engine slowdown makes bot moves slower and nothing else. They also deploy and restart independently.</p>
+    <p><strong>Trade-off:</strong> a network hop and a second service to operate. Worth it, because the alternative is a global stall triggered by one user's move.</p>
+  </div>
+
+  <div class="qa">
+    <span class="track-tag track-a">A · Q3</span>
+    <div class="q"><span class="qnum">3.</span> How do deterministic fallbacks keep a Gemini outage from crashing a live screening?</div>
+    <p><strong>By treating the LLM as an unreliable dependency with a hard latency ceiling.</strong> Every call is wrapped: 6-second timeout, 2 retries with exponential backoff (1s then 2s), and on final failure the system degrades rather than throws.</p>
+    <p>Each stage has a deterministic substitute — resume parsing falls back to a regex parser, question generation to pre-written role scripts, coding tasks to a curated challenge bank. Responses are also shape-validated before use, so a malformed reply triggers the fallback instead of propagating a bad object.</p>
+    <p><strong>Trade-off:</strong> fallback interviews are scripted, not adaptive. That's a deliberate choice — a candidate mid-interview needs a working session far more than an optimal one.</p>
+  </div>
+
+  <div class="qa">
+    <span class="track-tag track-a">A · Q4</span>
+    <div class="q"><span class="qnum">4.</span> How do you version model weights and handle large binaries in CI?</div>
+    <p><strong>Plain Git is disqualified immediately:</strong> it stores a full copy of every version forever, so a 100 MB <code>.pth</code> committed ten times is a gigabyte every clone must download, with no useful diffing on binary data.</p>
+    <p>Git LFS replaces the file with a small pointer and stores the bytes separately (<code>.gitattributes</code> holds the tracking rules). The payoff is <strong>atomic code-to-weights pairing</strong> — checking out the commit that produced a result also checks out the exact weights that produced it. In CI, that means runners can skip LFS fetch entirely for lint and unit jobs and pull weights only for the inference test.</p>
+    <p><strong>When I'd outgrow it:</strong> LFS has bandwidth quotas and stores no metadata. Past a few GB or a real team, S3 or a model registry (MLflow, HF Hub) with a version pointer in Git.</p>
+  </div>
+
+  <div class="qa">
+    <span class="track-tag track-a">A · Q5</span>
+    <div class="q"><span class="qnum">5.</span> Latency, bandwidth and privacy trade-offs of edge vs cloud inference?</div>
+    <p><strong>Latency:</strong> edge is bounded and local — no network variance. Cloud round-trip is unpredictable on a moving vehicle and unbounded when connectivity drops.</p>
+    <p><strong>Bandwidth:</strong> edge sends an integer per reading; cloud sends continuous video per bus. The cost gap widens linearly with fleet size, so cloud gets worse exactly as the product succeeds.</p>
+    <p><strong>Privacy:</strong> the decisive one. On-device, the frame becomes a count and is discarded — there is no passenger video to leak or subpoena. Privacy by architecture, not policy.</p>
+    <p><strong>What I gave up:</strong> model capacity (YOLOv5n's ~1.9M params vs a full-size model's ~87M) and easy updates — new weights must be pushed to every device rather than deployed once. For "how full is this bus," approximate is fine, so it's a good trade. For something requiring high precision, it wouldn't be.</p>
+  </div>
+
+  <hr class="divider">
+
+  <h3>Track B — ML / AI / Data Engineering</h3>
+
+  <div class="qa">
+    <span class="track-tag track-b">B · Q1</span>
+    <div class="q"><span class="qnum">1.</span> Walk me through training your custom spaCy NER model.</div>
+    <p><strong>Annotation:</strong> meal strings labelled with character-offset spans for a single custom <code>FOOD</code> entity — spaCy converts those offsets to BILOU tags internally, which is what keeps "grilled chicken breast" one entity rather than three.</p>
+    <p><strong>Splits:</strong> roughly <code>[70/15/15]</code> train/val/test, split <strong>by sentence</strong> so the same meal string can't land on both sides. Validation drove early stopping; test was touched once at the end.</p>
+    <p><strong>Training:</strong> blank English pipeline (not a pretrained NER model, to avoid inheriting irrelevant entity types), compounding batch sizes, dropout ~0.35 to stop it memorizing the small dataset.</p>
+    <p><strong>Metrics:</strong> report your real P/R/F1 — and more importantly, which one you optimized. I favoured <strong>recall</strong>: a missed food silently undercounts calories, while a false positive gets filtered when the USDA fuzzy match scores it low. Having a second filter downstream is what lets stage one be greedy.</p>
+  </div>
+
+  <div class="qa">
+    <span class="track-tag track-b">B · Q2</span>
+    <div class="q"><span class="qnum">2.</span> Why ResNet-50? Which layers were frozen, what LR schedule, why Dropout 0.5?</div>
+    <p><strong>ResNet-50</strong> because residual connections make a 50-layer network trainable (the <code>+x</code> gives gradients a path back), ImageNet pretraining already encodes texture and shape features that transfer directly to food, and it's the accuracy/size sweet spot — ResNet-18 underfits fine-grained food distinctions, ResNet-152 is heavier for marginal gain.</p>
+    <p><strong>Freezing:</strong> started with the full backbone frozen, training only the new head — fastest path to a baseline and the right call on a small dataset. Then optionally unfroze <code>layer4</code> (the most task-specific block) at a much lower LR.</p>
+    <p><strong>LR:</strong> normal (~1e-3) for the randomly-initialised head; roughly 10–100× lower for any unfrozen backbone layer. Those pretrained weights are already good — large gradients would destroy them. That's the whole idea behind discriminative learning rates.</p>
+    <p><strong>Dropout 0.5:</strong> the head is where overfitting concentrates — it's the only part learning, from a small dataset. 0.5 is standard for fully-connected layers; conv layers use far less because weight sharing already regularizes them.</p>
+  </div>
+
+  <div class="qa">
+    <span class="track-tag track-b">B · Q3</span>
+    <div class="q"><span class="qnum">3.</span> IoU vs NMS in YOLOv5, and how did adaptive thresholding fix false negatives?</div>
+    <p><strong>IoU is a measurement</strong> — intersection over union of two boxes, a number from 0 to 1. <strong>NMS is an algorithm that uses it</strong>: sort boxes by confidence, keep the highest, discard every remaining box with IoU above ~0.45 against it, repeat. IoU is the ruler; NMS is the cleanup.</p>
+    <p><strong>The two thresholds are different things</strong> — confidence decides if a box exists, NMS IoU decides if two boxes are the same object. Conflating them is the classic slip.</p>
+    <p><strong>Adaptive thresholding:</strong> a bus goes from tunnel-dark to noon-glare within seconds. A fixed confidence threshold tuned for bright light produces low-confidence detections in the dark that get filtered out — passengers vanish, and it fails <em>silently</em>. Sampling frame brightness and lowering the threshold in poor light keeps recall stable. The trade is more false positives in the dark, which is the right direction: overcounting by one is a better failure than reporting an empty bus that's full.</p>
+  </div>
+
+  <div class="qa">
+    <span class="track-tag track-b">B · Q4</span>
+    <div class="q"><span class="qnum">4.</span> How do you evaluate and reduce hallucinations in RAG? What chunk size and overlap?</div>
+    <p><strong>Evaluate by splitting the blame.</strong> RAGAS-style: <em>context relevance</em> (did retrieval fetch the right chunks?), <em>faithfulness</em> (is the answer supported by them?), <em>answer relevance</em> (does it address the question?). Good context but low faithfulness is a generation problem; low context relevance is a chunking or embedding problem. Without that split you're guessing which half to fix.</p>
+    <p><strong>Reduce by:</strong> requiring citations back to chunk IDs, instructing the model to answer "not in the provided documents" rather than infer, constraining output to a schema, and adding a validator pass that re-checks claims against sources.</p>
+    <p><strong>Chunking:</strong> recursive character splitting at ~<code>[1000]</code> chars with <code>[150–200]</code> overlap. Too small and a chunk loses the context that makes it meaningful; too large and the embedding averages multiple topics, so the vector points nowhere specific and retrieval precision drops. Overlap ensures a fact spanning a boundary survives intact in at least one chunk. I'd verify the choice by building question–answer pairs from the documents and measuring retrieval hit-rate across chunk sizes rather than guessing.</p>
+  </div>
+
+  <div class="qa">
+    <span class="track-tag track-b">B · Q5</span>
+    <div class="q"><span class="qnum">5.</span> How does α-β pruning cut branches, and how does your evaluation function score position?</div>
+    <p><strong>Pruning:</strong> α = the best value the maximiser has already secured; β = the best the minimiser has secured. Explore a branch, and the moment <code>β ≤ α</code> you stop — the opponent already has a better option elsewhere and will never permit this line, so its remaining moves cannot change the root decision. It's branch-and-bound with two bounds because two opposed players are optimizing.</p>
+    <p><strong>Effect:</strong> with good move ordering, O(b^d) → roughly O(b^(d/2)) — same answer, roughly double the reachable depth for the same time budget. With bad ordering you prune almost nothing, which is exactly why captures and checks are searched first.</p>
+    <p><strong>Evaluation:</strong> material (pawn 1 … queen 9) plus piece-square tables — a 64-value grid per piece type encoding <em>where</em> that piece is strong. Central knights score above rim knights; advanced pawns score above home-rank pawns. Sum both from the side to move's perspective. It's hand-tuned and inspectable, which means a bad move is debuggable — you can point at the term that caused it.</p>
+  </div>
+
+  <div class="qa">
+    <span class="track-tag track-b">B · Q6</span>
+    <div class="q"><span class="qnum">6.</span> How do you process real-time sensor streams to detect driving anomalies (Drive-Sure)?</div>
+    <p><strong>The signal:</strong> accelerometer and gyroscope readings at high frequency. Harsh braking is sustained negative longitudinal acceleration; harsh cornering is lateral acceleration past a threshold; rapid acceleration is the positive mirror.</p>
+    <p><strong>The pipeline:</strong> (1) smooth the raw stream — a moving average or low-pass filter, because a single spike is road noise, not a braking event; (2) detect over a <strong>sliding window</strong>, since an event is a sustained pattern over ~1–2 seconds, not one sample; (3) emit discrete events rather than raw readings, so what leaves the device is "harsh brake, severity 0.8, at timestamp T" — small, meaningful, and cheap to store; (4) aggregate events into a rolling risk score, normalized per distance travelled so a long trip isn't penalized for having more events.</p>
+    <p><strong>Storage:</strong> append-only time-series, partitioned by time, with raw kept hot briefly and events kept long-term.</p>
+    <p><strong>The hard part, and say so:</strong> thresholds are vehicle- and mount-dependent, and a phone lying loose on a seat generates spikes that look identical to braking. Calibration — establishing a per-device baseline orientation before scoring — is what separates a demo from a product.</p>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  AI/ML, NLP, Computer Vision &amp; Agentic LLM Systems · Interview Notes<br>
+  Grounded against Nutri-Vision AI, RecrutAI, SahYatri, Chessify AI and the RAG PDF engine.
+</footer>
+
+<script>
+  document.getElementById('jump').addEventListener('change', function(e) {
+    const id = e.target.value;
+    if (!id) return;
+    const el = document.getElementById(id);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    e.target.value = '';
+  });
+
+  const prog = document.getElementById('scrollProg');
+  window.addEventListener('scroll', function() {
+    const st = document.documentElement.scrollTop;
+    const sh = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+    prog.style.width = (sh > 0 ? (st / sh) * 100 : 0) + '%';
+  }, { passive: true });
+
+  const sections = document.querySelectorAll('section.cluster');
+  const observer = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        entry.target.style.animationPlayState = 'running';
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.08 });
+  sections.forEach(function(s) {
+    s.style.animationPlayState = 'paused';
+    observer.observe(s);
+  });
+</script>
+
+</body>
+</html>

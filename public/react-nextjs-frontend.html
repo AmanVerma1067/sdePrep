@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5">
+<title>React.js, Next.js &amp; Frontend Architecture — Interview Notes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0e17; --surface: #111827; --surface2: #1a2234;
+    --border: #1e293b; --border-glow: #334155;
+    --text: #cbd5e1; --text-dim: #64748b; --white: #f1f5f9;
+    --accent: #38bdf8; --accent2: #818cf8; --green: #34d399;
+    --orange: #fbbf24; --red: #fb7185; --purple: #a78bfa; --cyan: #22d3ee;
+    --radius: 14px; --maxw: 760px;
+    --font: 'Inter', system-ui, -apple-system, sans-serif;
+    --mono: 'JetBrains Mono', 'SF Mono', Consolas, monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--bg); color: var(--text); font-family: var(--font);
+    font-size: 14.5px; line-height: 1.65; overflow-x: hidden; }
+
+  .scroll-progress { position: fixed; top: 0; left: 0; z-index: 200; height: 3px; width: 0%;
+    background: linear-gradient(90deg, var(--accent), var(--accent2), var(--purple));
+    transition: width 80ms linear; border-radius: 0 2px 2px 0; }
+
+  .topbar { position: sticky; top: 0; z-index: 100;
+    background: rgba(10, 14, 23, 0.82);
+    backdrop-filter: blur(16px) saturate(1.6); -webkit-backdrop-filter: blur(16px) saturate(1.6);
+    border-bottom: 1px solid var(--border); padding: 10px 16px;
+    display: flex; align-items: center; gap: 10px; }
+  .topbar .logo { display: flex; align-items: center; gap: 8px; font-weight: 800;
+    font-size: 13.5px; color: var(--white); white-space: nowrap; letter-spacing: -0.02em; }
+  .topbar .dot { width: 8px; height: 8px; border-radius: 50%; background: #a78bfa;
+    box-shadow: 0 0 10px #a78bfa; animation: pulse 2s ease-in-out infinite; }
+  @keyframes pulse { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: .6; transform: scale(.85); } }
+  .topbar select { flex: 1; max-width: 380px; background: var(--surface); color: var(--accent);
+    border: 1px solid var(--border); border-radius: 10px; padding: 8px 12px;
+    font-family: var(--font); font-size: 12.5px; font-weight: 500; outline: none;
+    cursor: pointer; transition: border-color .2s; }
+  .topbar select:focus { border-color: var(--accent); }
+
+  main { max-width: var(--maxw); margin: 0 auto; padding: 24px 16px 80px; }
+
+  .hero { margin-bottom: 28px; padding: 24px 20px;
+    background: linear-gradient(135deg, rgba(56,189,248,0.06), rgba(129,140,248,0.06), rgba(167,139,250,0.04));
+    border: 1px solid var(--border); border-radius: var(--radius); position: relative; overflow: hidden; }
+  .hero::before { content: ''; position: absolute; top: -40%; right: -20%; width: 260px; height: 260px;
+    background: radial-gradient(circle, rgba(56,189,248,0.08) 0%, transparent 70%);
+    border-radius: 50%; pointer-events: none; }
+  .hero h1 { font-size: 22px; font-weight: 800; color: var(--white);
+    letter-spacing: -0.03em; line-height: 1.3; margin-bottom: 6px; }
+  .hero .sub { color: var(--text-dim); font-size: 12.5px; line-height: 1.5; }
+  .badge-row { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 14px; }
+  .badge { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em;
+    padding: 4px 10px; border-radius: 20px; border: 1px solid var(--border);
+    background: rgba(56,189,248,0.06); color: var(--accent); white-space: nowrap; }
+
+  .projects { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 8px; margin-bottom: 20px; }
+  .chip { background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+    padding: 10px 12px; font-size: 11.5px; color: var(--text-dim);
+    transition: border-color .2s, transform .15s; line-height: 1.4; }
+  .chip:hover { border-color: var(--border-glow); transform: translateY(-1px); }
+  .chip a { color: var(--accent); text-decoration: none; font-weight: 600; }
+  .chip a:hover { text-decoration: underline; }
+  .chip .emoji { margin-right: 4px; }
+
+  .calib { background: rgba(251,191,36,0.05); border: 1px solid rgba(251,191,36,0.22);
+    border-radius: 10px; padding: 12px 14px; margin-bottom: 26px; font-size: 12px; line-height: 1.55; }
+  .calib b { color: var(--orange); }
+
+  section.cluster { background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 20px 18px; margin-bottom: 16px;
+    scroll-margin-top: 60px; transition: border-color .25s; animation: fadeUp .4s ease both; }
+  section.cluster:hover { border-color: var(--border-glow); }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+  section.cluster > h2 { font-size: 16.5px; font-weight: 700; color: var(--white);
+    padding-bottom: 10px; margin-bottom: 14px; border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 10px; letter-spacing: -0.01em; }
+  section.cluster > h2 .idx { font-size: 10px; font-weight: 700; color: var(--accent);
+    background: rgba(56,189,248,0.1); border: 1px solid rgba(56,189,248,0.2);
+    border-radius: 6px; padding: 3px 8px; letter-spacing: .04em; }
+
+  h3 { font-size: 14px; font-weight: 700; color: var(--cyan); margin: 18px 0 8px; }
+  h4 { font-size: 12.5px; font-weight: 600; color: var(--orange); margin: 14px 0 6px; }
+  p { margin: 7px 0; font-size: 13px; }
+  ul, ol { padding-left: 18px; margin: 6px 0; }
+  li { margin: 3px 0; font-size: 13px; }
+  code { background: rgba(30,41,59,.8); color: var(--green); padding: 2px 6px;
+    border-radius: 5px; font-family: var(--mono); font-size: 11.5px; }
+  .fml { display: block; text-align: center; background: rgba(30,41,59,.5);
+    border: 1px solid var(--border); border-radius: 8px; padding: 9px 10px; margin: 9px 0;
+    font-family: var(--mono); font-size: 12px; color: var(--cyan); overflow-x: auto; white-space: nowrap; }
+
+  .tw { overflow-x: auto; margin: 10px 0; border: 1px solid var(--border);
+    border-radius: 10px; -webkit-overflow-scrolling: touch; }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; min-width: 420px; }
+  thead th { background: var(--surface2); color: var(--accent); font-size: 10.5px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: .05em; padding: 9px 10px; text-align: left;
+    white-space: nowrap; border-bottom: 1px solid var(--border); position: sticky; top: 0; }
+  tbody td { padding: 8px 10px; border-bottom: 1px solid rgba(30,41,59,.5);
+    vertical-align: top; color: var(--text); }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover { background: rgba(56,189,248,.03); }
+  tbody td:first-child { color: var(--white); font-weight: 600; white-space: nowrap; }
+
+  .box { border-radius: 10px; padding: 12px 14px; margin: 10px 0; font-size: 12.5px;
+    line-height: 1.55; border-left: 3px solid; }
+  .box .label { font-weight: 700; font-size: 10.5px; text-transform: uppercase;
+    letter-spacing: .05em; margin-bottom: 5px; display: flex; align-items: center; gap: 5px; }
+  .box p { margin: 3px 0; font-size: 12.5px; }
+  .box ul { margin: 4px 0; } .box li { font-size: 12.5px; }
+  .box.trap { background: rgba(251,113,133,.06); border-color: var(--red); }
+  .box.trap .label { color: var(--red); }
+  .box.insight { background: rgba(52,211,153,.06); border-color: var(--green); }
+  .box.insight .label { color: var(--green); }
+  .box.sde { background: rgba(56,189,248,.06); border-color: var(--accent); }
+  .box.sde .label { color: var(--accent); }
+  .box.mlde { background: rgba(167,139,250,.06); border-color: var(--purple); }
+  .box.mlde .label { color: var(--purple); }
+
+  details.snippet { background: #0c1018; border: 1px solid var(--border);
+    border-radius: 10px; margin: 10px 0; overflow: hidden; }
+  details.snippet summary { cursor: pointer; padding: 9px 14px; color: var(--text-dim);
+    font-size: 12px; font-weight: 600; font-family: var(--font); list-style: none;
+    display: flex; align-items: center; gap: 7px; user-select: none; transition: color .2s; }
+  details.snippet summary:hover { color: var(--accent); }
+  details.snippet summary::-webkit-details-marker { display: none; }
+  details.snippet summary::before { content: "▸"; color: var(--accent);
+    display: inline-block; transition: transform .15s ease; }
+  details.snippet[open] summary::before { transform: rotate(90deg); }
+  details.snippet pre { margin: 0; padding: 12px 14px; overflow-x: auto;
+    font-family: var(--mono); font-size: 12px; line-height: 1.55; color: var(--text); }
+
+  .qa { background: rgba(17,24,39,.6); border: 1px solid var(--border); border-radius: 10px;
+    padding: 14px; margin: 10px 0; transition: border-color .2s; }
+  .qa:hover { border-color: var(--border-glow); }
+  .qa .q { color: var(--white); font-weight: 600; font-size: 13px; margin-bottom: 7px; line-height: 1.45; }
+  .qa .q .qnum { color: var(--accent); margin-right: 6px; }
+  .track-tag { display: inline-block; font-size: 9.5px; font-weight: 700; letter-spacing: .06em;
+    text-transform: uppercase; padding: 3px 8px; border-radius: 6px; margin-bottom: 8px; }
+  .track-a { background: rgba(56,189,248,.1); color: var(--accent); border: 1px solid rgba(56,189,248,.25); }
+  .track-b { background: rgba(167,139,250,.1); color: var(--purple); border: 1px solid rgba(167,139,250,.25); }
+
+  hr.divider { border: none; border-top: 1px dashed var(--border); margin: 20px 0; }
+  footer { max-width: var(--maxw); margin: 0 auto; padding: 20px 16px 40px;
+    color: var(--text-dim); font-size: 11px; text-align: center; border-top: 1px solid var(--border); }
+
+  @media (max-width: 640px) {
+    body { font-size: 14px; }
+    main { padding: 16px 12px 60px; }
+    .hero { padding: 18px 16px; } .hero h1 { font-size: 19px; }
+    section.cluster { padding: 16px 14px; }
+    section.cluster > h2 { font-size: 15px; }
+    .projects { grid-template-columns: 1fr 1fr; gap: 6px; }
+    .chip { padding: 8px 10px; font-size: 10.5px; }
+    .topbar .logo span.full { display: none; }
+    table { font-size: 11px; min-width: 360px; }
+    thead th { font-size: 9.5px; padding: 7px 8px; }
+    tbody td { padding: 7px 8px; }
+    h3 { font-size: 13.5px; } p, li { font-size: 12.5px; }
+    .box { padding: 10px 12px; font-size: 12px; }
+    .box p, .box li { font-size: 12px; }
+    .qa .q { font-size: 12.5px; } .fml { font-size: 11px; }
+  }
+  @media (max-width: 380px) {
+    .projects { grid-template-columns: 1fr; }
+    .hero h1 { font-size: 17px; }
+    .topbar select { font-size: 11.5px; padding: 7px 10px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    section.cluster { animation: none; }
+    .topbar .dot { animation: none; }
+  }
+</style>
+</head>
+<body>
+<div class="scroll-progress" id="scrollProg"></div>
+<div class="topbar">
+  <div class="logo"><span class="dot"></span><span class="full">React Notes</span></div>
+  <select id="jump" aria-label="Jump to section">
+    <option value="">Jump to…</option>
+    <option value="c1">1 · React internals &amp; Fiber</option>
+    <option value="c2">2 · Hooks &amp; state architecture</option>
+    <option value="c3">3 · Next.js &amp; rendering lifecycles</option>
+    <option value="c4">4 · Real-time UI &amp; charting</option>
+    <option value="c5">5 · Interview defense bank</option>
+  </select>
+</div>
+
+<main>
+
+<div class="hero">
+  <h1>React.js, Next.js &amp; Modern Frontend Architecture</h1>
+  <p class="sub">Reconciliation, hydration, stale closures and socket cleanup — the four things that actually break real apps. Grounded in a live chessboard and a telemetry dashboard.</p>
+  <div class="badge-row">
+    <span class="badge">5 Clusters</span>
+    <span class="badge">SDE + ML Tracks</span>
+    <span class="badge">Project-Grounded</span>
+  </div>
+</div>
+
+<div class="projects">
+  <div class="chip"><span class="emoji">♟️</span> <a href="https://github.com/AmanVerma1067/Chessify-WebApp" target="_blank" rel="noopener">Chessify</a> — Next.js + Socket.IO live board</div>
+  <div class="chip"><span class="emoji">🧑‍💼</span> <a href="https://github.com/AmanVerma1067/RecrutAI" target="_blank" rel="noopener">RecrutAI</a> — Next.js 15 App Router, Monaco</div>
+  <div class="chip"><span class="emoji">🚦</span> <a href="https://github.com/AmanVerma1067/SahYatri" target="_blank" rel="noopener">SahYatri</a> — React telemetry dashboard</div>
+  <div class="chip"><span class="emoji">📚</span> <a href="https://github.com/AmanVerma1067/StudySync" target="_blank" rel="noopener">StudySync</a> — Flutter web build</div>
+</div>
+
+<div class="calib">
+  <b>The question behind most React interview questions:</b> <em>when does this component re-render, and what does it capture when it does?</em> Stale closures, wasted renders, duplicate socket listeners and hydration mismatches are all answers to that one question. If you're stuck, start there.
+</div>
+
+
+<!-- ========== C1 ========== -->
+<section class="cluster" id="c1">
+  <h2><span class="idx">01</span> React internals, Fiber &amp; reconciliation</h2>
+
+  <h3>The Virtual DOM and its two assumptions</h3>
+  <p>React builds a tree of plain objects describing the UI, diffs the new tree against the old, and applies the minimum set of real DOM changes. A general tree diff is O(n³), which is unusable — so React makes two assumptions to get to O(n):</p>
+  <ol>
+    <li><strong>Different element types produce different trees.</strong> A <code>&lt;div&gt;</code> becoming a <code>&lt;span&gt;</code> means React tears down the whole subtree rather than diffing it — including all its state.</li>
+    <li><strong>Keys tell React which children are which</strong> across renders.</li>
+  </ol>
+
+  <div class="box trap">
+    <div class="label">🚨 Interview Trap</div>
+    <p><strong>Why <code>key={index}</code> corrupts stateful lists.</strong> Keys are React's identity mechanism. With index keys, deleting the first of three items means the item previously at index 1 now claims key 0 — so React thinks item 0 merely <em>changed its props</em> rather than being removed. DOM state that React doesn't control comes along for the ride: typed input values, focus, scroll position, CSS transitions. You delete the first row and the second row inherits the first row's typed text.</p>
+    <p>Index keys are fine only when the list is static and never reordered, filtered or spliced. Use a stable ID — and note that <code>key</code> is a message to the reconciler, not a prop your component can read.</p>
+  </div>
+
+  <h3>Fiber: render vs commit</h3>
+  <p>Fiber rewrote reconciliation as a linked list of units of work instead of a recursive tree walk — which is what makes it <em>interruptible</em>.</p>
+  <div class="tw"><table>
+    <thead><tr><th>&nbsp;</th><th>Render phase</th><th>Commit phase</th></tr></thead>
+    <tbody>
+      <tr><td>Does</td><td>Builds the work-in-progress tree, computes changes</td><td>Applies DOM mutations, runs effects</td></tr>
+      <tr><td>Interruptible</td><td>Yes — can pause, resume, or discard</td><td>No — synchronous, all at once</td></tr>
+      <tr><td>May run twice</td><td>Yes</td><td>No</td></tr>
+      <tr><td>Implication</td><td><strong>Render must be pure</strong></td><td>Side effects belong here</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="box insight">
+    <div class="label">💡 Senior Insight</div>
+    <p>"Render must be pure" stops being an abstract rule once you know the render phase can be <strong>discarded and re-run</strong>. If you mutate a ref, fire an analytics event or push to an external store during render, that side effect happens once for work React threw away and again for the work it kept — a double-count with no error. This is also exactly what StrictMode's double-invoke in development is designed to surface: it's not a bug, it's a purity test you're being given for free.</p>
+  </div>
+
+  <h3>React 18 concurrent features</h3>
+  <ul>
+    <li><strong>Automatic batching</strong> — React 17 batched state updates only inside React event handlers; React 18 batches inside promises, timeouts and native handlers too. Three <code>setState</code> calls in a <code>.then()</code> now cause one render, not three.</li>
+    <li><strong><code>useTransition</code></strong> — marks an update as non-urgent, so React can interrupt it to handle typing. The classic case: a search input where keystrokes are urgent and re-filtering 5,000 rows is not.</li>
+    <li><strong><code>useDeferredValue</code></strong> — the same idea from the consuming side: render an expensive child from a lagging copy of a value while the input stays instantly responsive.</li>
+  </ul>
+
+  <div class="box mlde">
+    <div class="label">📊 ML / Data Eng Defense</div>
+    <p>These are the right tools for a data-heavy dashboard. On SahYatri, changing a date range triggers re-aggregating and re-charting thousands of telemetry points. Wrapped in <code>startTransition</code>, the filter control updates instantly and stays clickable while the chart recomputes in the background — React will even abandon that work if the user changes the filter again. Without it, every click freezes the UI for the duration of the recompute, and the app feels broken even though nothing is wrong.</p>
+  </div>
+</section>
+
+
+<!-- ========== C2 ========== -->
+<section class="cluster" id="c2">
+  <h2><span class="idx">02</span> Hooks &amp; state architecture</h2>
+
+  <h3>The stale closure — the single most-tested bug</h3>
+  <p>Every render creates new functions that <strong>capture that render's values</strong>. If a function outlives its render — inside a <code>setInterval</code>, a socket handler, a debounce — it keeps looking at the old value forever.</p>
+
+  <details class="snippet">
+    <summary>Stale closure: broken, then three fixes</summary>
+    <pre>// ❌ BROKEN — logs 0 forever. The interval captured count from the first render.
+useEffect(() => {
+  const id = setInterval(() => console.log(count), 1000);
+  return () => clearInterval(id);
+}, []);                                  // empty deps = frozen in render #1
+
+// ✅ FIX 1 — functional update. Never reads the captured value at all.
+setCount(prev => prev + 1);
+
+// ✅ FIX 2 — a ref always points at the latest value.
+const countRef = useRef(count);
+useEffect(() => { countRef.current = count; });
+useEffect(() => {
+  const id = setInterval(() => console.log(countRef.current), 1000);
+  return () => clearInterval(id);
+}, []);
+
+// ✅ FIX 3 — honest deps: re-subscribe when the value changes.
+useEffect(() => {
+  const id = setInterval(() => console.log(count), 1000);
+  return () => clearInterval(id);
+}, [count]);                             // correct, but tears down every change</pre>
+  </details>
+
+  <div class="box trap">
+    <div class="label">🚨 Interview Trap</div>
+    <p><strong>"Just remove it from the dependency array to stop the re-runs."</strong> This is the wrong instinct and interviewers listen for it. The lint warning isn't noise — it's telling you the effect reads something it hasn't subscribed to. Silencing it converts a visible re-render problem into an invisible stale-data problem, which is far harder to debug.</p>
+    <p>The right moves are: use a functional update so you don't need the value; move the function inside the effect; wrap it in <code>useCallback</code>; or store it in a ref. Pick one based on whether the effect <em>should</em> re-run when the value changes.</p>
+  </div>
+
+  <h3><code>useEffect</code> vs <code>useLayoutEffect</code></h3>
+  <div class="tw"><table>
+    <thead><tr><th>&nbsp;</th><th><code>useEffect</code></th><th><code>useLayoutEffect</code></th></tr></thead>
+    <tbody>
+      <tr><td>Timing</td><td>After paint, async</td><td>After DOM mutation, <em>before</em> paint, sync</td></tr>
+      <tr><td>Blocks paint</td><td>No</td><td>Yes</td></tr>
+      <tr><td>Use for</td><td>Data fetching, subscriptions, logging</td><td>DOM measurement, preventing visual flicker</td></tr>
+      <tr><td>SSR</td><td>Fine</td><td>Warns — no DOM on the server</td></tr>
+    </tbody>
+  </table></div>
+  <p>Default to <code>useEffect</code>. Reach for <code>useLayoutEffect</code> only when you measure the DOM and immediately change it based on the measurement — otherwise the user sees one frame of the wrong position before it corrects.</p>
+
+  <h3>Memoization: when it's worth it</h3>
+  <ul>
+    <li><strong><code>useMemo</code></strong> — caches a computed <em>value</em>.</li>
+    <li><strong><code>useCallback</code></strong> — caches a <em>function reference</em>.</li>
+    <li><strong><code>React.memo</code></strong> — skips re-rendering a child when its props are shallow-equal.</li>
+  </ul>
+
+  <div class="box trap">
+    <div class="label">🚨 Interview Trap</div>
+    <p><strong><code>useCallback</code> without <code>React.memo</code> on the child usually does nothing.</strong> The stable reference only matters if something compares it. An unmemoized child re-renders when the parent does, regardless of prop identity — so you've paid the memo cost and bought nothing.</p>
+    <p>The inverse trap too: <code>React.memo</code> on a child that receives <code>style={{...}}</code> or <code>onClick={() =&gt; ...}</code> inline never hits, because those are new objects every render. Memoization only works if <em>every</em> prop is referentially stable — one inline object defeats the whole thing.</p>
+  </div>
+
+  <h3>Context vs an external store</h3>
+  <div class="box insight">
+    <div class="label">💡 Senior Insight</div>
+    <p><strong>Context has no selector.</strong> When the context value changes, <em>every</em> consumer re-renders — even one reading a field that didn't change. So a single context holding <code>{ user, theme, notifications, socketStatus }</code> re-renders the entire consuming subtree whenever a notification arrives.</p>
+    <p>Zustand solves exactly this: <code>useStore(s =&gt; s.user.name)</code> subscribes to a slice, and the component re-renders only when that slice changes. Context is genuinely good for values that are stable — theme, locale, an auth object — and bad for anything that updates frequently. The mitigation without leaving Context is to <strong>split it into several contexts by update frequency</strong>, which is a fine answer when the app doesn't warrant a new dependency.</p>
+  </div>
+
+  <h4>Controlled vs uncontrolled</h4>
+  <p><strong>Controlled</strong> — React state is the source of truth, re-renders on every keystroke. Needed for live validation or interdependent fields. <strong>Uncontrolled</strong> — the DOM holds the value, read via <code>useRef</code> on submit, zero re-renders. Right for large simple forms where per-keystroke state is pure overhead.</p>
+</section>
+
+
+<!-- ========== C3 ========== -->
+<section class="cluster" id="c3">
+  <h2><span class="idx">03</span> Next.js &amp; rendering lifecycles</h2>
+
+  <div class="tw"><table>
+    <thead><tr><th>&nbsp;</th><th>CSR</th><th>SSR</th><th>SSG</th><th>ISR</th></tr></thead>
+    <tbody>
+      <tr><td>HTML built</td><td>In the browser</td><td>Per request</td><td>At build</td><td>At build + revalidated</td></tr>
+      <tr><td>First paint</td><td>Slowest</td><td>Fast</td><td>Fastest</td><td>Fastest</td></tr>
+      <tr><td>SEO</td><td>Weak</td><td>Strong</td><td>Strong</td><td>Strong</td></tr>
+      <tr><td>Data freshness</td><td>Live</td><td>Live</td><td>Frozen at build</td><td>Stale up to N seconds</td></tr>
+      <tr><td>Fits</td><td>Dashboards behind login</td><td>Per-user pages</td><td>Docs, marketing</td><td>Content changing hourly</td></tr>
+    </tbody>
+  </table></div>
+  <p><strong>ISR</strong> comes in two flavours worth distinguishing: time-based (<code>revalidate: 60</code>) and on-demand (<code>revalidateTag</code> / <code>revalidatePath</code> fired from a webhook when content actually changes). On-demand is strictly better when you control the CMS — fresh immediately, no polling.</p>
+
+  <div class="box insight">
+    <div class="label">💡 Senior Insight</div>
+    <p>The App Router's real shift is that these stop being app-wide settings and become <strong>per-route, even per-component</strong>. RecrutAI can server-render the recruiter dashboard shell for a fast first paint while the Monaco editor and live interview panel stay client-side — one app, both strategies. "It depends on the route" is the answer that shows you've shipped App Router rather than read about it.</p>
+  </div>
+
+  <h3>Server Components and the serialization boundary</h3>
+  <p>A Server Component runs on the server only and ships <strong>zero JavaScript</strong> to the browser. It can read a database or filesystem directly with no API layer. Anything interactive — state, effects, event handlers, browser APIs — needs <code>'use client'</code>.</p>
+
+  <div class="box trap">
+    <div class="label">🚨 Interview Trap</div>
+    <p><strong>The serialization boundary.</strong> Props crossing from a Server Component into a Client Component must be serializable — plain objects, arrays, strings, numbers, dates, Promises. You <em>cannot</em> pass a function, a class instance, or a Map. Try it and you get a runtime error many people misread as a bundler problem.</p>
+    <p>The related misconception: <code>'use client'</code> does not mean "renders only on the client." Client Components are still <strong>server-rendered for the initial HTML</strong>, then hydrated. It marks a bundling boundary — <em>this and everything it imports ships to the browser</em> — not a rendering location. Getting this right is a strong signal.</p>
+  </div>
+
+  <h3>Hydration mismatches</h3>
+  <p>Hydration is React attaching event listeners to server-rendered HTML while assuming its own render produces identical markup. When it doesn't, you get the mismatch error and React discards the server HTML.</p>
+  <div class="tw"><table>
+    <thead><tr><th>Cause</th><th>Why</th><th>Fix</th></tr></thead>
+    <tbody>
+      <tr><td><code>new Date()</code>, <code>toLocaleString()</code></td><td>Server and client differ in time and timezone</td><td>Format on the client in an effect, or pass an ISO string and use <code>suppressHydrationWarning</code></td></tr>
+      <tr><td><code>Math.random()</code>, <code>crypto.randomUUID()</code></td><td>Different value each render</td><td><code>useId()</code>, or generate on the server and pass down</td></tr>
+      <tr><td><code>window</code> / <code>localStorage</code> during render</td><td>Undefined on the server</td><td>Read in <code>useEffect</code>, render a fallback first</td></tr>
+      <tr><td>Invalid HTML nesting</td><td>The browser silently repairs <code>&lt;p&gt;&lt;div&gt;&lt;/p&gt;</code>, so the DOM ≠ your JSX</td><td>Fix the nesting</td></tr>
+      <tr><td>Browser extensions</td><td>They inject attributes into your markup</td><td>Reproduce in incognito before debugging</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Streaming, Suspense and Server Actions</h3>
+  <p><code>loading.tsx</code> or a <code>&lt;Suspense&gt;</code> boundary lets the server flush the shell immediately and stream slow sections in as they resolve — TTFB stops being hostage to the slowest query on the page.</p>
+  <p><strong>Server Actions</strong> are functions marked <code>'use server'</code> that run on the server but are callable from a client component, so a form mutation needs no API route. Two things to say about them unprompted: they're a <strong>public HTTP endpoint</strong> regardless of where they're imported, so they must do their own auth and validation; and <code>useOptimistic</code> pairs with them to show the result instantly and roll back if the action rejects.</p>
+</section>
+
+
+<!-- ========== C4 ========== -->
+<section class="cluster" id="c4">
+  <h2><span class="idx">04</span> Real-time UI, optimistic updates &amp; charting</h2>
+
+  <h3>The socket hook</h3>
+  <details class="snippet">
+    <summary>One connection, clean teardown, no duplicate listeners</summary>
+    <pre>'use client';
+
+export function useGameSocket(roomId) {
+  const socketRef = useRef(null);
+  const [fen, setFen] = useState(START_FEN);
+  const [status, setStatus] = useState('connecting');
+
+  useEffect(() => {
+    const socket = io(URL, { transports: ['websocket', 'polling'] });
+    socketRef.current = socket;
+
+    const onState   = ({ fen }) => setFen(fen);
+    const onConnect = () => { setStatus('connected'); socket.emit('join', { roomId }); };
+    const onDrop    = () => setStatus('reconnecting');
+
+    socket.on('connect', onConnect);
+    socket.on('state', onState);
+    socket.on('disconnect', onDrop);
+
+    return () => {                    // ← the line that prevents the leak
+      socket.off('connect', onConnect);
+      socket.off('state', onState);
+      socket.off('disconnect', onDrop);
+      socket.disconnect();
+    };
+  }, [roomId]);                       // re-subscribe only when the room changes
+
+  return { fen, status, socket: socketRef.current };
+}</pre>
+  </details>
+
+  <div class="box trap">
+    <div class="label">🚨 Interview Trap</div>
+    <p><strong>Duplicate listeners in StrictMode.</strong> React 18 development mounts, unmounts and remounts every component to surface missing cleanup. Without the <code>socket.off</code> teardown, you now have two handlers for <code>'state'</code>, and each server event fires your setState twice. In production it's worse and subtler: every navigation back to the board stacks another listener, so by the fifth visit one move triggers five updates and the app slows down for reasons that look like a server problem.</p>
+    <p>Two rules: <strong>always return a cleanup that removes exactly the handlers you added</strong>, and never create the socket inside the component body — the body runs on every render, so you'd open a new connection each time. Ref plus effect, or a module-level singleton.</p>
+  </div>
+
+  <h3>Optimistic updates with rollback</h3>
+  <details class="snippet">
+    <summary>Chessify: render the move instantly, reconcile with the server</summary>
+    <pre>function onDrop(from, to) {
+  const snapshot = fen;                          // 1. remember how to undo
+
+  const local = new Chess(fen);
+  const legal = local.move({ from, to, promotion: 'q' });
+  if (!legal) return false;                      // 2. client-side check = fast UX only
+
+  setFen(local.fen());                           // 3. paint immediately — feels instant
+
+  socket.timeout(5000).emit('move', { from, to }, (err, res) => {
+    if (err || !res?.ok) setFen(snapshot);       // 4. server said no → roll back
+  });
+  return true;
+}
+
+// The server ALSO broadcasts authoritative state; that always wins.
+useEffect(() => { socket.on('state', ({ fen }) => setFen(fen)); }, []);</pre>
+  </details>
+
+  <div class="box sde">
+    <div class="label">🛡️ SDE Defense</div>
+    <p>The framing that matters: <strong>the client-side chess.js check is a UX optimization, never a security control.</strong> It exists so an obviously illegal drag doesn't cost a round trip. The server runs its own independent validation against its own board, and its broadcast is authoritative — so a modified client that skips the local check gains nothing except a desynced view of a game everyone else sees correctly.</p>
+    <p>Two details worth volunteering: snapshot the previous state <em>before</em> mutating, since without it there's nothing to roll back to. And use a timeout on the ack — without one, a dropped packet leaves the board optimistically wrong forever with no error and no correction.</p>
+  </div>
+
+  <h3>High-frequency dashboards</h3>
+  <p>Telemetry arriving every few seconds will re-render the whole dashboard tree unless you stop it. Four techniques, in order of payoff:</p>
+  <ol>
+    <li><strong>Buffer, don't stream to state.</strong> Accumulate incoming points in a ref and flush to state on an interval. Ten updates per second becomes one render per second, and the chart looks identical.</li>
+    <li><strong>Colocate the state.</strong> Live data lives in the chart's own subtree, not a top-level provider — otherwise every tick re-renders the header, sidebar and filters too.</li>
+    <li><strong>Memoize the chart and its data.</strong> <code>React.memo</code> on the component, <code>useMemo</code> on the transformed array. Both are needed: a new array identity every render defeats the memo.</li>
+    <li><strong>Bound the window.</strong> Keep the last N points, not all of them, or the array grows without limit and each render gets slower.</li>
+  </ol>
+
+  <div class="box mlde">
+    <div class="label">📊 ML / Data Eng Defense</div>
+    <p><strong>Canvas vs SVG is the choice that decides whether the dashboard survives.</strong> SVG (Recharts, D3-with-DOM) creates a real DOM node per data point — beautiful, inspectable, and it collapses somewhere around a few thousand points because the browser is laying out thousands of elements every frame. Canvas (Chart.js, uPlot) paints pixels: one element, no layout cost, comfortable with tens of thousands of points.</p>
+    <p>So: SVG for a chart with dozens of points and rich interactivity; <strong>canvas for streaming telemetry</strong>. And downsample before rendering — a 1920px-wide chart cannot display more than 1920 distinct x-values, so plotting 50,000 raw readings burns CPU to draw pixels no one can see. Aggregate to roughly one point per pixel column and the chart is visually identical at a fraction of the cost.</p>
+    <p>For long tables of inference results, <strong>virtualize</strong> — render only the ~20 rows in the viewport, not all 10,000.</p>
+  </div>
+</section>
+
+
+<!-- ========== C5 ========== -->
+<section class="cluster" id="c5">
+  <h2><span class="idx">05</span> Interview defense bank</h2>
+  <p style="color:var(--text-dim); font-size:12px; margin-bottom:14px;">One-line reason → supporting mechanic → the trade-off you accepted.</p>
+
+  <h3>Track A — SDE</h3>
+
+  <div class="qa">
+    <span class="track-tag track-a">A · Q1</span>
+    <div class="q"><span class="qnum">1.</span> How do you manage Socket.IO lifecycle in Client Components without accumulating listeners?</div>
+    <p><strong>One connection in a ref, subscriptions in an effect, and a cleanup that removes exactly what it added.</strong></p>
+    <p>The socket is never created in the component body — that runs on every render, so you'd open a new connection each time. It goes in <code>useRef</code>, created inside a <code>useEffect</code> whose dependency is the room ID, so it re-subscribes when the room genuinely changes and not otherwise.</p>
+    <p><strong>The cleanup is the whole answer:</strong> <code>socket.off(event, handler)</code> for each handler, then <code>disconnect()</code>. Named handler references matter — calling <code>socket.off('state')</code> with no handler removes <em>all</em> listeners for that event, including ones another hook registered.</p>
+    <p><strong>Why it bites in Next.js specifically:</strong> StrictMode in development mounts, unmounts and remounts every component, which doubles listeners immediately if cleanup is missing. That's not a React bug — it's the framework showing you the leak that would otherwise appear in production as "the board updates five times per move after navigating around."</p>
+    <p><strong>Trade-off:</strong> tearing down on every room change costs a reconnect. If a socket must persist across routes, it belongs in a module-level singleton or a provider above the router — but then <em>you</em> own its lifecycle, and it never gets cleaned up automatically.</p>
+  </div>
+
+  <div class="qa">
+    <span class="track-tag track-a">A · Q2</span>
+    <div class="q"><span class="qnum">2.</span> Walk me through optimistic move rendering and rollback in Chessify.</div>
+    <p><strong>The problem:</strong> waiting for a server round trip before the piece moves makes the board feel laggy, even at 80 ms. So the UI renders the move immediately and reconciles afterwards.</p>
+    <p><strong>The sequence:</strong> snapshot the current FEN; validate the move locally with chess.js so an obviously illegal drag doesn't cost a round trip; apply it to local state so the piece moves instantly; emit to the server with an acknowledgement callback and a timeout; on rejection or timeout, restore the snapshot.</p>
+    <p><strong>The rule underneath it:</strong> the server's broadcast is always authoritative and always wins. Local state is a prediction, not a source of truth — so if the two ever disagree, the server's FEN overwrites mine without argument.</p>
+    <p><strong>Two details worth volunteering:</strong> snapshot <em>before</em> mutating, or there's nothing to roll back to. And always set an ack timeout — without one, a dropped packet leaves the board optimistically wrong permanently, with no error anywhere.</p>
+    <p><strong>Trade-off:</strong> a rejected move causes a visible flicker as the piece snaps back. Acceptable, because rejection is rare (the local check catches most illegal moves) while the latency it hides is on every single move.</p>
+  </div>
+
+  <div class="qa">
+    <span class="track-tag track-a">A · Q3</span>
+    <div class="q"><span class="qnum">3.</span> What causes hydration mismatches, and how do you debug them?</div>
+    <p><strong>Cause:</strong> the HTML React generates on the client during hydration doesn't match what the server sent. React expects them to be identical, so it warns and discards the server markup — which throws away the SSR benefit you paid for.</p>
+    <p><strong>The usual culprits, in order of frequency:</strong> anything time-based (<code>new Date()</code>, <code>toLocaleString()</code> — server and client differ in clock and timezone); anything random (<code>Math.random()</code>, UUID generation); reading <code>window</code> or <code>localStorage</code> during render, since neither exists on the server; invalid HTML nesting, because the browser silently repairs <code>&lt;div&gt;</code> inside <code>&lt;p&gt;</code> so the real DOM no longer matches your JSX; and browser extensions injecting attributes.</p>
+    <p><strong>Debugging:</strong> the error names the mismatched element, so start there. Reproduce in incognito to rule out extensions. Then bisect — comment out subtrees until it disappears.</p>
+    <p><strong>Fixes, from best to worst:</strong> make the value deterministic (pass an ISO string from the server and format in an effect); move browser-only reads into <code>useEffect</code> with a stable fallback for the first paint; <code>next/dynamic</code> with <code>ssr: false</code> for genuinely client-only components; and <code>suppressHydrationWarning</code> only on a single leaf node like a timestamp, never as a general silencer — it hides the symptom and the next mismatch too.</p>
+  </div>
+
+  <div class="qa">
+    <span class="track-tag track-a">A · Q4</span>
+    <div class="q"><span class="qnum">4.</span> Why App Router (RSC) for RecrutAI instead of a Vite SPA?</div>
+    <p><strong>Because rendering strategy becomes a per-route decision instead of one app-wide answer.</strong> RecrutAI has two opposite kinds of page: a recruiter dashboard that's mostly data display and should paint fast, and a live interview workspace with a code editor and real-time state that's inherently client-side. An SPA forces one answer for both — everything client-rendered behind a loading spinner.</p>
+    <p><strong>Concretely:</strong> Server Components fetch and render the dashboard's report data with zero JS shipped for those components, so the bundle stays small even as report views grow. The Monaco editor and interview panel are <code>'use client'</code> islands. Route handlers colocate the API with the app, so there's no separate server to deploy for the monorepo's web package.</p>
+    <p><strong>It also removes request waterfalls</strong> — an SPA loads JS, renders, discovers it needs data, then fetches, and nested components repeat that. Server components fetch during render, close to the data.</p>
+    <p><strong>Trade-off, honestly:</strong> the server/client boundary is a real source of bugs — serialization errors, hydration mismatches, and needing to always know which side a component runs on. For something like the Chessify board, where the entire app is interactive, an SPA genuinely is simpler and I'd choose it.</p>
+  </div>
+
+  <div class="qa">
+    <span class="track-tag track-a">A · Q5</span>
+    <div class="q"><span class="qnum">5.</span> When does Context become a bottleneck versus Zustand or Redux?</div>
+    <p><strong>The moment the value updates frequently — because Context has no selector.</strong> Any change to the context value re-renders <em>every</em> consumer, even one reading a field that didn't change. A context holding <code>{ user, theme, notifications, socketStatus }</code> re-renders the whole consuming subtree every time a notification arrives.</p>
+    <p><strong>Zustand fixes it structurally:</strong> <code>useStore(s =&gt; s.user.name)</code> subscribes to a slice, and the component re-renders only when that slice changes. The store lives outside React, so updates don't propagate through the tree at all.</p>
+    <p><strong>Mitigations if you're staying with Context:</strong> split into multiple contexts grouped by update frequency (stable auth in one, fast-changing socket state in another) — usually enough on its own. Memoize the provider value with <code>useMemo</code>, or a new object identity every render makes every consumer re-render regardless. And <code>React.memo</code> the components between provider and consumer so re-renders don't cascade further than necessary.</p>
+    <p><strong>My default:</strong> Context for stable, rarely-changing values — theme, locale, the auth object. An external store for anything high-frequency. And most state doesn't belong in either: colocating it in the component that uses it beats both, and "lift it only when something else genuinely needs it" prevents most of these problems from existing.</p>
+  </div>
+
+  <hr class="divider">
+
+  <h3>Track B — ML / AI / Data Engineering</h3>
+
+  <div class="qa">
+    <span class="track-tag track-b">B · Q1</span>
+    <div class="q"><span class="qnum">1.</span> How do you visualize live telemetry bursts without dropping frames?</div>
+    <p><strong>Decouple the data arrival rate from the render rate.</strong> That's the core idea — everything else follows from it.</p>
+    <p>Incoming readings accumulate in a <code>useRef</code> buffer, which doesn't trigger renders. A single interval flushes the buffer into state on a fixed cadence — say once per second. Ten updates a second becomes one render, and the chart looks identical because nobody perceives sub-second chart updates anyway.</p>
+    <p><strong>Then contain the blast radius:</strong> live data state lives inside the chart's own subtree, not a top-level provider, so a tick doesn't re-render the header, sidebar and filters. The chart component is <code>React.memo</code>'d and its transformed data is <code>useMemo</code>'d — both are required, since a new array identity every render defeats the memo.</p>
+    <p><strong>Bound the window:</strong> keep the last N points rather than the full history, or the array grows without limit and every render gets progressively slower — a leak that presents as "the dashboard gets sluggish after an hour."</p>
+    <p><strong>And use <code>startTransition</code></strong> for filter changes that trigger heavy re-aggregation, so the control stays responsive while the chart recomputes in the background.</p>
+  </div>
+
+  <div class="qa">
+    <span class="track-tag track-b">B · Q2</span>
+    <div class="q"><span class="qnum">2.</span> How did you structure the audit dashboard to render LLM state transitions and score matrices?</div>
+    <p><strong>Treat the interview as an append-only event log, and render it as a timeline.</strong> Each turn produces a record: the question asked, the candidate's answer, the scores across the rubric dimensions, and the branch decision the model made — <code>PROBE_DEEPER</code>, <code>SIMPLIFY</code>, <code>PIVOT_TOPIC</code> or <code>PROCEED</code>. The dashboard is a rendering of that log, not a separate data model.</p>
+    <p><strong>Why that shape matters:</strong> a recruiter's real question isn't "what was the score" but "<em>why</em> did the interview go this way." An event log answers that directly — each transition sits next to the answer and the scores that triggered it, so the model's reasoning is auditable rather than opaque.</p>
+    <p><strong>Rendering:</strong> the report route is dynamic (<code>/admin/reports/[id]</code>) and the data is fetched server-side, since a completed report is static, read-only and non-interactive — it ships essentially no JavaScript. Only the parts that need interaction (expanding a turn, replaying the transcript) are client components. The score matrix is a memoized table component; branch decisions are a constrained enum, so they map to badges from a lookup rather than free-text parsing.</p>
+    <p><strong>Design constraint worth naming:</strong> because the branch decision is one of four valid tokens, the UI can never receive an unexpected state — a hallucinated value is rejected at the service boundary before it's ever persisted or rendered.</p>
+  </div>
+
+  <div class="qa">
+    <span class="track-tag track-b">B · Q3</span>
+    <div class="q"><span class="qnum">3.</span> How do you handle client-side transformation and memoization before charting?</div>
+    <p><strong>First question: should this run on the client at all?</strong> Aggregating thousands of rows in the browser burns the user's battery and blocks the main thread. Rollups belong in the database — an hourly summary query returns 168 rows for a week instead of 200,000 raw readings. Push the work down before optimizing it up here.</p>
+    <p><strong>For what genuinely must happen client-side:</strong> <code>useMemo</code> keyed on the raw data plus the filter parameters, so the transform re-runs only when inputs actually change. Chain it — parse once, filter, then aggregate, each memoized separately, so a filter change doesn't re-parse.</p>
+    <p><strong>The trap to avoid:</strong> transforming inside the render body creates a new array identity every render, which defeats <code>React.memo</code> on the chart and re-renders it even when nothing changed. Memoizing the data and the component are two halves of one fix; either alone does nothing.</p>
+    <p><strong>Downsample before you draw.</strong> A 1920px chart cannot display more than 1920 distinct x-values, so plotting 50,000 points burns CPU rendering pixels nobody can see. Aggregate to roughly one point per pixel column — visually identical, fraction of the cost.</p>
+    <p><strong>If a transform is genuinely heavy</strong>, a Web Worker moves it off the main thread entirely — the only way to keep the UI at 60fps during a multi-hundred-millisecond computation, since <code>useMemo</code> makes work happen <em>less often</em>, never <em>faster</em>.</p>
+  </div>
+
+  <div class="qa">
+    <span class="track-tag track-b">B · Q4</span>
+    <div class="q"><span class="qnum">4.</span> Why dynamic-import Monaco with <code>ssr: false</code>?</div>
+    <p><strong>Two independent reasons, and both are worth stating.</strong></p>
+    <p><strong>It can't be server-rendered.</strong> Monaco is the editor from VS Code and it reaches for <code>window</code>, <code>document</code> and <code>navigator</code> at module load. On the server those don't exist, so the import throws during SSR — this isn't a preference, it's a hard requirement.</p>
+    <p><strong>It's large.</strong> Monaco with its language workers is one of the heaviest things you can put in a bundle. A static import puts it in the initial JS for every page that touches that route, so a candidate loading the interview intro downloads a full code editor before seeing any text. <code>next/dynamic</code> code-splits it into a chunk fetched only when the coding round actually starts.</p>
+    <p><strong>What this looks like in practice:</strong> <code>dynamic(() =&gt; import('@monaco-editor/react'), { ssr: false, loading: () =&gt; &lt;EditorSkeleton /&gt; })</code>. The skeleton matters — without it there's a visible gap while the chunk loads, and users read that as the app being broken.</p>
+    <p><strong>Trade-off:</strong> a delay when the editor first appears. Mitigated by prefetching the chunk during the preceding interview stage, so it's already cached by the time it's needed — you spend idle time rather than the user's attention.</p>
+  </div>
+</section>
+</main>
+<footer>
+  React.js, Next.js &amp; Modern Frontend Architecture · Interview Notes<br>Grounded against Chessify AI, RecrutAI and the SahYatri dashboard.
+</footer>
+<script>
+  document.getElementById('jump').addEventListener('change', function(e) {
+    const id = e.target.value; if (!id) return;
+    const el = document.getElementById(id);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    e.target.value = '';
+  });
+  const prog = document.getElementById('scrollProg');
+  window.addEventListener('scroll', function() {
+    const st = document.documentElement.scrollTop;
+    const sh = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+    prog.style.width = (sh > 0 ? (st / sh) * 100 : 0) + '%';
+  }, { passive: true });
+  const sections = document.querySelectorAll('section.cluster');
+  const observer = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) { entry.target.style.animationPlayState = 'running'; observer.unobserve(entry.target); }
+    });
+  }, { threshold: 0.08 });
+  sections.forEach(function(s) { s.style.animationPlayState = 'paused'; observer.observe(s); });
+</script>
+</body>
+</html>

@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5">
+<title>Databases, Data Engineering &amp; Cloud — Interview Notes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0e17; --surface: #111827; --surface2: #1a2234;
+    --border: #1e293b; --border-glow: #334155;
+    --text: #cbd5e1; --text-dim: #64748b; --white: #f1f5f9;
+    --accent: #38bdf8; --accent2: #818cf8; --green: #34d399;
+    --orange: #fbbf24; --red: #fb7185; --purple: #a78bfa; --cyan: #22d3ee;
+    --radius: 14px; --maxw: 760px;
+    --font: 'Inter', system-ui, -apple-system, sans-serif;
+    --mono: 'JetBrains Mono', 'SF Mono', Consolas, monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--bg); color: var(--text); font-family: var(--font);
+    font-size: 14.5px; line-height: 1.65; overflow-x: hidden; }
+
+  .scroll-progress { position: fixed; top: 0; left: 0; z-index: 200; height: 3px; width: 0%;
+    background: linear-gradient(90deg, var(--accent), var(--accent2), var(--purple));
+    transition: width 80ms linear; border-radius: 0 2px 2px 0; }
+
+  .topbar { position: sticky; top: 0; z-index: 100;
+    background: rgba(10, 14, 23, 0.82);
+    backdrop-filter: blur(16px) saturate(1.6); -webkit-backdrop-filter: blur(16px) saturate(1.6);
+    border-bottom: 1px solid var(--border); padding: 10px 16px;
+    display: flex; align-items: center; gap: 10px; }
+  .topbar .logo { display: flex; align-items: center; gap: 8px; font-weight: 800;
+    font-size: 13.5px; color: var(--white); white-space: nowrap; letter-spacing: -0.02em; }
+  .topbar .dot { width: 8px; height: 8px; border-radius: 50%; background: #38bdf8;
+    box-shadow: 0 0 10px #38bdf8; animation: pulse 2s ease-in-out infinite; }
+  @keyframes pulse { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: .6; transform: scale(.85); } }
+  .topbar select { flex: 1; max-width: 380px; background: var(--surface); color: var(--accent);
+    border: 1px solid var(--border); border-radius: 10px; padding: 8px 12px;
+    font-family: var(--font); font-size: 12.5px; font-weight: 500; outline: none;
+    cursor: pointer; transition: border-color .2s; }
+  .topbar select:focus { border-color: var(--accent); }
+
+  main { max-width: var(--maxw); margin: 0 auto; padding: 24px 16px 80px; }
+
+  .hero { margin-bottom: 28px; padding: 24px 20px;
+    background: linear-gradient(135deg, rgba(56,189,248,0.06), rgba(129,140,248,0.06), rgba(167,139,250,0.04));
+    border: 1px solid var(--border); border-radius: var(--radius); position: relative; overflow: hidden; }
+  .hero::before { content: ''; position: absolute; top: -40%; right: -20%; width: 260px; height: 260px;
+    background: radial-gradient(circle, rgba(56,189,248,0.08) 0%, transparent 70%);
+    border-radius: 50%; pointer-events: none; }
+  .hero h1 { font-size: 22px; font-weight: 800; color: var(--white);
+    letter-spacing: -0.03em; line-height: 1.3; margin-bottom: 6px; }
+  .hero .sub { color: var(--text-dim); font-size: 12.5px; line-height: 1.5; }
+  .badge-row { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 14px; }
+  .badge { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em;
+    padding: 4px 10px; border-radius: 20px; border: 1px solid var(--border);
+    background: rgba(56,189,248,0.06); color: var(--accent); white-space: nowrap; }
+
+  .projects { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 8px; margin-bottom: 20px; }
+  .chip { background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+    padding: 10px 12px; font-size: 11.5px; color: var(--text-dim);
+    transition: border-color .2s, transform .15s; line-height: 1.4; }
+  .chip:hover { border-color: var(--border-glow); transform: translateY(-1px); }
+  .chip a { color: var(--accent); text-decoration: none; font-weight: 600; }
+  .chip a:hover { text-decoration: underline; }
+  .chip .emoji { margin-right: 4px; }
+
+  .calib { background: rgba(251,191,36,0.05); border: 1px solid rgba(251,191,36,0.22);
+    border-radius: 10px; padding: 12px 14px; margin-bottom: 26px; font-size: 12px; line-height: 1.55; }
+  .calib b { color: var(--orange); }
+
+  section.cluster { background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 20px 18px; margin-bottom: 16px;
+    scroll-margin-top: 60px; transition: border-color .25s; animation: fadeUp .4s ease both; }
+  section.cluster:hover { border-color: var(--border-glow); }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+  section.cluster > h2 { font-size: 16.5px; font-weight: 700; color: var(--white);
+    padding-bottom: 10px; margin-bottom: 14px; border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 10px; letter-spacing: -0.01em; }
+  section.cluster > h2 .idx { font-size: 10px; font-weight: 700; color: var(--accent);
+    background: rgba(56,189,248,0.1); border: 1px solid rgba(56,189,248,0.2);
+    border-radius: 6px; padding: 3px 8px; letter-spacing: .04em; }
+
+  h3 { font-size: 14px; font-weight: 700; color: var(--cyan); margin: 18px 0 8px; }
+  h4 { font-size: 12.5px; font-weight: 600; color: var(--orange); margin: 14px 0 6px; }
+  p { margin: 7px 0; font-size: 13px; }
+  ul, ol { padding-left: 18px; margin: 6px 0; }
+  li { margin: 3px 0; font-size: 13px; }
+  code { background: rgba(30,41,59,.8); color: var(--green); padding: 2px 6px;
+    border-radius: 5px; font-family: var(--mono); font-size: 11.5px; }
+  .fml { display: block; text-align: center; background: rgba(30,41,59,.5);
+    border: 1px solid var(--border); border-radius: 8px; padding: 9px 10px; margin: 9px 0;
+    font-family: var(--mono); font-size: 12px; color: var(--cyan); overflow-x: auto; white-space: nowrap; }
+
+  .tw { overflow-x: auto; margin: 10px 0; border: 1px solid var(--border);
+    border-radius: 10px; -webkit-overflow-scrolling: touch; }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; min-width: 420px; }
+  thead th { background: var(--surface2); color: var(--accent); font-size: 10.5px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: .05em; padding: 9px 10px; text-align: left;
+    white-space: nowrap; border-bottom: 1px solid var(--border); position: sticky; top: 0; }
+  tbody td { padding: 8px 10px; border-bottom: 1px solid rgba(30,41,59,.5);
+    vertical-align: top; color: var(--text); }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover { background: rgba(56,189,248,.03); }
+  tbody td:first-child { color: var(--white); font-weight: 600; white-space: nowrap; }
+
+  .box { border-radius: 10px; padding: 12px 14px; margin: 10px 0; font-size: 12.5px;
+    line-height: 1.55; border-left: 3px solid; }
+  .box .label { font-weight: 700; font-size: 10.5px; text-transform: uppercase;
+    letter-spacing: .05em; margin-bottom: 5px; display: flex; align-items: center; gap: 5px; }
+  .box p { margin: 3px 0; font-size: 12.5px; }
+  .box ul { margin: 4px 0; } .box li { font-size: 12.5px; }
+  .box.trap { background: rgba(251,113,133,.06); border-color: var(--red); }
+  .box.trap .label { color: var(--red); }
+  .box.insight { background: rgba(52,211,153,.06); border-color: var(--green); }
+  .box.insight .label { color: var(--green); }
+  .box.sde { background: rgba(56,189,248,.06); border-color: var(--accent); }
+  .box.sde .label { color: var(--accent); }
+  .box.mlde { background: rgba(167,139,250,.06); border-color: var(--purple); }
+  .box.mlde .label { color: var(--purple); }
+
+  details.snippet { background: #0c1018; border: 1px solid var(--border);
+    border-radius: 10px; margin: 10px 0; overflow: hidden; }
+  details.snippet summary { cursor: pointer; padding: 9px 14px; color: var(--text-dim);
+    font-size: 12px; font-weight: 600; font-family: var(--font); list-style: none;
+    display: flex; align-items: center; gap: 7px; user-select: none; transition: color .2s; }
+  details.snippet summary:hover { color: var(--accent); }
+  details.snippet summary::-webkit-details-marker { display: none; }
+  details.snippet summary::before { content: "▸"; color: var(--accent);
+    display: inline-block; transition: transform .15s ease; }
+  details.snippet[open] summary::before { transform: rotate(90deg); }
+  details.snippet pre { margin: 0; padding: 12px 14px; overflow-x: auto;
+    font-family: var(--mono); font-size: 12px; line-height: 1.55; color: var(--text); }
+
+  .qa { background: rgba(17,24,39,.6); border: 1px solid var(--border); border-radius: 10px;
+    padding: 14px; margin: 10px 0; transition: border-color .2s; }
+  .qa:hover { border-color: var(--border-glow); }
+  .qa .q { color: var(--white); font-weight: 600; font-size: 13px; margin-bottom: 7px; line-height: 1.45; }
+  .qa .q .qnum { color: var(--accent); margin-right: 6px; }
+  .track-tag { display: inline-block; font-size: 9.5px; font-weight: 700; letter-spacing: .06em;
+    text-transform: uppercase; padding: 3px 8px; border-radius: 6px; margin-bottom: 8px; }
+  .track-a { background: rgba(56,189,248,.1); color: var(--accent); border: 1px solid rgba(56,189,248,.25); }
+  .track-b { background: rgba(167,139,250,.1); color: var(--purple); border: 1px solid rgba(167,139,250,.25); }
+
+  hr.divider { border: none; border-top: 1px dashed var(--border); margin: 20px 0; }
+  footer { max-width: var(--maxw); margin: 0 auto; padding: 20px 16px 40px;
+    color: var(--text-dim); font-size: 11px; text-align: center; border-top: 1px solid var(--border); }
+
+  @media (max-width: 640px) {
+    body { font-size: 14px; }
+    main { padding: 16px 12px 60px; }
+    .hero { padding: 18px 16px; } .hero h1 { font-size: 19px; }
+    section.cluster { padding: 16px 14px; }
+    section.cluster > h2 { font-size: 15px; }
+    .projects { grid-template-columns: 1fr 1fr; gap: 6px; }
+    .chip { padding: 8px 10px; font-size: 10.5px; }
+    .topbar .logo span.full { display: none; }
+    table { font-size: 11px; min-width: 360px; }
+    thead th { font-size: 9.5px; padding: 7px 8px; }
+    tbody td { padding: 7px 8px; }
+    h3 { font-size: 13.5px; } p, li { font-size: 12.5px; }
+    .box { padding: 10px 12px; font-size: 12px; }
+    .box p, .box li { font-size: 12px; }
+    .qa .q { font-size: 12.5px; } .fml { font-size: 11px; }
+  }
+  @media (max-width: 380px) {
+    .projects { grid-template-columns: 1fr; }
+    .hero h1 { font-size: 17px; }
+    .topbar select { font-size: 11.5px; padding: 7px 10px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    section.cluster { animation: none; }
+    .topbar .dot { animation: none; }
+  }
+</style>
+</head>
+<body>
+<div class="scroll-progress" id="scrollProg"></div>
+<div class="topbar">
+  <div class="logo"><span class="dot"></span><span class="full">Data Notes</span></div>
+  <select id="jump" aria-label="Jump to section">
+    <option value="">Jump to…</option>
+    <option value="c1">1 · Engines &amp; data modeling</option>
+    <option value="c2">2 · Transactions &amp; storage internals</option>
+    <option value="c3">3 · Indexing &amp; query optimization</option>
+    <option value="c4">4 · Ingestion &amp; pipelines</option>
+    <option value="c5">5 · Cloud, Docker &amp; CI/CD</option>
+    <option value="c6">6 · Interview defense bank</option>
+  </select>
+</div>
+
+<main>
+
+<div class="hero">
+  <h1>Databases, Data Engineering &amp; Cloud Infrastructure</h1>
+  <p class="sub">Why the telemetry store is Postgres and the SaaS store is Mongo — with the storage-engine reasoning to back both up. Applied trade-offs over textbook definitions.</p>
+  <div class="badge-row">
+    <span class="badge">6 Clusters</span>
+    <span class="badge">SDE + ML Tracks</span>
+    <span class="badge">Project-Grounded</span>
+  </div>
+</div>
+
+<div class="projects">
+  <div class="chip"><span class="emoji">🚦</span> <a href="https://github.com/AmanVerma1067/SahYatri" target="_blank" rel="noopener">SahYatri</a> — PostgreSQL time-series telemetry</div>
+  <div class="chip"><span class="emoji">📦</span> Packspec — MongoDB Atlas multi-tenant SaaS</div>
+  <div class="chip"><span class="emoji">📚</span> <a href="https://github.com/AmanVerma1067/StudySync" target="_blank" rel="noopener">StudySync</a> — MongoDB timetable modeling</div>
+  <div class="chip"><span class="emoji">🥗</span> <a href="https://github.com/Nutri-Vision" target="_blank" rel="noopener">Nutri-Vision</a> — Git LFS, USDA mappings, Docker</div>
+</div>
+
+<div class="calib">
+  <b>The framing that wins database questions:</b> never answer "which is better." Answer <em>"what does this data actually do?"</em> — uniform and queried by time range, or heterogeneous and read as a whole unit. The engine follows from the access pattern, and saying that out loud is half the mark.
+</div>
+
+
+<!-- ========== C1 ========== -->
+<section class="cluster" id="c1">
+  <h2><span class="idx">01</span> Engines &amp; practical data modeling</h2>
+
+  <div class="tw"><table>
+    <thead><tr><th>&nbsp;</th><th>PostgreSQL</th><th>MySQL</th><th>MongoDB Atlas</th></tr></thead>
+    <tbody>
+      <tr><td>Model</td><td>Relational + JSONB</td><td>Relational</td><td>BSON documents</td></tr>
+      <tr><td>Schema</td><td>Enforced, migrations</td><td>Enforced</td><td>Flexible, optional validation</td></tr>
+      <tr><td>Joins</td><td>Excellent, any depth</td><td>Good</td><td><code>$lookup</code> — works, not the strength</td></tr>
+      <tr><td>Transactions</td><td>ACID, mature MVCC</td><td>ACID (InnoDB)</td><td>Single-doc always; multi-doc since 4.0</td></tr>
+      <tr><td>Scaling out</td><td>Read replicas; sharding is manual</td><td>Similar</td><td>Native sharding by shard key</td></tr>
+      <tr><td>Standout</td><td>Window functions, CTEs, BRIN, partitioning</td><td>Ubiquity, simplicity</td><td>Schema evolves without migrations</td></tr>
+      <tr><td>Your use</td><td>SahYatri telemetry</td><td>Coursework</td><td>Packspec, StudySync</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="box insight">
+    <div class="label">💡 Senior Insight</div>
+    <p>The real dividing line isn't SQL vs NoSQL — it's <strong>uniform vs heterogeneous data</strong>. Telemetry is perfectly uniform: bus ID, timestamp, count, lat, lng, forever. Schema flexibility buys nothing and schema enforcement stops a malformed reading entering the table. A product specification is the opposite: every customer has different fields, so a rigid schema means either a wide sparse table or a migration per customer. Same engineer, opposite choices, one principle.</p>
+  </div>
+
+  <h3>Embed or reference?</h3>
+  <div class="tw"><table>
+    <thead><tr><th>Embed when</th><th>Reference when</th></tr></thead>
+    <tbody>
+      <tr><td>Always read with the parent</td><td>Queried independently</td></tr>
+      <tr><td>Belongs to exactly one parent</td><td>Shared across parents</td></tr>
+      <tr><td>Bounded — 1-to-few</td><td>Unbounded — 1-to-many</td></tr>
+      <tr><td>Updated together</td><td>Updated on different cycles</td></tr>
+      <tr><td><em>Spec field groups inside a spec</em></td><td><em>Users, components, revision history</em></td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="box trap">
+    <div class="label">🚨 Interview Trap</div>
+    <p><strong>The 16 MB BSON ceiling and the unbounded array anti-pattern.</strong> Embedding a revision history inside a spec document feels natural — until a heavily-edited spec accumulates hundreds of revisions and the document approaches 16 MB. The write then <em>fails</em>, in production, on your most active customer, which is the worst possible discovery path.</p>
+    <p>It's also slow long before it fails: MongoDB rewrites the whole document on update, so a 5 MB document costs 5 MB of I/O to append one revision. And you can't page through an embedded array efficiently.</p>
+    <p><strong>Fix:</strong> revisions go to a dedicated append-only <code>spec_revisions</code> collection keyed by <code>specId</code>, with the current version embedded for fast reads. Unbounded growth always means a separate collection — or the bucket pattern, grouping N entries per document, if you want a middle ground.</p>
+  </div>
+
+  <h3>Normalization vs pragmatic denormalization</h3>
+  <ul>
+    <li><strong>1NF</strong> — one value per cell, no lists in a column.</li>
+    <li><strong>2NF</strong> — no column depends on only part of a composite key.</li>
+    <li><strong>3NF</strong> — no column depends on another non-key column (don't store <code>city</code> beside <code>pincode</code>).</li>
+  </ul>
+  <p><strong>When to break it deliberately:</strong> strict 3NF forces joins on every read. On a dashboard aggregating millions of telemetry rows, joining to <code>routes</code> on each one is measurable cost for a value that changes almost never. Copying <code>route_name</code> onto the row is a real optimization — you accept updating it in two places.</p>
+  <p><strong>JSONB</strong> is the escape hatch that gets both: strict columns for the things you filter and join on, a JSONB column for genuinely variable attributes, and GIN indexing when you need to query inside it.</p>
+
+  <div class="box sde">
+    <div class="label">🛡️ SDE Defense</div>
+    <p>If asked "could Packspec have been Postgres?" — say yes, honestly, and show the design: strict columns for <code>tenant_id</code>, <code>role</code>, workflow state and timestamps; a JSONB column for the variable spec body; GIN index for field queries. That would have given stronger relational reporting. Mongo Atlas was the team's existing stack, which is a legitimate engineering reason on its own. <em>Claiming a deliberate architectural bake-off on an inherited codebase is the kind of overclaim that collapses under one follow-up.</em></p>
+  </div>
+</section>
+
+
+<!-- ========== C2 ========== -->
+<section class="cluster" id="c2">
+  <h2><span class="idx">02</span> Transactions, concurrency &amp; storage internals</h2>
+
+  <h3>MVCC — the idea both engines share</h3>
+  <p>Multi-Version Concurrency Control: an update writes a <em>new version</em> rather than overwriting in place. Readers see the version that was current when their transaction started. The payoff is the line worth memorizing: <strong>readers never block writers, and writers never block readers.</strong></p>
+
+  <div class="tw"><table>
+    <thead><tr><th>&nbsp;</th><th>PostgreSQL</th><th>MongoDB (WiredTiger)</th></tr></thead>
+    <tbody>
+      <tr><td>Old versions</td><td>Dead tuples in the table, cleaned by VACUUM</td><td>Kept in cache / lookaside</td></tr>
+      <tr><td>Durability</td><td>WAL — write-ahead log</td><td>Journal + oplog</td></tr>
+      <tr><td>Concurrency limit</td><td>Connections (a process each)</td><td>Transaction tickets (~128 read / 128 write)</td></tr>
+      <tr><td>Isolation default</td><td>Read Committed</td><td>Snapshot (in transactions)</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="box insight">
+    <div class="label">💡 Senior Insight</div>
+    <p><strong>WAL is why a crash doesn't lose committed data.</strong> Postgres writes the <em>intent</em> to a sequential log and fsyncs that before touching data pages. Sequential writes are fast; random page writes are not. On restart it replays the log. This also explains a lot of Postgres behaviour downstream: WAL is what replication ships to standbys, what point-in-time recovery replays, and why a commit-heavy workload is bounded by fsync throughput — which is why <strong>batching inserts into fewer transactions is such a large win</strong>. Each commit is an fsync; 1,000 single-row commits is 1,000 fsyncs, one 1,000-row commit is one.</p>
+  </div>
+
+  <h4>Isolation levels, and the anomaly each stops</h4>
+  <div class="tw"><table>
+    <thead><tr><th>Level</th><th>Prevents</th><th>Still possible</th></tr></thead>
+    <tbody>
+      <tr><td>Read Committed</td><td>Dirty reads</td><td>Non-repeatable reads, phantoms</td></tr>
+      <tr><td>Repeatable Read</td><td>+ non-repeatable reads</td><td>Phantoms (in the standard; Postgres blocks most)</td></tr>
+      <tr><td>Serializable</td><td>Everything — behaves as if serial</td><td>Nothing, but transactions get aborted and must retry</td></tr>
+    </tbody>
+  </table></div>
+  <p><strong>Phantom read:</strong> you run the same <code>WHERE</code> twice in one transaction and the second returns <em>extra rows</em> another transaction inserted. Non-repeatable read is about a row changing; phantom is about the row <em>set</em> changing.</p>
+
+  <div class="box trap">
+    <div class="label">🚨 Interview Trap</div>
+    <p><strong>Long-running transactions are a silent killer in Postgres.</strong> An idle-in-transaction session holds a snapshot, which means VACUUM cannot reclaim dead tuples newer than it — for the <em>whole database</em>. Tables bloat, indexes bloat, queries slow down, and the cause is one forgotten open transaction in a debug console. Related in Mongo: the default 60-second transaction limit and the ticket pool — long transactions exhaust tickets and new operations queue even though the server looks idle. <strong>Keep transactions short. Never wait on a network call inside one.</strong></p>
+  </div>
+
+  <h3>Multi-tenant isolation patterns</h3>
+  <div class="tw"><table>
+    <thead><tr><th>Pattern</th><th>Isolation</th><th>Cost</th><th>Fit</th></tr></thead>
+    <tbody>
+      <tr><td>Database per tenant</td><td>Strongest</td><td>N migrations, N connection pools, heavy ops</td><td>Few large enterprise tenants</td></tr>
+      <tr><td>Collection per tenant</td><td>Medium</td><td>Metadata explosion, awkward cross-tenant queries</td><td>Rarely the right answer</td></tr>
+      <tr><td>Shared + <code>tenantId</code></td><td>App-enforced</td><td>One migration, one pool — but a bug leaks data</td><td>Many small/medium tenants (Packspec)</td></tr>
+    </tbody>
+  </table></div>
+
+  <details class="snippet">
+    <summary>Making isolation structural, not remembered</summary>
+    <pre>// tenantId comes ONLY from the verified JWT — never from body, query or header.
+// If a client can send it, a client can send someone else's.
+
+class TenantScopedRepo {
+  constructor(model, tenantId) {
+    if (!tenantId) throw new Error('tenantId required');   // fail loud at construction
+    this.model = model; this.tenantId = tenantId;
+  }
+  find(f = {})        { return this.model.find({ ...f, tenantId: this.tenantId }); }
+  findById(id)        { return this.model.findOne({ _id: id, tenantId: this.tenantId }); }
+  update(id, patch)   { return this.model.updateOne({ _id: id, tenantId: this.tenantId }, patch); }
+  aggregate(pipeline) { return this.model.aggregate([{ $match: { tenantId: this.tenantId } }, ...pipeline]); }
+}                       // ^ tenant filter FIRST in the pipeline — both correct and index-friendly</pre>
+  </details>
+
+  <details class="snippet">
+    <summary>Atomic multi-document transaction — cloning a spec without orphans</summary>
+    <pre>const session = client.startSession();
+try {
+  await session.withTransaction(async () => {
+    const spec = await Spec.findOne({ _id: id, tenantId }, null, { session });
+    if (!spec) throw new NotFoundError();
+
+    const clone = await Spec.create([{ ...strip(spec), name: `${spec.name} (copy)`, tenantId }], { session });
+    await Field.insertMany(fieldsFor(clone[0]),   { session });
+    await Revision.create([initialRevision(clone[0])], { session });
+    await AuditLog.create([{ action: 'clone', specId: clone[0]._id, tenantId }], { session });
+  }, { readConcern: { level: 'snapshot' }, writeConcern: { w: 'majority' } });
+} finally {
+  await session.endSession();
+}
+// Without the session: a crash between insertMany and Revision.create leaves a
+// spec with fields but no history — an orphan nobody notices until an audit.</pre>
+  </details>
+
+  <div class="box sde">
+    <div class="label">🛡️ SDE Defense</div>
+    <p><code>writeConcern: majority</code> is the clause to explain rather than recite: it means the write is acknowledged only once a majority of replica-set members have it, so a primary failover cannot roll your commit back. Combined with <code>readConcern: snapshot</code>, the transaction reads one consistent point-in-time view and either every document lands or none does.</p>
+    <p><strong>And the constraint that shapes the design:</strong> transactions must be short. Everything slow — validation, external calls, file uploads — happens <em>before</em> <code>withTransaction</code> opens. The transaction contains writes only, because holding one open across a network call burns tickets and blocks other writers.</p>
+  </div>
+</section>
+
+
+<!-- ========== C3 ========== -->
+<section class="cluster" id="c3">
+  <h2><span class="idx">03</span> Indexing &amp; query optimization</h2>
+
+  <div class="tw"><table>
+    <thead><tr><th>Index</th><th>Good for</th><th>Weak at</th><th>Use on</th></tr></thead>
+    <tbody>
+      <tr><td>B-Tree</td><td><code>=</code>, ranges, <code>ORDER BY</code></td><td>Size; slows writes</td><td><code>(bus_id, recorded_at)</code></td></tr>
+      <tr><td>Hash</td><td>Equality only</td><td>No ranges, no sorting</td><td>Rarely worth it</td></tr>
+      <tr><td>BRIN</td><td>Huge, physically-sorted tables</td><td>Randomly ordered data</td><td><code>recorded_at</code> on telemetry</td></tr>
+      <tr><td>GIN</td><td>Inside JSONB, full-text arrays</td><td>Expensive to update</td><td>JSONB spec bodies</td></tr>
+      <tr><td>Multikey (Mongo)</td><td>Array fields</td><td>Explodes on large arrays</td><td>Tags on a doc</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="box insight">
+    <div class="label">💡 Senior Insight</div>
+    <p><strong>BRIN is the answer that separates you in a data-engineering interview.</strong> A B-tree over 50 million timestamps can run to gigabytes because it stores an entry per row. BRIN stores only min/max per block range — kilobytes — and works because telemetry arrives in time order, so the table is <em>already physically sorted</em> by the indexed column. A range scan just skips every block whose min/max can't contain the range.</p>
+    <p>The rule, and the condition that makes it fail: <strong>BRIN when insert order matches sort order.</strong> Backfill old data out of order and correlation breaks, blocks stop being selective, and BRIN quietly degrades toward a sequential scan.</p>
+  </div>
+
+  <h3>Compound indexes: ESR and the prefix rule</h3>
+  <p><strong>ESR</strong> — order columns as <strong>E</strong>quality, then <strong>S</strong>ort, then <strong>R</strong>ange. Equality narrows to a contiguous block, sort is then already satisfied, range scans within it.</p>
+
+  <div class="box trap">
+    <div class="label">🚨 Interview Trap</div>
+    <p><strong>The leftmost prefix rule.</strong> An index on <code>(bus_id, recorded_at)</code> serves queries on <code>bus_id</code> and on <code>bus_id + recorded_at</code> — but <strong>not</strong> on <code>recorded_at</code> alone. You cannot skip a prefix column, because the index is sorted by the first column first. People add a compound index, watch one query stay slow, and can't see why.</p>
+    <p>Two more that cost real interviews: an <strong>index everything</strong> instinct (every index must be updated on every write — a direct tax on an ingest-heavy table), and <strong>a function on the column</strong> — <code>WHERE DATE(recorded_at) = '2026-08-21'</code> cannot use the index at all. Rewrite as a range: <code>recorded_at &gt;= '2026-08-21' AND recorded_at &lt; '2026-08-22'</code>.</p>
+  </div>
+
+  <h3>Reading a query plan</h3>
+  <details class="snippet">
+    <summary>EXPLAIN ANALYZE — what to look for</summary>
+    <pre>EXPLAIN (ANALYZE, BUFFERS)
+SELECT bus_id, avg(occupancy)
+FROM telemetry
+WHERE recorded_at >= now() - interval '7 days'
+GROUP BY bus_id;
+
+-- Read it BOTTOM-UP. The checklist:
+--
+-- 1. Seq Scan on a big table with a selective WHERE  → missing/unused index
+-- 2. rows=1000 (estimated) vs actual rows=900000     → stale stats; run ANALYZE
+-- 3. Nested Loop with a huge outer row count         → planner misjudged; often (2)
+-- 4. "Filter: ... Rows Removed by Filter: 4000000"   → fetched then discarded; index it
+-- 5. external merge Disk: 250MB                      → sort spilled; raise work_mem
+-- 6. Buffers: read=  vs hit=                         → 'read' is disk, 'hit' is cache
+
+-- MongoDB equivalent:
+db.telemetry.find({ busId: 12 }).explain("executionStats")
+-- COLLSCAN                         → no index used
+-- IXSCAN → FETCH                   → index found docs, then fetched them
+-- totalDocsExamined >> nReturned   → the index isn't selective enough
+-- totalDocsExamined == nReturned   → ideal
+-- IXSCAN with no FETCH             → covered query, best case</pre>
+  </details>
+  <p>The single most useful signal in either engine: <strong>compare rows examined to rows returned.</strong> Close together is healthy; orders apart means you're scanning and discarding.</p>
+
+  <h3>Connection pooling</h3>
+  <p>Postgres forks a <strong>process</strong> per connection — roughly 5–10 MB each, plus scheduling cost. So connections are a scarce resource, not a free one.</p>
+  <ul>
+    <li><strong>Sizing</strong> — a common starting point is <code>(cores × 2) + effective_spindles</code>. Counter-intuitively, a <em>smaller</em> pool often has higher throughput: 20 connections on 4 cores just thrash.</li>
+    <li><strong>Exhaustion</strong> looks like timeouts and latency spikes with an idle-looking database — everyone's queued at the pool.</li>
+    <li><strong>PgBouncer</strong> in transaction mode multiplexes thousands of client connections onto a few server ones. Essential once you have many app instances, and mandatory for serverless, where each invocation would otherwise open its own connection.</li>
+  </ul>
+</section>
+
+
+<!-- ========== C4 ========== -->
+<section class="cluster" id="c4">
+  <h2><span class="idx">04</span> Ingestion, telemetry &amp; pipelines</h2>
+
+  <h3>Synchronous writes vs a queue</h3>
+  <div class="tw"><table>
+    <thead><tr><th>&nbsp;</th><th>Direct HTTP → INSERT</th><th>HTTP → queue → batch worker</th></tr></thead>
+    <tbody>
+      <tr><td>Latency to client</td><td>Waits for the DB</td><td>Immediate <code>202 Accepted</code></td></tr>
+      <tr><td>DB slow / down</td><td>Requests fail, data lost</td><td>Backlog on disk, drains later</td></tr>
+      <tr><td>Write pattern</td><td>One row per request</td><td>Batched — far fewer fsyncs</td></tr>
+      <tr><td>Complexity</td><td>Low</td><td>A broker to run and monitor</td></tr>
+    </tbody>
+  </table></div>
+  <p>Start simple and honest: at SahYatri's real volume, direct writes were correct. The queue is what you reach for when a database slowdown starts causing <em>data loss</em> rather than just slowness.</p>
+
+  <div class="box mlde">
+    <div class="label">📊 ML / Data Eng Defense</div>
+    <p><strong>Batching is the highest-leverage change and it costs almost nothing.</strong> Every commit is an fsync; 1,000 single-row inserts is 1,000 fsyncs plus 1,000 round trips plus 1,000 index updates. Buffer for a couple of seconds and write one multi-row <code>INSERT</code> — or <code>COPY</code> for real volume, which skips per-row parsing entirely — and you routinely get an order of magnitude. Do this <em>before</em> reaching for Kafka or a different database engine; most "we need a time-series DB" conclusions are really "we're committing one row at a time."</p>
+  </div>
+
+  <h3>Late data, retries and idempotency</h3>
+  <p>A bus loses signal for two hours and uploads a backlog. Three things must hold:</p>
+  <ul>
+    <li><strong>Event time ≠ ingest time</strong> — store both. <code>recorded_at</code> is when the reading happened; <code>ingested_at</code> is when you received it. Aggregate on event time, or a reconnect skews your history.</li>
+    <li><strong>Idempotency</strong> — a device that times out will retry, so the same reading can arrive twice. A unique constraint on <code>(bus_id, recorded_at)</code> with <code>ON CONFLICT DO NOTHING</code> makes duplicates harmless.</li>
+    <li><strong>Watermarks</strong> — a rollup for hour H shouldn't be considered final until you're reasonably sure late data has landed. Either delay finalizing, or recompute affected buckets when late data arrives.</li>
+  </ul>
+
+  <details class="snippet">
+    <summary>Idempotent batch upsert + partitioned schema + rollup</summary>
+    <pre>-- partitioned parent
+CREATE TABLE telemetry (
+  bus_id       int         NOT NULL,
+  recorded_at  timestamptz NOT NULL,
+  ingested_at  timestamptz NOT NULL DEFAULT now(),
+  occupancy    int         NOT NULL,
+  lat          double precision,
+  lng          double precision,
+  PRIMARY KEY (bus_id, recorded_at)        -- also gives idempotency
+) PARTITION BY RANGE (recorded_at);
+
+CREATE TABLE telemetry_2026_08 PARTITION OF telemetry
+  FOR VALUES FROM ('2026-08-01') TO ('2026-09-01');
+
+CREATE INDEX ON telemetry_2026_08 USING BRIN (recorded_at);   -- tiny; data is time-ordered
+
+-- idempotent batch insert: a retried burst can't double-count
+INSERT INTO telemetry (bus_id, recorded_at, occupancy, lat, lng)
+SELECT * FROM unnest($1::int[], $2::timestamptz[], $3::int[], $4::float[], $5::float[])
+ON CONFLICT (bus_id, recorded_at) DO NOTHING;
+
+-- hourly rollup: keep raw hot for a week, summaries forever
+INSERT INTO telemetry_hourly (bus_id, hour, avg_occupancy, max_occupancy, samples)
+SELECT bus_id, date_trunc('hour', recorded_at), avg(occupancy), max(occupancy), count(*)
+FROM telemetry
+WHERE recorded_at >= $1 AND recorded_at < $2
+GROUP BY 1, 2
+ON CONFLICT (bus_id, hour) DO UPDATE
+  SET avg_occupancy = EXCLUDED.avg_occupancy,   -- recompute if late data arrived
+      samples       = EXCLUDED.samples;</pre>
+  </details>
+
+  <div class="box insight">
+    <div class="label">💡 Senior Insight</div>
+    <p>Partitioning pays three separate dividends and it's worth naming all three: <strong>query pruning</strong> (a last-7-days query skips every other partition without reading it), <strong>small hot indexes</strong> (writes only touch the current partition, so the index that must stay in cache is one month's worth, not five years'), and <strong>instant retention</strong> — dropping old data becomes <code>DROP TABLE</code>, which is metadata-only, instead of a <code>DELETE</code> that writes dead tuples and then makes VACUUM clean them up.</p>
+  </div>
+
+  <h3>ETL vs ELT</h3>
+  <p><strong>ETL</strong> transforms before loading; <strong>ELT</strong> lands raw and transforms in the warehouse.</p>
+  <ul>
+    <li>SahYatri is necessarily <strong>ETL</strong>, and that's a design commitment, not a preference: YOLOv5n reduces a frame to a count <em>on the Pi</em>, and the frame is discarded. You could not do ELT without transmitting video, which breaks the privacy guarantee.</li>
+    <li><strong>ELT</strong> suits a warehouse where storage is cheap and you don't yet know the questions — land everything, transform later, re-transform when requirements change.</li>
+  </ul>
+  <p>The trade in one line: ETL is cheaper to store and impossible to reinterpret; ELT keeps every option open and costs more.</p>
+</section>
+
+
+<!-- ========== C5 ========== -->
+<section class="cluster" id="c5">
+  <h2><span class="idx">05</span> Cloud, Docker &amp; CI/CD</h2>
+
+  <h3>Service mapping</h3>
+  <div class="tw"><table>
+    <thead><tr><th>Need</th><th>AWS</th><th>Azure</th></tr></thead>
+    <tbody>
+      <tr><td>VM</td><td>EC2</td><td>Virtual Machines</td></tr>
+      <tr><td>Serverless</td><td>Lambda</td><td>Functions</td></tr>
+      <tr><td>Containers</td><td>ECS / EKS / Fargate</td><td>Container Apps / AKS</td></tr>
+      <tr><td>Object storage</td><td>S3</td><td>Blob Storage</td></tr>
+      <tr><td>Block storage</td><td>EBS</td><td>Managed Disks</td></tr>
+      <tr><td>Managed SQL</td><td>RDS / Aurora</td><td>Azure SQL / DB for PostgreSQL</td></tr>
+      <tr><td>Secrets</td><td>Secrets Manager</td><td>Key Vault</td></tr>
+    </tbody>
+  </table></div>
+  <p><strong>Object vs block:</strong> S3 is HTTP, effectively infinite, no filesystem — right for model weights, uploads, backups. EBS is a disk attached to one instance — right for a database's data directory. Model weights go in object storage; a Postgres volume does not.</p>
+  <p>Be straight about your actual deployments: Render for the Flask and Node services, Vercel for the Next.js and Flutter web builds, MongoDB Atlas as managed data. PaaS is a legitimate choice for projects at this scale, and claiming deep production AWS you don't have is a fast way to get caught.</p>
+
+  <h3>Multi-stage Dockerfile</h3>
+  <details class="snippet">
+    <summary>Build stage + slim runtime + non-root</summary>
+    <pre># ---------- build ----------
+FROM python:3.11 AS build
+WORKDIR /app
+COPY requirements.txt .
+RUN pip install --user --no-cache-dir -r requirements.txt
+
+# ---------- runtime ----------
+FROM python:3.11-slim
+RUN useradd -m -u 10001 appuser        # never run as root
+WORKDIR /app
+
+COPY --from=build /root/.local /home/appuser/.local
+COPY --chown=appuser:appuser . .
+
+ENV PATH=/home/appuser/.local/bin:$PATH \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1
+
+USER appuser
+EXPOSE 8000
+HEALTHCHECK --interval=30s --timeout=3s CMD curl -f http://localhost:8000/health || exit 1
+CMD ["gunicorn", "main:app", "-k", "uvicorn.workers.UvicornWorker", "--workers", "2", "--bind", "0.0.0.0:8000"]</pre>
+  </details>
+
+  <div class="box trap">
+    <div class="label">🚨 Interview Trap</div>
+    <p><strong>Docker layers are immutable, so a deleted secret is still in the image.</strong> <code>COPY .env . &amp;&amp; RUN use-it &amp;&amp; RUN rm .env</code> leaves the secret permanently readable in the earlier layer — anyone who pulls the image can extract it with <code>docker history</code>. Deleting a file in a later layer hides it from the filesystem, not from the image.</p>
+    <p>Real fixes: multi-stage (secrets used in build never enter the final stage), BuildKit <code>--mount=type=secret</code> (never written to any layer), or inject at runtime as environment variables. And a <code>.dockerignore</code> covering <code>.env</code>, <code>.git</code>, <code>node_modules</code> — <code>.git</code> alone often carries credentials in its history and bloats the build context.</p>
+  </div>
+
+  <h3>Git LFS for model artifacts</h3>
+  <p>Git stores a full copy of every version forever, and binary <code>.pth</code> files don't delta-compress. A 100 MB checkpoint committed ten times is a gigabyte in history that <em>every clone downloads forever</em> — and rewriting history to remove it is painful. LFS replaces the file with a pointer; <code>.gitattributes</code> holds the rules.</p>
+
+  <div class="box mlde">
+    <div class="label">📊 ML / Data Eng Defense</div>
+    <p>The distinction worth stating: <strong>LFS gives versioning tied to code; object storage gives scale.</strong> With LFS, checking out the commit that produced a result also checks out the exact weights that produced it — reproducibility with zero manual bookkeeping, versus an S3 bucket where matching <code>model_v3_final_FINAL.pth</code> to a commit is something a human does and eventually gets wrong.</p>
+    <p>In CI it pays off concretely: <code>GIT_LFS_SKIP_SMUDGE=1</code> lets lint and unit jobs clone in seconds without pulling weights, and only the inference test fetches them. <strong>Outgrow it</strong> past a few GB or a real team — LFS has bandwidth quotas and stores no model metadata — moving to S3 or a registry (MLflow, HF Hub) with a version pointer in Git.</p>
+  </div>
+
+  <h3>CI/CD and API test automation</h3>
+  <ul>
+    <li><strong>Cheap checks first</strong> — lint, then unit tests (PHPUnit/Jest/pytest), then build the container, then integration tests. Fail fast on the fast things.</li>
+    <li><strong>Newman</strong> runs Postman collections headlessly, so the same collection you click locally becomes a merge gate.</li>
+    <li><strong>Token injection</strong> — a first request logs in and stores the token into a collection variable via the Tests script; every later request uses <code>{{authToken}}</code>. Credentials come from environment files, never committed.</li>
+    <li><strong>Ephemeral environment</strong> — <code>docker compose up</code> the API plus a throwaway database, run the suite against it, tear it down. Tests never touch shared state.</li>
+  </ul>
+
+  <div class="box sde">
+    <div class="label">🛡️ SDE Defense</div>
+    <p>Multi-tenant isolation is exactly the property unit tests <em>cannot</em> verify. "Can tenant A read tenant B's spec?" is only answerable by a real request carrying A's real token against B's real resource ID, expecting 403. That's an integration test, and it's the highest-value one in the suite — it guards the failure with actual consequences. So the collection isn't just happy-path coverage; the useful cases are the negative ones: wrong tenant, insufficient role, expired token, tampered ID.</p>
+  </div>
+
+  <h3>Linux diagnostics</h3>
+  <div class="tw"><table>
+    <thead><tr><th>Task</th><th>Command</th></tr></thead>
+    <tbody>
+      <tr><td>Live processes</td><td><code>htop</code> · <code>top</code></td></tr>
+      <tr><td>Find a process</td><td><code>ps aux | grep [g]unicorn</code></td></tr>
+      <tr><td>Stop it</td><td><code>kill -15 PID</code> (graceful) → <code>kill -9</code> (force)</td></tr>
+      <tr><td>What's on a port</td><td><code>lsof -i :8000</code> · <code>ss -tulpn</code></td></tr>
+      <tr><td>Disk / memory</td><td><code>df -h</code> · <code>free -h</code></td></tr>
+      <tr><td>Follow logs</td><td><code>tail -f app.log</code> · <code>journalctl -u api -f</code></td></tr>
+      <tr><td>Check an endpoint</td><td><code>curl -sw '%{http_code} %{time_total}\n' -o /dev/null URL</code></td></tr>
+    </tbody>
+  </table></div>
+  <p><code>2&gt;&amp;1</code> means "send stderr wherever stdout is going," so <code>&gt; out.log 2&gt;&amp;1</code> captures both.</p>
+</section>
+
+
+<!-- ========== C6 ========== -->
+<section class="cluster" id="c6">
+  <h2><span class="idx">06</span> Interview defense bank</h2>
+  <p style="color:var(--text-dim); font-size:12px; margin-bottom:14px;">One-line reason → supporting mechanic → the trade-off you accepted.</p>
+
+  <h3>Track A — SDE</h3>
+
+  <div class="qa">
+    <span class="track-tag track-a">A · Q1</span>
+    <div class="q"><span class="qnum">1.</span> Why shared-collection multi-tenancy instead of database-per-tenant?</div>
+    <p><strong>Because the tenant count is high and each tenant is small — the exact profile shared-collection is built for.</strong> Database-per-tenant means every schema change is N migrations, every tenant needs its own connection pool, and cross-tenant analytics becomes a union across databases. Operational cost grows linearly with customers, which is backwards for a SaaS trying to add customers cheaply.</p>
+    <p>Shared collections with a <code>tenantId</code> discriminator give one migration, one pool, and indexes that lead with <code>tenantId</code> so queries stay selective.</p>
+    <p><strong>The cost, stated plainly:</strong> isolation is now enforced by application code, so a single missing filter leaks data across customers. That's why it's structural — every query goes through a tenant-scoped repository that injects the filter, and the tenant ID is read only from the verified token, never from client input. Writing an unscoped query requires bypassing the repo, which is visible in review.</p>
+    <p><strong>When I'd switch:</strong> a regulated enterprise tenant with a contractual data-residency or physical-isolation requirement. That's a compliance decision, not a performance one.</p>
+  </div>
+
+  <div class="qa">
+    <span class="track-tag track-a">A · Q2</span>
+    <div class="q"><span class="qnum">2.</span> How did you design atomic transactions to prevent orphaned clone records?</div>
+    <p><strong>The failure being prevented:</strong> cloning a spec writes several documents — the spec, its fields, an initial revision, an audit entry. A crash after two of four leaves a spec with fields but no history. Nothing errors; the data is just quietly wrong, and it surfaces during an audit weeks later.</p>
+    <p><strong>The fix</strong> is a session-scoped transaction: every write carries <code>{ session }</code>, with <code>readConcern: snapshot</code> so all reads see one consistent point in time and <code>writeConcern: majority</code> so a primary failover can't roll the commit back. Either all four documents land or none do.</p>
+    <p><strong>The design constraint that falls out of this:</strong> transactions must be short. Validation, permission checks and any external calls happen <em>before</em> the transaction opens — it contains writes only. A transaction held open across a network call burns WiredTiger tickets and blocks other writers.</p>
+    <p><strong>And the alternative I'd mention:</strong> if the clone could be modelled as a single document, no transaction would be needed at all — single-document writes are always atomic in MongoDB. Multi-document transactions are the fallback for when the model genuinely spans collections, not the default reach.</p>
+  </div>
+
+  <div class="qa">
+    <span class="track-tag track-a">A · Q3</span>
+    <div class="q"><span class="qnum">3.</span> How do you enforce tenant isolation so a junior dev can't accidentally leak records?</div>
+    <p><strong>By making the unsafe thing hard to write, not by asking people to remember.</strong> Any scheme that depends on every developer adding a <code>tenantId</code> filter to every query will eventually meet the endpoint that forgot — and that endpoint leaks.</p>
+    <p><strong>Three layers:</strong> (1) tenant ID is extracted from the verified JWT in middleware and attached to the request — never accepted from body, query or header, because anything a client can send, a client can forge; (2) all data access goes through a <code>TenantScopedRepo</code> constructed with that ID, which injects the filter into every find, update and aggregation, and throws at construction if the ID is missing; (3) the raw model isn't exported from the data module, so a query without a tenant scope is not merely discouraged — it's inconvenient, and it shows up in review as someone reaching past the repository.</p>
+    <p><strong>Then verify it</strong> — negative integration tests where tenant A's token requests tenant B's resource and must get 403. That's a class of bug only an end-to-end request can catch.</p>
+    <p><strong>Trade-off:</strong> the repository layer adds indirection and makes genuine cross-tenant admin queries awkward. Correct — those should be explicit and rare.</p>
+  </div>
+
+  <div class="qa">
+    <span class="track-tag track-a">A · Q4</span>
+    <div class="q"><span class="qnum">4.</span> Walk me through automating auth token injection and regression tests in CI.</div>
+    <p><strong>Structure:</strong> the collection opens with a login request whose Tests script writes the returned JWT into a collection variable. Every subsequent request sends <code>Authorization: Bearer {{authToken}}</code>, so tokens are never hardcoded and expiry never breaks the run. Per-role tokens (admin, editor, viewer) are captured up front so permission cases can be tested without re-authenticating.</p>
+    <p><strong>Data flow:</strong> a create request stores the new resource ID into a variable that later update and delete requests consume — the suite builds and tears down its own state, so runs are independent and re-runnable.</p>
+    <p><strong>In CI:</strong> Newman runs the collection headlessly against an ephemeral <code>docker compose</code> stack with a throwaway database. Environment files supply base URLs and credentials, pulled from CI secrets rather than committed. A non-zero exit fails the merge.</p>
+    <p><strong>What the suite is actually for:</strong> the valuable cases are the negative ones — wrong tenant, insufficient role, expired token, tampered ID. Happy paths are largely covered by unit tests; cross-tenant leakage is only detectable through a real authenticated request, which is exactly what this catches.</p>
+  </div>
+
+  <div class="qa">
+    <span class="track-tag track-a">A · Q5</span>
+    <div class="q"><span class="qnum">5.</span> How do you structure a multi-stage Dockerfile to shrink images and protect secrets?</div>
+    <p><strong>Two stages.</strong> The build stage carries compilers, dev headers and build-time credentials. The runtime stage starts from a slim base and copies <em>only</em> the built artifacts. Everything the build needed and the runtime doesn't — toolchains, caches, secrets — never exists in the shipped image. Smaller image, faster pulls, and a much smaller attack surface.</p>
+    <p><strong>On secrets, the key mechanic:</strong> layers are immutable, so <code>RUN rm .env</code> in a later layer removes the file from the filesystem but <em>not from the image</em> — it's still extractable via <code>docker history</code>. Multi-stage solves this structurally, because the layer containing the secret is discarded rather than hidden. For build-time secrets specifically, BuildKit's <code>--mount=type=secret</code> exposes the value during one RUN without writing it to any layer. Runtime secrets are injected as environment variables or from a secret manager — never baked in.</p>
+    <p><strong>Also:</strong> order layers so dependencies install <em>before</em> source is copied, or every code change reinstalls the world. Run as a non-root user. And keep a <code>.dockerignore</code> covering <code>.git</code>, <code>.env</code> and <code>node_modules</code> — <code>.git</code> frequently carries credentials in its history and bloats the build context.</p>
+  </div>
+
+  <hr class="divider">
+
+  <h3>Track B — ML / AI / Data Engineering</h3>
+
+  <div class="qa">
+    <span class="track-tag track-b">B · Q1</span>
+    <div class="q"><span class="qnum">1.</span> Why PostgreSQL for transit telemetry over MongoDB or InfluxDB?</div>
+    <p><strong>Because every question I ask this data is an aggregate over a time range, and that's what SQL is for.</strong> "Average occupancy per hour on route 12 last week" is one query with a window function. In a document store I'd be writing aggregation pipelines or doing it in application code.</p>
+    <p>The data is also perfectly uniform — bus ID, timestamp, occupancy, lat, lng — so schema flexibility buys nothing, while schema enforcement stops a malformed reading from entering the table at all.</p>
+    <p><strong>Postgres then gives me the whole time-series toolkit natively:</strong> range partitioning so a week's query skips every other partition, BRIN indexes that are tiny because time-ordered inserts leave the table physically sorted, <code>ON CONFLICT</code> for idempotent retries, and <code>DROP TABLE</code> retention instead of a slow <code>DELETE</code>.</p>
+    <p><strong>Why not Influx:</strong> it's genuinely better at extreme write volume, but it's a second technology to operate and learn, with a different query language, for a workload Postgres handles comfortably. <strong>Trade-off:</strong> raw write throughput is lower, which I address by batching. At 100× scale I'd move to TimescaleDB first — same SQL, purpose-built storage, no rewrite.</p>
+  </div>
+
+  <div class="qa">
+    <span class="track-tag track-b">B · Q2</span>
+    <div class="q"><span class="qnum">2.</span> How do you optimize a table ingesting millions of telemetry rows per day?</div>
+    <p><strong>Four levers, roughly in order of payoff.</strong></p>
+    <p><strong>1. Batch the writes.</strong> Every commit is an fsync, so one-row-per-insert is the dominant cost. Buffer and use multi-row inserts or <code>COPY</code>. Usually an order of magnitude on its own, and it's a code change, not an architecture change.</p>
+    <p><strong>2. Partition by time.</strong> <code>PARTITION BY RANGE (recorded_at)</code>, one partition per month. Three separate wins: queries prune to relevant partitions; writes only touch the current partition so the hot index stays small enough to sit in cache; retention becomes an instant <code>DROP TABLE</code> instead of a <code>DELETE</code> that leaves dead tuples for VACUUM.</p>
+    <p><strong>3. BRIN on the timestamp.</strong> A B-tree over 50M timestamps is gigabytes; BRIN stores min/max per block range and is kilobytes. It works only because inserts arrive in time order, so the table is already physically sorted — that correlation is the precondition, and backfilling out of order breaks it. Keep a B-tree on <code>(bus_id, recorded_at)</code> for per-bus lookups, since that one needs real selectivity.</p>
+    <p><strong>4. Downsample.</strong> Nobody queries per-second data from six months ago. A scheduled job rolls raw readings into hourly averages; raw stays hot for a week, summaries persist. Dashboards then read a table that's orders of magnitude smaller.</p>
+    <p><strong>And index restraint</strong> — every index is updated on every insert, so on an ingest-heavy table each one is a throughput tax. Add them from measured query plans, not speculation.</p>
+  </div>
+
+  <div class="qa">
+    <span class="track-tag track-b">B · Q3</span>
+    <div class="q"><span class="qnum">3.</span> A bus loses connectivity for 2 hours, then uploads 2,400 payloads at once. What happens?</div>
+    <p><strong>Three separate problems, and naming them separately is the answer.</strong></p>
+    <p><strong>Correctness — event time vs ingest time.</strong> Those 2,400 readings all arrive now but <em>happened</em> over the last two hours. If the schema only records arrival time, the history shows an empty two hours followed by an impossible spike. So <code>recorded_at</code> is set on the device and <code>ingested_at</code> on the server, and every aggregate uses event time.</p>
+    <p><strong>Duplicates — idempotency.</strong> A device that times out mid-upload will retry, so readings can arrive twice. A unique constraint on <code>(bus_id, recorded_at)</code> with <code>ON CONFLICT DO NOTHING</code> makes retries harmless — which in turn means the device can retry aggressively without coordination.</p>
+    <p><strong>Load — the burst itself.</strong> The device uploads in chunks (say 200 readings per request) rather than one enormous body, and the server inserts each chunk as one batched statement. If many buses reconnect simultaneously after an area-wide outage, that's a thundering herd, so devices add jitter to their retry timing and the ingest endpoint returns <code>202</code> after buffering rather than holding the connection through the write.</p>
+    <p><strong>Downstream:</strong> any hourly rollup covering that window is now stale, so late data marks affected buckets for recomputation — which is why the rollup is written as an idempotent upsert rather than a plain insert.</p>
+  </div>
+
+  <div class="qa">
+    <span class="track-tag track-b">B · Q4</span>
+    <div class="q"><span class="qnum">4.</span> Why Git LFS for <code>.pth</code> weights rather than plain Git or object storage?</div>
+    <p><strong>Plain Git is disqualified immediately.</strong> Git keeps a full copy of every version forever, and binary checkpoints don't delta-compress, so a 100 MB file committed ten times is a gigabyte that <em>every clone downloads forever</em>. Worse, it's not undoable without rewriting history for everyone.</p>
+    <p><strong>LFS over object storage</strong> because it ties weights to code. Checking out the commit that produced a result also checks out the exact weights that produced it — reproducibility with no manual bookkeeping. With a bare S3 bucket, mapping <code>model_v3_final_FINAL.pth</code> to the commit that trained it is something a human tracks in a spreadsheet and eventually gets wrong.</p>
+    <p><strong>Practical CI benefit:</strong> <code>GIT_LFS_SKIP_SMUDGE=1</code> lets lint and unit jobs clone in seconds without pulling weights; only the inference test fetches them.</p>
+    <p><strong>When I'd outgrow it:</strong> LFS has bandwidth quotas and stores no metadata — no metrics, no training config, no lineage. Past a few GB or a real team, S3 or a model registry (MLflow, HF Hub) holding the artifact with only a version pointer in Git. For a project with a handful of checkpoints, LFS is the right rung on that ladder, and knowing <em>when</em> you'd step off it is the rest of the answer.</p>
+  </div>
+
+  <div class="qa">
+    <span class="track-tag track-b">B · Q5</span>
+    <div class="q"><span class="qnum">5.</span> Index scan vs collection scan — what do you look for in EXPLAIN ANALYZE?</div>
+    <p><strong>The difference:</strong> a sequential/collection scan reads every row and discards non-matches — O(n), and fine when you genuinely want most of the table. An index scan walks a sorted structure to jump straight to matching rows — roughly O(log n). Note the planner sometimes chooses a seq scan <em>correctly</em>: if a query returns 60% of the table, random index lookups plus heap fetches are slower than reading it sequentially.</p>
+    <p><strong>What I check, in order:</strong></p>
+    <ul>
+      <li><strong>Estimated vs actual rows.</strong> <code>rows=1000</code> planned against <code>actual rows=900000</code> means stale statistics — the planner chose badly on bad information. <code>ANALYZE</code> the table first; it fixes more "slow query" tickets than adding an index does.</li>
+      <li><strong>Rows Removed by Filter.</strong> A large number means the database fetched rows only to throw them away — that filter belongs in an index.</li>
+      <li><strong>Seq Scan on a large table with a selective WHERE</strong> — missing index, or an unusable one (function applied to the column, or a skipped leftmost prefix).</li>
+      <li><strong>Sort spilling to disk</strong> (<code>external merge Disk: 250MB</code>) — raise <code>work_mem</code> or index for the sort order.</li>
+      <li><strong>Buffers</strong> — <code>read</code> is disk, <code>hit</code> is cache. High reads on a repeated query means the working set doesn't fit in cache.</li>
+    </ul>
+    <p><strong>In MongoDB:</strong> <code>COLLSCAN</code> means no index used; <code>IXSCAN → FETCH</code> means the index found documents and then fetched them. The number that matters is <code>totalDocsExamined</code> versus <code>nReturned</code> — equal is ideal, orders apart means the index isn't selective. An <code>IXSCAN</code> with no <code>FETCH</code> is a covered query, where the index alone answered it. Best case in either engine.</p>
+  </div>
+</section>
+</main>
+<footer>
+  Databases, Data Engineering &amp; Cloud Infrastructure · Interview Notes<br>Grounded against SahYatri, Packspec, StudySync and Nutri-Vision AI.
+</footer>
+<script>
+  document.getElementById('jump').addEventListener('change', function(e) {
+    const id = e.target.value; if (!id) return;
+    const el = document.getElementById(id);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    e.target.value = '';
+  });
+  const prog = document.getElementById('scrollProg');
+  window.addEventListener('scroll', function() {
+    const st = document.documentElement.scrollTop;
+    const sh = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+    prog.style.width = (sh > 0 ? (st / sh) * 100 : 0) + '%';
+  }, { passive: true });
+  const sections = document.querySelectorAll('section.cluster');
+  const observer = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) { entry.target.style.animationPlayState = 'running'; observer.unobserve(entry.target); }
+    });
+  }, { threshold: 0.08 });
+  sections.forEach(function(s) { s.style.animationPlayState = 'paused'; observer.observe(s); });
+</script>
+</body>
+</html>

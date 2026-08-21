@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5">
+<title>Node.js, Express &amp; Real-Time WebSockets — Interview Notes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0e17; --surface: #111827; --surface2: #1a2234;
+    --border: #1e293b; --border-glow: #334155;
+    --text: #cbd5e1; --text-dim: #64748b; --white: #f1f5f9;
+    --accent: #38bdf8; --accent2: #818cf8; --green: #34d399;
+    --orange: #fbbf24; --red: #fb7185; --purple: #a78bfa; --cyan: #22d3ee;
+    --radius: 14px; --maxw: 760px;
+    --font: 'Inter', system-ui, -apple-system, sans-serif;
+    --mono: 'JetBrains Mono', 'SF Mono', Consolas, monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--bg); color: var(--text); font-family: var(--font);
+    font-size: 14.5px; line-height: 1.65; overflow-x: hidden; }
+
+  .scroll-progress { position: fixed; top: 0; left: 0; z-index: 200; height: 3px; width: 0%;
+    background: linear-gradient(90deg, var(--accent), var(--accent2), var(--purple));
+    transition: width 80ms linear; border-radius: 0 2px 2px 0; }
+
+  .topbar { position: sticky; top: 0; z-index: 100;
+    background: rgba(10, 14, 23, 0.82);
+    backdrop-filter: blur(16px) saturate(1.6); -webkit-backdrop-filter: blur(16px) saturate(1.6);
+    border-bottom: 1px solid var(--border); padding: 10px 16px;
+    display: flex; align-items: center; gap: 10px; }
+  .topbar .logo { display: flex; align-items: center; gap: 8px; font-weight: 800;
+    font-size: 13.5px; color: var(--white); white-space: nowrap; letter-spacing: -0.02em; }
+  .topbar .dot { width: 8px; height: 8px; border-radius: 50%; background: #34d399;
+    box-shadow: 0 0 10px #34d399; animation: pulse 2s ease-in-out infinite; }
+  @keyframes pulse { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: .6; transform: scale(.85); } }
+  .topbar select { flex: 1; max-width: 380px; background: var(--surface); color: var(--accent);
+    border: 1px solid var(--border); border-radius: 10px; padding: 8px 12px;
+    font-family: var(--font); font-size: 12.5px; font-weight: 500; outline: none;
+    cursor: pointer; transition: border-color .2s; }
+  .topbar select:focus { border-color: var(--accent); }
+
+  main { max-width: var(--maxw); margin: 0 auto; padding: 24px 16px 80px; }
+
+  .hero { margin-bottom: 28px; padding: 24px 20px;
+    background: linear-gradient(135deg, rgba(56,189,248,0.06), rgba(129,140,248,0.06), rgba(167,139,250,0.04));
+    border: 1px solid var(--border); border-radius: var(--radius); position: relative; overflow: hidden; }
+  .hero::before { content: ''; position: absolute; top: -40%; right: -20%; width: 260px; height: 260px;
+    background: radial-gradient(circle, rgba(56,189,248,0.08) 0%, transparent 70%);
+    border-radius: 50%; pointer-events: none; }
+  .hero h1 { font-size: 22px; font-weight: 800; color: var(--white);
+    letter-spacing: -0.03em; line-height: 1.3; margin-bottom: 6px; }
+  .hero .sub { color: var(--text-dim); font-size: 12.5px; line-height: 1.5; }
+  .badge-row { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 14px; }
+  .badge { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em;
+    padding: 4px 10px; border-radius: 20px; border: 1px solid var(--border);
+    background: rgba(56,189,248,0.06); color: var(--accent); white-space: nowrap; }
+
+  .projects { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 8px; margin-bottom: 20px; }
+  .chip { background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+    padding: 10px 12px; font-size: 11.5px; color: var(--text-dim);
+    transition: border-color .2s, transform .15s; line-height: 1.4; }
+  .chip:hover { border-color: var(--border-glow); transform: translateY(-1px); }
+  .chip a { color: var(--accent); text-decoration: none; font-weight: 600; }
+  .chip a:hover { text-decoration: underline; }
+  .chip .emoji { margin-right: 4px; }
+
+  .calib { background: rgba(251,191,36,0.05); border: 1px solid rgba(251,191,36,0.22);
+    border-radius: 10px; padding: 12px 14px; margin-bottom: 26px; font-size: 12px; line-height: 1.55; }
+  .calib b { color: var(--orange); }
+
+  section.cluster { background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 20px 18px; margin-bottom: 16px;
+    scroll-margin-top: 60px; transition: border-color .25s; animation: fadeUp .4s ease both; }
+  section.cluster:hover { border-color: var(--border-glow); }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+  section.cluster > h2 { font-size: 16.5px; font-weight: 700; color: var(--white);
+    padding-bottom: 10px; margin-bottom: 14px; border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 10px; letter-spacing: -0.01em; }
+  section.cluster > h2 .idx { font-size: 10px; font-weight: 700; color: var(--accent);
+    background: rgba(56,189,248,0.1); border: 1px solid rgba(56,189,248,0.2);
+    border-radius: 6px; padding: 3px 8px; letter-spacing: .04em; }
+
+  h3 { font-size: 14px; font-weight: 700; color: var(--cyan); margin: 18px 0 8px; }
+  h4 { font-size: 12.5px; font-weight: 600; color: var(--orange); margin: 14px 0 6px; }
+  p { margin: 7px 0; font-size: 13px; }
+  ul, ol { padding-left: 18px; margin: 6px 0; }
+  li { margin: 3px 0; font-size: 13px; }
+  code { background: rgba(30,41,59,.8); color: var(--green); padding: 2px 6px;
+    border-radius: 5px; font-family: var(--mono); font-size: 11.5px; }
+  .fml { display: block; text-align: center; background: rgba(30,41,59,.5);
+    border: 1px solid var(--border); border-radius: 8px; padding: 9px 10px; margin: 9px 0;
+    font-family: var(--mono); font-size: 12px; color: var(--cyan); overflow-x: auto; white-space: nowrap; }
+
+  .tw { overflow-x: auto; margin: 10px 0; border: 1px solid var(--border);
+    border-radius: 10px; -webkit-overflow-scrolling: touch; }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; min-width: 420px; }
+  thead th { background: var(--surface2); color: var(--accent); font-size: 10.5px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: .05em; padding: 9px 10px; text-align: left;
+    white-space: nowrap; border-bottom: 1px solid var(--border); position: sticky; top: 0; }
+  tbody td { padding: 8px 10px; border-bottom: 1px solid rgba(30,41,59,.5);
+    vertical-align: top; color: var(--text); }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover { background: rgba(56,189,248,.03); }
+  tbody td:first-child { color: var(--white); font-weight: 600; white-space: nowrap; }
+
+  .box { border-radius: 10px; padding: 12px 14px; margin: 10px 0; font-size: 12.5px;
+    line-height: 1.55; border-left: 3px solid; }
+  .box .label { font-weight: 700; font-size: 10.5px; text-transform: uppercase;
+    letter-spacing: .05em; margin-bottom: 5px; display: flex; align-items: center; gap: 5px; }
+  .box p { margin: 3px 0; font-size: 12.5px; }
+  .box ul { margin: 4px 0; } .box li { font-size: 12.5px; }
+  .box.trap { background: rgba(251,113,133,.06); border-color: var(--red); }
+  .box.trap .label { color: var(--red); }
+  .box.insight { background: rgba(52,211,153,.06); border-color: var(--green); }
+  .box.insight .label { color: var(--green); }
+  .box.sde { background: rgba(56,189,248,.06); border-color: var(--accent); }
+  .box.sde .label { color: var(--accent); }
+  .box.mlde { background: rgba(167,139,250,.06); border-color: var(--purple); }
+  .box.mlde .label { color: var(--purple); }
+
+  details.snippet { background: #0c1018; border: 1px solid var(--border);
+    border-radius: 10px; margin: 10px 0; overflow: hidden; }
+  details.snippet summary { cursor: pointer; padding: 9px 14px; color: var(--text-dim);
+    font-size: 12px; font-weight: 600; font-family: var(--font); list-style: none;
+    display: flex; align-items: center; gap: 7px; user-select: none; transition: color .2s; }
+  details.snippet summary:hover { color: var(--accent); }
+  details.snippet summary::-webkit-details-marker { display: none; }
+  details.snippet summary::before { content: "▸"; color: var(--accent);
+    display: inline-block; transition: transform .15s ease; }
+  details.snippet[open] summary::before { transform: rotate(90deg); }
+  details.snippet pre { margin: 0; padding: 12px 14px; overflow-x: auto;
+    font-family: var(--mono); font-size: 12px; line-height: 1.55; color: var(--text); }
+
+  .qa { background: rgba(17,24,39,.6); border: 1px solid var(--border); border-radius: 10px;
+    padding: 14px; margin: 10px 0; transition: border-color .2s; }
+  .qa:hover { border-color: var(--border-glow); }
+  .qa .q { color: var(--white); font-weight: 600; font-size: 13px; margin-bottom: 7px; line-height: 1.45; }
+  .qa .q .qnum { color: var(--accent); margin-right: 6px; }
+  .track-tag { display: inline-block; font-size: 9.5px; font-weight: 700; letter-spacing: .06em;
+    text-transform: uppercase; padding: 3px 8px; border-radius: 6px; margin-bottom: 8px; }
+  .track-a { background: rgba(56,189,248,.1); color: var(--accent); border: 1px solid rgba(56,189,248,.25); }
+  .track-b { background: rgba(167,139,250,.1); color: var(--purple); border: 1px solid rgba(167,139,250,.25); }
+
+  hr.divider { border: none; border-top: 1px dashed var(--border); margin: 20px 0; }
+  footer { max-width: var(--maxw); margin: 0 auto; padding: 20px 16px 40px;
+    color: var(--text-dim); font-size: 11px; text-align: center; border-top: 1px solid var(--border); }
+
+  @media (max-width: 640px) {
+    body { font-size: 14px; }
+    main { padding: 16px 12px 60px; }
+    .hero { padding: 18px 16px; } .hero h1 { font-size: 19px; }
+    section.cluster { padding: 16px 14px; }
+    section.cluster > h2 { font-size: 15px; }
+    .projects { grid-template-columns: 1fr 1fr; gap: 6px; }
+    .chip { padding: 8px 10px; font-size: 10.5px; }
+    .topbar .logo span.full { display: none; }
+    table { font-size: 11px; min-width: 360px; }
+    thead th { font-size: 9.5px; padding: 7px 8px; }
+    tbody td { padding: 7px 8px; }
+    h3 { font-size: 13.5px; } p, li { font-size: 12.5px; }
+    .box { padding: 10px 12px; font-size: 12px; }
+    .box p, .box li { font-size: 12px; }
+    .qa .q { font-size: 12.5px; } .fml { font-size: 11px; }
+  }
+  @media (max-width: 380px) {
+    .projects { grid-template-columns: 1fr; }
+    .hero h1 { font-size: 17px; }
+    .topbar select { font-size: 11.5px; padding: 7px 10px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    section.cluster { animation: none; }
+    .topbar .dot { animation: none; }
+  }
+</style>
+</head>
+<body>
+<div class="scroll-progress" id="scrollProg"></div>
+<div class="topbar">
+  <div class="logo"><span class="dot"></span><span class="full">Node Notes</span></div>
+  <select id="jump" aria-label="Jump to section">
+    <option value="">Jump to…</option>
+    <option value="c1">1 · Node internals &amp; the event loop</option>
+    <option value="c2">2 · Express, middleware &amp; errors</option>
+    <option value="c3">3 · Real-time &amp; Socket.IO</option>
+    <option value="c4">4 · Auth, JWT &amp; access control</option>
+    <option value="c5">5 · Interview defense bank</option>
+  </select>
+</div>
+
+<main>
+
+<div class="hero">
+  <h1>Node.js, Express &amp; Real-Time WebSocket Architecture</h1>
+  <p class="sub">The event loop, the failure modes it creates, and how a multiplayer chess server survives them. Mechanics over tutorials — every section ends in something you can say out loud.</p>
+  <div class="badge-row">
+    <span class="badge">5 Clusters</span>
+    <span class="badge">SDE + ML Tracks</span>
+    <span class="badge">Project-Grounded</span>
+  </div>
+</div>
+
+<div class="projects">
+  <div class="chip"><span class="emoji">♟️</span> <a href="https://github.com/AmanVerma1067/Chessify-WebApp" target="_blank" rel="noopener">Chessify</a> — Socket.IO multiplayer server</div>
+  <div class="chip"><span class="emoji">📚</span> <a href="https://github.com/AmanVerma1067/StudySync" target="_blank" rel="noopener">StudySync</a> — Express + MongoDB REST API</div>
+  <div class="chip"><span class="emoji">🚦</span> <a href="https://github.com/AmanVerma1067/SahYatri" target="_blank" rel="noopener">SahYatri</a> — telemetry ingestion → PostgreSQL</div>
+  <div class="chip"><span class="emoji">🧑‍💼</span> <a href="https://github.com/AmanVerma1067/RecrutAI" target="_blank" rel="noopener">RecrutAI</a> — Next.js monorepo services</div>
+</div>
+
+<div class="calib">
+  <b>One idea underneath everything here:</b> Node has exactly one thread running your JavaScript. Almost every Node interview question — blocking, scaling, race conditions, memory leaks — is a consequence of that single sentence. If you're stuck mid-answer, reason from it.
+</div>
+
+
+<!-- ========== C1 ========== -->
+<section class="cluster" id="c1">
+  <h2><span class="idx">01</span> Node internals &amp; the event loop</h2>
+
+  <h3>The phases, in order</h3>
+  <p>libuv runs a loop with fixed phases. Each tick walks through them:</p>
+  <div class="tw"><table>
+    <thead><tr><th>Phase</th><th>Runs</th><th>You'll be asked</th></tr></thead>
+    <tbody>
+      <tr><td>Timers</td><td><code>setTimeout</code>, <code>setInterval</code> callbacks whose time has elapsed</td><td>Why timers fire <em>late</em>, never early</td></tr>
+      <tr><td>Pending callbacks</td><td>Deferred system-level I/O callbacks (e.g. some TCP errors)</td><td>Rarely</td></tr>
+      <tr><td>Idle / prepare</td><td>Internal libuv use</td><td>Just name it</td></tr>
+      <tr><td>Poll</td><td>Retrieves new I/O events; runs their callbacks. <strong>Blocks here when idle</strong></td><td>Where a Node process actually waits</td></tr>
+      <tr><td>Check</td><td><code>setImmediate</code> callbacks</td><td><code>setImmediate</code> vs <code>setTimeout(fn,0)</code></td></tr>
+      <tr><td>Close</td><td><code>'close'</code> events — <code>socket.on('close')</code></td><td>Cleanup ordering</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Microtasks jump the queue</h3>
+  <p>Between <em>every</em> phase (and after each callback), Node drains two queues before continuing:</p>
+  <ol>
+    <li><strong><code>process.nextTick</code> queue</strong> — drained completely first.</li>
+    <li><strong>Promise microtask queue</strong> — <code>.then</code>, <code>await</code> continuations — drained next.</li>
+  </ol>
+
+  <details class="snippet">
+    <summary>Ordering puzzle — be able to explain this output</summary>
+    <pre>console.log('1 sync');
+
+setTimeout(()  =&gt; console.log('5 timeout'), 0);
+setImmediate(() =&gt; console.log('6 immediate'));
+
+Promise.resolve().then(() =&gt; console.log('4 promise'));
+process.nextTick(()  =&gt; console.log('3 nextTick'));
+
+console.log('2 sync');
+
+// 1 sync → 2 sync → 3 nextTick → 4 promise → then 5/6
+// nextTick beats promises. Both beat every phase.
+// timeout-vs-immediate order at top level is NOT guaranteed —
+// it depends on how long the process took to boot.
+// Inside an I/O callback, setImmediate ALWAYS wins (check comes right after poll).</pre>
+  </details>
+
+  <div class="box trap">
+    <div class="label">🚨 Interview Trap</div>
+    <p><strong>Recursive <code>process.nextTick</code> starves the loop.</strong> Because the nextTick queue drains <em>completely</em> before the loop advances, a nextTick that schedules another nextTick never lets I/O run. Your server accepts no connections and shows no error — it just goes silent at 100% CPU. This is why <code>setImmediate</code> is the safe choice for "run after the current operation": it yields to the loop.</p>
+  </div>
+
+  <h3>V8 vs the libuv threadpool</h3>
+  <p>"Single-threaded" describes <em>your JavaScript</em>, not the process. Node has background threads — they're just not running your code.</p>
+  <div class="tw"><table>
+    <thead><tr><th>Work</th><th>Handled by</th><th>Blocks JS?</th></tr></thead>
+    <tbody>
+      <tr><td>Network I/O (sockets, HTTP)</td><td>OS kernel — epoll/kqueue</td><td>No, and no thread used</td></tr>
+      <tr><td>File I/O (<code>fs</code>)</td><td>libuv threadpool</td><td>No, but consumes a pool slot</td></tr>
+      <tr><td><code>crypto.pbkdf2</code>, bcrypt</td><td>libuv threadpool</td><td>No, consumes a slot</td></tr>
+      <tr><td>DNS <code>lookup()</code></td><td>libuv threadpool</td><td>No, consumes a slot</td></tr>
+      <tr><td>Your <code>for</code> loop, <code>JSON.parse</code></td><td>The one JS thread</td><td><strong>Yes</strong></td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="box insight">
+    <div class="label">💡 Senior Insight</div>
+    <p>The threadpool defaults to <strong>4 threads</strong> (<code>UV_THREADPOOL_SIZE</code>). That number matters more than people expect: bcrypt hashing runs there, so five concurrent logins mean the fifth waits for a free thread even though the event loop is idle. Sockets don't touch the pool at all — the kernel handles them. So the mental split is: <em>network scales to thousands; file and crypto work scales to four unless you raise it.</em></p>
+  </div>
+
+  <h3>Scaling past one core</h3>
+  <div class="tw"><table>
+    <thead><tr><th>Tool</th><th>Gives you</th><th>Use for</th><th>Watch out</th></tr></thead>
+    <tbody>
+      <tr><td>Worker Threads</td><td>Extra JS threads in one process</td><td>CPU work: parsing, image ops, compute</td><td>No shared objects — messages are copied</td></tr>
+      <tr><td>Cluster</td><td>N forked processes sharing a port</td><td>Scaling an HTTP server across cores</td><td>Nothing in memory is shared</td></tr>
+      <tr><td>PM2</td><td>Cluster + restarts, logs, zero-downtime reload</td><td>Production process management</td><td>Same shared-state problem</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="box trap">
+    <div class="label">🚨 Interview Trap</div>
+    <p>"Just add cluster mode to scale Chessify." <strong>That breaks it instantly.</strong> Room state lives in a plain object in one process's memory. Fork four workers and player A lands on worker 1, player B on worker 3 — different objects, so they're in different games with the same room code. Clustering a stateless REST API is free; clustering a stateful socket server requires externalizing state first. Knowing <em>which</em> of your services can be clustered safely is the actual answer.</p>
+  </div>
+
+  <h3>Streams &amp; backpressure</h3>
+  <p>Four types: <strong>Readable</strong> (source), <strong>Writable</strong> (sink), <strong>Duplex</strong> (both — a TCP socket), <strong>Transform</strong> (duplex that modifies — gzip).</p>
+  <p><strong>Backpressure</strong> is the whole point. <code>writable.write()</code> returns <code>false</code> when its internal buffer is over the high-water mark. That boolean is the sink saying "I'm behind — stop." Ignore it and Node keeps buffering in RAM until the process dies.</p>
+
+  <details class="snippet">
+    <summary>Respecting backpressure manually (and why pipeline is better)</summary>
+    <pre>// manual — this is what pipe() does for you
+function writeAll(rows, dest, done) {
+  let i = 0;
+  (function next() {
+    while (i &lt; rows.length) {
+      const ok = dest.write(JSON.stringify(rows[i++]) + '\n');
+      if (!ok) return dest.once('drain', next);   // stop; resume when flushed
+    }
+    done();
+  })();
+}
+
+// production: pipeline handles backpressure AND cleanup on error
+const { pipeline } = require('node:stream/promises');
+await pipeline(readStream, transformStream, writeStream);</pre>
+  </details>
+
+  <div class="box mlde">
+    <div class="label">📊 ML / Data Eng Defense</div>
+    <p>Backpressure is the concept that makes an ingestion service survive. If SahYatri's Node layer accepted telemetry faster than PostgreSQL could absorb it, the excess would sit in process memory and the container would OOM — the failure looks like a random crash, not a database problem, which makes it miserable to debug. Streams give you the signal to slow down. At larger scale you push that signal further upstream: a queue holds the backlog on disk instead of in RAM, and the ingest endpoint returns <code>202 Accepted</code> immediately.</p>
+  </div>
+</section>
+
+
+<!-- ========== C2 ========== -->
+<section class="cluster" id="c2">
+  <h2><span class="idx">02</span> Express, middleware &amp; error handling</h2>
+
+  <h3>The middleware pipeline</h3>
+  <p>Express is a list of functions run in order. Each gets <code>(req, res, next)</code>. Call <code>next()</code> to continue, send a response to stop, or call <code>next(err)</code> to jump to error handling. <strong>Registration order is execution order</strong> — that's the source of most Express bugs.</p>
+
+  <div class="tw"><table>
+    <thead><tr><th>Type</th><th>Signature</th><th>Example</th></tr></thead>
+    <tbody>
+      <tr><td>Application</td><td><code>app.use(fn)</code></td><td><code>helmet()</code>, <code>cors()</code>, <code>express.json()</code></td></tr>
+      <tr><td>Router</td><td><code>router.use(fn)</code></td><td><code>requireAuth</code> on <code>/api/admin</code></td></tr>
+      <tr><td>Route</td><td><code>app.get(path, fn, handler)</code></td><td>Per-endpoint validation</td></tr>
+      <tr><td>Error</td><td><code>(err, req, res, next)</code></td><td>Central error responder</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="box trap">
+    <div class="label">🚨 Interview Trap</div>
+    <p>Express identifies error middleware by <strong>arity — it counts the function's parameters</strong>. Write <code>(err, req, res)</code> with three params and Express treats it as normal middleware, so your error handler silently never fires. Same class of bug: register the error handler <em>before</em> your routes and it can never catch them, because it's already run.</p>
+  </div>
+
+  <h3>Async errors — the one that bites</h3>
+  <p>Express 4 catches thrown errors in <strong>synchronous</strong> handlers only. An async handler that rejects produces an unhandled rejection: the client hangs until timeout, and nothing reaches your error middleware.</p>
+
+  <details class="snippet">
+    <summary>The asyncHandler wrapper + centralized error hierarchy</summary>
+    <pre>// Express 4 fix — wrap every async route
+const asyncHandler = fn =&gt; (req, res, next) =&gt;
+  Promise.resolve(fn(req, res, next)).catch(next);
+
+// Custom error hierarchy — status lives on the error, not the route
+class AppError extends Error {
+  constructor(message, status = 500) {
+    super(message);
+    this.status = status;
+    this.isOperational = true;      // expected vs programmer bug
+  }
+}
+class NotFoundError     extends AppError { constructor(m='Not found')    { super(m, 404); } }
+class UnauthorizedError extends AppError { constructor(m='Unauthorized') { super(m, 401); } }
+class ConflictError     extends AppError { constructor(m='Conflict')     { super(m, 409); } }
+
+app.get('/timetable/:id', asyncHandler(async (req, res) =&gt; {
+  const t = await Timetable.findById(req.params.id);
+  if (!t) throw new NotFoundError('Timetable not found');   // just throw
+  res.json(t);
+}));
+
+// ONE error responder, registered LAST
+app.use((err, req, res, next) =&gt; {
+  const status = err.status || 500;
+  if (!err.isOperational) console.error(err);              // log real bugs
+  res.status(status).json({
+    error: status === 500 ? 'Internal server error' : err.message
+  });
+});</pre>
+  </details>
+  <p><strong>Express 5</strong> handles rejected promises from async handlers natively, so the wrapper becomes unnecessary. Say which version you targeted — it shows you know why the wrapper exists rather than cargo-culting it.</p>
+
+  <div class="box insight">
+    <div class="label">💡 Senior Insight</div>
+    <p>Distinguish <strong>operational</strong> errors (bad input, missing record, expired token — expected, handle and continue) from <strong>programmer</strong> errors (undefined property, blown invariant — a bug, state is now suspect). On <code>uncaughtException</code>, the correct move is to log and <em>exit</em>, letting PM2 or the container restart you. Continuing after an unknown crash means serving requests from a process you no longer trust.</p>
+  </div>
+
+  <h3>REST design that survives review</h3>
+  <div class="tw"><table>
+    <thead><tr><th>Code</th><th>Means</th><th>Use when</th></tr></thead>
+    <tbody>
+      <tr><td>200 / 201 / 204</td><td>OK / Created / No content</td><td>GET · POST that created · DELETE</td></tr>
+      <tr><td>400</td><td>Malformed request</td><td>Unparseable body, missing param</td></tr>
+      <tr><td>401 vs 403</td><td>Not authenticated vs not permitted</td><td>No token vs wrong role</td></tr>
+      <tr><td>404 / 409</td><td>Missing / conflict</td><td>Bad ID · duplicate email, version clash</td></tr>
+      <tr><td>422</td><td>Well-formed but semantically invalid</td><td>Valid JSON, failed validation rules</td></tr>
+    </tbody>
+  </table></div>
+  <p><strong>Idempotency:</strong> GET, PUT and DELETE produce the same end state when repeated; POST doesn't. This isn't trivia — it's exactly why a client can safely retry a GET on a flaky mobile connection but must use an idempotency key to retry a POST.</p>
+
+  <h4>Pagination: offset vs cursor</h4>
+  <div class="tw"><table>
+    <thead><tr><th>&nbsp;</th><th>Offset (<code>LIMIT/OFFSET</code>)</th><th>Cursor / keyset</th></tr></thead>
+    <tbody>
+      <tr><td>Query</td><td><code>OFFSET 10000 LIMIT 20</code></td><td><code>WHERE ts &lt; $last ORDER BY ts DESC LIMIT 20</code></td></tr>
+      <tr><td>Deep pages</td><td>Slow — the DB scans and discards 10,000 rows</td><td>Constant time — index seek</td></tr>
+      <tr><td>Jump to page 50</td><td>Yes</td><td>No, sequential only</td></tr>
+      <tr><td>New rows while paging</td><td><strong>Duplicates and skips</strong></td><td>Stable</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="box mlde">
+    <div class="label">📊 ML / Data Eng Defense</div>
+    <p>For SahYatri's telemetry history, cursor pagination isn't a preference — it's required. Rows arrive continuously, so between page 1 and page 2 the offsets have already shifted and a user paging backwards through history sees the same reading twice while missing another. Keyset on <code>(recorded_at, id)</code> is stable under concurrent writes and stays fast at any depth. <strong>Rule: offset for static tables, cursor for anything append-heavy.</strong></p>
+  </div>
+</section>
+
+
+<!-- ========== C3 ========== -->
+<section class="cluster" id="c3">
+  <h2><span class="idx">03</span> Real-time communication &amp; Socket.IO</h2>
+
+  <h3>Pick the lightest thing that works</h3>
+  <div class="tw"><table>
+    <thead><tr><th>Technique</th><th>How</th><th>Cost</th><th>Right for</th></tr></thead>
+    <tbody>
+      <tr><td>Short polling</td><td>Request every N seconds</td><td>Wasteful, laggy</td><td>Almost nothing</td></tr>
+      <tr><td>Long polling</td><td>Server holds request until data</td><td>Reconnect per message</td><td>Fallback only</td></tr>
+      <tr><td>SSE</td><td>One open stream, server → client</td><td>Cheap, HTTP-native</td><td>Live scores, LLM token streaming</td></tr>
+      <tr><td>WebSocket</td><td>Upgraded TCP, both directions</td><td>Stateful, sticky sessions</td><td>Chess, chat, collaboration</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="box insight">
+    <div class="label">💡 Senior Insight</div>
+    <p>Ask who initiates. <strong>Only the server pushes → SSE</strong>, and it's underrated: it runs over plain HTTP, reconnects automatically, and needs no special proxy config. <strong>Both sides push → WebSocket.</strong> Chess qualifies genuinely — both players send moves, and the server also emits join, disconnect and spectator events unprompted. A dashboard that only receives telemetry does not qualify, and choosing SSE there is the senior call.</p>
+  </div>
+
+  <h3>How Socket.IO actually connects</h3>
+  <p>Engine.IO starts with <strong>HTTP long-polling</strong>, then attempts an upgrade to WebSocket once the connection is proven. That's why it works behind corporate proxies that block <code>ws://</code> — it degrades instead of failing.</p>
+  <ul>
+    <li><strong>Namespace</strong> — a separate logical endpoint (<code>/admin</code>) sharing one TCP connection. Multiplexing.</li>
+    <li><strong>Room</strong> — a server-side set of socket IDs inside a namespace. Not a connection; just a label to broadcast to. <em>One chess game = one room.</em></li>
+    <li><strong>Heartbeats</strong> — <code>pingInterval</code> / <code>pingTimeout</code> detect a dead connection that never sent a TCP FIN (phone entering a tunnel).</li>
+  </ul>
+
+  <details class="snippet">
+    <summary>Chessify room lifecycle — the shape that matters</summary>
+    <pre>const rooms = {};   // roomId → { chess, white, black, spectators[] }
+
+io.on('connection', (socket) =&gt; {
+
+  socket.on('join', ({ roomId }) =&gt; {
+    const room = rooms[roomId] ||= { chess: new Chess(), white: null, black: null, spectators: [] };
+    socket.join(roomId);                          // Socket.IO room
+    socket.data.roomId = roomId;
+
+    // assign a ROLE — this is the security boundary, not a UI detail
+    if (!room.white)      { room.white = socket.id; socket.data.color = 'w'; }
+    else if (!room.black) { room.black = socket.id; socket.data.color = 'b'; }
+    else                  { room.spectators.push(socket.id); socket.data.color = null; }
+
+    socket.emit('joined', { color: socket.data.color, fen: room.chess.fen() });
+  });
+
+  socket.on('move', ({ from, to, promotion }) =&gt; {
+    const room = rooms[socket.data.roomId];
+    if (!room) return;
+    if (socket.data.color === null) return;                    // spectator: reject
+    if (room.chess.turn() !== socket.data.color) return;       // not your turn: reject
+
+    const legal = room.chess.move({ from, to, promotion });    // chess.js is the referee
+    if (!legal) return;                                        // illegal: reject silently
+
+    io.to(socket.data.roomId).emit('state', { fen: room.chess.fen(), last: legal });
+  });
+
+  socket.on('disconnect', () =&gt; {
+    const room = rooms[socket.data.roomId];
+    if (!room) return;
+    io.to(socket.data.roomId).emit('opponent-left', { color: socket.data.color });
+    // NOTE: don't delete the seat immediately — see reconnection Q3
+  });
+});</pre>
+  </details>
+
+  <div class="box sde">
+    <div class="label">🛡️ SDE Defense</div>
+    <p><strong>Three checks, in this order, and they must all live on the server:</strong> (1) is this socket a player or a spectator? (2) is it their turn? (3) is the move legal in <em>the server's</em> board state? The client's board is a rendering, never a source of truth. A modified client can emit any payload it likes — <code>{from:'a1', to:'h8'}</code> from the spectator seat — and every one of those is rejected by a check that doesn't consult the client at all. If validation lived only in the browser, the game would be trivially cheatable.</p>
+  </div>
+
+  <div class="box trap">
+    <div class="label">🚨 Interview Trap</div>
+    <p><strong>Socket memory leaks.</strong> Two versions worth knowing. Server-side: never removing a room from <code>rooms</code> after both players leave — the object grows forever, and it looks like a slow memory climb with no obvious cause. Client-side: registering <code>socket.on('state', ...)</code> inside a React component without removing it on unmount, so every remount stacks another listener and one server event fires the handler five times. Fix: return a cleanup that calls <code>socket.off</code>, and sweep empty rooms on disconnect.</p>
+  </div>
+
+  <h3>Scaling real-time horizontally</h3>
+  <p>The moment you run two instances, <code>rooms = {}</code> becomes a bug: instance A has no idea a socket on instance B joined the same game. Two things must change.</p>
+  <ol>
+    <li><strong>Pub/sub adapter</strong> — <code>@socket.io/redis-adapter</code> forwards emits between instances via Redis, so <code>io.to(room).emit()</code> reaches sockets on every node.</li>
+    <li><strong>Externalize state</strong> — the authoritative board FEN moves into Redis, so any instance can validate a move.</li>
+  </ol>
+  <p>Also needed: <strong>sticky sessions</strong> at the load balancer, because Engine.IO's polling handshake must reach the same instance each time.</p>
+
+  <div class="box insight">
+    <div class="label">💡 Senior Insight</div>
+    <p>Be honest that single-instance is the right choice for a project at this scale — and then show you know the exact upgrade path. "The adapter solves message routing; it does <em>not</em> solve shared state. If two instances both hold a board in local memory, they diverge. Redis has to become the single source of truth for the FEN, and then the move handler needs a per-room lock or an atomic compare-and-set, because two instances can now process moves for the same game concurrently." That last sentence is the one that signals real distributed-systems thinking.</p>
+  </div>
+</section>
+
+
+<!-- ========== C4 ========== -->
+<section class="cluster" id="c4">
+  <h2><span class="idx">04</span> Auth, JWT &amp; access control</h2>
+
+  <h3>Anatomy of a token</h3>
+  <p>Three base64url segments joined by dots: <strong>header</strong> (algorithm), <strong>payload</strong> (claims — <code>sub</code>, <code>role</code>, <code>tenantId</code>, <code>exp</code>, <code>iat</code>), <strong>signature</strong>.</p>
+
+  <div class="box trap">
+    <div class="label">🚨 Interview Trap</div>
+    <p><strong>A JWT is signed, not encrypted.</strong> Anyone can decode the payload — paste it into jwt.io and read it. Signing proves it wasn't <em>altered</em>; it hides nothing. So never put anything sensitive in the claims. Related classic: the <code>alg: none</code> attack, where a client submits an unsigned token hoping the server trusts the header. Always verify against an algorithm <em>you</em> specify, never one the token names.</p>
+  </div>
+
+  <div class="tw"><table>
+    <thead><tr><th>&nbsp;</th><th>HS256</th><th>RS256</th></tr></thead>
+    <tbody>
+      <tr><td>Keys</td><td>One shared secret</td><td>Private signs, public verifies</td></tr>
+      <tr><td>Who can forge</td><td>Anyone holding the secret</td><td>Only the private-key holder</td></tr>
+      <tr><td>Best for</td><td>A single monolith signing its own tokens</td><td>Many services verifying a central auth server's tokens</td></tr>
+    </tbody>
+  </table></div>
+  <p>The trade is straightforward: HS256 means every verifying service can also <em>mint</em> tokens. RS256 lets services verify while only the auth server can issue.</p>
+
+  <h3>Access + refresh token rotation</h3>
+  <p>The problem: a stateless JWT stays valid until it expires, so you can't really log someone out. The standard resolution is two tokens with different jobs.</p>
+  <ul>
+    <li><strong>Access token</strong> — short (~15 min), sent on every request, never stored server-side. Damage from theft is time-boxed.</li>
+    <li><strong>Refresh token</strong> — long-lived, stored server-side (DB/Redis), used only against <code>/auth/refresh</code>. Because it <em>is</em> tracked, it can be revoked.</li>
+  </ul>
+  <p><strong>Rotation with reuse detection</strong> is the part interviewers want:</p>
+
+  <details class="snippet">
+    <summary>Refresh rotation + reuse detection</summary>
+    <pre>// Refresh tokens are single-use. Each refresh issues a NEW one and
+// retires the old. Tokens are grouped by "family" (one login session).
+
+app.post('/auth/refresh', asyncHandler(async (req, res) =&gt; {
+  const raw = req.cookies.refreshToken;
+  const stored = await RefreshToken.findOne({ hash: sha256(raw) });
+
+  if (!stored) throw new UnauthorizedError();
+
+  // THE KEY CHECK: an already-used token means it was stolen and replayed.
+  // The legitimate user already rotated it — so someone else has a copy.
+  if (stored.usedAt) {
+    await RefreshToken.deleteMany({ family: stored.family });   // nuke the session
+    throw new UnauthorizedError('Token reuse detected — session revoked');
+  }
+
+  stored.usedAt = new Date();
+  await stored.save();
+
+  const next = await RefreshToken.create({
+    hash: sha256(newRaw), family: stored.family, userId: stored.userId,
+    expiresAt: addDays(new Date(), 30),
+  });
+
+  res.cookie('refreshToken', newRaw, {
+    httpOnly: true, secure: true, sameSite: 'strict', path: '/auth/refresh',
+  });
+  res.json({ accessToken: signAccess(stored.userId, '15m') });
+}));</pre>
+  </details>
+
+  <div class="box insight">
+    <div class="label">💡 Senior Insight</div>
+    <p>Reuse detection is elegant because it turns theft into a <em>detectable event</em> rather than a silent one. A refresh token is single-use, so if the server ever sees one presented twice, exactly one of the two holders is an attacker — and since you can't tell which, you kill the whole family and force a re-login. The user is mildly inconvenienced; the attacker loses access. That asymmetry is the entire design.</p>
+  </div>
+
+  <h4>Where do you store the token?</h4>
+  <div class="tw"><table>
+    <thead><tr><th>&nbsp;</th><th>HttpOnly cookie</th><th><code>Authorization: Bearer</code></th></tr></thead>
+    <tbody>
+      <tr><td>XSS reachable</td><td>No — JS can't read it</td><td>Yes if stored in localStorage</td></tr>
+      <tr><td>CSRF risk</td><td>Yes — needs SameSite + CSRF token</td><td>No — not sent automatically</td></tr>
+      <tr><td>Cross-origin / mobile</td><td>Fiddly</td><td>Simple — StudySync's Flutter client</td></tr>
+    </tbody>
+  </table></div>
+  <p>There's no free option — you're choosing which attack to defend explicitly. Cookies with <code>SameSite=Strict</code> for browser apps; bearer headers for mobile clients that have no cookie jar.</p>
+
+  <h3>RBAC and tenant isolation</h3>
+  <details class="snippet">
+    <summary>Role middleware + tenant-scoped repository</summary>
+    <pre>const requireRole = (...allowed) =&gt; (req, res, next) =&gt;
+  allowed.includes(req.user.role) ? next() : next(new AppError('Forbidden', 403));
+
+router.delete('/specs/:id', requireAuth, requireRole('owner', 'admin'), handler);
+
+// Isolation must be structural, not remembered.
+// Every query goes through a repo that injects tenantId from the VERIFIED token.
+class TenantScopedRepo {
+  constructor(model, tenantId) { this.model = model; this.tenantId = tenantId; }
+  find(filter = {})       { return this.model.find({ ...filter, tenantId: this.tenantId }); }
+  findById(id)            { return this.model.findOne({ _id: id, tenantId: this.tenantId }); }
+  update(id, patch)       { return this.model.updateOne({ _id: id, tenantId: this.tenantId }, patch); }
+}</pre>
+  </details>
+
+  <div class="box sde">
+    <div class="label">🛡️ SDE Defense</div>
+    <p>Two rules that make multi-tenancy actually safe. <strong>First: the tenant ID comes only from the verified token — never from a request body, query string or header.</strong> If a client can send <code>tenantId</code>, a client can send someone else's. <strong>Second: make isolation structural, not disciplined.</strong> Relying on every developer to remember a <code>tenantId</code> filter guarantees that one endpoint eventually forgets, and that endpoint leaks. Route everything through a scoped repository and the filter cannot be omitted — the only way to write an unscoped query is to bypass the repo entirely, which is visible in code review.</p>
+  </div>
+</section>
+
+
+<!-- ========== C5 ========== -->
+<section class="cluster" id="c5">
+  <h2><span class="idx">05</span> Interview defense bank</h2>
+  <p style="color:var(--text-dim); font-size:12px; margin-bottom:14px;">One-line reason → supporting mechanic → the trade-off you accepted.</p>
+
+  <h3>Track A — SDE</h3>
+
+  <div class="qa">
+    <span class="track-tag track-a">A · Q1</span>
+    <div class="q"><span class="qnum">1.</span> How does Chessify validate moves server-side, and what happens when a client emits an illegal move?</div>
+    <p><strong>The server holds the only real board.</strong> Each room has a chess.js instance; the browser's board is a rendering of state the server owns.</p>
+    <p><strong>Three gates, in order:</strong> is this socket a player or spectator (spectators are rejected outright); is it their colour's turn (checked against the server's <code>turn()</code>, not a client claim); and is the move legal in the server's position. chess.js returns <code>null</code> for anything illegal, so a fabricated move — teleporting a piece, moving into check, moving an opponent's piece — fails the same way.</p>
+    <p><strong>Rejected moves are dropped without broadcasting</strong>, so the cheater's own UI desyncs from the authoritative FEN and every honest client is unaffected. The board they see is a lie only to them.</p>
+    <p><strong>Trade-off:</strong> server-side validation costs a round trip before a move is confirmed. That's why the client renders optimistically and reconciles against the server's FEN — responsive UI, authoritative state.</p>
+  </div>
+
+  <div class="qa">
+    <span class="track-tag track-a">A · Q2</span>
+    <div class="q"><span class="qnum">2.</span> What if two players move in the same millisecond? How does single-threading resolve the race?</div>
+    <p><strong>It doesn't need resolving — the race can't happen inside one process.</strong> Node runs one JS thread, so the two <code>'move'</code> handlers are queued and executed one after the other, never interleaved. Each runs to completion before the next begins.</p>
+    <p>Whichever socket's packet the event loop picks up first is processed first; that move mutates the board and flips <code>turn()</code>. The second handler then reads the <em>already-updated</em> state and fails its turn check. So simultaneous submissions resolve into "first one wins, second is rejected" for free.</p>
+    <p><strong>The nuance that earns the point:</strong> this guarantee only holds because the handler is fully synchronous. Put an <code>await</code> in the middle — a DB write between validating and mutating — and you've created a real interleaving window where both moves pass validation. And it holds only on <em>one</em> instance: add a second server and you need a per-room lock or an atomic Redis compare-and-set, because two event loops genuinely can run concurrently.</p>
+  </div>
+
+  <div class="qa">
+    <span class="track-tag track-a">A · Q3</span>
+    <div class="q"><span class="qnum">3.</span> How do you handle a 10-second network drop without demoting a player to spectator?</div>
+    <p><strong>The bug to avoid:</strong> roles are assigned by seat availability, so if disconnect frees the white seat and both players are still in the room, the returning player gets whatever's left — spectator in their own game. Socket IDs are ephemeral and change on every reconnect, so identity can't be the socket ID.</p>
+    <p><strong>The fix:</strong> give each player a stable <code>playerId</code> (persisted client-side) sent on join. On disconnect, mark the seat <code>disconnected</code> with a timestamp rather than freeing it, and start a grace timer (~30s). On reconnect, match by <code>playerId</code>, restore the seat, update the stored socket ID, and replay the current FEN plus move history so their board catches up. Only when the timer expires is the seat released and the game forfeited or abandoned.</p>
+    <p><strong>Trade-off:</strong> holding seats means memory for abandoned games, so the sweep has to actually run. It's also why Socket.IO's <code>pingTimeout</code> matters — that's what decides how fast a silent drop (phone in a tunnel, no TCP FIN) is even noticed.</p>
+  </div>
+
+  <div class="qa">
+    <span class="track-tag track-a">A · Q4</span>
+    <div class="q"><span class="qnum">4.</span> Why offline-first HTTP caching in StudySync rather than WebSockets?</div>
+    <p><strong>Because a timetable changes a few times a semester, and WebSockets solve a problem it doesn't have.</strong> Real-time transport earns its cost when data changes while the user is watching. A weekly schedule doesn't.</p>
+    <p>The actual requirement was the opposite of real-time: render instantly with <em>zero</em> network, because students open the app between classes on bad campus wifi. So the app renders the cached schedule immediately and refreshes in the background — a plain <code>GET</code> plus a local cache. A socket would need a live connection to show anything, which is worse in exactly the conditions the app is used in.</p>
+    <p>REST also gets HTTP caching for free and needs no sticky sessions or reconnection logic on mobile.</p>
+    <p><strong>Trade-off:</strong> an admin edit isn't pushed — it appears on next refresh. Perfectly acceptable here. If it weren't, the lightest fix is a push notification triggering a re-fetch, not a persistent socket.</p>
+  </div>
+
+  <div class="qa">
+    <span class="track-tag track-a">A · Q5</span>
+    <div class="q"><span class="qnum">5.</span> Design a secure refresh-token rotation flow that detects reuse.</div>
+    <p><strong>Short access token (15 min) + long refresh token stored server-side, single-use.</strong> Every refresh issues a new token and retires the old one; tokens are grouped into a <em>family</em> representing one login session.</p>
+    <p><strong>Detection:</strong> if a refresh token that's already been used is presented again, one of two parties is an attacker — the legitimate client already rotated, so a second presentation means someone else has a copy. You can't tell which is which, so you delete the entire family and force re-login. Theft becomes a detectable event instead of a silent one.</p>
+    <p><strong>Hardening:</strong> store only a hash of the refresh token (a DB leak then yields nothing usable), serve it in an <code>HttpOnly; Secure; SameSite=Strict</code> cookie scoped to <code>/auth/refresh</code> so it's never sent on ordinary requests, and cap absolute session lifetime so rotation can't extend a session forever.</p>
+    <p><strong>Trade-off:</strong> refresh is now stateful — you gave up pure statelessness to gain revocation. That's the correct trade, and being able to name it is the point.</p>
+  </div>
+
+  <hr class="divider">
+
+  <h3>Track B — ML / AI / Data Engineering</h3>
+
+  <div class="qa">
+    <span class="track-tag track-b">B · Q1</span>
+    <div class="q"><span class="qnum">1.</span> Why a Node ingestion layer instead of writing to PostgreSQL from the Python detection service?</div>
+    <p><strong>Because inference and ingestion have opposite performance profiles, and coupling them makes the slower one dictate the faster one.</strong> The Pi's job is running YOLO frame by frame; if that same loop also opened a database connection and waited on a network write, every slow write would stall detection.</p>
+    <p>A Node ingestion endpoint is I/O-bound — accept JSON, write, respond — which is precisely what an event loop does well: hundreds of concurrent buses, no thread per connection. It also gives you one place to own the database concerns that don't belong on an edge device: a connection pool (a Pi shouldn't hold a direct DB connection over the public internet), validation, auth, and schema changes deployed once instead of pushed to every vehicle.</p>
+    <p><strong>Trade-off:</strong> an extra hop and a service to keep up. Worth it — the Pi now only needs to speak HTTP to one endpoint, and the database is never directly exposed to the fleet.</p>
+  </div>
+
+  <div class="qa">
+    <span class="track-tag track-b">B · Q2</span>
+    <div class="q"><span class="qnum">2.</span> Why decouple the chess engine from the Socket.IO server?</div>
+    <p><strong>Because they have opposite concurrency shapes and one event loop can't serve both.</strong> Multiplayer is hundreds of idle sockets exchanging tiny messages — pure I/O. A Stockfish search or a depth-3 minimax pins a core for hundreds of milliseconds — pure CPU.</p>
+    <p>In one Node process there is one thread executing JavaScript, so a single bot move would freeze every live game on the server. Split into a Flask service, an engine slowdown makes bot moves slower and nothing else. They also deploy, restart and scale independently, and Python is where the chess tooling lives.</p>
+    <p><strong>Trade-off:</strong> a network hop per bot move and a second service to operate. Cheap next to a global stall triggered by one user.</p>
+    <p><em>If pushed on alternatives:</em> Worker Threads would keep it in one process, but you'd be reimplementing engine integration in JS to avoid a hop that costs milliseconds. Spawning a child process per move is worse — process startup dominates the actual search.</p>
+  </div>
+
+  <div class="qa">
+    <span class="track-tag track-b">B · Q3</span>
+    <div class="q"><span class="qnum">3.</span> How do you stop high-frequency JSON parsing from blocking the event loop?</div>
+    <p><strong>Name the real mechanism first: <code>JSON.parse</code> is synchronous and runs on the one JS thread.</strong> It isn't I/O — nothing about it is async — so a large body genuinely freezes every other request for its duration.</p>
+    <p><strong>What actually helps:</strong></p>
+    <ul>
+      <li><strong>Cap body size</strong> — <code>express.json({ limit: '100kb' })</code>. A telemetry payload is small; anything large is a bug or an attack, and rejecting it is better than parsing it.</li>
+      <li><strong>Batch on the device, not the server</strong> — one request with 20 readings beats 20 requests. Fewer parses, fewer round trips, fewer inserts.</li>
+      <li><strong>Validate cheaply, respond early</strong> — return <code>202 Accepted</code> once the payload is durable (queue or buffer), and do the heavy write asynchronously. The device isn't waiting on your database.</li>
+      <li><strong>Stream genuinely large payloads</strong> — for a 2,400-reading backlog upload, a streaming JSON parser processes incrementally instead of materializing the whole array in memory.</li>
+      <li><strong>Worker thread</strong> if parsing is unavoidably heavy — but this is the last resort, not the first move.</li>
+    </ul>
+    <p><strong>The honest framing:</strong> at SahYatri's actual volume this never bit. Knowing the shape of the fix is what matters, along with knowing you didn't need it yet.</p>
+  </div>
+
+  <div class="qa">
+    <span class="track-tag track-b">B · Q4</span>
+    <div class="q"><span class="qnum">4.</span> How would you evolve the ingestion layer for a 100× spike in vehicles?</div>
+    <p><strong>The bottleneck moves from Node to PostgreSQL long before Node struggles.</strong> The event loop happily handles the connections; what falls over is one INSERT per reading, each with its own round trip, transaction and index update.</p>
+    <p><strong>In order of impact:</strong></p>
+    <ul>
+      <li><strong>Batch inserts</strong> — buffer briefly and write multi-row inserts or <code>COPY</code>. Usually an order-of-magnitude win on its own, and it's the cheapest change.</li>
+      <li><strong>Connection pooling</strong> — Postgres forks a process per connection, so 10,000 clients must funnel through a bounded pool. PgBouncer in transaction mode multiplexes many app connections onto few server ones.</li>
+      <li><strong>Decouple with a queue</strong> — the endpoint validates, pushes to Kafka or RabbitMQ, returns <code>202</code>. Writers drain in batches at whatever rate the DB sustains. Now a database slowdown creates a backlog on disk instead of dropped requests, and a DB restart doesn't lose data.</li>
+      <li><strong>Partition by time</strong> — writes concentrate on the current partition, keeping the hot index small; retention becomes <code>DROP TABLE</code>.</li>
+      <li><strong>Cluster the Node layer</strong> — safe here precisely because ingestion is stateless, unlike the socket server.</li>
+      <li><strong>Idempotency</strong> — <code>(bus_id, recorded_at)</code> unique with <code>ON CONFLICT DO NOTHING</code>, so a retry after a timeout can't double-count.</li>
+    </ul>
+    <p><strong>What I'd change last:</strong> the database engine. Switching to Timescale or Influx is a real answer at extreme scale, but doing it before batching and partitioning means paying a migration to avoid a config change.</p>
+  </div>
+</section>
+</main>
+<footer>
+  Node.js, Express &amp; Real-Time WebSocket Architecture · Interview Notes<br>Grounded against Chessify AI, StudySync, SahYatri and RecrutAI.
+</footer>
+<script>
+  document.getElementById('jump').addEventListener('change', function(e) {
+    const id = e.target.value; if (!id) return;
+    const el = document.getElementById(id);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    e.target.value = '';
+  });
+  const prog = document.getElementById('scrollProg');
+  window.addEventListener('scroll', function() {
+    const st = document.documentElement.scrollTop;
+    const sh = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+    prog.style.width = (sh > 0 ? (st / sh) * 100 : 0) + '%';
+  }, { passive: true });
+  const sections = document.querySelectorAll('section.cluster');
+  const observer = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) { entry.target.style.animationPlayState = 'running'; observer.unobserve(entry.target); }
+    });
+  }, { threshold: 0.08 });
+  sections.forEach(function(s) { s.style.animationPlayState = 'paused'; observer.observe(s); });
+</script>
+</body>
+</html>

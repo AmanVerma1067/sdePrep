@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5">
+<title>Python Backend Microservices: Flask &amp; FastAPI — Interview Notes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0e17; --surface: #111827; --surface2: #1a2234;
+    --border: #1e293b; --border-glow: #334155;
+    --text: #cbd5e1; --text-dim: #64748b; --white: #f1f5f9;
+    --accent: #38bdf8; --accent2: #818cf8; --green: #34d399;
+    --orange: #fbbf24; --red: #fb7185; --purple: #a78bfa; --cyan: #22d3ee;
+    --radius: 14px; --maxw: 760px;
+    --font: 'Inter', system-ui, -apple-system, sans-serif;
+    --mono: 'JetBrains Mono', 'SF Mono', Consolas, monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--bg); color: var(--text); font-family: var(--font);
+    font-size: 14.5px; line-height: 1.65; overflow-x: hidden; }
+
+  .scroll-progress { position: fixed; top: 0; left: 0; z-index: 200; height: 3px; width: 0%;
+    background: linear-gradient(90deg, var(--accent), var(--accent2), var(--purple));
+    transition: width 80ms linear; border-radius: 0 2px 2px 0; }
+
+  .topbar { position: sticky; top: 0; z-index: 100;
+    background: rgba(10, 14, 23, 0.82);
+    backdrop-filter: blur(16px) saturate(1.6); -webkit-backdrop-filter: blur(16px) saturate(1.6);
+    border-bottom: 1px solid var(--border); padding: 10px 16px;
+    display: flex; align-items: center; gap: 10px; }
+  .topbar .logo { display: flex; align-items: center; gap: 8px; font-weight: 800;
+    font-size: 13.5px; color: var(--white); white-space: nowrap; letter-spacing: -0.02em; }
+  .topbar .dot { width: 8px; height: 8px; border-radius: 50%; background: #fbbf24;
+    box-shadow: 0 0 10px #fbbf24; animation: pulse 2s ease-in-out infinite; }
+  @keyframes pulse { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: .6; transform: scale(.85); } }
+  .topbar select { flex: 1; max-width: 380px; background: var(--surface); color: var(--accent);
+    border: 1px solid var(--border); border-radius: 10px; padding: 8px 12px;
+    font-family: var(--font); font-size: 12.5px; font-weight: 500; outline: none;
+    cursor: pointer; transition: border-color .2s; }
+  .topbar select:focus { border-color: var(--accent); }
+
+  main { max-width: var(--maxw); margin: 0 auto; padding: 24px 16px 80px; }
+
+  .hero { margin-bottom: 28px; padding: 24px 20px;
+    background: linear-gradient(135deg, rgba(56,189,248,0.06), rgba(129,140,248,0.06), rgba(167,139,250,0.04));
+    border: 1px solid var(--border); border-radius: var(--radius); position: relative; overflow: hidden; }
+  .hero::before { content: ''; position: absolute; top: -40%; right: -20%; width: 260px; height: 260px;
+    background: radial-gradient(circle, rgba(56,189,248,0.08) 0%, transparent 70%);
+    border-radius: 50%; pointer-events: none; }
+  .hero h1 { font-size: 22px; font-weight: 800; color: var(--white);
+    letter-spacing: -0.03em; line-height: 1.3; margin-bottom: 6px; }
+  .hero .sub { color: var(--text-dim); font-size: 12.5px; line-height: 1.5; }
+  .badge-row { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 14px; }
+  .badge { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em;
+    padding: 4px 10px; border-radius: 20px; border: 1px solid var(--border);
+    background: rgba(56,189,248,0.06); color: var(--accent); white-space: nowrap; }
+
+  .projects { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 8px; margin-bottom: 20px; }
+  .chip { background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+    padding: 10px 12px; font-size: 11.5px; color: var(--text-dim);
+    transition: border-color .2s, transform .15s; line-height: 1.4; }
+  .chip:hover { border-color: var(--border-glow); transform: translateY(-1px); }
+  .chip a { color: var(--accent); text-decoration: none; font-weight: 600; }
+  .chip a:hover { text-decoration: underline; }
+  .chip .emoji { margin-right: 4px; }
+
+  .calib { background: rgba(251,191,36,0.05); border: 1px solid rgba(251,191,36,0.22);
+    border-radius: 10px; padding: 12px 14px; margin-bottom: 26px; font-size: 12px; line-height: 1.55; }
+  .calib b { color: var(--orange); }
+
+  section.cluster { background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 20px 18px; margin-bottom: 16px;
+    scroll-margin-top: 60px; transition: border-color .25s; animation: fadeUp .4s ease both; }
+  section.cluster:hover { border-color: var(--border-glow); }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+  section.cluster > h2 { font-size: 16.5px; font-weight: 700; color: var(--white);
+    padding-bottom: 10px; margin-bottom: 14px; border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 10px; letter-spacing: -0.01em; }
+  section.cluster > h2 .idx { font-size: 10px; font-weight: 700; color: var(--accent);
+    background: rgba(56,189,248,0.1); border: 1px solid rgba(56,189,248,0.2);
+    border-radius: 6px; padding: 3px 8px; letter-spacing: .04em; }
+
+  h3 { font-size: 14px; font-weight: 700; color: var(--cyan); margin: 18px 0 8px; }
+  h4 { font-size: 12.5px; font-weight: 600; color: var(--orange); margin: 14px 0 6px; }
+  p { margin: 7px 0; font-size: 13px; }
+  ul, ol { padding-left: 18px; margin: 6px 0; }
+  li { margin: 3px 0; font-size: 13px; }
+  code { background: rgba(30,41,59,.8); color: var(--green); padding: 2px 6px;
+    border-radius: 5px; font-family: var(--mono); font-size: 11.5px; }
+  .fml { display: block; text-align: center; background: rgba(30,41,59,.5);
+    border: 1px solid var(--border); border-radius: 8px; padding: 9px 10px; margin: 9px 0;
+    font-family: var(--mono); font-size: 12px; color: var(--cyan); overflow-x: auto; white-space: nowrap; }
+
+  .tw { overflow-x: auto; margin: 10px 0; border: 1px solid var(--border);
+    border-radius: 10px; -webkit-overflow-scrolling: touch; }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; min-width: 420px; }
+  thead th { background: var(--surface2); color: var(--accent); font-size: 10.5px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: .05em; padding: 9px 10px; text-align: left;
+    white-space: nowrap; border-bottom: 1px solid var(--border); position: sticky; top: 0; }
+  tbody td { padding: 8px 10px; border-bottom: 1px solid rgba(30,41,59,.5);
+    vertical-align: top; color: var(--text); }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover { background: rgba(56,189,248,.03); }
+  tbody td:first-child { color: var(--white); font-weight: 600; white-space: nowrap; }
+
+  .box { border-radius: 10px; padding: 12px 14px; margin: 10px 0; font-size: 12.5px;
+    line-height: 1.55; border-left: 3px solid; }
+  .box .label { font-weight: 700; font-size: 10.5px; text-transform: uppercase;
+    letter-spacing: .05em; margin-bottom: 5px; display: flex; align-items: center; gap: 5px; }
+  .box p { margin: 3px 0; font-size: 12.5px; }
+  .box ul { margin: 4px 0; } .box li { font-size: 12.5px; }
+  .box.trap { background: rgba(251,113,133,.06); border-color: var(--red); }
+  .box.trap .label { color: var(--red); }
+  .box.insight { background: rgba(52,211,153,.06); border-color: var(--green); }
+  .box.insight .label { color: var(--green); }
+  .box.sde { background: rgba(56,189,248,.06); border-color: var(--accent); }
+  .box.sde .label { color: var(--accent); }
+  .box.mlde { background: rgba(167,139,250,.06); border-color: var(--purple); }
+  .box.mlde .label { color: var(--purple); }
+
+  details.snippet { background: #0c1018; border: 1px solid var(--border);
+    border-radius: 10px; margin: 10px 0; overflow: hidden; }
+  details.snippet summary { cursor: pointer; padding: 9px 14px; color: var(--text-dim);
+    font-size: 12px; font-weight: 600; font-family: var(--font); list-style: none;
+    display: flex; align-items: center; gap: 7px; user-select: none; transition: color .2s; }
+  details.snippet summary:hover { color: var(--accent); }
+  details.snippet summary::-webkit-details-marker { display: none; }
+  details.snippet summary::before { content: "▸"; color: var(--accent);
+    display: inline-block; transition: transform .15s ease; }
+  details.snippet[open] summary::before { transform: rotate(90deg); }
+  details.snippet pre { margin: 0; padding: 12px 14px; overflow-x: auto;
+    font-family: var(--mono); font-size: 12px; line-height: 1.55; color: var(--text); }
+
+  .qa { background: rgba(17,24,39,.6); border: 1px solid var(--border); border-radius: 10px;
+    padding: 14px; margin: 10px 0; transition: border-color .2s; }
+  .qa:hover { border-color: var(--border-glow); }
+  .qa .q { color: var(--white); font-weight: 600; font-size: 13px; margin-bottom: 7px; line-height: 1.45; }
+  .qa .q .qnum { color: var(--accent); margin-right: 6px; }
+  .track-tag { display: inline-block; font-size: 9.5px; font-weight: 700; letter-spacing: .06em;
+    text-transform: uppercase; padding: 3px 8px; border-radius: 6px; margin-bottom: 8px; }
+  .track-a { background: rgba(56,189,248,.1); color: var(--accent); border: 1px solid rgba(56,189,248,.25); }
+  .track-b { background: rgba(167,139,250,.1); color: var(--purple); border: 1px solid rgba(167,139,250,.25); }
+
+  hr.divider { border: none; border-top: 1px dashed var(--border); margin: 20px 0; }
+  footer { max-width: var(--maxw); margin: 0 auto; padding: 20px 16px 40px;
+    color: var(--text-dim); font-size: 11px; text-align: center; border-top: 1px solid var(--border); }
+
+  @media (max-width: 640px) {
+    body { font-size: 14px; }
+    main { padding: 16px 12px 60px; }
+    .hero { padding: 18px 16px; } .hero h1 { font-size: 19px; }
+    section.cluster { padding: 16px 14px; }
+    section.cluster > h2 { font-size: 15px; }
+    .projects { grid-template-columns: 1fr 1fr; gap: 6px; }
+    .chip { padding: 8px 10px; font-size: 10.5px; }
+    .topbar .logo span.full { display: none; }
+    table { font-size: 11px; min-width: 360px; }
+    thead th { font-size: 9.5px; padding: 7px 8px; }
+    tbody td { padding: 7px 8px; }
+    h3 { font-size: 13.5px; } p, li { font-size: 12.5px; }
+    .box { padding: 10px 12px; font-size: 12px; }
+    .box p, .box li { font-size: 12px; }
+    .qa .q { font-size: 12.5px; } .fml { font-size: 11px; }
+  }
+  @media (max-width: 380px) {
+    .projects { grid-template-columns: 1fr; }
+    .hero h1 { font-size: 17px; }
+    .topbar select { font-size: 11.5px; padding: 7px 10px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    section.cluster { animation: none; }
+    .topbar .dot { animation: none; }
+  }
+</style>
+</head>
+<body>
+<div class="scroll-progress" id="scrollProg"></div>
+<div class="topbar">
+  <div class="logo"><span class="dot"></span><span class="full">Python Notes</span></div>
+  <select id="jump" aria-label="Jump to section">
+    <option value="">Jump to…</option>
+    <option value="c1">1 · WSGI vs ASGI &amp; concurrency</option>
+    <option value="c2">2 · FastAPI, Pydantic &amp; DI</option>
+    <option value="c3">3 · Flask contexts &amp; design</option>
+    <option value="c4">4 · Serving ML models in production</option>
+    <option value="c5">5 · Interview defense bank</option>
+  </select>
+</div>
+
+<main>
+
+<div class="hero">
+  <h1>Python Backend Microservices: Flask &amp; FastAPI</h1>
+  <p class="sub">Where the event loop breaks, why your model eats 4 GB across 8 workers, and how to serve PyTorch without freezing the server. Concurrency internals over syntax.</p>
+  <div class="badge-row">
+    <span class="badge">5 Clusters</span>
+    <span class="badge">SDE + ML Tracks</span>
+    <span class="badge">Project-Grounded</span>
+  </div>
+</div>
+
+<div class="projects">
+  <div class="chip"><span class="emoji">🥗</span> <a href="https://github.com/Nutri-Vision" target="_blank" rel="noopener">Nutri-Vision</a> — FastAPI food-logging API</div>
+  <div class="chip"><span class="emoji">🖼️</span> Model_Image — Flask + ResNet-50, Git LFS</div>
+  <div class="chip"><span class="emoji">♟️</span> <a href="https://github.com/AmanVerma1067/Chessify-WebApp" target="_blank" rel="noopener">Chess-AI</a> — stateless Flask engine service</div>
+  <div class="chip"><span class="emoji">🚦</span> <a href="https://github.com/AmanVerma1067/SahYatri" target="_blank" rel="noopener">SahYatri</a> — YOLO detection service</div>
+</div>
+
+<div class="calib">
+  <b>The sentence this whole doc hangs on:</b> in FastAPI, <code>async def</code> means "I promise not to block." A PyTorch forward pass breaks that promise. Nearly every question below is downstream of that one fact — if you're stuck, reason from it.
+</div>
+
+
+<!-- ========== C1 ========== -->
+<section class="cluster" id="c1">
+  <h2><span class="idx">01</span> WSGI vs ASGI &amp; concurrency models</h2>
+
+  <h3>The two interfaces</h3>
+  <p><strong>WSGI</strong> (Flask) is a synchronous contract: one callable takes a request, returns a response, and <em>owns its worker for the entire duration</em>. Wait 200 ms on a database and that worker does nothing else for 200 ms.</p>
+  <p><strong>ASGI</strong> (FastAPI/Starlette on Uvicorn) is async: a coroutine that hits <code>await</code> yields control back to the event loop, which runs other requests until the awaited thing is ready.</p>
+
+  <div class="tw"><table>
+    <thead><tr><th>&nbsp;</th><th>Flask (WSGI)</th><th>FastAPI (ASGI)</th></tr></thead>
+    <tbody>
+      <tr><td>Concurrency</td><td>1 request per worker/thread</td><td>Thousands of concurrent awaits per worker</td></tr>
+      <tr><td>Waiting on I/O</td><td>Worker sits idle, blocked</td><td>Loop serves someone else</td></tr>
+      <tr><td>Validation</td><td>Manual / Marshmallow</td><td>Pydantic, automatic, typed</td></tr>
+      <tr><td>Docs</td><td>None built in</td><td>OpenAPI + Swagger UI, free</td></tr>
+      <tr><td>WebSockets / SSE</td><td>Needs extensions</td><td>Native</td></tr>
+      <tr><td>Best at</td><td>Simple sync services, CPU work</td><td>I/O-heavy APIs, typed contracts</td></tr>
+      <tr><td>Yours</td><td>Chess-AI, Model_Image</td><td>Nutri-Vision food logging</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="box insight">
+    <div class="label">💡 Senior Insight</div>
+    <p><strong>Async does not make anything faster — it makes waiting cheaper.</strong> A route that spends 200 ms in a matrix multiply takes 200 ms either way; async can't parallelize it, because there's still one thread and one GIL. A route that spends 200 ms waiting on the USDA API can overlap with hundreds of others. The correct question is never "is this slow?" but <strong>"is this slow because it's waiting, or slow because it's working?"</strong> Async fixes the first; only processes or C extensions fix the second.</p>
+  </div>
+
+  <h3>Workers, threads and the GIL</h3>
+  <p>The GIL allows one thread to execute Python bytecode at a time <em>per process</em>. Two consequences that decide your deployment:</p>
+  <ul>
+    <li><strong>Threads don't parallelize Python compute</strong> — 4 Gunicorn threads running inference give you roughly the throughput of 1.</li>
+    <li><strong>Processes do</strong> — each has its own interpreter and its own GIL. That's why the unit of CPU scaling in Python is the <em>worker</em>, not the thread.</li>
+    <li><strong>C extensions release the GIL</strong> — PyTorch and NumPy drop it during heavy kernels, so some genuine parallelism sneaks back in. Don't over-claim it.</li>
+  </ul>
+
+  <details class="snippet">
+    <summary>Deployment commands worth memorizing</summary>
+    <pre># Flask (WSGI) under Gunicorn — sync workers
+gunicorn app:app --workers 4 --threads 2 --timeout 120 --bind 0.0.0.0:8000
+
+# FastAPI (ASGI) — Uvicorn directly
+uvicorn main:app --host 0.0.0.0 --port 8000 --workers 4
+
+# FastAPI under Gunicorn, using Uvicorn workers (process mgmt + async)
+gunicorn main:app -k uvicorn.workers.UvicornWorker --workers 4 --bind 0.0.0.0:8000
+
+# Rule of thumb for I/O-bound: workers = (2 x cores) + 1
+# For ML serving: workers = however many model copies fit in RAM. Usually far fewer.</pre>
+  </details>
+
+  <div class="box trap">
+    <div class="label">🚨 Interview Trap</div>
+    <p><strong>The 4 GB arithmetic.</strong> "Set <code>--workers 8</code> for throughput" is the wrong instinct for ML serving. Gunicorn workers are separate <em>processes</em> with separate memory — a 500 MB model loaded in 8 workers is 4 GB of RAM for eight identical copies. In a container with a 2 GB limit, the OOM killer takes workers down and the failures look random.</p>
+    <p>Fork-time copy-on-write helps a little if you preload, but PyTorch tensors get touched during inference, so pages get copied anyway — don't lean on it. <strong>For model serving, worker count is decided by memory, not by CPU cores.</strong> Often the right answer is 1–2 workers and a request queue.</p>
+  </div>
+</section>
+
+
+<!-- ========== C2 ========== -->
+<section class="cluster" id="c2">
+  <h2><span class="idx">02</span> FastAPI, Pydantic &amp; dependency injection</h2>
+
+  <h3>Pydantic V2 does three jobs</h3>
+  <ol>
+    <li><strong>Parses</strong> — JSON body → typed Python object.</li>
+    <li><strong>Coerces</strong> — <code>"150"</code> → <code>150</code> where the type allows it, with strict mode available when you don't want that.</li>
+    <li><strong>Rejects</strong> — anything invalid returns <strong>422</strong> automatically, with a field-level error path, before your code runs.</li>
+  </ol>
+
+  <details class="snippet">
+    <summary>Nutri-Vision request/response schemas</summary>
+    <pre>from pydantic import BaseModel, Field, field_validator
+
+class MealTextRequest(BaseModel):
+    text: str = Field(min_length=1, max_length=500)
+    servings: float = Field(default=1.0, gt=0, le=20)
+
+    @field_validator("text")
+    @classmethod
+    def not_blank(cls, v: str) -> str:
+        if not v.strip():
+            raise ValueError("text cannot be blank")
+        return v.strip()
+
+class FoodItem(BaseModel):
+    name: str
+    quantity_g: float
+    calories: float
+    protein_g: float
+    carbs_g: float
+    fat_g: float
+    confidence: float = Field(ge=0, le=1)   # how sure the USDA match was
+    source: str                              # "ner+usda" | "image" | "fallback"
+
+class MealResponse(BaseModel):
+    items: list[FoodItem]
+    totals: FoodItem | None = None
+    warnings: list[str] = []                 # e.g. "quantity not parsed, assumed 1 serving"</pre>
+  </details>
+
+  <div class="box insight">
+    <div class="label">💡 Senior Insight</div>
+    <p>The underrated win isn't validation — it's that <strong>the schema is the contract, the docs and the types simultaneously.</strong> One <code>BaseModel</code> generates the OpenAPI spec, so the frontend integrates without you writing a spec by hand and without the spec drifting from reality. Pydantic V2's core is written in Rust, which is why it's fast enough to sit in the request path without being a cost you think about.</p>
+  </div>
+
+  <h3>File uploads: <code>UploadFile</code> vs <code>bytes</code></h3>
+  <div class="tw"><table>
+    <thead><tr><th>&nbsp;</th><th><code>bytes</code></th><th><code>UploadFile</code></th></tr></thead>
+    <tbody>
+      <tr><td>Memory</td><td>Whole file in RAM, always</td><td>Spooled — RAM up to a threshold, then a temp file on disk</td></tr>
+      <tr><td>20 MB upload × 10 users</td><td>200 MB of RAM</td><td>Mostly disk</td></tr>
+      <tr><td>Access</td><td>Already in memory</td><td><code>await file.read()</code> / <code>file.file</code></td></tr>
+      <tr><td>Metadata</td><td>None</td><td>filename, content_type</td></tr>
+      <tr><td>Use</td><td>Small known payloads</td><td>Anything user-uploaded</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="box trap">
+    <div class="label">🚨 Interview Trap</div>
+    <p>Declaring <code>image: bytes = File(...)</code> looks harmless and is a memory bomb — FastAPI reads the entire body into RAM before your function starts, so ten concurrent 20 MB uploads is 200 MB with no upper bound you control. <code>UploadFile</code> spools to disk past a threshold (~1 MB) and keeps memory flat. And <em>neither</em> enforces a size limit — a client can send 2 GB. Cap it at the reverse proxy (<code>client_max_body_size</code>) or check <code>content-length</code> yourself. Validate the actual image too: trusting <code>content_type</code> from the client is trusting the attacker.</p>
+  </div>
+
+  <h3>Dependency injection with <code>Depends</code></h3>
+  <details class="snippet">
+    <summary>Auth, roles, and a singleton model loader</summary>
+    <pre>from fastapi import Depends, HTTPException, status
+
+# --- auth: one function, reused everywhere ---
+async def current_user(token: str = Depends(oauth2_scheme)) -> User:
+    try:
+        payload = jwt.decode(token, SECRET, algorithms=["HS256"])
+    except JWTError:
+        raise HTTPException(status.HTTP_401_UNAUTHORIZED, "Invalid token")
+    return await get_user(payload["sub"])
+
+# --- roles: a dependency FACTORY, so it parameterizes cleanly ---
+def require_role(*allowed: str):
+    async def checker(user: User = Depends(current_user)) -> User:
+        if user.role not in allowed:
+            raise HTTPException(status.HTTP_403_FORBIDDEN, "Forbidden")
+        return user
+    return checker
+
+@router.delete("/meals/{id}")
+async def delete_meal(id: str, user: User = Depends(require_role("admin", "owner"))):
+    ...
+
+# --- apply to a whole router instead of 20 routes ---
+router = APIRouter(prefix="/admin", dependencies=[Depends(require_role("admin"))])
+
+# --- yield dependency: setup + guaranteed teardown ---
+async def db_session():
+    session = SessionLocal()
+    try:
+        yield session
+    finally:
+        session.close()     # runs even if the route raises</pre>
+  </details>
+
+  <div class="box sde">
+    <div class="label">🛡️ SDE Defense</div>
+    <p>Across 20+ routes the pattern that scales is <strong>router-level dependencies plus dependency factories</strong>. Attach <code>require_role("admin")</code> once to the admin router and every route under it inherits the check — you cannot forget it on a new endpoint, because you'd have to actively register the route somewhere else. That's the same principle as a tenant-scoped repository: <em>make the safe thing structural rather than remembered.</em></p>
+    <p>Two bonuses worth naming: dependencies are <strong>cached per request</strong>, so <code>current_user</code> resolving in three places decodes the token once. And because they're just functions, tests override them with <code>app.dependency_overrides</code> — no auth mocking, no monkeypatching.</p>
+  </div>
+
+  <h3>The <code>async def</code> vs <code>def</code> rule</h3>
+  <div class="tw"><table>
+    <thead><tr><th>Route is…</th><th>Declare as</th><th>Runs on</th></tr></thead>
+    <tbody>
+      <tr><td>Awaiting async I/O (httpx, async DB)</td><td><code>async def</code></td><td>Event loop</td></tr>
+      <tr><td>Blocking I/O (requests, sync DB driver)</td><td><code>def</code></td><td>anyio threadpool</td></tr>
+      <tr><td>CPU-bound (PyTorch, spaCy, YOLO)</td><td><code>def</code></td><td>anyio threadpool</td></tr>
+      <tr><td>CPU-bound and heavy/long</td><td>Separate service or process pool</td><td>Elsewhere</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="box trap">
+    <div class="label">🚨 Interview Trap</div>
+    <p>This is the counter-intuitive one, and it's a favourite: <strong>the "modern" choice is wrong.</strong> Writing <code>async def</code> around a synchronous model call blocks the entire event loop — every other request on that worker stalls for the full inference. Writing plain <code>def</code> lets FastAPI run it in a threadpool and the loop stays free.</p>
+    <p>So for CPU-bound inference, <code>def</code> is <em>more</em> concurrent than <code>async def</code>. The failure mode is nasty because it's invisible under light load and only appears as latency spikes in production.</p>
+  </div>
+
+  <details class="snippet">
+    <summary>Three correct shapes</summary>
+    <pre># 1. Sync inference — plain def. FastAPI threadpools it automatically.
+@app.post("/predict")
+def predict(req: MealTextRequest):
+    return run_model(req.text)          # blocking, but off the loop
+
+# 2. Async route that must call something blocking — offload explicitly.
+@app.post("/analyze")
+async def analyze(req: MealTextRequest):
+    usda = await fetch_usda(req.text)                    # real async I/O
+    result = await asyncio.to_thread(run_model, req.text) # blocking → thread
+    return merge(usda, result)
+
+# 3. Heavy CPU — a process pool escapes the GIL entirely.
+pool = ProcessPoolExecutor(max_workers=2)
+
+@app.post("/heavy")
+async def heavy(req: Req):
+    loop = asyncio.get_running_loop()
+    return await loop.run_in_executor(pool, expensive_fn, req.data)</pre>
+  </details>
+</section>
+
+
+<!-- ========== C3 ========== -->
+<section class="cluster" id="c3">
+  <h2><span class="idx">03</span> Flask architecture &amp; contexts</h2>
+
+  <h3>The two contexts</h3>
+  <div class="tw"><table>
+    <thead><tr><th>&nbsp;</th><th>Application context</th><th>Request context</th></tr></thead>
+    <tbody>
+      <tr><td>Objects</td><td><code>current_app</code>, <code>g</code></td><td><code>request</code>, <code>session</code></td></tr>
+      <tr><td>Lifetime</td><td>Per app operation (usually per request)</td><td>Exactly one request</td></tr>
+      <tr><td>Holds</td><td>Config, DB handle, loaded model</td><td>Headers, body, args</td></tr>
+      <tr><td>Outside a request</td><td>Push manually — CLI, scripts</td><td>Unavailable</td></tr>
+    </tbody>
+  </table></div>
+  <p>Both are <strong>thread-local proxies</strong>. <code>request</code> is a global you can import anywhere, yet it resolves to <em>this</em> thread's request — which is exactly why Flask's synchronous, thread-per-request model is the assumption baked into its design.</p>
+
+  <div class="box trap">
+    <div class="label">🚨 Interview Trap</div>
+    <p><strong>"Working outside of application context."</strong> Everyone hits it; few can explain it. It means you touched <code>current_app</code> or <code>g</code> when no context was pushed — typically in a background thread, a CLI command, or at import time. Fix: <code>with app.app_context():</code>.</p>
+    <p>The deeper version: <strong><code>g</code> is not global state</strong> despite the name. It's per-context, so a value stashed in <code>g</code> during a request is gone in a background thread. People use it as a cache and are baffled when it's empty.</p>
+  </div>
+
+  <h3>Blueprints</h3>
+  <details class="snippet">
+    <summary>Blueprint + app factory + centralized errors</summary>
+    <pre>from flask import Blueprint, jsonify
+
+bp = Blueprint("chess_ai", __name__, url_prefix="/api")
+
+@bp.post("/get_bot_move")
+def get_bot_move():
+    fen = request.get_json().get("fen")
+    if not fen:
+        raise BadRequest("fen is required")
+    return jsonify(compute_move(fen))
+
+def create_app(config=None):          # app factory — testable, no import-time globals
+    app = Flask(__name__)
+    app.config.from_object(config or "config.Production")
+    CORS(app, origins=app.config["ALLOWED_ORIGINS"])
+    app.register_blueprint(bp)
+
+    @app.errorhandler(BadRequest)
+    def handle_bad_request(e):
+        return jsonify(error=str(e)), 400
+
+    @app.errorhandler(Exception)      # catch-all: never leak a stack trace
+    def handle_unexpected(e):
+        app.logger.exception(e)
+        return jsonify(error="Internal server error"), 500
+
+    return app</pre>
+  </details>
+
+  <div class="box sde">
+    <div class="label">🛡️ SDE Defense</div>
+    <p>Flask was the right call for Chess-AI precisely <em>because</em> the workload is CPU-bound and stateless. FastAPI's async advantage is worth nothing when the endpoint never waits on I/O — it computes a move and returns. Meanwhile Flask's synchronous per-worker model gives clean isolation: one slow search occupies one worker, and Gunicorn's <code>--timeout</code> kills a search that hangs without touching the others.</p>
+    <p>The endpoint is deliberately <strong>stateless</strong> — board in (FEN), move out. No session, no memory of the game. That's what lets it scale by adding workers, restart without losing anything, and be tested with a single curl.</p>
+  </div>
+</section>
+
+
+<!-- ========== C4 ========== -->
+<section class="cluster" id="c4">
+  <h2><span class="idx">04</span> Serving ML models in production</h2>
+
+  <h3>Load once, at startup</h3>
+  <p>The single most common ML-serving bug is loading the model inside the request handler. A ResNet-50 checkpoint is seconds of disk read and hundreds of MB — per request that's catastrophic, and it usually ships because it works fine with one test user.</p>
+
+  <details class="snippet">
+    <summary>Lifespan loading + a correct inference path</summary>
+    <pre>from contextlib import asynccontextmanager
+
+ml = {}
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # startup — runs once per worker process
+    model = models.resnet50()
+    model.fc = nn.Sequential(nn.Dropout(0.5), nn.Linear(2048, NUM_CLASSES))
+    model.load_state_dict(torch.load(CKPT, map_location="cpu"))
+    model.eval()                       # CRITICAL: disables dropout + BN updates
+    ml["model"] = model
+    ml["nlp"] = spacy.load("models/food_ner")
+    yield
+    ml.clear()                         # shutdown
+
+app = FastAPI(lifespan=lifespan)
+
+@app.post("/predict")                  # plain def → threadpool
+def predict(file: UploadFile = File(...)):
+    img = preprocess(Image.open(file.file).convert("RGB"))
+    with torch.inference_mode():       # no autograd graph, no grad memory
+        logits = ml["model"](img.unsqueeze(0))
+        probs  = torch.softmax(logits, dim=1)
+        conf, idx = probs.max(1)
+    return {"label": CLASSES[idx.item()], "confidence": round(conf.item(), 4)}
+                                       # .item() → Python float, drops the tensor</pre>
+  </details>
+
+  <div class="box trap">
+    <div class="label">🚨 Interview Trap</div>
+    <p>Two one-line bugs that both produce <em>silently wrong or slowly dying</em> services:</p>
+    <ul>
+      <li><strong>Forgetting <code>model.eval()</code></strong> — dropout stays active at inference, so the same image returns different predictions on each call. Nothing errors. You just have a randomly wrong model.</li>
+      <li><strong>Forgetting <code>torch.no_grad()</code> / <code>inference_mode()</code></strong> — PyTorch builds an autograd graph for every forward pass and holds the activations. In a long-running server that's a steady memory climb that eventually OOMs, hours or days after deploy.</li>
+    </ul>
+    <p><code>inference_mode()</code> is the stronger, newer version of <code>no_grad()</code> — same intent, a bit faster. Knowing both names is worth a point.</p>
+  </div>
+
+  <div class="box mlde">
+    <div class="label">📊 ML / Data Eng Defense</div>
+    <p><strong>Memory hygiene checklist for a long-running service</strong> — say these as a list and it lands:</p>
+    <ul>
+      <li><code>eval()</code> + <code>inference_mode()</code> — non-negotiable.</li>
+      <li>Never accumulate tensors in a module-level list or cache. Call <code>.item()</code> or <code>.detach().cpu()</code> before storing anything, or you keep the whole graph alive by holding one tensor.</li>
+      <li>On GPU, <code>torch.cuda.empty_cache()</code> releases cached blocks — but understand it frees the <em>allocator's</em> cache, not leaked references. It's a symptom-reliever, not a fix.</li>
+      <li>Bound concurrency: N parallel inferences = N copies of activation memory. A semaphore around the model is cheaper than an OOM.</li>
+      <li>Pin your batch size. Variable batches fragment the allocator over time.</li>
+    </ul>
+  </div>
+
+  <h3>Fallback cascades</h3>
+  <p>Every ML service should degrade rather than fail. The pattern across all your projects is the same three tiers:</p>
+  <div class="tw"><table>
+    <thead><tr><th>Service</th><th>Primary</th><th>Fallback</th><th>Floor</th></tr></thead>
+    <tbody>
+      <tr><td>Nutri-Vision text</td><td>spaCy NER + USDA match</td><td>Rule/regex extraction</td><td>Unparsed item + warning</td></tr>
+      <tr><td>Chess-AI</td><td>Stockfish (ELO 1800)</td><td>Minimax α-β depth 3</td><td>Any legal move</td></tr>
+      <tr><td>RecrutAI</td><td>Gemini 2.5 Flash</td><td>Regex resume parser</td><td>Scripted question bank</td></tr>
+    </tbody>
+  </table></div>
+
+  <details class="snippet">
+    <summary>Aggressive timeout + backoff calling an upstream</summary>
+    <pre>import httpx, asyncio
+
+TIMEOUT = httpx.Timeout(6.0, connect=2.0)   # match RecrutAI's 6s ceiling
+
+async def call_upstream(payload, retries=2):
+    delay = 1.0
+    async with httpx.AsyncClient(timeout=TIMEOUT) as client:
+        for attempt in range(retries + 1):
+            try:
+                r = await client.post(UPSTREAM, json=payload)
+                r.raise_for_status()
+                return r.json()
+            except (httpx.TimeoutException, httpx.HTTPStatusError):
+                if attempt == retries:
+                    return None            # caller runs the deterministic fallback
+                await asyncio.sleep(delay)
+                delay *= 2                 # 1s → 2s</pre>
+  </details>
+
+  <div class="box insight">
+    <div class="label">💡 Senior Insight</div>
+    <p>Retries make things worse when the upstream is <em>overloaded</em> rather than flaky — three clients each retrying twice is triple the load on a service already struggling. That's what a <strong>circuit breaker</strong> fixes: after N consecutive failures the breaker opens and calls fail instantly for a cooldown, going straight to the fallback without touching the network. It gives the upstream room to recover instead of pinning it down. Retries handle transient blips; breakers handle sustained outages. Naming both, and when each applies, is the senior answer.</p>
+  </div>
+</section>
+
+
+<!-- ========== C5 ========== -->
+<section class="cluster" id="c5">
+  <h2><span class="idx">05</span> Interview defense bank</h2>
+  <p style="color:var(--text-dim); font-size:12px; margin-bottom:14px;">One-line reason → supporting mechanic → the trade-off you accepted.</p>
+
+  <h3>Track A — SDE</h3>
+
+  <div class="qa">
+    <span class="track-tag track-a">A · Q1</span>
+    <div class="q"><span class="qnum">1.</span> Why a Flask microservice for the chess engine rather than child processes from Node?</div>
+    <p><strong>Because spawning a process per move pays startup cost on every single request.</strong> A child process must boot a Python interpreter, import chess libraries and initialize Stockfish — that overhead is comparable to or larger than the search itself, and it repeats for every move.</p>
+    <p>A long-lived Flask service pays that cost once at startup. It also gets you a real HTTP contract instead of parsing stdout, independent deploys and restarts, the ability to scale engine capacity separately from the game server, and testability with a single curl.</p>
+    <p><strong>Trade-off:</strong> a network hop (milliseconds, irrelevant next to search time) and a second service to run. The decisive point is that the engine is <em>stateless</em> — FEN in, move out — so it scales by adding workers and loses nothing on restart.</p>
+  </div>
+
+  <div class="qa">
+    <span class="track-tag track-a">A · Q2</span>
+    <div class="q"><span class="qnum">2.</span> How do you structure JWT auth and RBAC cleanly across 20+ FastAPI routes?</div>
+    <p><strong>Dependency factories plus router-level dependencies</strong> — so the check is attached to the router, not repeated per route.</p>
+    <p><code>current_user</code> decodes and validates the token. <code>require_role(*allowed)</code> is a factory returning a dependency that itself depends on <code>current_user</code> — so roles compose on top of auth without duplicating decode logic. Then <code>APIRouter(dependencies=[Depends(require_role("admin"))])</code> covers every route underneath at once.</p>
+    <p><strong>Why this beats decorators or middleware:</strong> dependencies are cached per request (token decodes once even if three dependencies need the user), they appear in the OpenAPI schema so the docs show which routes need auth, and they're overridable in tests via <code>app.dependency_overrides</code> — no monkeypatching.</p>
+    <p><strong>The structural argument:</strong> a new route added under the admin router is protected by default. You'd have to work to make it insecure.</p>
+  </div>
+
+  <div class="qa">
+    <span class="track-tag track-a">A · Q3</span>
+    <div class="q"><span class="qnum">3.</span> 20 MB image via <code>UploadFile</code> vs <code>bytes</code> — what happens to memory?</div>
+    <p><strong><code>bytes</code>:</strong> FastAPI reads the entire body into RAM before your function is called. One request is 20 MB; ten concurrent is 200 MB, growing linearly with no ceiling you control. That's an availability bug an attacker can trigger deliberately.</p>
+    <p><strong><code>UploadFile</code>:</strong> wraps Python's <code>SpooledTemporaryFile</code> — kept in memory up to a threshold (~1 MB), then transparently spilled to a temp file on disk. Memory stays roughly flat regardless of file size, and you additionally get <code>filename</code> and <code>content_type</code>.</p>
+    <p><strong>What neither does:</strong> enforce a maximum. A client can send 2 GB either way. Real protection is a body-size cap at the reverse proxy plus a <code>content-length</code> check, and validating the file is actually an image by decoding it — <code>content_type</code> is client-supplied and therefore attacker-controlled.</p>
+    <p><strong>For a detection endpoint</strong> you also want to resize immediately after decode, because a 20 MP image decoded to a tensor is far larger in RAM than the 20 MB on the wire.</p>
+  </div>
+
+  <div class="qa">
+    <span class="track-tag track-a">A · Q4</span>
+    <div class="q"><span class="qnum">4.</span> How do you size Gunicorn/Uvicorn workers in a memory-limited container?</div>
+    <p><strong>For an ML service, workers are bounded by memory, not by cores.</strong> Start from the arithmetic: <code>worker_count × model_size</code> must fit inside the container limit with headroom for activations and request buffers. A 500 MB model in a 2 GB container means 2 workers, not 8 — and the standard <code>(2 × cores) + 1</code> heuristic is for I/O-bound web apps, where it's fine and here it's actively harmful.</p>
+    <p><strong>Concretely:</strong> <code>gunicorn -k uvicorn.workers.UvicornWorker --workers 2 --timeout 120</code>. Gunicorn for process supervision and restarts, Uvicorn workers for async. Set the timeout above worst-case inference or Gunicorn will kill mid-inference requests.</p>
+    <p><strong>Then bound concurrency inside each worker</strong> — a semaphore around the model, so N threadpool threads don't hold N copies of activation memory. Queuing under load is the correct failure mode; OOM-killing is not.</p>
+    <p><strong>And set the container limit explicitly</strong>, because otherwise the OOM killer takes a worker down and the symptom looks like a random crash rather than a memory problem.</p>
+  </div>
+
+  <div class="qa">
+    <span class="track-tag track-a">A · Q5</span>
+    <div class="q"><span class="qnum">5.</span> How would you implement a circuit breaker between a Node gateway and a FastAPI ML service?</div>
+    <p><strong>Three states.</strong> <em>Closed</em> — requests flow, failures counted. After N consecutive failures (or a failure rate over a window), the breaker <em>opens</em>: every call fails instantly with no network attempt, straight to the fallback. After a cooldown it goes <em>half-open</em> and lets one probe through — success closes it, failure re-opens it with a longer cooldown.</p>
+    <p><strong>Why not just retries:</strong> retries assume the failure is transient. If the ML service is overloaded, every retry is <em>more</em> load on something already drowning — you turn a slow service into a dead one. The breaker does the opposite: it removes load so recovery is possible.</p>
+    <p><strong>What "fail fast" buys you:</strong> without a breaker, an ML service that hangs makes every gateway request wait the full 6-second timeout, so the gateway's own connection pool fills with waiting requests and the outage spreads upstream. That's cascading failure, and fast rejection is what stops it.</p>
+    <p><strong>Practically:</strong> <code>opossum</code> on the Node side wrapping the call, a timeout below the client's patience threshold, and a deterministic fallback per endpoint — cached last result, rule-based response, or an honest "inference unavailable" with a 503. Emit breaker state as a metric; an open breaker is the alert you actually want to page on.</p>
+  </div>
+
+  <hr class="divider">
+
+  <h3>Track B — ML / AI / Data Engineering</h3>
+
+  <div class="qa">
+    <span class="track-tag track-b">B · Q1</span>
+    <div class="q"><span class="qnum">1.</span> Sync CPU inference in FastAPI — <code>async def</code> or plain <code>def</code>?</div>
+    <p><strong>Plain <code>def</code>. And the reason is the whole answer.</strong></p>
+    <p><code>async def</code> is a promise to the event loop that you'll yield at every <code>await</code>. A PyTorch forward pass or a spaCy parse contains no awaits — it just runs. So the loop is stuck inside your function for the entire inference, and <em>every other request on that worker is frozen</em>, including health checks.</p>
+    <p>Declare it <code>def</code> and FastAPI detects the sync function and runs it in the <strong>anyio threadpool</strong> (40 threads by default). The loop stays free to accept and serve other requests while inference happens on a worker thread.</p>
+    <p><strong>The counter-intuitive summary:</strong> for CPU-bound work, <code>def</code> gives you more concurrency than <code>async def</code>. The "more modern" keyword is the wrong one.</p>
+    <p><strong>The honest limit:</strong> threads don't escape the GIL, so this buys responsiveness, not parallel throughput — PyTorch releasing the GIL inside C++ kernels is what provides some real overlap. For genuine CPU parallelism you need a process pool or separate workers. And the failure mode of getting it wrong is nasty: fine in dev with one user, latency spikes in production.</p>
+  </div>
+
+  <div class="qa">
+    <span class="track-tag track-b">B · Q2</span>
+    <div class="q"><span class="qnum">2.</span> How does one JSON schema serve both the spaCy NER path and the image classifier?</div>
+    <p><strong>By making USDA the convergence point.</strong> Both paths are treated as <em>hypothesis generators</em> that output the same thing: a food name and a confidence. Text goes free-form → NER extracts food entities → rule parser extracts quantities. Image goes upload → classifier → predicted food label. Neither path produces a nutrition number.</p>
+    <p><strong>Then a single resolution stage</strong> takes (name, quantity) and matches it against USDA FoodData Central, returning the canonical item with per-100g macros. Portion scaling happens once, in one place: <code>macro × grams / 100</code>. So both routes emit the identical <code>FoodItem</code> shape, differing only in a <code>source</code> field and their confidence value.</p>
+    <p><strong>Why this design holds up:</strong> nutrition numbers come from a government database, never from a model. Adding a third input path — barcode scan, voice — means writing one more hypothesis generator, not touching the response schema or the frontend. And Pydantic enforces the shape, so a path that returns something malformed fails at the boundary rather than reaching a client.</p>
+    <p><strong>Be precise about the image path</strong> if asked: the trained ResNet-50 lives in its own service, and the food-logging API can also route images to a managed vision provider. Two options behind one schema — which is exactly the point of resolving through USDA.</p>
+  </div>
+
+  <div class="qa">
+    <span class="track-tag track-b">B · Q3</span>
+    <div class="q"><span class="qnum">3.</span> What happens when concurrent requests hit <code>/detect</code> running YOLO?</div>
+    <p><strong>Walk the path in order — that structure is what they're marking.</strong></p>
+    <p>(1) Uvicorn accepts all connections immediately; the event loop parses multipart headers and spools each upload to <code>SpooledTemporaryFile</code>, so memory stays flat even with several large images in flight.</p>
+    <p>(2) The route is sync <code>def</code>, so each request is dispatched to an anyio threadpool thread. The loop is now free again.</p>
+    <p>(3) <strong>Here's the real constraint:</strong> the threads all share one GIL and one model instance. Ultralytics releases the GIL inside its C++/ATen kernels, so there's partial overlap, but Python-level pre/post-processing serializes. You do <em>not</em> get N× throughput from N threads.</p>
+    <p>(4) Memory scales with concurrency — each in-flight inference holds its own activations. Ten simultaneous requests is ten sets of intermediate tensors.</p>
+    <p><strong>What I'd do about it:</strong> a semaphore capping concurrent inferences (queue rather than thrash), and for real load, batching — collect requests arriving within a short window and run one batched forward pass, since GPU/vectorized inference on a batch of 8 costs far less than 8 separate passes. Add a queue depth metric so you can see saturation before users do.</p>
+    <p><strong>Also worth saying:</strong> a shared model object is fine for read-only inference in <code>eval()</code> mode. It would <em>not</em> be if anything mutated model state per request.</p>
+  </div>
+
+  <div class="qa">
+    <span class="track-tag track-b">B · Q4</span>
+    <div class="q"><span class="qnum">4.</span> How do you prevent memory leaks serving PyTorch in a long-running service?</div>
+    <p><strong>The main leak is autograd.</strong> By default every forward pass builds a computation graph and retains intermediate activations for a backward pass that never comes. In a server that runs for days, that's a steady climb ending in OOM — and it's invisible in a short test.</p>
+    <p><strong>Fix:</strong> wrap inference in <code>torch.inference_mode()</code> (or <code>no_grad()</code>) and call <code>model.eval()</code> at load. Two different jobs, both required: <code>eval()</code> switches dropout and BatchNorm to inference behaviour; <code>inference_mode()</code> stops graph construction.</p>
+    <p><strong>The second leak is retained references.</strong> Storing a raw output tensor in a cache or metrics list keeps its entire graph alive. Always <code>.item()</code> for scalars or <code>.detach().cpu()</code> before storing — one held tensor can pin hundreds of MB.</p>
+    <p><strong>On GPU:</strong> <code>torch.cuda.empty_cache()</code> returns cached blocks to the driver, but be precise that it frees the <em>allocator cache</em>, not leaked references — it makes <code>nvidia-smi</code> look better without fixing a real leak. Use <code>torch.cuda.memory_allocated()</code> to tell the difference.</p>
+    <p><strong>Operationally:</strong> bound concurrency so activation memory is capped, log RSS per request, and keep a worker max-requests recycle as a safety net — restarting periodically is a legitimate belt-and-braces measure, not an admission of defeat.</p>
+  </div>
+
+  <div class="qa">
+    <span class="track-tag track-b">B · Q5</span>
+    <div class="q"><span class="qnum">5.</span> Why FastAPI over Flask for Nutri-Vision, and what did Pydantic actually do?</div>
+    <p><strong>Because the endpoint's dominant cost is waiting, not computing.</strong> A meal-logging request calls out to USDA FoodData Central and potentially a vision provider — mostly network wait. Flask would hold an entire worker idle for each of those; FastAPI's event loop overlaps them, so one worker serves many concurrent requests.</p>
+    <p><strong>Pydantic did three concrete things:</strong></p>
+    <ul>
+      <li><strong>Guarded the boundary</strong> — malformed input returns 422 with a field-level error path <em>before</em> reaching the NLP pipeline. Without it, bad input surfaces as a confusing exception deep inside the extractor.</li>
+      <li><strong>Made portion scaling safe</strong> — <code>servings: float = Field(gt=0, le=20)</code> means the scaling multiplier can never be zero or negative, so a malicious or accidental value can't produce absurd macro numbers. Constraints on the input are cheaper than defensive checks scattered through the math.</li>
+      <li><strong>Generated the contract</strong> — one schema produced the OpenAPI docs, so the frontend integrated without a hand-written spec that drifts.</li>
+    </ul>
+    <p><strong>The honest caveat:</strong> FastAPI's async advantage disappears the moment you put synchronous model inference in the same process — which is exactly why the ResNet-50 classifier runs as its own service rather than inside this API. Same reasoning as Chessify: don't put CPU work on an I/O event loop.</p>
+  </div>
+</section>
+</main>
+<footer>
+  Python Backend Microservices: Flask &amp; FastAPI · Interview Notes<br>Grounded against Nutri-Vision AI, Chessify AI and SahYatri detection services.
+</footer>
+<script>
+  document.getElementById('jump').addEventListener('change', function(e) {
+    const id = e.target.value; if (!id) return;
+    const el = document.getElementById(id);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    e.target.value = '';
+  });
+  const prog = document.getElementById('scrollProg');
+  window.addEventListener('scroll', function() {
+    const st = document.documentElement.scrollTop;
+    const sh = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+    prog.style.width = (sh > 0 ? (st / sh) * 100 : 0) + '%';
+  }, { passive: true });
+  const sections = document.querySelectorAll('section.cluster');
+  const observer = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) { entry.target.style.animationPlayState = 'running'; observer.unobserve(entry.target); }
+    });
+  }, { threshold: 0.08 });
+  sections.forEach(function(s) { s.style.animationPlayState = 'paused'; observer.observe(s); });
+</script>
+</body>
+</html>
