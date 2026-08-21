@@ -2,281 +2,926 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5">
 <title>Tech Fundamentals & Comparisons — Interview Notes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-  :root{
-    --bg:#0d1117; --card:#161b22; --border:#232a35;
-    --cyan:#7dcfff; --green:#9ece6a; --orange:#e0af68; --red:#f7768e; --purple:#bb9af7;
-    --text:#c9d1d9; --text-dim:#8b949e; --white:#e6edf3;
+  :root {
+    --bg: #0a0e17;
+    --surface: #111827;
+    --surface2: #1a2234;
+    --border: #1e293b;
+    --border-glow: #334155;
+    --text: #cbd5e1;
+    --text-dim: #64748b;
+    --white: #f1f5f9;
+    --accent: #38bdf8;
+    --accent2: #818cf8;
+    --green: #34d399;
+    --orange: #fbbf24;
+    --red: #fb7185;
+    --purple: #a78bfa;
+    --cyan: #22d3ee;
+    --radius: 14px;
+    --maxw: 760px;
+    --font: 'Inter', system-ui, -apple-system, sans-serif;
+    --mono: 'JetBrains Mono', 'SF Mono', Consolas, monospace;
   }
-  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
-  html{scroll-behavior:smooth;}
-  body{margin:0; background:var(--bg); color:var(--text); font-family:'Segoe UI',system-ui,-apple-system,sans-serif; line-height:1.6; font-size:15px; padding-bottom:30px;}
-  a{color:var(--cyan); text-decoration:none;}
-  .topbar{position:sticky; top:0; z-index:50; background:rgba(13,17,23,.93); backdrop-filter:blur(8px); border-bottom:1px solid var(--border); padding:9px 14px; display:flex; gap:8px; align-items:center;}
-  .topbar .dot{width:8px; height:8px; border-radius:50%; background:var(--green); box-shadow:0 0 8px var(--green); flex-shrink:0;}
-  .topbar select{flex:1; background:var(--card); color:var(--cyan); border:1px solid var(--border); border-radius:8px; padding:8px; font-size:13px;}
-  main{padding:18px 15px; max-width:720px; margin:0 auto;}
-  h1{color:var(--white); font-size:21px; margin:0 0 6px;}
-  .sub{color:var(--text-dim); font-size:13px; margin:0 0 14px;}
-  .badge-row{display:flex; gap:6px; flex-wrap:wrap; margin-bottom:18px;}
-  .badge{background:var(--card); border:1px solid var(--border); color:var(--cyan); font-size:10.5px; padding:4px 9px; border-radius:20px;}
-  section{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:17px 15px; margin-bottom:16px; scroll-margin-top:55px;}
-  section h2{color:var(--white); font-size:17.5px; margin:0 0 4px; padding-bottom:10px; border-bottom:1px solid var(--border);}
-  .cluster-desc{color:var(--text-dim); font-size:12.5px; margin:10px 0 14px;}
-  h3{color:var(--cyan); font-size:14.5px; margin:16px 0 7px;}
-  h4{color:var(--orange); font-size:13px; margin:12px 0 5px;}
-  p{margin:7px 0;}
-  ul,ol{padding-left:19px; margin:7px 0;}
-  li{margin:4px 0;}
-  code{background:#1f2732; color:var(--green); padding:2px 5px; border-radius:4px; font-family:monospace; font-size:12px;}
-  pre{background:#0a0e13; border:1px solid var(--border); border-radius:8px; padding:11px 13px; overflow-x:auto; font-size:12px; margin:9px 0;}
-  pre code{background:none; padding:0; color:#d7dee7;}
-  .tw{overflow-x:auto; margin:9px 0; -webkit-overflow-scrolling:touch;}
-  table{width:100%; border-collapse:collapse; font-size:12.5px; min-width:400px;}
-  th,td{border:1px solid var(--border); padding:7px 9px; text-align:left;}
-  th{background:#1a2029; color:var(--cyan); white-space:nowrap;}
-  tr:nth-child(even){background:#111620;}
-  .minicard{background:#101520; border:1px solid var(--border); border-radius:8px; padding:11px 12px; margin:9px 0;}
-  .minicard h5{margin:0 0 5px; color:var(--cyan); font-size:12.5px;}
-  .box{border-radius:8px; padding:11px 13px; margin:9px 0; font-size:12.5px; border-left:4px solid;}
-  .box.tip{background:#12271f; border-color:var(--green);} .box.tip strong{color:var(--green);}
-  .box.q{background:#1c1420; border-color:var(--red);} .box.q strong{color:var(--red);}
-  .box.ref{background:#181c2e; border-color:var(--purple);} .box.ref strong{color:var(--purple);}
-  .qa{background:#0f1620; border:1px solid var(--border); border-radius:8px; padding:12px 13px; margin:10px 0;}
-  .qa .q{color:var(--white); font-weight:600; font-size:13px; margin-bottom:6px;}
-  .qa .q::before{content:"Q. "; color:var(--red);}
-  .qa .a{color:var(--text-dim); font-size:12.5px;}
-  .divider{border:none; border-top:1px dashed var(--border); margin:18px 0;}
-  footer{color:var(--text-dim); font-size:11px; text-align:center; padding:22px 14px;}
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font);
+    font-size: 14.5px;
+    line-height: 1.65;
+    overflow-x: hidden;
+  }
+
+  /* --- Scroll progress bar --- */
+  .scroll-progress {
+    position: fixed; top: 0; left: 0; z-index: 200;
+    height: 3px; width: 0%;
+    background: linear-gradient(90deg, var(--accent), var(--accent2), var(--purple));
+    transition: width 80ms linear;
+    border-radius: 0 2px 2px 0;
+  }
+
+  /* --- Sticky nav --- */
+  .topbar {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(10, 14, 23, 0.82);
+    backdrop-filter: blur(16px) saturate(1.6);
+    -webkit-backdrop-filter: blur(16px) saturate(1.6);
+    border-bottom: 1px solid var(--border);
+    padding: 10px 16px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .topbar .logo {
+    display: flex; align-items: center; gap: 8px;
+    font-weight: 800; font-size: 13.5px; color: var(--white);
+    white-space: nowrap; letter-spacing: -0.02em;
+  }
+  .topbar .dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--green);
+    box-shadow: 0 0 10px var(--green), 0 0 20px rgba(52, 211, 153, 0.3);
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.6; transform: scale(0.85); }
+  }
+  .topbar select {
+    flex: 1; max-width: 380px;
+    background: var(--surface);
+    color: var(--accent);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 8px 12px;
+    font-family: var(--font);
+    font-size: 12.5px;
+    font-weight: 500;
+    outline: none;
+    cursor: pointer;
+    transition: border-color .2s;
+  }
+  .topbar select:focus { border-color: var(--accent); }
+
+  /* --- Main --- */
+  main {
+    max-width: var(--maxw);
+    margin: 0 auto;
+    padding: 24px 16px 80px;
+  }
+
+  /* --- Hero header --- */
+  .hero {
+    margin-bottom: 28px;
+    padding: 24px 20px;
+    background: linear-gradient(135deg, rgba(56,189,248,0.06), rgba(129,140,248,0.06), rgba(167,139,250,0.04));
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; top: -40%; right: -20%;
+    width: 260px; height: 260px;
+    background: radial-gradient(circle, rgba(56,189,248,0.08) 0%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+  }
+  .hero h1 {
+    font-size: 22px; font-weight: 800; color: var(--white);
+    letter-spacing: -0.03em; line-height: 1.3;
+    margin-bottom: 6px;
+  }
+  .hero .sub {
+    color: var(--text-dim); font-size: 12.5px; line-height: 1.5;
+  }
+  .badge-row {
+    display: flex; gap: 6px; flex-wrap: wrap;
+    margin-top: 14px;
+  }
+  .badge {
+    font-size: 10px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 4px 10px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    background: rgba(56, 189, 248, 0.06);
+    color: var(--accent);
+    white-space: nowrap;
+  }
+
+  /* --- Project chips --- */
+  .projects {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 8px;
+    margin-bottom: 28px;
+  }
+  .chip {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 12px;
+    font-size: 11.5px;
+    color: var(--text-dim);
+    transition: border-color .2s, transform .15s;
+    line-height: 1.4;
+  }
+  .chip:hover { border-color: var(--border-glow); transform: translateY(-1px); }
+  .chip a {
+    color: var(--accent); text-decoration: none; font-weight: 600;
+  }
+  .chip a:hover { text-decoration: underline; }
+  .chip .emoji { margin-right: 4px; }
+
+  /* --- Section cards --- */
+  section.cluster {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px 18px;
+    margin-bottom: 16px;
+    scroll-margin-top: 60px;
+    transition: border-color .25s;
+    animation: fadeUp .4s ease both;
+  }
+  section.cluster:hover { border-color: var(--border-glow); }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  section.cluster > h2 {
+    font-size: 16.5px; font-weight: 700; color: var(--white);
+    padding-bottom: 10px; margin-bottom: 14px;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 10px;
+    letter-spacing: -0.01em;
+  }
+  section.cluster > h2 .idx {
+    font-size: 10px; font-weight: 700;
+    color: var(--accent);
+    background: rgba(56,189,248,0.1);
+    border: 1px solid rgba(56,189,248,0.2);
+    border-radius: 6px;
+    padding: 3px 8px;
+    letter-spacing: 0.04em;
+  }
+
+  h3 {
+    font-size: 14px; font-weight: 700; color: var(--cyan);
+    margin: 18px 0 8px;
+  }
+  h4 {
+    font-size: 12.5px; font-weight: 600; color: var(--orange);
+    margin: 14px 0 6px;
+  }
+  p { margin: 7px 0; font-size: 13px; }
+  ul, ol { padding-left: 18px; margin: 6px 0; }
+  li { margin: 3px 0; font-size: 13px; }
+
+  code {
+    background: rgba(30, 41, 59, 0.8);
+    color: var(--green);
+    padding: 2px 6px;
+    border-radius: 5px;
+    font-family: var(--mono);
+    font-size: 11.5px;
+  }
+
+  /* --- Tables --- */
+  .tw {
+    overflow-x: auto; margin: 10px 0;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    -webkit-overflow-scrolling: touch;
+  }
+  table {
+    width: 100%; border-collapse: collapse;
+    font-size: 12px; min-width: 420px;
+  }
+  thead th {
+    background: var(--surface2);
+    color: var(--accent);
+    font-size: 10.5px; font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 9px 10px;
+    text-align: left;
+    white-space: nowrap;
+    border-bottom: 1px solid var(--border);
+    position: sticky; top: 0;
+  }
+  tbody td {
+    padding: 8px 10px;
+    border-bottom: 1px solid rgba(30, 41, 59, 0.5);
+    vertical-align: top;
+    color: var(--text);
+  }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover { background: rgba(56, 189, 248, 0.03); }
+  tbody td:first-child {
+    color: var(--white); font-weight: 600;
+    white-space: nowrap;
+  }
+
+  /* --- Callout boxes --- */
+  .box {
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin: 10px 0;
+    font-size: 12.5px;
+    line-height: 1.55;
+    border-left: 3px solid;
+    position: relative;
+  }
+  .box .label {
+    font-weight: 700; font-size: 10.5px;
+    text-transform: uppercase; letter-spacing: 0.05em;
+    margin-bottom: 5px;
+    display: flex; align-items: center; gap: 5px;
+  }
+  .box p { margin: 3px 0; font-size: 12.5px; }
+
+  .box.trap {
+    background: rgba(251,113,133,0.06);
+    border-color: var(--red);
+  }
+  .box.trap .label { color: var(--red); }
+
+  .box.insight {
+    background: rgba(52,211,153,0.06);
+    border-color: var(--green);
+  }
+  .box.insight .label { color: var(--green); }
+
+  .box.sde {
+    background: rgba(56,189,248,0.06);
+    border-color: var(--accent);
+  }
+  .box.sde .label { color: var(--accent); }
+
+  .box.mlde {
+    background: rgba(167,139,250,0.06);
+    border-color: var(--purple);
+  }
+  .box.mlde .label { color: var(--purple); }
+
+  /* --- Code snippets --- */
+  details.snippet {
+    background: #0c1018;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin: 10px 0;
+    overflow: hidden;
+  }
+  details.snippet summary {
+    cursor: pointer;
+    padding: 9px 14px;
+    color: var(--text-dim);
+    font-size: 12px; font-weight: 600;
+    font-family: var(--font);
+    list-style: none;
+    display: flex; align-items: center; gap: 7px;
+    user-select: none;
+    transition: color .2s;
+  }
+  details.snippet summary:hover { color: var(--accent); }
+  details.snippet summary::-webkit-details-marker { display: none; }
+  details.snippet summary::before {
+    content: "▸"; color: var(--accent);
+    display: inline-block;
+    transition: transform .15s ease;
+  }
+  details.snippet[open] summary::before { transform: rotate(90deg); }
+  details.snippet pre {
+    margin: 0; padding: 12px 14px;
+    overflow-x: auto;
+    font-family: var(--mono);
+    font-size: 12px; line-height: 1.55;
+    color: var(--text);
+  }
+
+  /* --- Q&A cards --- */
+  .qa {
+    background: rgba(17, 24, 39, 0.6);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 14px;
+    margin: 10px 0;
+    transition: border-color .2s;
+  }
+  .qa:hover { border-color: var(--border-glow); }
+  .qa .q {
+    color: var(--white);
+    font-weight: 600;
+    font-size: 13px;
+    margin-bottom: 7px;
+    line-height: 1.45;
+  }
+  .qa .q .qnum { color: var(--accent); margin-right: 6px; }
+  .track-tag {
+    display: inline-block;
+    font-size: 9.5px; font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 6px;
+    margin-bottom: 8px;
+  }
+  .track-a {
+    background: rgba(56,189,248,0.1);
+    color: var(--accent);
+    border: 1px solid rgba(56,189,248,0.25);
+  }
+  .track-b {
+    background: rgba(167,139,250,0.1);
+    color: var(--purple);
+    border: 1px solid rgba(167,139,250,0.25);
+  }
+
+  /* --- Divider --- */
+  hr.divider {
+    border: none;
+    border-top: 1px dashed var(--border);
+    margin: 20px 0;
+  }
+
+  /* --- Footer --- */
+  footer {
+    max-width: var(--maxw);
+    margin: 0 auto;
+    padding: 20px 16px 40px;
+    color: var(--text-dim);
+    font-size: 11px;
+    text-align: center;
+    border-top: 1px solid var(--border);
+  }
+
+  /* --- Mobile --- */
+  @media (max-width: 640px) {
+    body { font-size: 14px; }
+    main { padding: 16px 12px 60px; }
+    .hero { padding: 18px 16px; }
+    .hero h1 { font-size: 19px; }
+    section.cluster { padding: 16px 14px; }
+    section.cluster > h2 { font-size: 15px; }
+    .projects { grid-template-columns: 1fr 1fr; gap: 6px; }
+    .chip { padding: 8px 10px; font-size: 10.5px; }
+    .topbar .logo span.full { display: none; }
+    table { font-size: 11px; min-width: 360px; }
+    thead th { font-size: 9.5px; padding: 7px 8px; }
+    tbody td { padding: 7px 8px; }
+    h3 { font-size: 13.5px; }
+    p, li { font-size: 12.5px; }
+    .box { padding: 10px 12px; font-size: 12px; }
+    .box p { font-size: 12px; }
+    .qa .q { font-size: 12.5px; }
+  }
+
+  @media (max-width: 380px) {
+    .projects { grid-template-columns: 1fr; }
+    .hero h1 { font-size: 17px; }
+    .topbar select { font-size: 11.5px; padding: 7px 10px; }
+  }
 </style>
 </head>
 <body>
 
+<div class="scroll-progress" id="scrollProg"></div>
+
 <div class="topbar">
-  <span class="dot"></span>
-  <select onchange="if(this.value) location.hash=this.value;">
+  <div class="logo">
+    <span class="dot"></span>
+    <span class="full">Interview Notes</span>
+    <span style="display:none" class="short">Notes</span>
+  </div>
+  <select id="jump" aria-label="Jump to section">
     <option value="">Jump to…</option>
-    <option value="#c1">1 · Language Comparisons</option>
-    <option value="#c2">2 · Frontend Framework Evolution</option>
-    <option value="#c3">3 · Backend Framework/Runtime</option>
-    <option value="#c4">4 · Database Landscape</option>
-    <option value="#c5">5 · API Paradigms</option>
-    <option value="#c6">6 · Cloud/Infra Fundamentals</option>
-    <option value="#c7">7 · "Why X over Y" Q&A Bank</option>
+    <option value="c1">1 · Languages & Runtimes</option>
+    <option value="c2">2 · Backend & Concurrency</option>
+    <option value="c3">3 · Databases & Storage</option>
+    <option value="c4">4 · AI, ML & LLMs</option>
+    <option value="c5">5 · API Protocols</option>
+    <option value="c6">6 · Frontend & Rendering</option>
+    <option value="c7">7 · DevOps & Cloud</option>
+    <option value="c8">8 · Why-X-Over-Y Q&A</option>
   </select>
 </div>
 
 <main>
-  <header>
-    <h1>Tech Fundamentals & Cross-Technology Comparisons</h1>
-    <p class="sub">Not project-specific — this is the "why does X exist / how does X compare to Y" layer interviewers use to test whether you actually understand your own skills list, independent of any project bullet.</p>
+
+  <!-- Hero -->
+  <div class="hero">
+    <h1>Tech Fundamentals &amp; Cross-Tech Comparisons</h1>
+    <p class="sub">Dense, defensible trade-off notes. Every claim survives a senior follow-up: <em>"why, specifically, over the obvious alternative?"</em></p>
     <div class="badge-row">
-      <span class="badge">Standalone Conceptual Prep</span>
-      <span class="badge">Skills-Section Coverage</span>
-      <span class="badge">7 Clusters</span>
+      <span class="badge">8 Clusters</span>
+      <span class="badge">SDE + ML Tracks</span>
+      <span class="badge">Project-Grounded</span>
     </div>
-  </header>
+  </div>
 
-  <!-- ============ CLUSTER 1 ============ -->
-  <section id="c1">
-    <h2>1 · Language Comparisons</h2>
-    <p class="cluster-desc">You list C, C++, Python, PHP, JavaScript, TypeScript, SQL. Expect at least one "why this language for this use case" question.</p>
+  <!-- Project chips -->
+  <div class="projects">
+    <div class="chip"><span class="emoji">🥗</span> <a href="https://github.com/Nutri-Vision" target="_blank">Nutri-Vision</a> — ResNet-50, spaCy, FastAPI</div>
+    <div class="chip"><span class="emoji">🧑‍💼</span> <a href="https://github.com/AmanVerma1067/RecrutAI" target="_blank">RecrutAI</a> — Gemini 2.5 Flash, Next.js 15</div>
+    <div class="chip"><span class="emoji">🚦</span> <a href="https://github.com/AmanVerma1067/SahYatri" target="_blank">SahYatri</a> — Edge YOLOv5n, Postgres</div>
+    <div class="chip"><span class="emoji">♟️</span> <a href="https://github.com/AmanVerma1067/Chessify-WebApp" target="_blank">Chessify</a> — Socket.IO, Flask/Stockfish</div>
+    <div class="chip"><span class="emoji">📚</span> <a href="https://github.com/AmanVerma1067/StudySync" target="_blank">StudySync</a> — Flutter, Express/Mongo</div>
+    <div class="chip"><span class="emoji">📦</span> Packspec — PHP, MongoDB Atlas RBAC</div>
+  </div>
 
-    <h3>JavaScript vs Python</h3>
-    <div class="tw"><table>
-      <tr><th>Aspect</th><th>JavaScript</th><th>Python</th></tr>
-      <tr><td>Typing</td><td>Dynamic, weakly typed</td><td>Dynamic, strongly typed</td></tr>
-      <tr><td>Execution model</td><td>Single-threaded, event loop (non-blocking)</td><td>Single-threaded by default, GIL restricts true parallel threads</td></tr>
-      <tr><td>Concurrency</td><td>Async/await + event loop — great for I/O-bound work</td><td>Async via asyncio, but true parallel CPU work needs multiprocessing (GIL blocks it in threads)</td></tr>
-      <tr><td>Typical use</td><td>Web (frontend mandatory, backend via Node), real-time apps</td><td>Data science, ML, scripting, rapid backend prototyping</td></tr>
-    </table></div>
-    <div class="box tip"><strong>One-line answer:</strong> "JS's event loop makes it a natural fit for I/O-heavy, real-time backends like my chess platform's Socket.IO layer — Python's GIL makes raw concurrency weaker, but its ecosystem (NumPy, PyTorch, LangChain) makes it unbeatable for ML work, which is why I use both depending on the problem."</div>
 
-    <h3>TypeScript vs JavaScript</h3>
-    <p>TypeScript adds static typing on top of JS, checked at compile time (transpiles down to plain JS). Catches type errors before runtime, improves IDE autocomplete/refactoring safety, and makes large codebases more maintainable across teams. Cost: extra build step, more upfront verbosity.</p>
-    <div class="box tip"><strong>Why teams adopt it:</strong> As a codebase grows past a few thousand lines with multiple contributors, JS's "anything can be anything" flexibility becomes a liability — TS trades a bit of writing speed for compile-time safety and self-documenting interfaces.</div>
+<!-- ============ CLUSTER 1 ============ -->
+<section class="cluster" id="c1">
+  <h2><span class="idx">01</span> Languages, Runtimes &amp; Scripting</h2>
 
-    <h3>PHP vs Node.js (as backend choices)</h3>
-    <div class="tw"><table>
-      <tr><th>Aspect</th><th>PHP</th><th>Node.js</th></tr>
-      <tr><td>Execution model</td><td>Request-per-process (traditionally), synchronous</td><td>Single-threaded event loop, async I/O</td></tr>
-      <tr><td>Best for</td><td>Traditional server-rendered CRUD apps, mature ecosystems (WordPress, Laravel)</td><td>Real-time apps, high-concurrency I/O-bound APIs</td></tr>
-      <tr><td>Ecosystem maturity</td><td>Very mature for classic web/CMS work</td><td>Dominant for modern JS-fullstack + real-time systems</td></tr>
-    </table></div>
+  <div class="tw"><table>
+    <thead><tr>
+      <th>Language</th><th>Typing</th><th>Memory</th><th>Concurrency</th><th>Speed</th><th>Domain Fit</th>
+    </tr></thead>
+    <tbody>
+      <tr><td>C++</td><td>Static, strong</td><td>Manual (RAII, smart ptrs)</td><td>OS threads, std::async</td><td>Fastest (zero-cost abstractions)</td><td>CP/DSA, engines, embedded</td></tr>
+      <tr><td>Python</td><td>Dynamic, strong</td><td>GC (refcount + cyclic)</td><td>GIL serializes threads; multiprocessing for CPU</td><td>Slow unless via C extensions</td><td>ML/AI, data science, scripting</td></tr>
+      <tr><td>JavaScript</td><td>Dynamic, weak</td><td>V8 generational GC</td><td>Single-threaded event loop (libuv)</td><td>JIT; fast for I/O-bound work</td><td>Web frontend, Node backends</td></tr>
+      <tr><td>TypeScript</td><td>Static (compile-time), structural</td><td>Same as JS (types erased)</td><td>Same as JS</td><td>Identical post-compile</td><td>Large-team JS codebases</td></tr>
+      <tr><td>PHP</td><td>Dynamic, weak (gradual)</td><td>Request-scoped GC (Zend)</td><td>Process-per-request (FPM)</td><td>Moderate; opcache helps</td><td>Server-rendered CRUD, SaaS</td></tr>
+      <tr><td>Bash</td><td>Untyped (strings)</td><td>N/A — OS processes</td><td>Fork/pipe, no in-process</td><td>Fast orchestration, slow compute</td><td>CI glue, cron, log pipelines</td></tr>
+    </tbody>
+  </table></div>
 
-    <h3>C vs C++ vs Python</h3>
-    <ul>
-      <li><strong>C</strong> — closest to hardware, manual memory management, no OOP; used for systems programming, OS-level work, embedded systems</li>
-      <li><strong>C++</strong> — C + OOP + templates + STL; used where you need performance AND abstraction (game engines, competitive programming, high-performance systems)</li>
-      <li><strong>Python</strong> — high-level, interpreted, huge library ecosystem; trades raw execution speed for developer speed — ideal for ML, scripting, prototyping</li>
-    </ul>
-    <div class="box tip"><strong>Framed for you specifically:</strong> "I use C++ for competitive programming and DSA because of raw execution speed and STL — critical when problems have tight time limits. Python is my go-to for ML/data work because the ecosystem (PyTorch, LangChain) outweighs raw speed concerns there."</div>
-  </section>
+  <h3>C++ vs Python</h3>
+  <p>C++ gives deterministic memory control — no GC pauses in hot loops. STL provides O(1)/O(log n) primitives without interpreter overhead, ideal for CP and low-latency systems.</p>
+  <p>Python trades determinism for dev speed and an unmatched ML ecosystem. The GIL means only one thread runs Python bytecode at a time — PyTorch/NumPy sidestep this by dropping into C/CUDA and releasing the GIL. That's why Nutri-Vision's ResNet-50 inference is fast despite being "Python."</p>
 
-  <!-- ============ CLUSTER 2 ============ -->
-  <section id="c2">
-    <h2>2 · Frontend Framework Evolution</h2>
-    <p class="cluster-desc">You list React.js, Next.js — expect "why does Next.js exist on top of React" almost verbatim.</p>
+  <div class="box trap">
+    <div class="label">🚨 Interview Trap</div>
+    <p>"Python can't do concurrency" is an overgeneralization. The GIL blocks <strong>CPU-bound</strong> multi-core parallelism. I/O-bound concurrency (async/await, threads waiting on network) is unaffected — the GIL is released during I/O waits.</p>
+  </div>
 
-    <h3>Why React was created</h3>
-    <p>Before React, direct DOM manipulation (vanilla JS / jQuery) meant manually tracking which parts of the UI needed updating whenever data changed — this got unmanageable as apps grew complex, leading to bug-prone, hard-to-reason-about code. React introduced a <strong>declarative</strong> model: you describe what the UI should look like for a given state, and React figures out the minimal DOM changes needed via the <strong>virtual DOM</strong> (an in-memory representation diffed against the previous render).</p>
+  <div class="box insight">
+    <div class="label">💡 Intuition</div>
+    <p>GIL = single microphone in a room. Only the thread holding the mic can speak (execute bytecode), but any thread can leave the room (syscall / C extension) without needing it. <code>requests.get()</code> doesn't block other threads; a tight Python <code>for</code> loop does.</p>
+  </div>
 
-    <h3>Why Next.js exists on top of React</h3>
-    <p>Plain React (CSR — client-side rendering) ships a nearly empty HTML shell and builds the UI via JavaScript in the browser. Two big problems: (1) <strong>SEO</strong> — search engine crawlers historically struggled with content that only appears after JS execution, and (2) <strong>initial load performance</strong> — the user stares at a blank page until JS downloads, parses, and runs. Next.js solves both by rendering on the server (or at build time) and sending fully-formed HTML to the browser.</p>
+  <h3>TypeScript vs JavaScript</h3>
+  <p>TS adds structural typing, <strong>erased at compile time</strong> — zero runtime cost, zero runtime safety. Value is compile-time: catching interface mismatches, refactor errors, undocumented shapes. RecrutAI uses typed props and API routes across its multi-page prompt chain. Plain JS works for small scripts; anything multi-contributor accrues "shape debt" that TS makes explicit.</p>
 
-    <h3>CSR vs SSR vs SSG vs ISR — with real scenarios</h3>
-    <div class="tw"><table>
-      <tr><th>Mode</th><th>When HTML is built</th><th>Good for</th></tr>
-      <tr><td>CSR</td><td>In the browser, after JS loads</td><td>Highly interactive dashboards where SEO doesn't matter (e.g. an internal admin panel)</td></tr>
-      <tr><td>SSR</td><td>On the server, per request</td><td>Pages needing fresh data + SEO on every load (e.g. a live chess spectator page, a product page with live stock)</td></tr>
-      <tr><td>SSG</td><td>At build time, once</td><td>Content that rarely changes (e.g. a blog post, marketing landing page) — fastest possible load</td></tr>
-      <tr><td>ISR</td><td>At build time, then regenerated in the background on a set interval</td><td>Mostly-static content that needs occasional refresh (e.g. a product catalog updated every few minutes) without a full rebuild</td></tr>
-    </table></div>
+  <h3>Bash vs High-Level Languages</h3>
+  <p>Bash is the native language of OS processes and streams — pipes, redirection, <code>grep</code>/<code>awk</code>/<code>sed</code> compose with no startup cost. Right for CI glue, log rotation, cron jobs. Wrong the moment you need real data structures, error handling beyond exit codes, or non-trivial computation.</p>
 
-    <h3>SPA vs MPA</h3>
-    <p><strong>SPA (Single Page App)</strong> — one HTML shell, JS handles routing/rendering client-side; feels app-like, no full page reloads, but initial bundle can be heavy and SEO needs extra work (solved by Next.js SSR). <strong>MPA (Multi Page App)</strong> — each route is a full server round-trip and page reload; simpler mental model and naturally SEO-friendly, but less fluid UX for complex interactions.</p>
-  </section>
+  <details class="snippet">
+    <summary>Bash: pipe/xargs pattern</summary>
+    <pre>find /var/log -name "*.log" -mtime -1 \
+  | xargs grep -l "ERROR" \
+  | while read -r f; do echo "Flagged: $f"; done</pre>
+  </details>
 
-  <!-- ============ CLUSTER 3 ============ -->
-  <section id="c3">
-    <h2>3 · Backend Framework & Runtime Comparisons</h2>
-    <p class="cluster-desc">You list Node.js, Express.js, Flask, FastAPI — the "why event-driven Node" and "Flask vs FastAPI" questions are near-guaranteed given your Chessify AI architecture split.</p>
+  <div class="box sde">
+    <div class="label">🛡️ SDE Defense</div>
+    <p>"Why not one language for consistency?" — Language choice is a latency/ecosystem trade-off <em>per-service</em>. Chessify's Node I/O layer + Python/Flask engine is a concrete example: each picked the language matching its concurrency shape.</p>
+  </div>
 
-    <h3>Node.js vs traditional multi-threaded backends (Java / Python WSGI)</h3>
-    <p>Traditional multi-threaded servers spin up a new thread (or process) per request — each thread has memory overhead and the OS has to context-switch between them, which gets expensive under high concurrency. Node.js uses a <strong>single-threaded event loop</strong> with non-blocking I/O: instead of a thread waiting idle on a database/network call, Node registers a callback and moves on to handle other requests, resuming the callback when the I/O completes.</p>
-    <div class="box tip"><strong>When this wins:</strong> I/O-bound workloads with many concurrent connections (chat apps, real-time dashboards, APIs that mostly wait on DB/network calls) — exactly the profile of a real-time multiplayer system. It's a weaker fit for CPU-heavy work (heavy computation blocks the single event loop) — which is exactly why I offloaded the chess engine's Minimax computation to a separate Flask service instead of doing it in Node.</div>
+  <div class="box mlde">
+    <div class="label">📊 ML Track Defense</div>
+    <p>Python dominates ML not because Python is fast — it's a <strong>coordination language</strong>. Actual compute runs in C++/CUDA kernels (ATen, cuDNN) that Python orchestrates via bindings. Defend Python as "an ergonomic control plane over a compiled numerical core."</p>
+  </div>
+</section>
 
-    <h3>Express vs Flask vs FastAPI</h3>
-    <div class="tw"><table>
-      <tr><th>Aspect</th><th>Express (Node)</th><th>Flask (Python)</th><th>FastAPI (Python)</th></tr>
-      <tr><td>Execution</td><td>Async by default (event loop)</td><td>Sync by default (can add async)</td><td>Async-first, built on Starlette</td></tr>
-      <tr><td>Typing/validation</td><td>None built-in (use TS/Zod separately)</td><td>None built-in</td><td>Built-in via Pydantic — validates request/response automatically</td></tr>
-      <tr><td>Docs</td><td>Manual (Swagger setup needed)</td><td>Manual</td><td>Auto-generated OpenAPI/Swagger docs out of the box</td></tr>
-      <tr><td>Best for</td><td>JS-fullstack teams, real-time apps</td><td>Simple APIs, ML model serving, quick prototypes</td><td>Modern typed APIs, high-performance async services, ML inference APIs</td></tr>
-    </table></div>
 
-    <h3>Monolith vs Microservices</h3>
-    <p><strong>Monolith</strong> — single deployable codebase/service handling all functionality. Simpler to develop, test, and deploy early on; but scaling means scaling the whole thing, and one bug can bring down everything. <strong>Microservices</strong> — functionality split into independently deployable services communicating over the network (REST/gRPC/message queues). Enables independent scaling and technology choice per service, but adds operational complexity (service discovery, network latency, distributed debugging).</p>
-    <div class="box tip"><strong>Connects to your own architecture:</strong> Chessify AI is effectively a mini-microservices split — Node.js handles real-time/socket concerns, Flask handles the CPU-heavy AI engine. That's a legitimate, defensible example if asked "have you worked with microservices."</div>
-  </section>
+<!-- ============ CLUSTER 2 ============ -->
+<section class="cluster" id="c2">
+  <h2><span class="idx">02</span> Backend Frameworks &amp; Concurrency</h2>
 
-  <!-- ============ CLUSTER 4 ============ -->
-  <section id="c4">
-    <h2>4 · Database Landscape</h2>
-    <p class="cluster-desc">You list MongoDB, PostgreSQL, MySQL — "SQL vs NoSQL" and "types of NoSQL" are classic standalone questions asked regardless of which project comes up.</p>
+  <div class="tw"><table>
+    <thead><tr><th>Framework</th><th>Concurrency</th><th>Validation</th><th>Best Fit</th></tr></thead>
+    <tbody>
+      <tr><td>Node / Express</td><td>Event loop (libuv thread pool for I/O)</td><td>Manual (Joi, Zod)</td><td>High-concurrency I/O APIs, real-time</td></tr>
+      <tr><td>FastAPI (ASGI)</td><td>Async event loop (uvicorn), coroutines</td><td>Pydantic (auto, typed)</td><td>ML inference endpoints, typed APIs</td></tr>
+      <tr><td>Flask (WSGI)</td><td>Synchronous — one request per worker</td><td>Manual (Marshmallow)</td><td>CPU-bound compute, simple sync APIs</td></tr>
+      <tr><td>PHP-FPM</td><td>Process-per-request, fully isolated</td><td>Framework-level (Laravel)</td><td>Server-rendered multi-tenant CRUD</td></tr>
+    </tbody>
+  </table></div>
 
-    <h3>SQL vs NoSQL — the real tradeoffs</h3>
-    <div class="tw"><table>
-      <tr><th>Aspect</th><th>SQL</th><th>NoSQL</th></tr>
-      <tr><td>Schema</td><td>Fixed, enforced upfront</td><td>Flexible/dynamic — good when data shape varies or evolves fast</td></tr>
-      <tr><td>Relationships</td><td>Strong via joins/foreign keys</td><td>Weaker — often denormalized/embedded instead</td></tr>
-      <tr><td>Consistency</td><td>Strong (ACID) by default</td><td>Often eventual consistency (BASE), tunable in some systems</td></tr>
-      <tr><td>Scaling</td><td>Primarily vertical (though modern Postgres scales horizontally too)</td><td>Built for horizontal scaling (sharding) from the ground up</td></tr>
-      <tr><td>Best when</td><td>Data is relational, consistency is critical (finance, inventory)</td><td>Data is high-volume, semi-structured, or write-heavy at scale (logs, IoT streams, session data)</td></tr>
-    </table></div>
-    <div class="box tip"><strong>Not just "NoSQL is flexible":</strong> the real tradeoff is that SQL enforces correctness upfront via schema + constraints + ACID, while NoSQL defers that cost — you gain flexibility and horizontal scale, but push data-integrity responsibility into application logic.</div>
+  <h3>Chessify: Why Decouple Node from Flask</h3>
+  <p>Real-time multiplayer = many idle sockets, small frequent messages — <strong>I/O-bound</strong>. Node's event loop handles thousands of idle connections cheaply. Minimax + alpha-beta against Stockfish is <strong>CPU-bound</strong> and can pin a core for hundreds of ms. Running it inside Node would block every socket. Decoupling into a separate Flask service keeps Node responsive.</p>
 
-    <h3>4 Major NoSQL Types — with concrete use cases</h3>
-    <div class="minicard"><h5>Key-Value Store</h5>Simplest — hash map interface. <strong>Use case:</strong> session caching, rate limiting counters. <strong>Example:</strong> Redis.</div>
-    <div class="minicard"><h5>Document Store</h5>JSON/BSON-like documents, flexible nested schema. <strong>Use case:</strong> content with varying structure — exactly why I used MongoDB for StudySync's flexible scheduling data. <strong>Example:</strong> MongoDB.</div>
-    <div class="minicard"><h5>Column-Family Store</h5>Data grouped by column, optimized for scanning huge datasets. <strong>Use case:</strong> analytics over massive time-series/log data at scale. <strong>Example:</strong> Cassandra, HBase.</div>
-    <div class="minicard"><h5>Graph Database</h5>Nodes + edges, optimized for relationship traversal. <strong>Use case:</strong> social networks, recommendation engines, fraud-detection ring analysis. <strong>Example:</strong> Neo4j.</div>
+  <div class="box trap">
+    <div class="label">🚨 Interview Trap</div>
+    <p>"Node is single-threaded so it can't handle concurrency" — <strong>wrong</strong>. Node is single-threaded for JS execution, but I/O is delegated to libuv's thread pool + OS async I/O (epoll/kqueue). The single thread only bottlenecks <em>CPU-bound synchronous work</em>.</p>
+  </div>
 
-    <h3>PostgreSQL vs MySQL vs MongoDB — choosing for a new project</h3>
-    <ul>
-      <li><strong>PostgreSQL</strong> — richest feature set (JSONB, window functions, strong concurrency control), great default choice when you want SQL guarantees plus some NoSQL-like flexibility (JSONB columns). Chose this for SahYatri's time-series sensor data because of its strong write consistency and ability to handle structured, high-volume inserts reliably.</li>
-      <li><strong>MySQL</strong> — simpler, extremely widely supported, slightly faster for straightforward read-heavy workloads; common default in many hosting/CMS ecosystems.</li>
-      <li><strong>MongoDB</strong> — best when the data shape is naturally nested/flexible and you don't need complex joins — chose this for StudySync since timetable/scheduling data varies per user and benefits from document-style flexibility.</li>
-    </ul>
+  <h3>Nutri-Vision: Why FastAPI over Flask</h3>
+  <p>FastAPI's ASGI model overlaps I/O waits across requests instead of blocking a whole worker. Pydantic gives auto schema validation + OpenAPI docs for free. Flask would need a full extra worker <em>per concurrent request</em> — heavier on memory, especially with a loaded PyTorch model per worker.</p>
 
-    <h3>ACID vs BASE</h3>
-    <div class="tw"><table>
-      <tr><th>ACID (traditional SQL)</th><th>BASE (typical NoSQL)</th></tr>
-      <tr><td>Atomicity, Consistency, Isolation, Durability — strict correctness guarantees</td><td>Basically Available, Soft state, Eventually consistent — favors availability/scale over immediate consistency</td></tr>
-      <tr><td>Every read sees the latest committed write</td><td>Replicas may briefly serve stale data, converging over time</td></tr>
-    </table></div>
-  </section>
+  <div class="box insight">
+    <div class="label">💡 Intuition</div>
+    <p><strong>Shared-nothing vs shared-loop.</strong> PHP-FPM = total request isolation (crash in one can't touch another, but per-request process overhead). Node/FastAPI = one process serves many requests (cheap, but one blocking call degrades everyone). Choose which failure mode you tolerate.</p>
+  </div>
 
-  <!-- ============ CLUSTER 5 ============ -->
-  <section id="c5">
-    <h2>5 · API Paradigm Comparisons</h2>
-    <p class="cluster-desc">You've used REST + WebSocket across projects — expect "why not GraphQL" or "REST vs WebSocket, when would you use which."</p>
+  <h3>Monolith vs Microservices vs Serverless</h3>
+  <div class="tw"><table>
+    <thead><tr><th>Pattern</th><th>Deploy Unit</th><th>Scaling</th><th>Ops Cost</th></tr></thead>
+    <tbody>
+      <tr><td>Monolith</td><td>Single process</td><td>Whole app together</td><td>Lowest</td></tr>
+      <tr><td>Microservices</td><td>Independent services</td><td>Per-service</td><td>Higher (discovery, tracing)</td></tr>
+      <tr><td>Serverless</td><td>Individual functions</td><td>Per-invocation, auto</td><td>Least ops, but cold-starts + lock-in</td></tr>
+    </tbody>
+  </table></div>
 
-    <div class="tw"><table>
-      <tr><th>Paradigm</th><th>Problem it solves</th><th>When to pick it</th></tr>
-      <tr><td>REST</td><td>Simple, stateless, resource-oriented communication over HTTP</td><td>Standard CRUD APIs, wide client compatibility, caching via HTTP semantics</td></tr>
-      <tr><td>GraphQL</td><td>Clients often over-fetch or under-fetch data with REST (fixed response shapes); GraphQL lets clients request exactly the fields they need in one call</td><td>Complex frontends with varied data needs, multiple client types (web/mobile) needing different data shapes from the same backend</td></tr>
-      <tr><td>gRPC</td><td>REST/JSON has parsing + payload-size overhead; gRPC uses Protocol Buffers (binary) + HTTP/2 for much faster, strongly-typed service-to-service calls</td><td>Internal microservice-to-microservice communication where performance matters more than human-readability</td></tr>
-      <tr><td>WebSocket</td><td>REST/HTTP is request-response only — no way for the server to push updates without the client re-polling; WebSocket keeps a persistent bidirectional connection open</td><td>Real-time features — exactly why I used Socket.IO (built on WebSocket) for live chess board sync</td></tr>
-    </table></div>
-    <div class="box tip"><strong>Why not GraphQL for your projects:</strong> a defensible answer — "My projects had fairly fixed, well-known data shapes per endpoint, so REST's simplicity and caching benefits outweighed GraphQL's flexibility; GraphQL earns its complexity when you have many different client consumers needing different slices of the same data."</div>
-  </section>
+  <div class="box sde">
+    <div class="label">🛡️ SDE Defense</div>
+    <p>"I'd split a monolith only when a subsystem has a genuinely <em>different scaling or failure profile</em> — like Chessify's compute vs I/O layers — not because microservices are 'best practice.' Splitting without differentiated load just adds latency and ops surface."</p>
+  </div>
+</section>
 
-  <!-- ============ CLUSTER 6 ============ -->
-  <section id="c6">
-    <h2>6 · Cloud / Infra Fundamentals</h2>
-    <p class="cluster-desc">You list AWS, Azure, Docker, CI/CD — keep this section awareness-level, not certification-depth.</p>
 
-    <h3>AWS vs Azure (conceptual)</h3>
-    <p>Both offer the same broad categories — compute (AWS EC2 / Azure VMs), storage (S3 / Blob Storage), managed databases (RDS / Azure SQL), serverless (Lambda / Azure Functions). AWS has the largest market share and service breadth; Azure has strong enterprise/Microsoft-ecosystem integration (Active Directory, .NET shops). For most interview purposes, knowing the equivalent service categories matters more than picking a "winner."</p>
+<!-- ============ CLUSTER 3 ============ -->
+<section class="cluster" id="c3">
+  <h2><span class="idx">03</span> Databases, Storage &amp; Data Engineering</h2>
 
-    <h3>What "the cloud" actually abstracts away</h3>
-    <p>Instead of buying/maintaining physical servers, you rent compute/storage/networking on-demand from a provider's data centers — abstracting away hardware provisioning, physical maintenance, and (for managed services) a lot of the operational overhead like patching and backups.</p>
+  <div class="tw"><table>
+    <thead><tr><th>Engine</th><th>Model</th><th>Transactions</th><th>Best Fit</th></tr></thead>
+    <tbody>
+      <tr><td>PostgreSQL</td><td>Relational, rich indexing (B-Tree, GIN, BRIN)</td><td>Full ACID, MVCC</td><td>OLTP, time-series, complex joins</td></tr>
+      <tr><td>MySQL</td><td>Relational (InnoDB)</td><td>Full ACID, MVCC</td><td>Read-heavy web CRUD</td></tr>
+      <tr><td>MongoDB Atlas</td><td>Document store, flexible schema</td><td>Multi-doc ACID since 4.0</td><td>Multi-tenant, heterogeneous schemas</td></tr>
+    </tbody>
+  </table></div>
 
-    <h3>Containers (Docker) vs Virtual Machines</h3>
-    <div class="tw"><table>
-      <tr><th>Aspect</th><th>Virtual Machine</th><th>Container (Docker)</th></tr>
-      <tr><td>What it virtualizes</td><td>Entire hardware stack, including its own OS kernel</td><td>Shares the host OS kernel, isolates at the process level</td></tr>
-      <tr><td>Size/startup</td><td>Heavy (GBs), slow to boot (minutes)</td><td>Lightweight (MBs), starts in seconds</td></tr>
-      <tr><td>Use case</td><td>Running fully different OSes, strong isolation needs</td><td>Packaging an app + its dependencies consistently across dev/staging/prod</td></tr>
-    </table></div>
+  <h3>Normalization vs Denormalization vs Embedding</h3>
+  <p><strong>Normalization (3NF)</strong> — each fact lives in one place; right default for OLTP with many-to-many and frequent updates. <strong>Denormalization</strong> — intentional duplication to avoid joins on hot read paths. <strong>MongoDB embedding</strong> — embed when sub-data is always read together and bounded in size; reference by ID when large, independently queried, or shared.</p>
 
-    <h3>Why CI/CD exists</h3>
-    <p>Without it: every deploy is a manual, error-prone process — someone SSHs in, pulls code, restarts services, hoping nothing breaks. <strong>CI (Continuous Integration)</strong> automatically builds and tests every code change, catching integration bugs early. <strong>CD (Continuous Deployment/Delivery)</strong> automatically ships passing changes to staging/production, removing manual deploy steps and human error, and making releases fast and frequent instead of risky and rare.</p>
-  </section>
+  <div class="box trap">
+    <div class="label">🚨 Interview Trap</div>
+    <p>"MongoDB has no transactions" is <strong>outdated since 4.0</strong> (2018). The real trade-off: Mongo's document model naturally <em>minimizes the need</em> for cross-document transactions by embedding related data, while relational schemas rely on multi-row transactions as their normal mode.</p>
+  </div>
 
-  <!-- ============ CLUSTER 7 ============ -->
-  <section id="c7">
-    <h2>7 · "Why Did You Choose X Over Y" — Q&A Bank</h2>
-    <p class="cluster-desc">You've genuinely used overlapping technologies across projects (Node vs PHP, MongoDB vs PostgreSQL, Flask vs Express) — these exact comparative questions will come up. Model answers below, framed generically so they work regardless of which project the interviewer references.</p>
+  <h3>OLTP vs OLAP / Time-Series</h3>
+  <p><strong>OLTP</strong>: small, low-latency point lookups/writes on current state → row-oriented storage efficient. <strong>OLAP/time-series</strong>: large append-only writes, wide aggregate scans over history → column-oriented or time-partitioned storage efficient (scan 1-2 columns across millions of rows).</p>
 
-    <div class="qa">
-      <div class="q">Why did you use Node.js in some projects and PHP in others?</div>
-      <div class="a">Node.js fits I/O-heavy, real-time workloads well because of its non-blocking event loop — that's why I chose it for systems needing live updates (sockets, streaming data). PHP was the existing stack at my internship for a REST API-heavy SaaS product, and it's a mature, well-supported choice for traditional request-response CRUD APIs where real-time push isn't a core requirement.</div>
-    </div>
+  <h3>Index Types</h3>
+  <div class="tw"><table>
+    <thead><tr><th>Type</th><th>Best For</th><th>Weakness</th></tr></thead>
+    <tbody>
+      <tr><td>B-Tree</td><td>Range queries, equality, sorted scans</td><td>Larger footprint vs BRIN for sequential data</td></tr>
+      <tr><td>Hash</td><td>Pure equality lookups</td><td>No range support</td></tr>
+      <tr><td>BRIN</td><td>Huge time-series tables (timestamp cols)</td><td>Useless on unordered columns</td></tr>
+      <tr><td>Multikey (Mongo)</td><td>Indexing array fields</td><td>Grows with array cardinality</td></tr>
+    </tbody>
+  </table></div>
 
-    <div class="qa">
-      <div class="q">Why MongoDB in one project and PostgreSQL in another?</div>
-      <div class="a">I choose based on data shape and consistency needs, not habit. When the data is naturally nested/flexible and doesn't need complex relational joins, MongoDB's document model reduces friction. When I need strong write consistency for structured, high-volume data — like continuous sensor time-series data — PostgreSQL's ACID guarantees and mature indexing make it the safer choice.</div>
-    </div>
+  <div class="box insight">
+    <div class="label">💡 Intuition</div>
+    <p>BRIN stores only min/max per disk block — a bet that "nearby rows have nearby values." True by construction for append-only time-series. Fraction of B-Tree's size, useless if rows are updated out-of-order.</p>
+  </div>
 
-    <div class="qa">
-      <div class="q">Why Flask for one backend and Express for another?</div>
-      <div class="a">Flask fit well as a lightweight Python service specifically because I needed to integrate a Python-based chess engine (Stockfish + a custom Minimax implementation) — Python's ecosystem made that integration natural. Express handled the real-time, high-concurrency layer of the same application, since Node's event loop suits that workload better. Rather than picking one framework for everything, I split responsibilities by which runtime's strengths matched each piece.</div>
-    </div>
+  <h3>ETL vs ELT</h3>
+  <p><strong>ETL</strong>: transform before loading — suits destinations that can't do heavy transformation. <strong>ELT</strong>: load raw, transform inside destination — suits cloud warehouses with elastic compute. SahYatri uses streaming ELT: ingest raw readings continuously, run rollup transforms as scheduled jobs on landed data.</p>
 
-    <div class="qa">
-      <div class="q">Why REST instead of GraphQL across your projects?</div>
-      <div class="a">My endpoints had fairly predictable, well-scoped data shapes per client, so REST's simplicity, caching behavior, and lower setup overhead outweighed GraphQL's flexibility. I'd reach for GraphQL if I had multiple client types (web, mobile, third-party) each needing different slices of the same underlying data.</div>
-    </div>
+  <div class="box mlde">
+    <div class="label">📊 ML Track Defense</div>
+    <p>"Why Postgres for time-series over NoSQL?" — Time-series is fundamentally relational (device_id, timestamp, value). Postgres gives ACID durability, BRIN indexes cheap on append-only timestamps, and mature window-function SQL for rollups — no need for a second DB technology.</p>
+  </div>
+</section>
 
-    <div class="qa">
-      <div class="q">Why TypeScript in some places but plain JavaScript elsewhere?</div>
-      <div class="a">I lean toward TypeScript as a project's complexity or team size grows, since compile-time type checking catches whole categories of bugs before runtime and makes refactoring safer. For smaller, fast-moving prototypes, plain JS avoids the extra build-step overhead when the codebase is small enough to reason about directly.</div>
-    </div>
 
-    <div class="qa">
-      <div class="q">Why not just use one language/stack for everything?</div>
-      <div class="a">Because different parts of a system have genuinely different requirements — real-time concurrency, CPU-heavy computation, ML integration, structured vs flexible data — and no single stack is optimal for all of them. I'd rather choose the right tool per component and manage the integration cleanly than force one stack to do everything adequately.</div>
-    </div>
+<!-- ============ CLUSTER 4 ============ -->
+<section class="cluster" id="c4">
+  <h2><span class="idx">04</span> AI, ML, CV &amp; Agentic LLMs</h2>
 
-    <div class="divider"></div>
-    <div class="box ref"><strong>How to use this section:</strong> Read each Q&A out loud once, then try answering from memory without looking. The goal isn't memorization word-for-word — it's having the reasoning pattern ("what does this workload actually need") ready so you can improvise confidently on any similar question, even ones not listed here verbatim.</div>
-  </section>
+  <h3>Search Heuristics vs Deep Learning</h3>
+  <p><strong>Minimax + alpha-beta</strong> (Chessify) = deterministic search over a known game tree. No learning needed when rules are explicit. <strong>ResNet-50</strong> (Nutri-Vision) = learned mapping when no closed-form description exists ("what does biryani look like?"). Principle: use search when you have a computable model; use learned models when you only have examples.</p>
 
-  <footer>Tech Fundamentals & Comparisons · Standalone conceptual layer · Pairs with your 7 project-specific deep-dive docs</footer>
+  <h3>Rule-Based vs Statistical NER</h3>
+  <p>Nutri-Vision's hybrid: <strong>regex</strong> for quantities ("200g", "2 cups" — small closed grammar, deterministic) + <strong>spaCy NER</strong> for food names (open vocabulary, fuzzy). Statistical model would be overkill for quantities; regex would be unmaintainable for food names ("chicken tikka" vs "murgh tikka").</p>
+
+  <div class="box trap">
+    <div class="label">🚨 Interview Trap</div>
+    <p>"Just use an LLM for everything" — wrong. LLM calls for a deterministic sub-problem like quantity parsing add latency, cost, and non-determinism to something a five-line regex solves exactly and instantly.</p>
+  </div>
+
+  <h3>Edge CV vs Cloud GPU</h3>
+  <p>SahYatri runs YOLOv5n (nano, INT8 quantized) on Raspberry Pi 4 ARM CPU. Cloud streaming = network latency + bandwidth cost + connectivity dependency — unacceptable for real-time safety detection on a moving vehicle.</p>
+
+  <div class="tw"><table>
+    <thead><tr><th>Dimension</th><th>Edge (YOLOv5n / RPi4)</th><th>Cloud GPU</th></tr></thead>
+    <tbody>
+      <tr><td>Latency</td><td>Bounded, local</td><td>Variable, network-dependent</td></tr>
+      <tr><td>Connectivity</td><td>None required</td><td>Hard requirement</td></tr>
+      <tr><td>Model capacity</td><td>Constrained (nano/quantized)</td><td>Unconstrained</td></tr>
+      <tr><td>Cost</td><td>One-time hardware</td><td>Ongoing compute + bandwidth</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>LLM System Paradigms</h3>
+  <div class="tw"><table>
+    <thead><tr><th>Paradigm</th><th>Mechanism</th><th>Best Fit</th></tr></thead>
+    <tbody>
+      <tr><td>Prompt-Chaining SM</td><td>Sequential prompts, explicit fallback branches</td><td>Known-sequence workflows (RecrutAI screening)</td></tr>
+      <tr><td>Agentic RAG</td><td>Multi-agent, dynamic tool use, retrieval-augmented</td><td>Open-ended tasks needing external knowledge</td></tr>
+      <tr><td>Full Fine-Tuning</td><td>Update all weights on task-specific data</td><td>High-volume narrow tasks</td></tr>
+      <tr><td>LoRA / PEFT</td><td>Freeze base, train small adapter matrices</td><td>Domain adaptation, limited data/compute</td></tr>
+    </tbody>
+  </table></div>
+
+  <p>RecrutAI uses prompt-chaining over Gemini 2.5 Flash — predictable, auditable stage transitions (parse → score → generate questions → fallback) over agentic autonomy. Hiring workflows need compliance-friendly determinism, not self-directed agents.</p>
+
+  <div class="box insight">
+    <div class="label">💡 Intuition</div>
+    <p><strong>Prompt-chaining = fixed pipeline.</strong> Agentic RAG = dynamic graph. Fixed pipelines are easier to test + cheaper to run. Pick agentic only when the task's steps genuinely can't be known in advance.</p>
+  </div>
+
+  <h3>Mitigating LLM Issues</h3>
+  <ul>
+    <li><strong>Hallucination:</strong> ground in retrieved context, constrain output format (JSON schema), add verification stage.</li>
+    <li><strong>Context overflow:</strong> RAG (retrieve only relevant chunks), sliding-window summarization, hierarchical compression.</li>
+    <li><strong>Latency:</strong> smaller models (Flash-tier) for high-volume stages, cache sub-prompts, parallelize independent stages, stream output.</li>
+  </ul>
+
+  <div class="box mlde">
+    <div class="label">📊 ML Track Defense</div>
+    <p>"An end-to-end LLM for every food item is slower, costlier, and non-deterministic on a sub-task that's a closed grammar. spaCy NER handles open-vocabulary food names; regex handles quantities. LLM budget is reserved for genuinely ambiguous language."</p>
+  </div>
+</section>
+
+
+<!-- ============ CLUSTER 5 ============ -->
+<section class="cluster" id="c5">
+  <h2><span class="idx">05</span> API Protocols &amp; Communication</h2>
+
+  <div class="tw"><table>
+    <thead><tr><th>Protocol</th><th>Connection</th><th>Serialization</th><th>Use Case</th></tr></thead>
+    <tbody>
+      <tr><td>REST</td><td>Stateless req/resp</td><td>JSON (text)</td><td>Public APIs, CRUD, cacheable reads</td></tr>
+      <tr><td>WebSockets</td><td>Persistent, bidirectional, full-duplex</td><td>JSON or binary</td><td>Real-time multiplayer, live chat (Chessify)</td></tr>
+      <tr><td>GraphQL</td><td>Stateless (HTTP POST)</td><td>JSON, client-defined shape</td><td>Complex nested resource graphs</td></tr>
+      <tr><td>gRPC</td><td>Persistent HTTP/2, supports streaming</td><td>Protobuf (binary)</td><td>Low-latency service-to-service</td></tr>
+      <tr><td>SSE</td><td>Persistent, server→client only</td><td>Text/event-stream</td><td>One-way live updates, LLM token streaming</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>REST vs GraphQL</h3>
+  <p>REST's fixed shapes are cacheable at the HTTP layer — CDNs, browser caches, reverse proxies cache by URL with zero app logic. GraphQL's flexible queries break simple URL-based caching. <strong>REST wins</strong> when consumers have uniform, known data needs. <strong>GraphQL wins</strong> when many different frontends need different slices of a deeply nested graph.</p>
+
+  <div class="box trap">
+    <div class="label">🚨 Interview Trap</div>
+    <p>"WebSockets always beat REST for real-time" — polling REST or SSE can be sufficient for <em>one-way</em> updates. WebSockets earn their cost (sticky sessions, connection-count limits) only when communication is genuinely <strong>bidirectional + low-latency</strong>, like Chessify's move sync.</p>
+  </div>
+
+  <div class="box insight">
+    <div class="label">💡 Intuition</div>
+    <p>gRPC's Protobuf = binary, schema-defined upfront. Both sides skip text parsing + field-name transmission — real win for high-volume internal calls. But you lose "curl-it-and-read-it" debuggability. <strong>Binary vs text = call-volume/observability trade-off.</strong></p>
+  </div>
+
+  <div class="box sde">
+    <div class="label">🛡️ SDE Defense</div>
+    <p>"Why not GraphQL for internal microservices?" — Internal calls are a stable, fixed set of contracts, not diverse client queries. gRPC's typed <code>.proto</code> contracts + HTTP/2 multiplexing serve this with lower overhead. GraphQL's flexible queries aren't needed when you control both ends.</p>
+  </div>
+</section>
+
+
+<!-- ============ CLUSTER 6 ============ -->
+<section class="cluster" id="c6">
+  <h2><span class="idx">06</span> Frontend Paradigms &amp; Rendering</h2>
+
+  <div class="tw"><table>
+    <thead><tr><th>Strategy</th><th>HTML Generated</th><th>Best Fit</th></tr></thead>
+    <tbody>
+      <tr><td>CSR</td><td>In browser after JS loads</td><td>Dashboards, apps behind auth</td></tr>
+      <tr><td>SSR</td><td>On server, per request</td><td>Dynamic, personalized, SEO pages</td></tr>
+      <tr><td>SSG</td><td>At build time, once</td><td>Static content (docs, marketing)</td></tr>
+      <tr><td>ISR</td><td>Build time + background regen</td><td>Mostly-static with occasional updates</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>App Router vs Pages Router vs Vite SPA</h3>
+  <p><strong>App Router RSC:</strong> components fetch data + render to HTML on the server by default — zero JS shipped for non-interactive components. Suspense enables per-section streaming. <strong>Pages Router:</strong> per-page data fetching (<code>getServerSideProps</code>) — simpler but coarser. <strong>Vite SPA:</strong> no server rendering, fastest to develop, but client must download full JS bundle before anything renders — hurts first paint + SEO.</p>
+
+  <h3>Flutter vs React Native vs Web</h3>
+  <div class="tw"><table>
+    <thead><tr><th>Approach</th><th>Rendering</th><th>Trade-off</th></tr></thead>
+    <tbody>
+      <tr><td>Flutter</td><td>Compiles to ARM; draws every pixel via Skia/Impeller</td><td>Pixel-perfect consistency, no bridge, larger app size</td></tr>
+      <tr><td>React Native</td><td>JS logic → native widgets via bridge/JSI</td><td>True native look, but bridge can bottleneck high-freq updates</td></tr>
+      <tr><td>PWA</td><td>Standard browser rendering</td><td>No app store needed, weaker native APIs/offline</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="box trap">
+    <div class="label">🚨 Interview Trap</div>
+    <p>"Flutter uses native components" — <strong>backwards</strong>. Flutter deliberately bypasses native widgets and renders its own widget tree via Skia/Impeller. That's <em>why</em> it looks pixel-identical across platforms.</p>
+  </div>
+
+  <div class="box sde">
+    <div class="label">🛡️ SDE Defense</div>
+    <p>"RSC lets me fetch data where it lives — close to the DB — and stream only HTML to the client. Cuts bundle size and avoids request waterfalls that a pure SPA incurs when nested components each need their own data."</p>
+  </div>
+</section>
+
+
+<!-- ============ CLUSTER 7 ============ -->
+<section class="cluster" id="c7">
+  <h2><span class="idx">07</span> DevOps, Cloud &amp; Linux</h2>
+
+  <h3>VMs vs Containers</h3>
+  <p><strong>VM:</strong> hypervisor virtualizes hardware, full guest OS kernel → strong isolation, memory/boot overhead. <strong>Docker:</strong> shares host kernel, uses Linux namespaces (PID, net, mount) for isolation + cgroups for resource limits → millisecond startup, no duplicate kernel. Trade: weaker isolation than a hypervisor boundary.</p>
+
+  <h3>Git vs Git LFS</h3>
+  <p>Standard Git stores every version as a full blob — terrible for large binaries (<code>.pth</code> checkpoints: every commit re-stores hundreds of MB with no diff compression). Git LFS replaces binaries with small pointer files, stores content separately. Repo stays fast, large files fetched on demand.</p>
+
+  <div class="box mlde">
+    <div class="label">📊 ML Track Defense</div>
+    <p>"Why LFS over cloud object storage alone?" — LFS keeps checkpoints versioned <em>alongside</em> the exact code commit. <code>git checkout</code> gives atomic code-to-weights pairing. Pure S3 loses that linkage unless you build a separate manifest system.</p>
+  </div>
+
+  <h3>Cloud: AWS vs Azure</h3>
+  <div class="tw"><table>
+    <thead><tr><th>Layer</th><th>AWS</th><th>Azure</th></tr></thead>
+    <tbody>
+      <tr><td>Compute</td><td>EC2</td><td>Virtual Machines</td></tr>
+      <tr><td>Serverless</td><td>Lambda</td><td>Azure Functions</td></tr>
+      <tr><td>Object Storage</td><td>S3</td><td>Blob Storage</td></tr>
+      <tr><td>Managed DB (doc)</td><td>DocumentDB</td><td>Cosmos DB</td></tr>
+      <tr><td>Managed DB (rel)</td><td>RDS</td><td>Azure SQL / PG</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>CI/CD</h3>
+  <p><strong>Unit tests</strong> (PHPUnit, pytest): verify functions in isolation, run on every commit — fast, no external deps. <strong>Integration tests</strong> (Postman/Newman): verify services cooperate across network boundaries, run on merge/pre-deploy — slower, costlier. Fast failures caught cheaply before expensive checks.</p>
+
+  <details class="snippet">
+    <summary>Linux: process monitoring reference</summary>
+    <pre># live process view
+top / htop
+
+# snapshot matching pattern
+ps aux | grep node
+
+# redirect stdout+stderr to file
+./server.sh > out.log 2>&1
+
+# tail logs, filter errors
+tail -f app.log | grep --line-buffered "ERROR"</pre>
+  </details>
+
+  <div class="box insight">
+    <div class="label">💡 Intuition</div>
+    <p><strong>Namespaces</strong> control what a process can <em>see</em> (own PID tree, network, mounts). <strong>Cgroups</strong> control what it can <em>use</em> (CPU, memory, I/O). A container = isolated view + bounded consumption.</p>
+  </div>
+</section>
+
+
+<!-- ============ CLUSTER 8 ============ -->
+<section class="cluster" id="c8">
+  <h2><span class="idx">08</span> Why-X-Over-Y Q&amp;A Bank</h2>
+  <p style="color:var(--text-dim); font-size:12px; margin-bottom:14px;">Two tracks. Each answer survives an immediate "okay, but why not the obvious alternative?" follow-up.</p>
+
+  <h3>Track A — SDE</h3>
+
+  <div class="qa">
+    <span class="track-tag track-a">A · Q1</span>
+    <div class="q"><span class="qnum">1.</span> Why Node.js + Socket.IO for real-time multiplayer over multi-threaded Python/Java?</div>
+    <p>Real-time multiplayer = many idle connections + small frequent messages = I/O-bound. Node's event loop handles thousands of idle sockets cheaply with no per-connection thread overhead. Socket.IO adds auto-reconnection + fallback transports for flaky mobile connections. CPU-heavy chess engine stays out of this layer entirely.</p>
+  </div>
+
+  <div class="qa">
+    <span class="track-tag track-a">A · Q2</span>
+    <div class="q"><span class="qnum">2.</span> Why MongoDB Atlas ACID transactions for Packspec over PostgreSQL?</div>
+    <p>Per-tenant schema flexibility (different custom fields/workflows) maps naturally to documents. Most ops stay single-document atomic by embedding; multi-doc ACID (since 4.0) handles cross-document cases. Relational alternative needs sparse columns, EAV tables, or per-tenant schemas — all add complexity Mongo's document model avoids.</p>
+  </div>
+
+  <div class="qa">
+    <span class="track-tag track-a">A · Q3</span>
+    <div class="q"><span class="qnum">3.</span> Why Flutter over React Native for StudySync?</div>
+    <p>Flutter compiles to native ARM + renders everything via Skia/Impeller — no JS bridge serialization bottleneck, pixel-identical across platforms. Pairs well with offline-first: Flutter's own rendering pipeline + local cache stay responsive without negotiating with platform-specific native components.</p>
+  </div>
+
+  <div class="qa">
+    <span class="track-tag track-a">A · Q4</span>
+    <div class="q"><span class="qnum">4.</span> Why REST with HTTP caching over GraphQL for microservices?</div>
+    <p>REST's fixed endpoint shapes are cacheable by URL at the HTTP layer — CDNs, browser caches, reverse proxies with zero app logic. GraphQL's flexible queries break URL-based caching. For stable, known consumers with predictable data needs, REST's cache efficiency + simplicity outweighs GraphQL's flexibility.</p>
+  </div>
+
+  <div class="qa">
+    <span class="track-tag track-a">A · Q5</span>
+    <div class="q"><span class="qnum">5.</span> Why Next.js App Router (RSC) over a pure SPA?</div>
+    <p>RSC fetches data + renders HTML server-side — client never downloads JS for non-interactive components. Suspense streaming shows fast sections immediately while slow data loads. Avoids client-side request waterfalls. Client Components preserved where interactivity is genuinely needed — server-first by default, client-side only where required.</p>
+  </div>
+
+  <hr class="divider">
+
+  <h3>Track B — ML / AI / Data Engineering</h3>
+
+  <div class="qa">
+    <span class="track-tag track-b">B · Q1</span>
+    <div class="q"><span class="qnum">1.</span> Why hybrid parser (spaCy NER + regex) in Nutri-Vision over end-to-end LLM?</div>
+    <p>Quantities = closed grammar → regex is faster, deterministic, debuggable. Food names = open vocabulary → spaCy NER generalizes to novel phrasings. An LLM for quantity parsing adds latency, cost, and non-determinism to a solved problem. Learned model budget spent only where ambiguity exists.</p>
+  </div>
+
+  <div class="qa">
+    <span class="track-tag track-b">B · Q2</span>
+    <div class="q"><span class="qnum">2.</span> Why prompt-chaining state machine (Gemini Flash) over fine-tuned local LLM in RecrutAI?</div>
+    <p>Zero training data curation, zero GPU infra, updated by editing prompts not retraining. Hiring workflow requirements change frequently — fine-tuning's fixed cost only pays off with high volume + stable workflows. Explicit state machine gives auditable, testable control flow that a fine-tuned model's implicit behavior wouldn't.</p>
+  </div>
+
+  <div class="qa">
+    <span class="track-tag track-b">B · Q3</span>
+    <div class="q"><span class="qnum">3.</span> Why edge YOLOv5n on RPi4 over cloud GPU streaming in SahYatri?</div>
+    <p>Cloud streaming = network latency + bandwidth cost + hard connectivity dependency — unacceptable for real-time safety detection on a moving vehicle with intermittent connectivity. Nano model + INT8 quantization gives bounded, local latency. Trade: lower model capacity for connectivity independence.</p>
+  </div>
+
+  <div class="qa">
+    <span class="track-tag track-b">B · Q4</span>
+    <div class="q"><span class="qnum">4.</span> Why PostgreSQL for time-series telemetry over NoSQL?</div>
+    <p>Telemetry is structurally relational (device_id, timestamp, value). Postgres gives ACID durability on writes, BRIN indexes cheap on append-only timestamps, and window-function SQL for rollups. A document store would reinvent ordering/aggregation at the application layer with no schema-flexibility benefit on fixed, simple telemetry data.</p>
+  </div>
+
+  <div class="qa">
+    <span class="track-tag track-b">B · Q5</span>
+    <div class="q"><span class="qnum">5.</span> Why Git LFS for model checkpoints over standard Git or cloud object storage?</div>
+    <p>Standard Git stores full binary blobs — repo bloats permanently with multi-hundred-MB <code>.pth</code> files, no diff compression. Git LFS replaces binaries with pointer files. Pure object storage (S3) loses atomic code-to-weights pairing — <code>git checkout</code> with LFS gives that for free.</p>
+  </div>
+
+  <div class="qa">
+    <span class="track-tag track-b">B · Q6</span>
+    <div class="q"><span class="qnum">6.</span> When multi-agent (CrewAI) over single-pass RAG?</div>
+    <p>Single-pass RAG works when the answer is a bounded lookup in one region of the corpus. Multi-agent earns its complexity when the task requires sub-role decomposition (extract → cross-check → synthesize) or multi-step tool use where each action depends on the prior result. Pick agentic when steps genuinely can't be known in advance.</p>
+  </div>
+</section>
+
 </main>
+
+<footer>
+  Tech Fundamentals &amp; Cross-Technology Comparisons · Interview Notes<br>
+  Grounded against Nutri-Vision AI, RecrutAI, SahYatri, Chessify AI, StudySync &amp; Packspec architectures.
+</footer>
+
+<script>
+  // Jump-to-section
+  document.getElementById('jump').addEventListener('change', function(e) {
+    const id = e.target.value;
+    if (!id) return;
+    const el = document.getElementById(id);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    e.target.value = '';
+  });
+
+  // Scroll progress bar
+  const prog = document.getElementById('scrollProg');
+  window.addEventListener('scroll', function() {
+    const scrollTop = document.documentElement.scrollTop;
+    const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+    const pct = scrollHeight > 0 ? (scrollTop / scrollHeight) * 100 : 0;
+    prog.style.width = pct + '%';
+  }, { passive: true });
+
+  // Fade-in on scroll (IntersectionObserver)
+  const sections = document.querySelectorAll('section.cluster');
+  const observer = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        entry.target.style.animationDelay = '0s';
+        entry.target.style.animationPlayState = 'running';
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.08 });
+  sections.forEach(function(s) {
+    s.style.animationPlayState = 'paused';
+    observer.observe(s);
+  });
+</script>
+
 </body>
 </html>
