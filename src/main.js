@@ -379,90 +379,151 @@ function renderTodoItem(t) {
 
 function renderTipsView() {
   return `
-    <div class="tips-interactive">
-      ${ix.renderStarTimer()}
-    </div>
-
-    <div class="tips-interactive">
-      <h2 class="section-title">🧮 OA &amp; System Design Calculators</h2>
-      ${ix.renderCalculators()}
-    </div>
-
-    <div class="tips-interactive">
-      ${ix.renderMilestones()}
-    </div>
-
   <div class="fade-in">
     ${renderBackButton()}
-    <div class="page-header"><h1>Strategy & Interview Tips</h1><p class="page-sub">The meta-game for cracking SDE interviews — and how to use this prep tool effectively.</p></div>
+    <div class="page-header">
+      <h1>Strategy & Interview Prep Command</h1>
+      <p class="page-sub">The battle-tested playbook for SDE & ML/Data Engineering interviews — with live rehearsal timers, OA calculators & milestone tracking.</p>
+    </div>
+
+    <!-- Interactive Prep Suite -->
+    <div class="tips-interactive-grid">
+      ${ix.renderStarTimer()}
+
+      <div class="calc-section-wrap">
+        <h2 class="section-title">🧮 High-Yield OA &amp; System Design Calculators</h2>
+        <p class="section-sub-desc" style="color:var(--text-muted); font-size:12.5px; margin-bottom: 14px;">Instant mathematical formulas for CPU scheduling, IP subnetting CIDR, and DB storage / connection pool capacity estimation.</p>
+        ${ix.renderCalculators()}
+      </div>
+
+      <div class="milestones-section-wrap">
+        ${ix.renderMilestones()}
+      </div>
+    </div>
 
     <div class="tips-grid">
 
       <!-- How to Use This Website -->
       <div class="tip-card wide guide-card">
-        <h3>🖥️ How to Use This Website</h3>
+        <h3>🖥️ How to Use This Prep Suite</h3>
         <div class="guide-grid">
           <div class="guide-item">
-            <strong>📖 Learning Paths</strong>
-            <p>Open any learning path from the sidebar. The left pane loads the full interview notes document, the right pane shows a checklist of every section. Click the ▾ arrow on any topic to expand it — you'll see a "Scroll Notes to Section" button and a personal notes textarea.</p>
+            <strong>📖 13 Learning Paths</strong>
+            <p>Access all 13 specialized roadmaps from the sidebar. The left pane loads the rich HTML defense notes; the right pane provides an interactive checklist of all 357 topics with search and jump anchors.</p>
           </div>
           <div class="guide-item">
-            <strong>✅ Track Progress</strong>
-            <p>Check off topics as you master them. Your progress syncs to the consistency heatmap on the dashboard. Set a daily goal and maintain your study streak — it's shown on the sidebar.</p>
+            <strong>🎯 Dual-Track Overview</strong>
+            <p>Toggle between <strong>All</strong>, <strong>SDE Focus</strong>, and <strong>ML & Data Eng Focus</strong> on the Overview page to filter visible roadmaps and calculate track-specific completion rates.</p>
           </div>
           <div class="guide-item">
-            <strong>🔍 Focus Reading Mode</strong>
-            <p>Click "Focus Mode" (or the 🔍 tab on mobile) to enter distraction-free fullscreen reading. The sidebar and checklist disappear, leaving only the notes. Press <kbd>Esc</kbd> or tap the exit button to return.</p>
+            <strong>🎙️ Rehearsal Mode & Timer</strong>
+            <p>Under "My Resume", click "Rehearse Defense" on any project to rehearse 30s STAR openers, code reality checks, and interview traps. Time yourself using the Spoken Answer Timer above.</p>
           </div>
           <div class="guide-item">
-            <strong>📝 Section Notes</strong>
-            <p>Each checklist topic has a collapsible textarea. Jot down key points, gotcha reminders, or interview phrases. Notes are saved to localStorage and optionally synced via Firebase.</p>
+            <strong>⚡ Daily Defense Drill</strong>
+            <p>Test your spoken response on daily system and ML trade-off questions directly on the dashboard before revealing the 30-second answer.</p>
           </div>
           <div class="guide-item">
-            <strong>📄 Resume → Deep Dives</strong>
-            <p>The "My Resume" tab shows your full profile. Under each experience and project, action buttons jump you directly to the relevant interview notes section. Use these before an interview to rehearse your talking points.</p>
+            <strong>📋 1-Click ATS Bullets</strong>
+            <p>Export formatted, bullet-pointed project summaries tailored for SDE or ML/Data Eng job applications straight to your clipboard with one click.</p>
           </div>
           <div class="guide-item">
-            <strong>☁️ Cloud Sync</strong>
-            <p>Click "Cloud Sync" in the sidebar footer to connect your Firebase config. Once connected, your checklist progress, notes, tasks, and streaks sync across all your devices.</p>
+            <strong>☁️ Firebase Cloud Sync</strong>
+            <p>Connect your Firebase credentials to synchronize checklist ticks, notes, daily streaks, and strategy milestones seamlessly across all your devices.</p>
           </div>
         </div>
       </div>
 
       <!-- Preparation Strategy -->
       <div class="tip-card priority">
-        <h3>🎯 Recommended Study Order</h3>
+        <h3>🎯 Recommended Master Study Order (13 Roadmaps)</h3>
         <ol class="priority-list">
-          <li><strong>Tech Fundamentals</strong> — build the vocabulary first (language comparisons, API paradigms, cloud basics)</li>
-          <li><strong>CS Core 21-Day Sprint</strong> — DBMS, OS, Computer Networks & Software Engineering OAs/Interviews</li>
-          <li><strong>React & Next.js + Flutter</strong> — cover frontend/mobile to defend your full-stack projects</li>
-          <li><strong>Node & Express</strong> — backend deep-dive: event loop, middleware, JWT, Socket.IO</li>
-          <li><strong>Packspec Architecture Defense</strong> — prepare to walk through your internship endpoints, MongoDB schemas & ACID transactions</li>
-          <li><strong>Flask & FastAPI</strong> — Python backends + Chessify minimax engine & Nutri-Vision inference defense</li>
-          <li><strong>AI/ML Stack & Deep Dives</strong> — ML fundamentals, RAG, LangChain, CrewAI, YOLOv5 for SahYatri & RecrutAI</li>
-          <li><strong>Databases & Cloud</strong> — SQL vs NoSQL, Docker, CI/CD, Git, Postman workflow</li>
+          <li><strong>Tech Fundamentals</strong> — language runtimes, GIL, TypeScript, API paradigms, cloud mappings</li>
+          <li><strong>First-Principles Core</strong> — browser rendering/event loop, TCP/TLS handshake, DB storage & ACID internals, ML loss/training loop</li>
+          <li><strong>CS Core 21-Day Sprint</strong> — DBMS, OS CPU scheduling/deadlocks, Computer Networks subnetting/protocols, Software Engineering</li>
+          <li><strong>Backend & LLD Systems</strong> — B-Tree indexes, locking (FOR UPDATE vs SKIP LOCKED), idempotency/outbox, rate limiting & machine coding</li>
+          <li><strong>Node & Express</strong> — single-threaded event loop, middleware pipelines, JWT family rotation, Socket.IO concurrency</li>
+          <li><strong>React & Next.js + Flutter</strong> — App Router SSR/SSG, hydration, Flutter widget tree lifecycles & offline caching</li>
+          <li><strong>Packspec Architecture Defense</strong> — PHP/MongoDB Atlas, multi-tenant RBAC, atomic transactions & plan-based quotas</li>
+          <li><strong>Flask & FastAPI</strong> — Python async vs sync def, Pydantic v2, dependency injection, Stockfish/Minimax AI microservice</li>
+          <li><strong>AI/ML Stack & Deep Dives</strong> — PyTorch transfer learning, spaCy custom NER, YOLOv5, LangChain & CrewAI RAG, Gemini 2.5 Flash</li>
+          <li><strong>Databases & Cloud</strong> — PostgreSQL vs MongoDB, BRIN/B-Tree indexing, ETL/ELT pipelines, Redis, Docker, AWS/Azure</li>
           <li><strong>SDE Resume Defense Rehearsal</strong> — Bullet-by-bullet code-tested defense for SDE & Systems roles</li>
           <li><strong>ML & Data Eng Resume Defense</strong> — Bullet-by-bullet defense for ML, NLP, Vision, LLM & Data Engineering roles</li>
         </ol>
-        <p class="tip-note">This matches the sidebar ordering. Work top-to-bottom, checking off topics as you go.</p>
+        <p class="tip-note">This sequence builds foundational computer science first, moves through full-stack systems, and concludes with live rehearsal defense.</p>
+      </div>
+
+      <!-- Track 1: SDE Defense Blueprint -->
+      <div class="tip-card wide" style="border-left: 3px solid #38bdf8;">
+        <h3>⚡ Track 1: SDE & Systems Architecture Defense Blueprint</h3>
+        <div class="guide-grid">
+          <div class="guide-item">
+            <strong>Chessify AI (Real-Time Multiplayer & AI)</strong>
+            <p><strong>30s Opener:</strong> <em>"A real-time chess engine with decoupled Node.js WebSocket room validation and a Flask AI service running Stockfish ELO 1800 with Minimax alpha-beta fallback."</em></p>
+            <p><strong>Key Defense:</strong> Node runs on 1 thread so synchronous board mutation has zero race conditions. Stockfish is decoupled in Flask to prevent CPU-bound engine search from blocking Socket.IO games.</p>
+          </div>
+          <div class="guide-item">
+            <strong>StudySync (Offline-First Mobile & Backend)</strong>
+            <p><strong>30s Opener:</strong> <em>"A cross-platform timetable app in Flutter used daily at JIIT, rendering schedules instantly from local cache with zero network, backed by Express + MongoDB."</em></p>
+            <p><strong>Key Defense:</strong> Write path is admin-only so offline sync is simplified to pull-only with cached last-good response. Zero write-conflict engine needed — skipping unnecessary complexity is an engineering strength.</p>
+          </div>
+          <div class="guide-item">
+            <strong>SahYatri (SDE Track · IoT Transit Telemetry)</strong>
+            <p><strong>30s Opener:</strong> <em>"An IoT edge telemetry pipeline running YOLOv5n at 15 FPS on a Raspberry Pi 4, streaming passenger density and GPS telemetry into a PostgreSQL time-series store."</em></p>
+            <p><strong>Key Defense:</strong> PostgreSQL with BRIN indexes for time-series range queries (physically ordered data), ON CONFLICT for idempotent retries, and privacy-by-design (zero raw video leaves the bus).</p>
+          </div>
+          <div class="guide-item">
+            <strong>DigiFlute Internship (Packspec SaaS Architecture)</strong>
+            <p><strong>30s Opener:</strong> <em>"Engineered 20+ RESTful APIs in PHP + MongoDB Atlas for a multi-tenant spec platform, implementing 5-tier RBAC, atomic transactions, and quota enforcement."</em></p>
+            <p><strong>Key Defense:</strong> Tenant ID scoping on every query prevents cross-tenant data leakage; MongoDB multi-document transactions ensure atomic revision state transitions and cascading soft deletes.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Track 2: ML & Data Engineering Defense Blueprint -->
+      <div class="tip-card wide" style="border-left: 3px solid #a78bfa;">
+        <h3>🤖 Track 2: ML, Vision, LLMs & Data Engineering Defense Blueprint</h3>
+        <div class="guide-grid">
+          <div class="guide-item">
+            <strong>Nutri-Vision AI (Nutrition Inference Pipeline)</strong>
+            <p><strong>30s Opener:</strong> <em>"A hybrid nutrition pipeline resolving free-form text via custom spaCy NER + quantity rule parser against USDA DB, alongside a fine-tuned ResNet-50 food classifier served via FastAPI."</em></p>
+            <p><strong>Key Defense:</strong> Hybrid design: spaCy handles fuzzy open-vocabulary food names, regex handles exact quantities. Model weights versioned via Git LFS; CPU inference served synchronously in FastAPI via threadpool.</p>
+          </div>
+          <div class="guide-item">
+            <strong>RecrutAI (Adaptive LLM Technical Screening)</strong>
+            <p><strong>30s Opener:</strong> <em>"An LLM screening engine orchestrating a prompt-chaining state machine on Gemini 2.5 Flash that scores candidates across 5 rubric dimensions and branches interview questions dynamically."</em></p>
+            <p><strong>Key Defense:</strong> Inference hardening with 6s timeouts, exponential backoff, regex fallback on JSON failure, and an in-memory recruiter audit dashboard logging state machine score matrices.</p>
+          </div>
+          <div class="guide-item">
+            <strong>SahYatri (ML Track · Edge Computer Vision)</strong>
+            <p><strong>30s Opener:</strong> <em>"Edge computer vision pipeline deploying YOLOv5n on a Raspberry Pi 4 at 15 FPS with adaptive thresholding for transit density analysis."</em></p>
+            <p><strong>Key Defense:</strong> YOLOv5n (1.9M parameters) fits edge compute constraints. Raw video is immediately discarded after inference, guaranteeing rider privacy while emitting structured occupancy telemetry.</p>
+          </div>
+          <div class="guide-item">
+            <strong>RAG Multi-Agent PDF Query Engine</strong>
+            <p><strong>30s Opener:</strong> <em>"Independent ML project deploying a multi-agent RAG workflow on Hugging Face Spaces using LangChain and CrewAI to automate document queries."</em></p>
+            <p><strong>Key Defense:</strong> Decomposed single-pass retrieval into research, validation, and synthesis agents, giving each agent a focused context window while caching embeddings for fast retrieval.</p>
+          </div>
+        </div>
       </div>
 
       <div class="tip-card">
         <h3>⏰ Ideal Daily Routine</h3>
         <div class="routine-block">
-          <div class="routine-row"><span class="routine-time">Morning 2-3h</span><span>New topic learning + read notes in Focus Mode</span></div>
-          <div class="routine-row"><span class="routine-time">Afternoon 2-3h</span><span>Timed problem solving (LeetCode mediums)</span></div>
-          <div class="routine-row"><span class="routine-time">Evening 1-2h</span><span>Revision — re-read checked topics, retry failed problems</span></div>
-          <div class="routine-row"><span class="routine-time">Night 30min</span><span>Mock interview or defense rehearsal</span></div>
+          <div class="routine-row"><span class="routine-time">Morning 2-3h</span><span>Deep-dive learning + read notes in Focus Mode</span></div>
+          <div class="routine-row"><span class="routine-time">Afternoon 2-3h</span><span>Timed LeetCode Medium problem solving (25 min max)</span></div>
+          <div class="routine-row"><span class="routine-time">Evening 1-2h</span><span>Core CS revision & live OA formula practice</span></div>
+          <div class="routine-row"><span class="routine-time">Night 30min</span><span>Spoken defense rehearsal with STAR timer</span></div>
         </div>
         <p class="tip-note">Target 6-8 focused hours/day. Quality beats quantity — take real breaks.</p>
       </div>
 
       <div class="tip-card">
-        <h3>📊 Problem Targets (2 Months)</h3>
+        <h3>📊 Problem Targets (~230 Problems)</h3>
         <div class="target-grid">
           <div class="target-row"><span>Recursion + Backtracking</span><span class="target-num">25</span></div>
-          <div class="target-row"><span>Stack / Queue</span><span class="target-num">25</span></div>
+          <div class="target-row"><span>Stack / Queue (Monotonic)</span><span class="target-num">25</span></div>
           <div class="target-row"><span>Trees + BST</span><span class="target-num">40</span></div>
           <div class="target-row"><span>Graphs (BFS/DFS/Dijkstra)</span><span class="target-num">45</span></div>
           <div class="target-row"><span>Dynamic Programming</span><span class="target-num">50</span></div>
@@ -476,14 +537,12 @@ function renderTipsView() {
       <div class="tip-card">
         <h3>🚫 What NOT To Do</h3>
         <ul class="dont-list">
-          <li>Chase hard problems before mastering mediums</li>
+          <li>Chase hard problems before mastering core mediums</li>
           <li>Jump randomly between topics without finishing one</li>
-          <li>Compare yourself to competitive programmers</li>
-          <li>Spend 3 days on one DP hard — look at the solution after 45min</li>
-          <li>Watch too many video explanations instead of solving</li>
-          <li>Memorize solutions instead of understanding patterns</li>
-          <li>Neglect system design and CS fundamentals for DSA-only prep</li>
-          <li>Skip mock interviews — you need to practice communicating under pressure</li>
+          <li>Spend 3 days on one DP problem — read the editorial after 45min</li>
+          <li>Memorize code instead of recognizing patterns (sliding window, two pointers)</li>
+          <li>Neglect system design, LLD, and CS fundamentals for DSA-only prep</li>
+          <li>Skip spoken mock rehearsals — you must practice articulating trade-offs under time pressure</li>
         </ul>
       </div>
 
@@ -491,7 +550,7 @@ function renderTipsView() {
         <h3>📓 Three Notebooks You MUST Maintain</h3>
         <div class="notebook-grid">
           <div class="notebook-item"><strong>Mistake Notebook</strong><p>Every wrong approach, why it failed, what the correct intuition was. Review weekly.</p></div>
-          <div class="notebook-item"><strong>Pattern Notebook</strong><p>Sliding window, binary search on answer, monotonic stack, take/not-take DP, topological sort, etc.</p></div>
+          <div class="notebook-item"><strong>Pattern Notebook</strong><p>Sliding window, binary search on answer, monotonic stack, take/not-take DP, topological sort.</p></div>
           <div class="notebook-item"><strong>Template Notebook</strong><p>BFS/DFS template, Dijkstra's, DSU, segment tree, trie, KMP — ready-to-paste code in your language.</p></div>
         </div>
       </div>
@@ -515,70 +574,48 @@ function renderTipsView() {
       </div>
 
       <div class="tip-card wide">
-        <h3>⚡ 21-Day CS Core Sprint & OA Specific Strategy</h3>
-        <div class="guide-grid">
-          <div class="guide-item">
-            <strong>DBMS (Days 1–5)</strong>
-            <p>Normalization (1NF-BCNF), ACID properties, keys, joins, and hand-written SQL. SQL writing is almost always live-tested in interviews.</p>
-          </div>
-          <div class="guide-item">
-            <strong>Operating Systems (Days 6–12)</strong>
-            <p>CPU scheduling Gantt charts, process sync & semaphores, deadlock 4 conditions & Banker's algorithm, virtual memory & page replacement (LRU/FIFO/Belady's).</p>
-          </div>
-          <div class="guide-item">
-            <strong>Computer Networks (Days 13–16)</strong>
-            <p>OSI/TCP-IP 7-layer mapping, IP subnetting calculations, TCP 3-way handshake vs UDP, HTTP/1.1 vs HTTP/2/3, DNS & TLS security handshake.</p>
-          </div>
-          <div class="guide-item">
-            <strong>Software Engineering (Days 17–21)</strong>
-            <p>SDLC models (Waterfall, Spiral, RAD, Agile/Scrum), COCOMO estimation, SRS requirements, Coupling & Cohesion (Low coupling + High cohesion), and Software Testing (Unit, Black-box, White-box, Integration).</p>
-          </div>
-        </div>
-      </div>
-
-      <div class="tip-card wide">
-        <h3>📝 OA (Online Assessment) Core CS MCQ Strategy</h3>
+        <h3>📝 OA (Online Assessment) Core CS MCQ & Numericals Strategy</h3>
         <p class="tip-note" style="margin-bottom: 12px;">Core-CS sections in OAs (Amazon, Flipkart GRiD, Juspay, Campus OAs) are almost always 10–20 MCQs. Aim for &lt;45 sec per question.</p>
         <div class="guide-grid">
           <div class="guide-item">
             <strong>High-Yield Numericals</strong>
-            <p>CPU Scheduling avg waiting/turnaround time, Page Replacement FIFO/LRU/Optimal trace, Deadlock safe sequence, Subnetting host counts.</p>
+            <p>CPU Scheduling avg waiting/turnaround time (FCFS/SJF), Page Replacement FIFO/LRU/Optimal trace, Deadlock Banker's safe sequence, Subnetting usable host counts (2^(32-prefix) - 2).</p>
           </div>
           <div class="guide-item">
             <strong>Output Prediction & Syntax</strong>
-            <p>Predict output of SQL JOIN / GROUP BY queries, C++ polymorphism vtable calls, and process fork() loop counts.</p>
+            <p>Predict output of SQL JOIN / GROUP BY queries, C++ polymorphism vtable dynamic dispatch, and process fork() loop counts (2^n processes).</p>
           </div>
           <div class="guide-item">
             <strong>Conceptual Traps</strong>
-            <p>Multiprogramming ≠ Multitasking, 2-tier vs 3-tier, Candidate key vs Super key, MAC (L2) vs IP (L3), Low coupling + High cohesion.</p>
+            <p>Multiprogramming ≠ Multitasking, Candidate key vs Super key, MAC (L2) vs IP (L3), Low coupling + High cohesion, FOR UPDATE vs SKIP LOCKED.</p>
           </div>
         </div>
       </div>
 
       <div class="tip-card wide">
-        <h3>🗣️ Interview Day Checklist</h3>
+        <h3>🗣️ Interview Day Checklist & STAR Behavioral Matrix</h3>
         <div class="guide-grid">
           <div class="guide-item">
-            <strong>Before the Call</strong>
-            <p>Review your resume deep-dives using the "My Resume" tab. Re-read the SDE or ML/Data Eng defense sheets. Have your template notebook open. Test your mic, camera, and screen share.</p>
+            <strong>90-Second Pitch ("Tell me about yourself")</strong>
+            <p>Lead with your dual specialization at JIIT Noida (8.6 CGPA), LeetCode Knight (2094 peak), 1st Place BitBox 5.0 GDG Hackathon, and your primary project matching the applied role (SDE or ML/Data Eng).</p>
           </div>
           <div class="guide-item">
             <strong>During DSA Round</strong>
-            <p>Clarify constraints FIRST. Think out loud. Start with brute force, then optimize. Trace through an example before coding. Handle edge cases. Analyze time/space complexity.</p>
+            <p>Clarify constraints FIRST. Think out loud. Start with brute force, then optimize. Trace an example by hand before typing code. Analyze time and space complexity proactively.</p>
           </div>
           <div class="guide-item">
             <strong>During Tech/System Design & ML Rounds</strong>
-            <p>Use the STAR method for experience questions. For SDE: requirements → API → architecture → scaling. For ML: problem formulation → data & baseline → model architecture → metrics & evaluation trade-offs.</p>
+            <p>Structure with STAR: <strong>Situation</strong> (problem & constraints), <strong>Task</strong> (requirements), <strong>Action</strong> (architecture, algorithms, trade-offs), <strong>Result</strong> (metrics, latency, throughput).</p>
           </div>
           <div class="guide-item">
-            <strong>Behavioral Tips</strong>
-            <p>"Tell me about yourself" — 90-second pitch max. Lead with your strongest project matching the applied role (SDE or ML/Data Eng). Every answer should have: situation, action, metric/result.</p>
+            <strong>Questions to Ask Interviewer</strong>
+            <p>"What is the biggest operational bottleneck in your current data/request ingestion pipeline?" or "How does your team handle schema migrations and zero-downtime deployments?"</p>
           </div>
         </div>
       </div>
 
       <div class="tip-card wide skillset">
-        <h3>🛠️ Dual-Track Skillsets for Aman Verma</h3>
+        <h3>🛠️ Aman Verma's Dual-Specialization Skill Matrix</h3>
         <div class="skill-cols">
           <div>
             <h4>⚡ SDE & Systems Track</h4>
@@ -588,6 +625,7 @@ function renderTipsView() {
               <li>Offline-first Flutter mobile apps</li>
               <li>PostgreSQL time-series & relational schema</li>
               <li>Minimax with alpha-beta game tree search</li>
+              <li>B-Tree/BRIN indexing, locks, queues & state machines</li>
             </ul>
           </div>
           <div>
@@ -598,19 +636,20 @@ function renderTipsView() {
               <li>Gemini 2.5 Flash prompt-chaining state machine</li>
               <li>RAG Multi-Agent retrieval (LangChain & CrewAI)</li>
               <li>Edge CV detection (YOLOv5) & telemetry ETL</li>
+              <li>FastAPI async inference & USDA API integration</li>
             </ul>
           </div>
           <div>
             <h4>🎯 Problem Solving & Core CS</h4>
             <ul>
               <li>LeetCode Knight (Peak Rating: 2094)</li>
-              <li>1000+ DSA problems solved across platforms</li>
+              <li>1,000+ DSA problems solved across platforms</li>
               <li>250-day continuous algorithmic coding streak</li>
-              <li>OS, DBMS, Networks, OOP & System Design</li>
+              <li>OS, DBMS, Networks, OOP & Low-Level Design</li>
             </ul>
           </div>
           <div>
-            <h4>🏆 Hackathon Honors & Impact</h4>
+            <h4>🏆 Honors & Impact</h4>
             <ul>
               <li>1st Place BitBox 5.0 (Google Developer Groups)</li>
               <li>Finalist Innovate 3.0 Hackathon (Drive-Sure)</li>
@@ -885,10 +924,18 @@ function renderResumeView() {
     <div class="resume-section-card">
       <div class="resume-section-head-wrap">
         <h2 class="resume-section-title">Academic & Technical Projects</h2>
-        <span class="section-badge">${displayedProjects.length} Projects Displayed</span>
+        <span class="section-badge">${shownProjects.length} of ${displayedProjects.length} Projects</span>
       </div>
+
+      ${ix.renderTechFilter(activeTechTag)}
+
       <div class="resume-projects-grid">
-        ${displayedProjects.map(proj => `
+        ${shownProjects.length === 0 ? `
+          <div class="resume-empty">
+            No projects match <code>${activeTechTag}</code>.
+            <button class="tech-clear" data-tech="">Clear filter</button>
+          </div>
+        ` : shownProjects.map(proj => `
           <div class="resume-project-card">
             <div class="resume-proj-header">
               <div>
@@ -904,6 +951,9 @@ function renderResumeView() {
               ${proj.points.map(pt => `<li>${pt}</li>`).join('')}
             </ul>
             <div class="resume-btn-group">
+              <button class="resume-action-btn rehearse ${openRehearsal?.projId === proj.id ? 'active' : ''}" data-rehearse="${proj.id}">
+                🎙️ Rehearse Defense ▾
+              </button>
               ${proj.defenseJumps.map(j => `
                 <button class="resume-action-btn" data-jump-roadmap="${j.roadmap}" data-jump-hash="${j.hash}">
                   <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
@@ -911,6 +961,7 @@ function renderResumeView() {
                 </button>
               `).join('')}
             </div>
+            ${ix.renderRehearsalPanel(proj, openRehearsal)}
           </div>
         `).join('')}
       </div>
@@ -986,6 +1037,17 @@ function attachEvents() {
         await navigator.clipboard.writeText(btn.dataset.copyText);
         ix.toast('Opener copied to clipboard');
       } catch { ix.toast('Copy failed — select and copy manually'); }
+    });
+  });
+  document.querySelectorAll('[data-star-seconds]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      navigateTo('tips');
+      setTimeout(() => {
+        const starSection = document.querySelector('.star-timer');
+        if (starSection) {
+          starSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }, 60);
     });
   });
 
