@@ -216,6 +216,274 @@ export const roadmaps = [
     ]
   },
   {
+    "id": "first-principles",
+    "title": "First-Principles Core",
+    "icon": "\ud83d\udd2c",
+    "accent": "#22d3ee",
+    "url": "/first-principles-fundamentals.html",
+    "phases": [
+      {
+        "title": "01 Browser & frontend runtime",
+        "topics": [
+          {
+            "name": "The Critical Rendering Path",
+            "hash": "#c1",
+            "desc": "What the browser does between receiving HTML and showing pixels:",
+            "links": []
+          },
+          {
+            "name": "Reflow vs repaint",
+            "hash": "#c1",
+            "desc": "Master Reflow vs repaint core concepts and interview defense.",
+            "links": [],
+            "tip": "\ud83d\udea8 First-Principles Trap Layout thrashing. Reading a layout property ( offsetTop , offsetWidth , getBoundingClientRect ) forces the browser to flush pending changes and compute layout right now , because it must give you an accurate answer. So a loop that writes a style then reads a position triggers a full reflow on every iteration: for (el of els)",
+            "isTrap": true
+          },
+          {
+            "name": "async vs defer",
+            "hash": "#c1",
+            "desc": "Rule of thumb: defer for anything that touches the DOM or depends on another script. async only for independent scripts that don't care about order or the DOM \u2014 analytics being the classic example.",
+            "links": []
+          },
+          {
+            "name": "The DOM and event flow",
+            "hash": "#c1",
+            "desc": "An event travels in three phases: capturing (window down to the target), target , then bubbling (target back up to window). Listeners default to the bubbling phase; pass true as the third argument to catch it on the way down.",
+            "links": [],
+            "tip": "\ud83d\udee1\ufe0f SDE Core Event delegation is why bubbling matters practically. Instead of attaching 1,000 listeners to 1,000 list items \u2014 1,000 objects in memory, all needing cleanup \u2014 attach one to the parent and read event.target to find which child was clicked. Two wins beyond memory: it automatically works for items added later (a newly inserted row needs n",
+            "isTrap": false
+          },
+          {
+            "name": "The browser event loop",
+            "hash": "#c1",
+            "desc": "Master The browser event loop core concepts and interview defense.",
+            "links": [],
+            "tip": "\ud83d\udea8 First-Principles Trap Microtasks drain completely; macrotasks are taken one at a time. That asymmetry is the whole answer to ordering puzzles \u2014 and it means a promise that schedules another promise, recursively, starves the queue . The page freezes and no timer ever fires, because step 2 never finishes. The classic ordering question: console.log(",
+            "isTrap": true
+          },
+          {
+            "name": "Memory and garbage collection",
+            "hash": "#c1",
+            "desc": "Mark-and-sweep: start from the roots (globals, the current call stack), mark everything reachable, delete everything unmarked. So an object is freed when it's unreachable , not when it's \"unused.\"",
+            "links": []
+          },
+          {
+            "name": "Client-side storage",
+            "hash": "#c1",
+            "desc": "Cookie flags that matter: HttpOnly (JavaScript can't read it \u2014 blocks XSS token theft), Secure (HTTPS only), SameSite \u2014 Strict never sends cross-site, Lax sends on top-level navigation only, None always sends and requires Secure .",
+            "links": [],
+            "tip": "\ud83d\udea8 First-Principles Trap \"Where do I store the auth token?\" has no safe answer \u2014 you're choosing which attack to defend. localStorage is readable by any JavaScript on your page, so one XSS \u2014 including from a compromised npm dependency \u2014 steals the token. An HttpOnly cookie is unreadable by JS, but it's sent automatically on every request to your dom",
+            "isTrap": true
+          },
+          {
+            "name": "Same-Origin Policy and CORS",
+            "hash": "#c1",
+            "desc": "An origin is protocol + domain + port . All three must match. https://a.com and http://a.com are different origins; so are a.com and api.a.com ; so are ports 80 and 3000.",
+            "links": [],
+            "tip": "\ud83d\udea8 First-Principles Trap CORS is enforced by the browser, not the server \u2014 and it is not a security feature for your API. The request usually reaches your server and executes; the browser just refuses to hand the response to JavaScript. A curl request, a mobile app or a script ignores CORS entirely. So CORS protects users from malicious pages, not y",
+            "isTrap": true
+          },
+          {
+            "name": "Core Web Vitals",
+            "hash": "#c1",
+            "desc": "Each maps to a first-principle: LCP is network + rendering path , INP is the single-threaded event loop , CLS is layout running again after paint . Setting width and height on images fixes most CLS on its own \u2014 it lets the browser reserve the space before the image arrives.",
+            "links": []
+          }
+        ]
+      },
+      {
+        "title": "02 Networking, HTTP & security",
+        "topics": [
+          {
+            "name": "OSI vs TCP/IP",
+            "hash": "#c2",
+            "desc": "OSI is the teaching model; TCP/IP is what actually runs. The useful idea from either is encapsulation : each layer wraps the one above in its own header and doesn't care what's inside.",
+            "links": []
+          },
+          {
+            "name": "TCP vs UDP",
+            "hash": "#c2",
+            "desc": "Master TCP vs UDP core concepts and interview defense.",
+            "links": [],
+            "tip": "\ud83d\udca1 Mental Model TCP is registered post; UDP is shouting across a room. The choice is: is a late packet still useful? In a video call, a frame that arrives 400 ms late is worthless \u2014 you'd rather have a brief glitch than a call that runs progressively behind. UDP drops it and moves on. In a file download, every byte matters no matter how late, so TCP",
+            "isTrap": false
+          },
+          {
+            "name": "TLS in one paragraph",
+            "hash": "#c2",
+            "desc": "Asymmetric crypto (slow, but no shared secret needed) is used once to verify the server's certificate and agree a session key. Everything after that uses symmetric crypto (fast) with that key. Asymmetric to establish trust, symmetric to move data \u2014 that sentence is the whole answer, and it explains ",
+            "links": []
+          },
+          {
+            "name": "HTTP versions",
+            "hash": "#c2",
+            "desc": "Master HTTP versions core concepts and interview defense.",
+            "links": [],
+            "tip": "\ud83d\udea8 First-Principles Trap \"HTTP/2 fixed head-of-line blocking\" is only half right , and the other half is the good answer. HTTP/2 fixed it at the application layer \u2014 ten requests share one connection instead of queueing. But they still share one TCP stream, and TCP guarantees in-order delivery. So one lost packet stalls every multiplexed request unti",
+            "isTrap": true
+          },
+          {
+            "name": "REST's six constraints",
+            "hash": "#c2",
+            "desc": "Statelessness is the one that carries the weight , because it's what makes horizontal scaling possible: any server can handle any request, so you add servers behind a load balancer without sticky sessions.",
+            "links": []
+          },
+          {
+            "name": "Safe vs idempotent",
+            "hash": "#c2",
+            "desc": "This isn't trivia: it's why a browser or proxy can safely retry a GET on a flaky connection, and why a POST needs an idempotency key before it can be retried.",
+            "links": []
+          },
+          {
+            "name": "Status codes",
+            "hash": "#c2",
+            "desc": "The 401/403 distinction is the most-tested: 401 means \"I don't know who you are\", 403 means \"I know exactly who you are and you still can't.\" And 502/503/504 tell you where the failure is, which is why they matter in debugging.",
+            "links": []
+          },
+          {
+            "name": "Caching headers",
+            "hash": "#c2",
+            "desc": "no-cache is the most misread header name in HTTP: it does not mean \"don't cache.\" It means \"cache it, but check with me before you use it.\" no-store is the one that means don't cache.",
+            "links": []
+          },
+          {
+            "name": "Sessions vs JWTs",
+            "hash": "#c2",
+            "desc": "Master Sessions vs JWTs core concepts and interview defense.",
+            "links": [],
+            "tip": "\ud83d\udee1\ufe0f SDE Core The trade is revocation versus lookup. Sessions can be killed instantly but require shared state every request. JWTs need no lookup but stay valid until exp , so logout is a client-side illusion. The standard resolution: short access token (~15 min) + long refresh token stored server-side. The short life bounds the damage from theft, an",
+            "isTrap": false
+          },
+          {
+            "name": "XSS vs CSRF",
+            "hash": "#c2",
+            "desc": "Types of XSS: stored (the payload is saved in your database and served to everyone), reflected (bounced back from a URL parameter), DOM-based (never touches the server \u2014 client JS writes untrusted data into the page).",
+            "links": [],
+            "tip": "\ud83d\udea8 First-Principles Trap XSS defeats every CSRF defence. If an attacker can run JavaScript on your origin, they can read your CSRF token and send perfectly valid requests. So the defences aren't equal partners \u2014 fix XSS first , because CSRF protection assumes your page isn't already compromised. And the subtle one: CSRF works precisely because the b",
+            "isTrap": true
+          }
+        ]
+      },
+      {
+        "title": "03 Database fundamentals",
+        "topics": [
+          {
+            "name": "Storage models",
+            "hash": "#c3",
+            "desc": "Master Storage models core concepts and interview defense.",
+            "links": [],
+            "tip": "\ud83d\udca1 Mental Model Storage layout is a bet about which direction you'll read. Rows bet you want whole records; columns bet you want one field across many records. Disks read in blocks, so an average over one column in a row store drags every other column into memory too \u2014 20 fields read to use one. A column store reads only that column's blocks, and be",
+            "isTrap": false
+          },
+          {
+            "name": "ACID and what enforces each letter",
+            "hash": "#c3",
+            "desc": "Write-Ahead Logging in one line: write down what you're about to do, and flush that note to disk, before doing it. On restart, replay the log. Sequential log writes are fast; random page writes are slow \u2014 so WAL gives durability without paying random-write cost on every commit.",
+            "links": []
+          },
+          {
+            "name": "Isolation levels",
+            "hash": "#c3",
+            "desc": "* In the SQL standard. PostgreSQL's MVCC snapshot blocks most phantoms at Repeatable Read.",
+            "links": [],
+            "tip": "\ud83d\udea8 First-Principles Trap Serializable isn't free, and it isn't \"just safer.\" Higher isolation means either more locking (more waiting, more deadlocks) or optimistic checks that abort transactions. At Serializable, Postgres may kill your transaction with a serialization failure \u2014 so your application must be prepared to retry . Choosing Serializable w",
+            "isTrap": true
+          },
+          {
+            "name": "Index structures",
+            "hash": "#c3",
+            "desc": "Why B+ Tree and not a binary tree: disks read in blocks, so you want each node to hold hundreds of keys and fill exactly one block. A tree with fanout 500 reaches a billion rows in about four levels \u2014 four disk reads \u2014 where a binary tree would need thirty. Also, in a B+ Tree all real data lives in ",
+            "links": [],
+            "tip": "\ud83d\udca1 Mental Model LSM trees trade read speed for write speed, on purpose. Writes go to an in-memory table and an append-only log \u2014 never a random disk seek \u2014 then get flushed to immutable sorted files, which are periodically merged in the background. The cost: a read may have to check several files. The benefit: writes are sequential, which is the sin",
+            "isTrap": false
+          },
+          {
+            "name": "Normalization",
+            "hash": "#c3",
+            "desc": "What normalization actually prevents is anomalies, and naming them is better than reciting the forms: an update anomaly (a value stored in five places, you change four), an insert anomaly (you can't record a department until someone works there), a delete anomaly (removing the last employee erases t",
+            "links": []
+          }
+        ]
+      },
+      {
+        "title": "04 AI / ML fundamentals",
+        "topics": [
+          {
+            "name": "The lifecycle",
+            "hash": "#c4",
+            "desc": "Master The lifecycle core concepts and interview defense.",
+            "links": []
+          },
+          {
+            "name": "Preprocessing",
+            "hash": "#c4",
+            "desc": "Master Preprocessing core concepts and interview defense.",
+            "links": [],
+            "tip": "\ud83d\udea8 First-Principles Trap Data leakage via the scaler. Fit the scaler on the whole dataset before splitting and the training set now contains information about the test set's mean and standard deviation. Your test score comes out optimistic, and you find out in production. Correct order: split first, fit the scaler on train only, then transform train",
+            "isTrap": true
+          },
+          {
+            "name": "The training loop",
+            "hash": "#c4",
+            "desc": "Master The training loop core concepts and interview defense.",
+            "links": []
+          },
+          {
+            "name": "Loss functions",
+            "hash": "#c4",
+            "desc": "Master Loss functions core concepts and interview defense.",
+            "links": [],
+            "tip": "\ud83d\udcca ML Track \u2014 MSE vs MAE, said well An error of 10 costs MSE 100 but costs MAE 10 . So MSE will happily make ten predictions slightly worse to fix one large error, which is right when big misses are genuinely disproportionately bad \u2014 and wrong when your data has noisy outliers you'd rather ignore. Statistically, minimizing MSE fits the mean ; minimi",
+            "isTrap": false
+          },
+          {
+            "name": "Gradient descent",
+            "hash": "#c4",
+            "desc": "Master Gradient descent core concepts and interview defense.",
+            "links": []
+          },
+          {
+            "name": "Bias, variance and regularization",
+            "hash": "#c4",
+            "desc": "Irreducible error is noise in the data itself \u2014 no model removes it, and chasing it is how you overfit. Worth naming, because it's the reason 100% accuracy is a red flag rather than a triumph.",
+            "links": []
+          },
+          {
+            "name": "Splits and cross-validation",
+            "hash": "#c4",
+            "desc": "Train fits the weights. Validation tunes hyperparameters and decides when to stop. Test is touched once , at the end. If you tune against the test set, it has quietly become a validation set and you no longer have an honest estimate.",
+            "links": []
+          },
+          {
+            "name": "Evaluation metrics",
+            "hash": "#c4",
+            "desc": "Master Evaluation metrics core concepts and interview defense.",
+            "links": [],
+            "tip": "\ud83d\udea8 First-Principles Trap The 99% accuracy trap. If 1 in 100 transactions is fraud, a model that predicts \"not fraud\" every single time scores 99% accuracy \u2014 and catches zero fraud. Accuracy is dominated by the majority class, so under imbalance it measures the class distribution rather than the model. Precision and recall fix it by ignoring true neg",
+            "isTrap": true
+          },
+          {
+            "name": "NLP and vision first principles",
+            "hash": "#c4",
+            "desc": "NLP \u2014 turning text into numbers:",
+            "links": []
+          }
+        ]
+      },
+      {
+        "title": "05 Spoken answer templates",
+        "topics": [
+          {
+            "name": "05 Spoken answer templates",
+            "hash": "#c5",
+            "desc": "Open with the 20\u201330 second version. Pause. Let them steer you deeper \u2014 that's better than reciting for four minutes and missing what they cared about.",
+            "links": []
+          }
+        ]
+      }
+    ]
+  },
+  {
     "id": "cs-21day",
     "title": "CS Core 21-Day Sprint",
     "icon": "\u26a1",
@@ -2226,6 +2494,255 @@ export const roadmaps = [
             "hash": "#c5",
             "desc": "Master Track B \u2014 ML / AI / Data Engineering core concepts and defense.",
             "links": []
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "backend-lld",
+    "title": "Backend & LLD Systems",
+    "icon": "\ud83c\udfd7\ufe0f",
+    "accent": "#fb7185",
+    "url": "/backend-lld-machine-coding.html",
+    "phases": [
+      {
+        "title": "01 Indexing & database locking",
+        "topics": [
+          {
+            "name": "How a B-Tree index actually helps",
+            "hash": "#c1",
+            "desc": "An index is a sorted structure. Sorted means you can binary-search it, so finding a row costs about log(N) steps instead of reading every row. For a million rows that's roughly 20 steps instead of a million.",
+            "links": []
+          },
+          {
+            "name": "The ESR rule \u2014 Equality, Sort, Range",
+            "hash": "#c1",
+            "desc": "Order your index columns as: columns you match exactly , then columns you sort by, then columns you filter with a range .",
+            "links": [],
+            "tip": "\ud83d\udea8 Concurrency / Index Trap The leftmost prefix rule. An index on (status, scheduled_at) can serve a query on status alone, or on both \u2014 but not on scheduled_at alone. You can't skip the first column, because the index is sorted by it first. The phone book is useless if you only know the first name. Two more that cost real marks: putting a function ",
+            "isTrap": true
+          },
+          {
+            "name": "Partial indexes \u2014 index only what you query",
+            "hash": "#c1",
+            "desc": "Master Partial indexes \u2014 index only what you query core concepts and interview defense.",
+            "links": [],
+            "tip": "\ud83d\udca1 Implementation Pattern Partial indexes are the most under-used tool in queue design. The insight: a queue table grows forever, but the queue is only the pending rows. A partial index means the structure the database keeps hot in memory is proportional to work-in-progress, not to history. A table with 50 million completed jobs and 200 pending ones",
+            "isTrap": false
+          },
+          {
+            "name": "Pessimistic locking \u2014 SELECT ... FOR UPDATE",
+            "hash": "#c1",
+            "desc": "\"I'm going to change this row, so nobody else touch it until I commit.\" The lock is held until the transaction ends.",
+            "links": [],
+            "tip": "\ud83d\udee1\ufe0f LLD Blueprint The distinction to state out loud in an interview: use plain FOR UPDATE when you need a specific row and it's correct for others to wait \u2014 booking seat 14A, debiting account 7. Use SKIP LOCKED when you need any row from a pool and waiting is pointless \u2014 a job queue, a task dispatcher. Getting this backwards is a classic failure: pl",
+            "isTrap": false
+          },
+          {
+            "name": "Optimistic locking \u2014 version columns",
+            "hash": "#c1",
+            "desc": "No locks at all. Read the row with its version, and when you write, require the version to still be what you read. If someone changed it first, your update matches zero rows and you know you lost.",
+            "links": [],
+            "tip": "\ud83d\udca1 Implementation Pattern Optimistic locking is the right answer for human-edited records , and Packspec's spec editing is the example. Two people rarely edit the same spec in the same second, so paying lock cost on every edit to protect against a rare collision is backwards. And when it does collide, the correct product behaviour isn't \"wait\" \u2014 it'",
+            "isTrap": false
+          },
+          {
+            "name": "Deadlocks",
+            "hash": "#c1",
+            "desc": "Two transactions each hold something the other wants, and both wait forever. The database detects the cycle and kills one.",
+            "links": [],
+            "tip": "\ud83d\udea8 Deadlock Trap The fix is boringly simple: always lock rows in the same order. If every transaction locks by ascending ID, a cycle is impossible \u2014 A holds 1 and wants 2 while B waits for 1, so B never holds 2. The cycle can't close. In a transfer function that means sorting the two account IDs before locking, not locking \"from\" then \"to\". This is ",
+            "isTrap": true
+          }
+        ]
+      },
+      {
+        "title": "02 Idempotency, queues & state machines",
+        "topics": [
+          {
+            "name": "Idempotency: doing it twice must equal doing it once",
+            "hash": "#c2",
+            "desc": "Networks are unreliable. A client sends \"charge \u20b9500\", the response is lost, the client retries. Without protection you charged twice. The client cannot tell the difference between \"request never arrived\" and \"response never came back\" \u2014 so it must retry, and the server must make that safe.",
+            "links": [],
+            "tip": "\ud83d\udca1 Implementation Pattern The cheapest idempotency of all is a conditional update \u2014 no extra table needed: UPDATE orders SET status='PROCESSING', worker_id='w1' WHERE id=101 AND status='PENDING' The AND status='PENDING' is the guard. If two workers run this simultaneously, the database serializes them: the first flips the row and gets rowsAffected =",
+            "isTrap": false
+          },
+          {
+            "name": "Queues: polling a table vs Redis",
+            "hash": "#c2",
+            "desc": "Start with the table. \"We already have Postgres\" is a real advantage, and SKIP LOCKED makes it genuinely good. Move to Redis or a broker when polling latency or throughput actually hurts.",
+            "links": []
+          },
+          {
+            "name": "The outbox pattern",
+            "hash": "#c2",
+            "desc": "The problem it solves: you save an order to the database and publish \"order created\" to a queue. Two systems, no shared transaction. If the DB commit succeeds and the publish fails, the rest of the world never hears about the order. That's the dual-write problem.",
+            "links": [],
+            "tip": "\ud83d\udee1\ufe0f LLD Blueprint Say the guarantee precisely: the outbox gives you at-least-once delivery, not exactly-once. If the relay publishes and then crashes before marking published_at , the event is sent twice. That is not a flaw to apologise for \u2014 it's the standard guarantee, and the answer is that consumers must be idempotent . Every event carries an ID",
+            "isTrap": false
+          },
+          {
+            "name": "Retries, backoff and circuit breakers",
+            "hash": "#c2",
+            "desc": "Master Retries, backoff and circuit breakers core concepts and interview defense.",
+            "links": [],
+            "tip": "\ud83d\udea8 Thundering Herd Trap Why jitter is not optional. A service goes down. A thousand clients all fail at the same moment, all wait exactly 1000 ms, and all retry at the same moment. You've built a synchronised hammer. The service comes back up, gets hit by a thousand simultaneous requests, and dies again. Random jitter spreads those retries over a wi",
+            "isTrap": true
+          },
+          {
+            "name": "State machines",
+            "hash": "#c2",
+            "desc": "A state machine is a list of allowed states plus a table of legal transitions. Everything not in the table is rejected. It turns \"did we handle that case?\" into a data question.",
+            "links": [],
+            "tip": "\ud83d\udca1 Implementation Pattern Both Chessify and RecrutAI use this shape and it's worth naming the shared benefit: illegal transitions become impossible rather than unhandled. In RecrutAI the LLM returns one of four branch tokens \u2014 PROBE_DEEPER , SIMPLIFY , PIVOT_TOPIC , PROCEED \u2014 and anything else fails the transition table and triggers the fallback. A ",
+            "isTrap": false
+          }
+        ]
+      },
+      {
+        "title": "03 Machine coding implementations",
+        "topics": [
+          {
+            "name": "1 \u00b7 Rate limiter",
+            "hash": "#c3",
+            "desc": "Master 1 \u00b7 Rate limiter core concepts and interview defense.",
+            "links": [],
+            "tip": "\ud83d\udea8 Concurrency Trap Read-modify-write is not atomic. Checking tokens >= 1 and then doing tokens -= 1 is two operations. Two threads can both read 1 token and both decrement, letting through two requests when only one was allowed. The mutex must cover the check and the update together, not each separately. Mention the distributed version unprompted: ",
+            "isTrap": true
+          },
+          {
+            "name": "2 \u00b7 Job scheduler with retries",
+            "hash": "#c3",
+            "desc": "Master 2 \u00b7 Job scheduler with retries core concepts and interview defense.",
+            "links": [],
+            "tip": "\ud83d\udee1\ufe0f LLD Blueprint Three decisions worth defending, because interviewers probe all three: Run the task outside the lock. If you hold the mutex while executing, a slow task blocks every other worker and the scheduler becomes single-threaded. This is the most common bug in this problem. wait_until , not sleep_for . Sleeping blindly means a newly-schedu",
+            "isTrap": false
+          },
+          {
+            "name": "3 \u00b7 Parking lot \u2014 resource allocation",
+            "hash": "#c3",
+            "desc": "Master 3 \u00b7 Parking lot \u2014 resource allocation core concepts and interview defense.",
+            "links": [],
+            "tip": "\ud83d\udca1 Implementation Pattern Two things that earn marks here beyond \"it works.\" Free-list per size makes allocation O(1) instead of scanning every slot \u2014 and it's the difference between a toy and something that handles 10,000 slots. Strategy interface for pricing means weekend rates, EV surcharges or a flat-fee model are a new class, not an edit to Par",
+            "isTrap": false
+          },
+          {
+            "name": "4 \u00b7 Chess engine \u2014 command pattern with undo",
+            "hash": "#c3",
+            "desc": "Master 4 \u00b7 Chess engine \u2014 command pattern with undo core concepts and interview defense.",
+            "links": [],
+            "tip": "\ud83d\udee1\ufe0f LLD Blueprint Why the command pattern rather than just storing board snapshots: a snapshot per move is 64 squares copied every time; a command is two squares plus a captured piece. For a 100-move game that's a meaningful difference, and undo/redo falls out for free instead of being bolted on. And the ordering of the four checks matters \u2014 cheapes",
+            "isTrap": false
+          }
+        ]
+      },
+      {
+        "title": "04 Schema blueprints & SQL bank",
+        "topics": [
+          {
+            "name": "Flash sale / inventory reservation",
+            "hash": "#c4",
+            "desc": "Master Flash sale / inventory reservation core concepts and interview defense.",
+            "links": [],
+            "tip": "\ud83d\udca1 Implementation Pattern The whole trick is putting the business rule in the WHERE clause. The naive version \u2014 SELECT stock , check it in application code, then UPDATE \u2014 has a gap between the read and the write where a thousand other requests can slip through. All of them read \"10 left\", all decide it's fine, all decrement, and you've oversold. UPD",
+            "isTrap": false
+          },
+          {
+            "name": "Time-series telemetry (SahYatri pattern)",
+            "hash": "#c4",
+            "desc": "Master Time-series telemetry (SahYatri pattern) core concepts and interview defense.",
+            "links": [],
+            "tip": "\ud83d\udcbb Why partitioning pays three times Query pruning \u2014 a last-7-days query skips every other partition without reading it. Small hot index \u2014 writes only touch the current partition, so the index that must stay in RAM is one month's worth, not five years'. Instant retention \u2014 deleting old data becomes DROP TABLE , which is metadata-only, instead of a D",
+            "isTrap": false
+          },
+          {
+            "name": "Multi-tenant spec engine (Packspec pattern)",
+            "hash": "#c4",
+            "desc": "Master Multi-tenant spec engine (Packspec pattern) core concepts and interview defense.",
+            "links": [],
+            "tip": "\ud83d\udea8 Multi-tenancy Trap Soft delete silently breaks every query you forget it in. Once deleted_at exists, every single read must include AND deleted_at IS NULL \u2014 and the one that forgets shows deleted specs to users, or worse, counts them in a billing query. Same class of bug as a missing company_id filter. The structural fixes: a database view ( acti",
+            "isTrap": true
+          },
+          {
+            "name": "Advanced SQL bank",
+            "hash": "#c4",
+            "desc": "Master Advanced SQL bank core concepts and interview defense.",
+            "links": [],
+            "tip": "\ud83d\udca1 Implementation Pattern The mental model for window functions: they add a column computed across a group of rows, without collapsing those rows. That's exactly what separates them from GROUP BY , which collapses. If a question sounds like \"for each X, the top N\" or \"compare each row to the previous one\", it's a window function \u2014 and the ROW_NUMBER",
+            "isTrap": false
+          }
+        ]
+      },
+      {
+        "title": "05 Bottlenecks & capacity sizing",
+        "topics": [
+          {
+            "name": "Connection pool exhaustion",
+            "hash": "#c5",
+            "desc": "PostgreSQL forks a process per connection \u2014 several MB each plus scheduling cost. So connections are scarce, and more is not better.",
+            "links": [],
+            "tip": "\ud83d\udca1 Implementation Pattern The counter-intuitive result worth stating: a smaller pool is often faster. A 4-core machine can genuinely execute about 4 queries at once; 100 connections just means 100 processes fighting over 4 cores with context-switch overhead. A common starting point is (cores \u00d7 2) + effective_spindles \u2014 so single digits, not hundreds",
+            "isTrap": false
+          },
+          {
+            "name": "Hot row contention",
+            "hash": "#c5",
+            "desc": "Every request updates the same row \u2014 a global counter, a popular product's stock. Even with correct locking, they serialize: 1,000 requests become 1,000 sequential updates on one row.",
+            "links": []
+          },
+          {
+            "name": "Cache stampede (thundering herd)",
+            "hash": "#c5",
+            "desc": "A popular cache key expires. In the same millisecond, 5,000 requests all miss, and all 5,000 hit the database with the same expensive query. The database falls over \u2014 because the cache was working well.",
+            "links": [],
+            "tip": "\ud83d\udea8 Thundering Herd Trap Never give many keys the same TTL. Warming a cache at deploy time with EX 3600 on everything means they all expire in the same second an hour later \u2014 a self-inflicted stampede, on a timer, in production. Add random jitter: EX 3600 + random(0..300) . Same principle as retry jitter, and the same failure if you skip it.",
+            "isTrap": true
+          },
+          {
+            "name": "Capacity estimation \u2014 do the arithmetic out loud",
+            "hash": "#c5",
+            "desc": "Master Capacity estimation \u2014 do the arithmetic out loud core concepts and interview defense.",
+            "links": [],
+            "tip": "\ud83d\udee1\ufe0f LLD Blueprint The point of capacity estimation is never the number \u2014 it's identifying which resource runs out first . Say the assumptions out loud, use round numbers, and finish with a named bottleneck. \"Writes are easy, disk growth is the problem, so retention policy is the real design decision\" is a complete answer. Numbers to keep handy: a da",
+            "isTrap": false
+          }
+        ]
+      },
+      {
+        "title": "06 Problem bank",
+        "topics": [
+          {
+            "name": "1 \u00b7 High-concurrency seat booking",
+            "hash": "#c6",
+            "desc": "Master 1 \u00b7 High-concurrency seat booking core concepts and interview defense.",
+            "links": [],
+            "tip": "\ud83d\udee1\ufe0f LLD Blueprint \u2014 what to say \"Two-phase booking with a TTL hold.\" Holding is separate from paying, because payment takes minutes and you cannot keep a database lock open across a payment gateway call. Specific seat \u2192 conditional UPDATE ... WHERE status='FREE' . Atomic, no lock held by the app, loser gets 409. Any N seats \u2192 FOR UPDATE SKIP LOCKED ",
+            "isTrap": false
+          },
+          {
+            "name": "2 \u00b7 In-memory key-value store with TTL + LRU",
+            "hash": "#c6",
+            "desc": "Master 2 \u00b7 In-memory key-value store with TTL + LRU core concepts and interview defense.",
+            "links": [],
+            "tip": "\ud83d\udcbb Machine Coding \u2014 the two things they're checking Is everything O(1)? Hash map for lookup, ordered structure for recency. Scanning to find the least-recently-used is the mistake \u2014 insertion-ordered Map (or hashmap + doubly linked list) makes eviction O(1). Lazy vs active expiry, and why you need both. Lazy alone (check on read) is O(1) and free, b",
+            "isTrap": false
+          },
+          {
+            "name": "3 \u00b7 Real-time leaderboard",
+            "hash": "#c6",
+            "desc": "Master 3 \u00b7 Real-time leaderboard core concepts and interview defense.",
+            "links": [],
+            "tip": "\ud83d\udee1\ufe0f LLD Blueprint \u2014 what to say \"Redis for ranking, Postgres for truth.\" Ranking a million players in SQL means ORDER BY score DESC over the whole table \u2014 fine for the top 10 with an index, but \"what's my rank?\" requires counting everyone above me, which is a full scan. A sorted set answers it in O(log N) because rank is maintained as part of the st",
+            "isTrap": false
+          },
+          {
+            "name": "4 \u00b7 Offline-first sync engine",
+            "hash": "#c6",
+            "desc": "Master 4 \u00b7 Offline-first sync engine core concepts and interview defense.",
+            "links": [],
+            "tip": "\ud83d\udea8 Sync Trap Never use client timestamps for last-write-wins. Device clocks are wrong, sometimes by hours, and a user can change theirs. A phone set five minutes fast wins every conflict forever. Use server-assigned timestamps or version counters. And deletes must be explicit. If a deleted row simply disappears from the server's response, the client",
+            "isTrap": true
           }
         ]
       }

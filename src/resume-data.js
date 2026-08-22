@@ -85,7 +85,8 @@ export const resumeData = {
       ],
       defenseJumps: [
         { label: "Nutri-Vision ML Defense", roadmap: "ml-dataeng-defense", hash: "#nv1" },
-        { label: "FastAPI Backend Notes", roadmap: "flask-fastapi", hash: "#fastapi-overview" }
+        { label: "FastAPI & Pydantic Notes", roadmap: "flask-fastapi", hash: "#c2" },
+        { label: "ML & Vision Fundamentals", roadmap: "first-principles", hash: "#c4" }
       ]
     },
     {
@@ -101,7 +102,8 @@ export const resumeData = {
       ],
       defenseJumps: [
         { label: "RecrutAI LLM Defense", roadmap: "ml-dataeng-defense", hash: "#ra1" },
-        { label: "AI/ML RAG & LLM Notes", roadmap: "aiml-stack", hash: "#rag-llm" }
+        { label: "AI/ML RAG & LLM Notes", roadmap: "aiml-stack", hash: "#m4" },
+        { label: "Next.js Rendering Notes", roadmap: "react-nextjs", hash: "#c3" }
       ]
     },
     {
@@ -117,8 +119,9 @@ export const resumeData = {
       ],
       defenseJumps: [
         { label: "Chessify SDE Defense", roadmap: "sde-defense", hash: "#ch1" },
-        { label: "Flask & Minimax Notes", roadmap: "flask-fastapi", hash: "#chessify" },
-        { label: "Next.js Frontend Notes", roadmap: "react-nextjs", hash: "#repo-overview" }
+        { label: "Real-Time Socket.IO Notes", roadmap: "node-express", hash: "#c3" },
+        { label: "Chess Engine LLD Blueprint", roadmap: "backend-lld", hash: "#c3" },
+        { label: "Flask AI Microservice Notes", roadmap: "flask-fastapi", hash: "#c4" }
       ]
     },
     {
@@ -134,7 +137,8 @@ export const resumeData = {
       ],
       defenseJumps: [
         { label: "StudySync SDE Defense", roadmap: "sde-defense", hash: "#ss1" },
-        { label: "Express Backend Notes", roadmap: "node-express", hash: "#study-overview" },
+        { label: "Auth & JWT Notes", roadmap: "node-express", hash: "#c4" },
+        { label: "Offline-First Sync Engine LLD", roadmap: "backend-lld", hash: "#c6" },
         { label: "Flutter Mobile Notes", roadmap: "flutter", hash: "#ss-overview" }
       ]
     },
@@ -151,7 +155,8 @@ export const resumeData = {
       ],
       defenseJumps: [
         { label: "SahYatri SDE Defense", roadmap: "sde-defense", hash: "#sy1" },
-        { label: "PostgreSQL Time-Series Notes", roadmap: "databases-cloud", hash: "#sahyatri-choice" }
+        { label: "Telemetry & Ingestion Notes", roadmap: "databases-cloud", hash: "#c4" },
+        { label: "Time-Series Telemetry Blueprint", roadmap: "backend-lld", hash: "#c4" }
       ]
     },
     {
@@ -167,7 +172,8 @@ export const resumeData = {
       ],
       defenseJumps: [
         { label: "SahYatri ML Defense", roadmap: "ml-dataeng-defense", hash: "#sy1" },
-        { label: "AI/ML CV & YOLOv5 Notes", roadmap: "aiml-stack", hash: "#sy-overview" }
+        { label: "Edge CV & YOLOv5 Notes", roadmap: "aiml-stack", hash: "#m3" },
+        { label: "First-Principles AI/ML", roadmap: "first-principles", hash: "#c4" }
       ]
     }
   ],

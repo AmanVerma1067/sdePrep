@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5">
+<title>First-Principles Engineering — Interview Notes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0e17; --surface: #111827; --surface2: #1a2234;
+    --border: #1e293b; --border-glow: #334155;
+    --text: #cbd5e1; --text-dim: #64748b; --white: #f1f5f9;
+    --accent: #38bdf8; --accent2: #818cf8; --green: #34d399;
+    --orange: #fbbf24; --red: #fb7185; --purple: #a78bfa; --cyan: #22d3ee;
+    --radius: 14px; --maxw: 760px;
+    --font: 'Inter', system-ui, -apple-system, sans-serif;
+    --mono: 'JetBrains Mono', 'SF Mono', Consolas, monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--bg); color: var(--text); font-family: var(--font);
+    font-size: 14.5px; line-height: 1.65; overflow-x: hidden; }
+
+  .scroll-progress { position: fixed; top: 0; left: 0; z-index: 200; height: 3px; width: 0%;
+    background: linear-gradient(90deg, var(--accent), var(--accent2), var(--purple));
+    transition: width 80ms linear; border-radius: 0 2px 2px 0; }
+
+  .topbar { position: sticky; top: 0; z-index: 100;
+    background: rgba(10, 14, 23, 0.82);
+    backdrop-filter: blur(16px) saturate(1.6); -webkit-backdrop-filter: blur(16px) saturate(1.6);
+    border-bottom: 1px solid var(--border); padding: 10px 16px;
+    display: flex; align-items: center; gap: 10px; }
+  .topbar .logo { display: flex; align-items: center; gap: 8px; font-weight: 800;
+    font-size: 13.5px; color: var(--white); white-space: nowrap; letter-spacing: -0.02em; }
+  .topbar .dot { width: 8px; height: 8px; border-radius: 50%; background: #22d3ee;
+    box-shadow: 0 0 10px #22d3ee; animation: pulse 2s ease-in-out infinite; }
+  @keyframes pulse { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: .6; transform: scale(.85); } }
+  .topbar select { flex: 1; max-width: 380px; background: var(--surface); color: var(--accent);
+    border: 1px solid var(--border); border-radius: 10px; padding: 8px 12px;
+    font-family: var(--font); font-size: 12.5px; font-weight: 500; outline: none;
+    cursor: pointer; transition: border-color .2s; }
+  .topbar select:focus { border-color: var(--accent); }
+
+  main { max-width: var(--maxw); margin: 0 auto; padding: 24px 16px 80px; }
+
+  .hero { margin-bottom: 28px; padding: 24px 20px;
+    background: linear-gradient(135deg, rgba(56,189,248,0.06), rgba(129,140,248,0.06), rgba(167,139,250,0.04));
+    border: 1px solid var(--border); border-radius: var(--radius); position: relative; overflow: hidden; }
+  .hero::before { content: ''; position: absolute; top: -40%; right: -20%; width: 260px; height: 260px;
+    background: radial-gradient(circle, rgba(56,189,248,0.08) 0%, transparent 70%);
+    border-radius: 50%; pointer-events: none; }
+  .hero h1 { font-size: 22px; font-weight: 800; color: var(--white);
+    letter-spacing: -0.03em; line-height: 1.3; margin-bottom: 6px; }
+  .hero .sub { color: var(--text-dim); font-size: 12.5px; line-height: 1.5; }
+  .badge-row { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 14px; }
+  .badge { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em;
+    padding: 4px 10px; border-radius: 20px; border: 1px solid var(--border);
+    background: rgba(56,189,248,0.06); color: var(--accent); white-space: nowrap; }
+
+  .projects { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 8px; margin-bottom: 20px; }
+  .chip { background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+    padding: 10px 12px; font-size: 11.5px; color: var(--text-dim);
+    transition: border-color .2s, transform .15s; line-height: 1.4; }
+  .chip:hover { border-color: var(--border-glow); transform: translateY(-1px); }
+  .chip a { color: var(--accent); text-decoration: none; font-weight: 600; }
+  .chip a:hover { text-decoration: underline; }
+  .chip .emoji { margin-right: 4px; }
+
+  .calib { background: rgba(251,191,36,0.05); border: 1px solid rgba(251,191,36,0.22);
+    border-radius: 10px; padding: 12px 14px; margin-bottom: 26px; font-size: 12px; line-height: 1.55; }
+  .calib b { color: var(--orange); }
+
+  section.cluster { background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 20px 18px; margin-bottom: 16px;
+    scroll-margin-top: 60px; transition: border-color .25s; animation: fadeUp .4s ease both; }
+  section.cluster:hover { border-color: var(--border-glow); }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+  section.cluster > h2 { font-size: 16.5px; font-weight: 700; color: var(--white);
+    padding-bottom: 10px; margin-bottom: 14px; border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 10px; letter-spacing: -0.01em; }
+  section.cluster > h2 .idx { font-size: 10px; font-weight: 700; color: var(--accent);
+    background: rgba(56,189,248,0.1); border: 1px solid rgba(56,189,248,0.2);
+    border-radius: 6px; padding: 3px 8px; letter-spacing: .04em; }
+
+  h3 { font-size: 14px; font-weight: 700; color: var(--cyan); margin: 18px 0 8px; }
+  h4 { font-size: 12.5px; font-weight: 600; color: var(--orange); margin: 14px 0 6px; }
+  p { margin: 7px 0; font-size: 13px; }
+  ul, ol { padding-left: 18px; margin: 6px 0; }
+  li { margin: 3px 0; font-size: 13px; }
+  code { background: rgba(30,41,59,.8); color: var(--green); padding: 2px 6px;
+    border-radius: 5px; font-family: var(--mono); font-size: 11.5px; }
+  .fml { display: block; text-align: center; background: rgba(30,41,59,.5);
+    border: 1px solid var(--border); border-radius: 8px; padding: 9px 10px; margin: 9px 0;
+    font-family: var(--mono); font-size: 12px; color: var(--cyan); overflow-x: auto; white-space: nowrap; }
+
+  .tw { overflow-x: auto; margin: 10px 0; border: 1px solid var(--border);
+    border-radius: 10px; -webkit-overflow-scrolling: touch; }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; min-width: 420px; }
+  thead th { background: var(--surface2); color: var(--accent); font-size: 10.5px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: .05em; padding: 9px 10px; text-align: left;
+    white-space: nowrap; border-bottom: 1px solid var(--border); position: sticky; top: 0; }
+  tbody td { padding: 8px 10px; border-bottom: 1px solid rgba(30,41,59,.5);
+    vertical-align: top; color: var(--text); }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover { background: rgba(56,189,248,.03); }
+  tbody td:first-child { color: var(--white); font-weight: 600; white-space: nowrap; }
+
+  .box { border-radius: 10px; padding: 12px 14px; margin: 10px 0; font-size: 12.5px;
+    line-height: 1.55; border-left: 3px solid; }
+  .box .label { font-weight: 700; font-size: 10.5px; text-transform: uppercase;
+    letter-spacing: .05em; margin-bottom: 5px; display: flex; align-items: center; gap: 5px; }
+  .box p { margin: 3px 0; font-size: 12.5px; }
+  .box ul { margin: 4px 0; } .box li { font-size: 12.5px; }
+  .box.trap { background: rgba(251,113,133,.06); border-color: var(--red); }
+  .box.trap .label { color: var(--red); }
+  .box.insight { background: rgba(52,211,153,.06); border-color: var(--green); }
+  .box.insight .label { color: var(--green); }
+  .box.sde { background: rgba(56,189,248,.06); border-color: var(--accent); }
+  .box.sde .label { color: var(--accent); }
+  .box.mlde { background: rgba(167,139,250,.06); border-color: var(--purple); }
+  .box.mlde .label { color: var(--purple); }
+
+  details.snippet { background: #0c1018; border: 1px solid var(--border);
+    border-radius: 10px; margin: 10px 0; overflow: hidden; }
+  details.snippet summary { cursor: pointer; padding: 9px 14px; color: var(--text-dim);
+    font-size: 12px; font-weight: 600; font-family: var(--font); list-style: none;
+    display: flex; align-items: center; gap: 7px; user-select: none; transition: color .2s; }
+  details.snippet summary:hover { color: var(--accent); }
+  details.snippet summary::-webkit-details-marker { display: none; }
+  details.snippet summary::before { content: "▸"; color: var(--accent);
+    display: inline-block; transition: transform .15s ease; }
+  details.snippet[open] summary::before { transform: rotate(90deg); }
+  details.snippet pre { margin: 0; padding: 12px 14px; overflow-x: auto;
+    font-family: var(--mono); font-size: 12px; line-height: 1.55; color: var(--text); }
+
+  .qa { background: rgba(17,24,39,.6); border: 1px solid var(--border); border-radius: 10px;
+    padding: 14px; margin: 10px 0; transition: border-color .2s; }
+  .qa:hover { border-color: var(--border-glow); }
+  .qa .q { color: var(--white); font-weight: 600; font-size: 13px; margin-bottom: 7px; line-height: 1.45; }
+  .qa .q .qnum { color: var(--accent); margin-right: 6px; }
+  .track-tag { display: inline-block; font-size: 9.5px; font-weight: 700; letter-spacing: .06em;
+    text-transform: uppercase; padding: 3px 8px; border-radius: 6px; margin-bottom: 8px; }
+  .track-a { background: rgba(56,189,248,.1); color: var(--accent); border: 1px solid rgba(56,189,248,.25); }
+  .track-b { background: rgba(167,139,250,.1); color: var(--purple); border: 1px solid rgba(167,139,250,.25); }
+
+  hr.divider { border: none; border-top: 1px dashed var(--border); margin: 20px 0; }
+  footer { max-width: var(--maxw); margin: 0 auto; padding: 20px 16px 40px;
+    color: var(--text-dim); font-size: 11px; text-align: center; border-top: 1px solid var(--border); }
+
+  @media (max-width: 640px) {
+    body { font-size: 14px; }
+    main { padding: 16px 12px 60px; }
+    .hero { padding: 18px 16px; } .hero h1 { font-size: 19px; }
+    section.cluster { padding: 16px 14px; }
+    section.cluster > h2 { font-size: 15px; }
+    .projects { grid-template-columns: 1fr 1fr; gap: 6px; }
+    .chip { padding: 8px 10px; font-size: 10.5px; }
+    .topbar .logo span.full { display: none; }
+    table { font-size: 11px; min-width: 360px; }
+    thead th { font-size: 9.5px; padding: 7px 8px; }
+    tbody td { padding: 7px 8px; }
+    h3 { font-size: 13.5px; } p, li { font-size: 12.5px; }
+    .box { padding: 10px 12px; font-size: 12px; }
+    .box p, .box li { font-size: 12px; }
+    .qa .q { font-size: 12.5px; } .fml { font-size: 11px; }
+  }
+  @media (max-width: 380px) {
+    .projects { grid-template-columns: 1fr; }
+    .hero h1 { font-size: 17px; }
+    .topbar select { font-size: 11.5px; padding: 7px 10px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    section.cluster { animation: none; }
+    .topbar .dot { animation: none; }
+  }
+
+  /* Track filters */
+  .topbar-left { display: flex; align-items: center; gap: 10px; flex: 1 1 auto; min-width: 220px; }
+  .track-btns { display: flex; gap: 5px; align-items: center; }
+  .tb { background: var(--surface); color: var(--text-dim); border: 1px solid var(--border);
+    border-radius: 8px; padding: 6px 10px; font-size: 11.5px; font-family: var(--mono);
+    font-weight: 600; cursor: pointer; transition: all .2s ease; white-space: nowrap; }
+  .tb:hover { color: var(--white); border-color: var(--border-glow); }
+  .tb[aria-pressed="true"] { color: var(--white); background: rgba(56, 189, 248, 0.14); border-color: var(--accent); }
+
+  body[data-track="sde"] .box.mlde,
+  body[data-track="sde"] .qa.track-b,
+  body[data-track="sde"] .qa-track-b,
+  body[data-track="sde"] .callout.mlde { display: none !important; }
+
+  body[data-track="ml"] .box.sde,
+  body[data-track="ml"] .qa.track-a,
+  body[data-track="ml"] .qa-track-a,
+  body[data-track="ml"] .callout.sde { display: none !important; }
+
+</style>
+</head>
+<body>
+<div class="scroll-progress" id="scrollProg"></div>
+<style>
+  .ascii { background:#0c1018; border:1px solid var(--border); border-radius:10px;
+    padding:12px 14px; margin:10px 0; overflow-x:auto; font-family:var(--mono);
+    font-size:11.5px; line-height:1.5; color:var(--text); white-space:pre; }
+  @media (max-width:640px){ .ascii{ font-size:10px; } }
+  .spoken { background:rgba(52,211,153,0.05); border:1px solid rgba(52,211,153,0.25);
+    border-radius:10px; padding:13px 15px; margin:11px 0; font-size:12.8px; line-height:1.6; }
+  .spoken .lbl { font-family:var(--mono); font-size:10.5px; letter-spacing:.07em;
+    text-transform:uppercase; color:var(--green); font-weight:700; display:block; margin-bottom:6px; }
+  .spoken em { color:var(--white); font-style:normal; }
+
+  /* Track filters */
+  .topbar-left { display: flex; align-items: center; gap: 10px; flex: 1 1 auto; min-width: 220px; }
+  .track-btns { display: flex; gap: 5px; align-items: center; }
+  .tb { background: var(--surface); color: var(--text-dim); border: 1px solid var(--border);
+    border-radius: 8px; padding: 6px 10px; font-size: 11.5px; font-family: var(--mono);
+    font-weight: 600; cursor: pointer; transition: all .2s ease; white-space: nowrap; }
+  .tb:hover { color: var(--white); border-color: var(--border-glow); }
+  .tb[aria-pressed="true"] { color: var(--white); background: rgba(56, 189, 248, 0.14); border-color: var(--accent); }
+
+  body[data-track="sde"] .box.mlde,
+  body[data-track="sde"] .qa.track-b,
+  body[data-track="sde"] .qa-track-b,
+  body[data-track="sde"] .callout.mlde { display: none !important; }
+
+  body[data-track="ml"] .box.sde,
+  body[data-track="ml"] .qa.track-a,
+  body[data-track="ml"] .qa-track-a,
+  body[data-track="ml"] .callout.sde { display: none !important; }
+
+</style>
+
+<div class="topbar">
+  <div class="topbar-left">
+    <div class="logo">
+      <span class="dot"></span>
+      <span class="full">First-Principles Core</span>
+    </div>
+    <select id="jump" aria-label="Jump to section">
+    <option value="">Jump to…</option>
+    <option value="c1">1 · Browser &amp; frontend runtime</option>
+    <option value="c2">2 · Networking, HTTP &amp; security</option>
+    <option value="c3">3 · Database fundamentals</option>
+    <option value="c4">4 · AI / ML fundamentals</option>
+    <option value="c5">5 · Spoken answer templates</option>
+  </select>
+  </div>
+  <div class="track-btns" role="group" aria-label="Filter by track">
+    <button class="tb" data-filter="all" aria-pressed="true">ALL</button>
+    <button class="tb" data-filter="sde" aria-pressed="false">SDE</button>
+    <button class="tb" data-filter="ml" aria-pressed="false">ML/AI</button>
+  </div>
+</div>
+<main>
+
+<div class="hero">
+  <h1>First-Principles Engineering</h1>
+  <p class="sub">Universal frontend, backend, database and ML foundations — no frameworks, no buzzwords. The stuff that stays true after React, Postgres and PyTorch have all been replaced.</p>
+  <div class="badge-row">
+    <span class="badge">5 Clusters</span>
+    <span class="badge">Framework-Agnostic</span>
+    <span class="badge">Spoken Templates</span>
+  </div>
+</div>
+
+<div class="calib">
+  <b>Why this doc exists:</b> framework questions test what you've used. First-principles questions test whether you understand what's underneath — and they're what separates candidates when everyone lists the same tools. Every section here ends in something you can <em>say</em>, not just something you know.
+</div>
+
+
+<!-- ============== C1 ============== -->
+<section class="cluster" id="c1">
+  <h2><span class="idx">01</span> Browser &amp; frontend runtime</h2>
+
+  <h3>The Critical Rendering Path</h3>
+  <p>What the browser does between receiving HTML and showing pixels:</p>
+
+  <div class="ascii">   HTML ──parse──► DOM  ┐
+                        ├──► Render Tree ──► Layout ──► Paint ──► Composite
+   CSS  ──parse──► CSSOM ┘   (visible only)   (where)   (what)   (layers→screen)
+
+   Layout  = compute size and position of every box   (expensive)
+   Paint   = fill in pixels: colours, text, shadows   (medium)
+   Composite = stack the painted layers on the GPU    (cheap)</div>
+
+  <p>The render tree contains only what's <em>visible</em>. An element with <code>display:none</code> never enters it. <code>visibility:hidden</code> does enter it — it takes up space, so it must be laid out.</p>
+
+  <h3>Reflow vs repaint</h3>
+  <div class="tw"><table>
+    <thead><tr><th>You change…</th><th>Triggers</th><th>Cost</th></tr></thead>
+    <tbody>
+      <tr><td><code>width</code>, <code>height</code>, <code>margin</code>, <code>padding</code>, <code>font-size</code></td><td><strong>Reflow</strong> → repaint → composite</td><td>Highest — may re-layout the whole page</td></tr>
+      <tr><td><code>color</code>, <code>background</code>, <code>box-shadow</code>, <code>visibility</code></td><td><strong>Repaint</strong> → composite</td><td>Medium</td></tr>
+      <tr><td><code>transform</code>, <code>opacity</code></td><td><strong>Composite only</strong></td><td>Lowest — GPU, no layout, no paint</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="box trap">
+    <div class="label">🚨 First-Principles Trap</div>
+    <p><strong>Layout thrashing.</strong> Reading a layout property (<code>offsetTop</code>, <code>offsetWidth</code>, <code>getBoundingClientRect</code>) forces the browser to flush pending changes and compute layout <em>right now</em>, because it must give you an accurate answer. So a loop that writes a style then reads a position triggers a full reflow on every iteration:</p>
+    <p><code>for (el of els) { el.style.width = x + 'px'; console.log(el.offsetWidth); }</code> — 100 elements, 100 forced layouts.</p>
+    <p><strong>Fix: batch reads, then batch writes.</strong> Read all the values first, then apply all the changes. One layout instead of a hundred.</p>
+    <p>Related: this is exactly <em>why</em> CSS animations should use <code>transform</code> and <code>opacity</code> rather than <code>left</code> and <code>width</code>. Animating <code>left</code> reflows every frame and drops below 60fps; animating <code>transform</code> is a GPU composite and stays smooth.</p>
+  </div>
+
+  <h3><code>async</code> vs <code>defer</code></h3>
+  <div class="ascii">  &lt;script&gt;            HTML parse ──[STOP]── download ── execute ──[RESUME]──
+                      (blocks everything — worst case)
+
+  &lt;script async&gt;      HTML parse ────────────────────────────────────────
+                            download ─── execute (parse PAUSES here)
+                      → runs as soon as it lands. ORDER NOT GUARANTEED.
+
+  &lt;script defer&gt;      HTML parse ────────────────────────────► DOM ready
+                            download                    execute (in order)
+                      → after parsing, IN DOCUMENT ORDER. The safe default.</div>
+  <p><strong>Rule of thumb:</strong> <code>defer</code> for anything that touches the DOM or depends on another script. <code>async</code> only for independent scripts that don't care about order or the DOM — analytics being the classic example.</p>
+
+  <h3>The DOM and event flow</h3>
+  <p>An event travels in three phases: <strong>capturing</strong> (window down to the target), <strong>target</strong>, then <strong>bubbling</strong> (target back up to window). Listeners default to the bubbling phase; pass <code>true</code> as the third argument to catch it on the way down.</p>
+
+  <div class="ascii">           window
+             │  ▲
+    capture  ▼  │  bubble
+           document
+             │  ▲
+             ▼  │
+            &lt;ul&gt;         ← ONE listener here handles all &lt;li&gt; clicks
+             │  ▲
+             ▼  │
+            &lt;li&gt;  ← target</div>
+
+  <div class="box sde">
+    <div class="label">🛡️ SDE Core</div>
+    <p><strong>Event delegation</strong> is why bubbling matters practically. Instead of attaching 1,000 listeners to 1,000 list items — 1,000 objects in memory, all needing cleanup — attach <em>one</em> to the parent and read <code>event.target</code> to find which child was clicked.</p>
+    <p>Two wins beyond memory: it automatically works for items added <em>later</em> (a newly inserted row needs no listener), and there's one thing to remove on teardown instead of a thousand. This is exactly what React does internally — it attaches a small number of listeners at the root rather than one per element.</p>
+    <p>Know the difference between <code>stopPropagation()</code> (halts the journey up the tree) and <code>preventDefault()</code> (allows propagation but cancels the browser's default action, like following a link).</p>
+  </div>
+
+  <h3>The browser event loop</h3>
+  <div class="ascii">  ┌─────────────┐   offload   ┌──────────────┐
+  │  Call Stack │ ──────────► │   Web APIs   │  timers, fetch, DOM events
+  │ (one thread)│             └──────┬───────┘
+  └──────▲──────┘                    │ done
+         │                           ▼
+         │              ┌─────────────────────────┐
+         │              │  Macrotask queue        │  setTimeout, I/O, events
+         │              ├─────────────────────────┤
+         └──────────────┤  Microtask queue        │  Promise.then, queueMicrotask
+      event loop:       └─────────────────────────┘
+      1. run stack to empty
+      2. DRAIN ALL microtasks      ← every single one
+      3. take ONE macrotask
+      4. repeat (render between steps)</div>
+
+  <div class="box trap">
+    <div class="label">🚨 First-Principles Trap</div>
+    <p><strong>Microtasks drain completely; macrotasks are taken one at a time.</strong> That asymmetry is the whole answer to ordering puzzles — and it means a promise that schedules another promise, recursively, <em>starves the queue</em>. The page freezes and no timer ever fires, because step 2 never finishes.</p>
+    <p>The classic ordering question: <code>console.log('A'); setTimeout(()=&gt;log('D'),0); Promise.resolve().then(()=&gt;log('C')); console.log('B');</code> → <strong>A, B, C, D</strong>. Sync code first, then all microtasks, then macrotasks. And <code>setTimeout(fn, 0)</code> does not mean "now" — it means "after the stack empties and all microtasks are done."</p>
+  </div>
+
+  <h3>Memory and garbage collection</h3>
+  <p><strong>Mark-and-sweep:</strong> start from the roots (globals, the current call stack), mark everything reachable, delete everything unmarked. So an object is freed when it's <em>unreachable</em>, not when it's "unused."</p>
+  <p>Common leaks, all the same shape — something still holds a reference:</p>
+  <ul>
+    <li>An event listener never removed keeps its closure, and everything the closure captured, alive.</li>
+    <li>A <code>setInterval</code> never cleared keeps running and keeps its callback reachable.</li>
+    <li>A detached DOM node still referenced by a variable — removed from the page, still in memory.</li>
+    <li>A cache or array that only ever grows.</li>
+  </ul>
+
+  <h3>Client-side storage</h3>
+  <div class="tw"><table>
+    <thead><tr><th>&nbsp;</th><th>Cookie</th><th>localStorage</th><th>sessionStorage</th><th>IndexedDB</th></tr></thead>
+    <tbody>
+      <tr><td>Size</td><td>~4 KB</td><td>~5–10 MB</td><td>~5–10 MB</td><td>Hundreds of MB</td></tr>
+      <tr><td>Sent to server</td><td><strong>Automatically, every request</strong></td><td>No</td><td>No</td><td>No</td></tr>
+      <tr><td>Lifetime</td><td>Set by expiry</td><td>Until cleared</td><td>Until tab closes</td><td>Until cleared</td></tr>
+      <tr><td>JS can read</td><td>No, if <code>HttpOnly</code></td><td>Yes</td><td>Yes</td><td>Yes</td></tr>
+      <tr><td>API</td><td>String</td><td>Sync string</td><td>Sync string</td><td>Async, transactional</td></tr>
+    </tbody>
+  </table></div>
+  <p>Cookie flags that matter: <strong><code>HttpOnly</code></strong> (JavaScript can't read it — blocks XSS token theft), <strong><code>Secure</code></strong> (HTTPS only), <strong><code>SameSite</code></strong> — <code>Strict</code> never sends cross-site, <code>Lax</code> sends on top-level navigation only, <code>None</code> always sends and requires <code>Secure</code>.</p>
+
+  <div class="box trap">
+    <div class="label">🚨 First-Principles Trap</div>
+    <p><strong>"Where do I store the auth token?" has no safe answer — you're choosing which attack to defend.</strong></p>
+    <p><code>localStorage</code> is readable by any JavaScript on your page, so one XSS — including from a compromised npm dependency — steals the token. An <code>HttpOnly</code> cookie is unreadable by JS, but it's sent <em>automatically</em> on every request to your domain, which is precisely what makes CSRF possible.</p>
+    <p>The usual production answer: <code>HttpOnly; Secure; SameSite=Strict</code> cookies, since <code>SameSite</code> defeats most CSRF, plus a CSRF token for anything sensitive. Bearer headers for mobile clients that have no cookie jar. State the trade-off rather than picking one and calling it "secure."</p>
+  </div>
+
+  <h3>Same-Origin Policy and CORS</h3>
+  <p>An <strong>origin</strong> is <code>protocol + domain + port</code>. All three must match. <code>https://a.com</code> and <code>http://a.com</code> are different origins; so are <code>a.com</code> and <code>api.a.com</code>; so are ports 80 and 3000.</p>
+  <p>The Same-Origin Policy stops page A reading a response from origin B. <strong>CORS is the server's way of granting an exception</strong> — a set of response headers saying "this origin is allowed."</p>
+
+  <div class="ascii">SIMPLE REQUEST (GET/POST, basic headers)
+  browser ──── GET /data ────► server
+          ◄─── Access-Control-Allow-Origin: https://app.com
+
+PREFLIGHT (PUT/DELETE, custom headers, JSON content-type)
+  browser ──── OPTIONS /data ────►  "may I send a PUT with Authorization?"
+              Access-Control-Request-Method: PUT
+          ◄─── Access-Control-Allow-Origin: https://app.com
+               Access-Control-Allow-Methods: PUT, DELETE
+               Access-Control-Allow-Headers: Authorization
+               Access-Control-Max-Age: 86400      ← cache it, skip future preflights
+  browser ──── PUT /data ────►  only now does the real request go</div>
+
+  <div class="box trap">
+    <div class="label">🚨 First-Principles Trap</div>
+    <p><strong>CORS is enforced by the browser, not the server — and it is not a security feature for your API.</strong> The request usually <em>reaches</em> your server and executes; the browser just refuses to hand the response to JavaScript. A curl request, a mobile app or a script ignores CORS entirely. So CORS protects <em>users</em> from malicious pages, not your API from attackers. Your API still needs real authentication.</p>
+    <p>And <code>Access-Control-Allow-Origin: *</code> cannot be combined with <code>Allow-Credentials: true</code> — browsers reject it, because "any site may send authenticated requests and read the results" would be catastrophic. With credentials you must name the exact origin.</p>
+  </div>
+
+  <h3>Core Web Vitals</h3>
+  <div class="tw"><table>
+    <thead><tr><th>Metric</th><th>Measures</th><th>Good</th><th>Usually caused by</th></tr></thead>
+    <tbody>
+      <tr><td><strong>LCP</strong></td><td>When the biggest element appears</td><td>&lt; 2.5 s</td><td>Slow server, huge images, render-blocking CSS</td></tr>
+      <tr><td><strong>INP</strong></td><td>Delay from interaction to visual response</td><td>&lt; 200 ms</td><td>Long JS tasks blocking the main thread</td></tr>
+      <tr><td><strong>CLS</strong></td><td>How much content jumps around</td><td>&lt; 0.1</td><td>Images without dimensions, injected banners, late fonts</td></tr>
+    </tbody>
+  </table></div>
+  <p>Each maps to a first-principle: LCP is <em>network + rendering path</em>, INP is <em>the single-threaded event loop</em>, CLS is <em>layout running again after paint</em>. Setting <code>width</code> and <code>height</code> on images fixes most CLS on its own — it lets the browser reserve the space before the image arrives.</p>
+</section>
+
+
+<!-- ============== C2 ============== -->
+<section class="cluster" id="c2">
+  <h2><span class="idx">02</span> Networking, HTTP &amp; security</h2>
+
+  <h3>OSI vs TCP/IP</h3>
+  <div class="tw"><table>
+    <thead><tr><th>OSI (7)</th><th>TCP/IP (4)</th><th>Example</th></tr></thead>
+    <tbody>
+      <tr><td>Application / Presentation / Session</td><td>Application</td><td>HTTP, DNS, TLS</td></tr>
+      <tr><td>Transport</td><td>Transport</td><td>TCP, UDP</td></tr>
+      <tr><td>Network</td><td>Internet</td><td>IP, routing</td></tr>
+      <tr><td>Data Link / Physical</td><td>Link</td><td>Ethernet, Wi-Fi</td></tr>
+    </tbody>
+  </table></div>
+  <p>OSI is the teaching model; TCP/IP is what actually runs. The useful idea from either is <strong>encapsulation</strong>: each layer wraps the one above in its own header and doesn't care what's inside.</p>
+
+  <h3>TCP vs UDP</h3>
+  <div class="ascii">TCP — 3-way handshake before any data moves
+
+  client                          server
+    │ ── SYN (seq=x) ──────────────► │      "let's talk"
+    │ ◄─ SYN-ACK (seq=y, ack=x+1) ── │      "sure, and I hear you"
+    │ ── ACK (ack=y+1) ────────────► │      "confirmed"
+    │ ══════ data flows ═══════════  │
+                                        1 round trip before byte one.</div>
+
+  <div class="tw"><table>
+    <thead><tr><th>&nbsp;</th><th>TCP</th><th>UDP</th></tr></thead>
+    <tbody>
+      <tr><td>Connection</td><td>Handshake first</td><td>None — just send</td></tr>
+      <tr><td>Lost packets</td><td>Retransmitted</td><td>Gone</td></tr>
+      <tr><td>Order</td><td>Guaranteed</td><td>Not guaranteed</td></tr>
+      <tr><td>Flow/congestion control</td><td>Yes</td><td>No</td></tr>
+      <tr><td>Overhead</td><td>20-byte header + ACKs</td><td>8-byte header</td></tr>
+      <tr><td>Use</td><td>Web, APIs, file transfer, DB</td><td>Video calls, games, DNS, streaming</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="box insight">
+    <div class="label">💡 Mental Model</div>
+    <p><strong>TCP is registered post; UDP is shouting across a room.</strong> The choice is: <em>is a late packet still useful?</em></p>
+    <p>In a video call, a frame that arrives 400 ms late is worthless — you'd rather have a brief glitch than a call that runs progressively behind. UDP drops it and moves on. In a file download, every byte matters no matter how late, so TCP retransmits. <strong>Reliability isn't universally good — it costs latency, and sometimes latency is what you're buying.</strong></p>
+  </div>
+
+  <h3>TLS in one paragraph</h3>
+  <p>Asymmetric crypto (slow, but no shared secret needed) is used <em>once</em> to verify the server's certificate and agree a session key. Everything after that uses symmetric crypto (fast) with that key. <strong>Asymmetric to establish trust, symmetric to move data</strong> — that sentence is the whole answer, and it explains why HTTPS isn't meaningfully slower once connected.</p>
+
+  <h3>HTTP versions</h3>
+  <div class="tw"><table>
+    <thead><tr><th>&nbsp;</th><th>HTTP/1.1</th><th>HTTP/2</th><th>HTTP/3</th></tr></thead>
+    <tbody>
+      <tr><td>Transport</td><td>TCP</td><td>TCP</td><td><strong>QUIC over UDP</strong></td></tr>
+      <tr><td>Format</td><td>Text</td><td>Binary frames</td><td>Binary frames</td></tr>
+      <tr><td>Parallel requests</td><td>One at a time per connection</td><td>Multiplexed on one connection</td><td>Multiplexed, truly independent</td></tr>
+      <tr><td>Headers</td><td>Repeated in full</td><td>Compressed (HPACK)</td><td>Compressed (QPACK)</td></tr>
+      <tr><td>Head-of-line blocking</td><td>At application layer</td><td><strong>Still at TCP layer</strong></td><td>Eliminated</td></tr>
+      <tr><td>Reconnect</td><td>Full handshake</td><td>Full handshake</td><td>0-RTT resumption</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="box trap">
+    <div class="label">🚨 First-Principles Trap</div>
+    <p><strong>"HTTP/2 fixed head-of-line blocking" is only half right</strong>, and the other half is the good answer. HTTP/2 fixed it at the <em>application</em> layer — ten requests share one connection instead of queueing. But they still share one <em>TCP</em> stream, and TCP guarantees in-order delivery. So one lost packet stalls <em>every</em> multiplexed request until it's retransmitted, even requests whose data already arrived.</p>
+    <p>HTTP/3 moves to QUIC over UDP precisely to escape this: streams are independent at the transport layer, so a lost packet stalls only its own stream. <strong>That's why HTTP/3 uses UDP</strong> — not because UDP is faster, but because TCP's ordering guarantee was the bottleneck.</p>
+  </div>
+
+  <h3>REST's six constraints</h3>
+  <ol>
+    <li><strong>Client-server</strong> — separate concerns, evolve independently.</li>
+    <li><strong>Stateless</strong> — every request carries everything needed. No server-side session memory.</li>
+    <li><strong>Cacheable</strong> — responses say whether they can be cached.</li>
+    <li><strong>Layered</strong> — a client can't tell if it's talking to the server or a proxy/CDN.</li>
+    <li><strong>Uniform interface</strong> — resources, standard verbs, self-describing messages.</li>
+    <li><strong>Code-on-demand</strong> (optional) — the server may send executable code.</li>
+  </ol>
+  <p><strong>Statelessness is the one that carries the weight</strong>, because it's what makes horizontal scaling possible: any server can handle any request, so you add servers behind a load balancer without sticky sessions.</p>
+
+  <h3>Safe vs idempotent</h3>
+  <div class="tw"><table>
+    <thead><tr><th>Verb</th><th>Safe (no change)</th><th>Idempotent (repeat = same end state)</th></tr></thead>
+    <tbody>
+      <tr><td>GET, HEAD</td><td>✅</td><td>✅</td></tr>
+      <tr><td>PUT</td><td>❌</td><td>✅ — sets to the same value</td></tr>
+      <tr><td>DELETE</td><td>❌</td><td>✅ — already gone stays gone</td></tr>
+      <tr><td>POST</td><td>❌</td><td>❌ — creates a new thing each time</td></tr>
+      <tr><td>PATCH</td><td>❌</td><td>Depends — <code>set x=5</code> yes, <code>increment x</code> no</td></tr>
+    </tbody>
+  </table></div>
+  <p>This isn't trivia: it's <em>why</em> a browser or proxy can safely retry a GET on a flaky connection, and why a POST needs an idempotency key before it can be retried.</p>
+
+  <h3>Status codes</h3>
+  <div class="tw"><table>
+    <thead><tr><th>Class</th><th>Codes worth knowing exactly</th></tr></thead>
+    <tbody>
+      <tr><td>2xx</td><td>200 OK · 201 Created · 204 No Content (success, nothing to return)</td></tr>
+      <tr><td>3xx</td><td>301 Moved Permanently (cached forever — be careful) · 302/307 Temporary · <strong>304 Not Modified</strong> (your cached copy is still good)</td></tr>
+      <tr><td>4xx</td><td>400 Bad Request · <strong>401</strong> not authenticated · <strong>403</strong> authenticated but not allowed · 404 Not Found · 409 Conflict · 422 valid syntax, invalid content</td></tr>
+      <tr><td>5xx</td><td>500 Internal · <strong>502</strong> Bad Gateway (upstream sent garbage) · <strong>503</strong> Unavailable (overloaded/down) · <strong>504</strong> Gateway Timeout (upstream too slow)</td></tr>
+    </tbody>
+  </table></div>
+  <p>The 401/403 distinction is the most-tested: <strong>401 means "I don't know who you are", 403 means "I know exactly who you are and you still can't."</strong> And 502/503/504 tell you <em>where</em> the failure is, which is why they matter in debugging.</p>
+
+  <h3>Caching headers</h3>
+  <details class="snippet">
+    <summary>Cache-Control and conditional requests</summary>
+    <pre>Cache-Control: max-age=3600      # reuse for 1h without asking
+Cache-Control: no-cache          # you MAY store it, but revalidate before using
+Cache-Control: no-store          # never write to disk (sensitive data)
+Cache-Control: private           # browser only, not shared CDN caches
+Cache-Control: immutable         # never changes — for hashed asset filenames
+
+# Conditional request — saves bandwidth, not a round trip
+  server ─► ETag: "abc123"
+  browser ─► GET /data
+             If-None-Match: "abc123"
+  server ─► 304 Not Modified   (empty body — the browser reuses its copy)</pre>
+  </details>
+  <p><code>no-cache</code> is the most misread header name in HTTP: it does <strong>not</strong> mean "don't cache." It means "cache it, but check with me before you use it." <code>no-store</code> is the one that means don't cache.</p>
+
+  <h3>Sessions vs JWTs</h3>
+  <div class="ascii">STATEFUL SESSION                    STATELESS JWT
+  cookie: sid=abc123                  header.payload.signature
+        │                                     │
+        ▼                                     ▼
+  server looks up abc123              server verifies the signature
+  in a session store                  using a key it already has
+        │                                     │
+  ✅ revoke instantly (delete it)      ✅ no lookup, scales freely
+  ❌ needs shared storage              ❌ valid until it expires —
+     across all servers                   you cannot "log out"</div>
+
+  <div class="box sde">
+    <div class="label">🛡️ SDE Core</div>
+    <p><strong>The trade is revocation versus lookup.</strong> Sessions can be killed instantly but require shared state every request. JWTs need no lookup but stay valid until <code>exp</code>, so logout is a client-side illusion.</p>
+    <p>The standard resolution: <strong>short access token (~15 min) + long refresh token stored server-side.</strong> The short life bounds the damage from theft, and the refresh token — because it <em>is</em> tracked — can be revoked. You've reintroduced state, but only on one endpoint instead of all of them, which is the actual insight. If someone asks "how do you log a JWT user out?", "you can't, so here's how the design works around it" is the answer.</p>
+    <p>Also: <strong>a JWT is signed, not encrypted.</strong> Anyone can decode the payload. Signing proves it wasn't altered; it hides nothing. Never put secrets in claims.</p>
+  </div>
+
+  <h3>XSS vs CSRF</h3>
+  <div class="tw"><table>
+    <thead><tr><th>&nbsp;</th><th>XSS</th><th>CSRF</th></tr></thead>
+    <tbody>
+      <tr><td>Attack</td><td>Attacker's JS runs on <em>your</em> page</td><td>Attacker's page makes the browser send a request to your site</td></tr>
+      <tr><td>Needs</td><td>Unescaped user input rendered as HTML</td><td>The victim already logged in + cookies sent automatically</td></tr>
+      <tr><td>Can read the response</td><td>Yes — full control</td><td><strong>No</strong> — only fires the request</td></tr>
+      <tr><td>Defence</td><td>Escape output, Content-Security-Policy, <code>HttpOnly</code></td><td><code>SameSite</code> cookies, CSRF tokens, check Origin</td></tr>
+    </tbody>
+  </table></div>
+  <p><strong>Types of XSS:</strong> <em>stored</em> (the payload is saved in your database and served to everyone), <em>reflected</em> (bounced back from a URL parameter), <em>DOM-based</em> (never touches the server — client JS writes untrusted data into the page).</p>
+
+  <div class="box trap">
+    <div class="label">🚨 First-Principles Trap</div>
+    <p><strong>XSS defeats every CSRF defence.</strong> If an attacker can run JavaScript on your origin, they can read your CSRF token and send perfectly valid requests. So the defences aren't equal partners — <strong>fix XSS first</strong>, because CSRF protection assumes your page isn't already compromised.</p>
+    <p>And the subtle one: CSRF works precisely <em>because</em> the browser is being helpful. Cookies are attached automatically to any request to your domain, including one triggered by a form on <code>evil.com</code>. The attacker never sees the response — they just need the side effect (transfer money, change email) to happen. That's why <code>SameSite</code> is such an effective fix: it stops the automatic attachment.</p>
+  </div>
+</section>
+
+
+<!-- ============== C3 ============== -->
+<section class="cluster" id="c3">
+  <h2><span class="idx">03</span> Database fundamentals</h2>
+
+  <h3>Storage models</h3>
+  <div class="tw"><table>
+    <thead><tr><th>&nbsp;</th><th>Row-oriented (OLTP)</th><th>Column-oriented (OLAP)</th><th>Document / KV</th></tr></thead>
+    <tbody>
+      <tr><td>Stores together</td><td>All fields of one row</td><td>All values of one column</td><td>A whole nested object</td></tr>
+      <tr><td>Fast at</td><td>"Give me this one record"</td><td>"Average this column over 50M rows"</td><td>"Give me this document"</td></tr>
+      <tr><td>Compression</td><td>Poor — mixed types</td><td>Excellent — same type together</td><td>Varies</td></tr>
+      <tr><td>Example</td><td>PostgreSQL, MySQL</td><td>ClickHouse, Redshift, Parquet</td><td>MongoDB, Redis, DynamoDB</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="box insight">
+    <div class="label">💡 Mental Model</div>
+    <p><strong>Storage layout is a bet about which direction you'll read.</strong> Rows bet you want whole records; columns bet you want one field across many records.</p>
+    <p>Disks read in blocks, so an average over one column in a row store drags every <em>other</em> column into memory too — 20 fields read to use one. A column store reads only that column's blocks, and because every value is the same type, it compresses far better. Same data, opposite physical layout, roughly 100× difference on analytical queries.</p>
+  </div>
+
+  <h3>ACID and what enforces each letter</h3>
+  <div class="tw"><table>
+    <thead><tr><th>Property</th><th>Means</th><th>Enforced by</th></tr></thead>
+    <tbody>
+      <tr><td><strong>A</strong>tomicity</td><td>All or nothing</td><td>Write-ahead log + undo — replay or roll back on crash</td></tr>
+      <tr><td><strong>C</strong>onsistency</td><td>Rules are never violated</td><td>Constraints, foreign keys, CHECK, triggers</td></tr>
+      <tr><td><strong>I</strong>solation</td><td>Concurrent transactions don't corrupt each other</td><td>Locking or MVCC</td></tr>
+      <tr><td><strong>D</strong>urability</td><td>Committed means survives a power cut</td><td><code>fsync</code> the log to disk before acknowledging</td></tr>
+    </tbody>
+  </table></div>
+
+  <p><strong>Write-Ahead Logging in one line:</strong> write down what you're <em>about</em> to do, and flush that note to disk, <em>before</em> doing it. On restart, replay the log. Sequential log writes are fast; random page writes are slow — so WAL gives durability without paying random-write cost on every commit.</p>
+
+  <h3>Isolation levels</h3>
+  <div class="tw"><table>
+    <thead><tr><th>Level</th><th>Dirty read</th><th>Non-repeatable read</th><th>Phantom read</th></tr></thead>
+    <tbody>
+      <tr><td>Read Uncommitted</td><td>Possible</td><td>Possible</td><td>Possible</td></tr>
+      <tr><td>Read Committed</td><td>Prevented</td><td>Possible</td><td>Possible</td></tr>
+      <tr><td>Repeatable Read</td><td>Prevented</td><td>Prevented</td><td>Possible*</td></tr>
+      <tr><td>Serializable</td><td>Prevented</td><td>Prevented</td><td>Prevented</td></tr>
+    </tbody>
+  </table></div>
+  <p style="font-size:11.5px;color:var(--text-dim)">* In the SQL standard. PostgreSQL's MVCC snapshot blocks most phantoms at Repeatable Read.</p>
+
+  <ul>
+    <li><strong>Dirty read</strong> — you see a change another transaction hasn't committed, and it might roll back.</li>
+    <li><strong>Non-repeatable read</strong> — you read a row twice in one transaction and the <em>value</em> changed.</li>
+    <li><strong>Phantom read</strong> — you run the same <code>WHERE</code> twice and get <em>extra rows</em>. Not a row changing; the row <em>set</em> changing.</li>
+  </ul>
+
+  <div class="box trap">
+    <div class="label">🚨 First-Principles Trap</div>
+    <p><strong>Serializable isn't free, and it isn't "just safer."</strong> Higher isolation means either more locking (more waiting, more deadlocks) or optimistic checks that <em>abort</em> transactions. At Serializable, Postgres may kill your transaction with a serialization failure — so <strong>your application must be prepared to retry</strong>. Choosing Serializable without retry logic turns a correctness feature into random 500s under load.</p>
+    <p>Most systems run Read Committed and handle specific races explicitly with <code>SELECT FOR UPDATE</code> or a conditional <code>UPDATE ... WHERE</code>. That's targeted, cheap, and predictable.</p>
+  </div>
+
+  <h3>Index structures</h3>
+  <div class="tw"><table>
+    <thead><tr><th>Structure</th><th>Lookup</th><th>Ranges</th><th>Writes</th><th>Used by</th></tr></thead>
+    <tbody>
+      <tr><td>B+ Tree</td><td>O(log N)</td><td>✅ Excellent</td><td>Moderate</td><td>Postgres, MySQL, most SQL</td></tr>
+      <tr><td>Hash</td><td>O(1)</td><td>❌ None</td><td>Fast</td><td>In-memory maps, some KV stores</td></tr>
+      <tr><td>LSM Tree</td><td>Slower reads</td><td>✅</td><td><strong>Very fast</strong></td><td>Cassandra, RocksDB, LevelDB</td></tr>
+    </tbody>
+  </table></div>
+
+  <p><strong>Why B+ Tree and not a binary tree:</strong> disks read in blocks, so you want each node to hold hundreds of keys and fill exactly one block. A tree with fanout 500 reaches a billion rows in about four levels — <em>four disk reads</em> — where a binary tree would need thirty. Also, in a B+ Tree all real data lives in the leaves, which are linked together, so a range scan is "seek once, then walk sideways."</p>
+
+  <div class="box insight">
+    <div class="label">💡 Mental Model</div>
+    <p><strong>LSM trees trade read speed for write speed, on purpose.</strong> Writes go to an in-memory table and an append-only log — never a random disk seek — then get flushed to immutable sorted files, which are periodically merged in the background.</p>
+    <p>The cost: a read may have to check several files. The benefit: writes are sequential, which is the single fastest thing a disk does. That's why write-heavy systems (time-series, event logs, message stores) use LSM, while read-heavy transactional systems use B-Trees. <em>The data structure encodes the workload assumption.</em></p>
+  </div>
+
+  <h3>Normalization</h3>
+  <ul>
+    <li><strong>1NF</strong> — one value per cell, no lists stuffed into a column, rows are unique.</li>
+    <li><strong>2NF</strong> — 1NF, and no column depends on only <em>part</em> of a composite key.</li>
+    <li><strong>3NF</strong> — 2NF, and no column depends on another non-key column. (Don't store <code>city</code> next to <code>pincode</code>.)</li>
+  </ul>
+  <p><strong>What normalization actually prevents</strong> is anomalies, and naming them is better than reciting the forms: an <em>update anomaly</em> (a value stored in five places, you change four), an <em>insert anomaly</em> (you can't record a department until someone works there), a <em>delete anomaly</em> (removing the last employee erases the department).</p>
+  <p><strong>Denormalize deliberately</strong> when reads dominate and the duplicated value rarely changes. You're buying read speed with the obligation to update in two places — a fine trade, as long as it's a decision rather than an accident.</p>
+</section>
+
+
+<!-- ============== C4 ============== -->
+<section class="cluster" id="c4">
+  <h2><span class="idx">04</span> AI / ML fundamentals</h2>
+
+  <h3>The lifecycle</h3>
+  <div class="ascii">  problem → data → features → train → evaluate → deploy → monitor
+                     ▲                                        │
+                     └──────────── retrain ◄──────────────────┘
+
+  supervised     : labelled data           (spam / not spam)
+  unsupervised   : no labels, find structure (customer clusters)
+  self-supervised: labels from the data itself (predict the next word)
+  reinforcement  : learn from reward signals (game playing, robotics)</div>
+
+  <h3>Preprocessing</h3>
+  <ul>
+    <li><strong>Imputation</strong> — fill missing values (mean, median, or a "missing" category). Note that <em>missingness itself</em> is often a signal worth keeping as a flag.</li>
+    <li><strong>One-hot encoding</strong> — for categories with no order (red/green/blue). One column each.</li>
+    <li><strong>Ordinal encoding</strong> — for categories with real order (small/medium/large → 1/2/3).</li>
+    <li><strong>Standardization (z-score)</strong> — <code>(x − mean) / std</code>. Mean 0, std 1. The default; handles outliers better.</li>
+    <li><strong>Min-max normalization</strong> — squash to [0,1]. Good when you need a bounded range; badly distorted by outliers.</li>
+  </ul>
+
+  <div class="box mlde">
+    <div class="label">📊 ML Track — why scaling matters at all</div>
+    <p>Gradient descent takes steps proportional to feature magnitude. If <code>age</code> ranges 0–100 and <code>income</code> ranges 0–1,000,000, the loss surface is a long narrow valley — a learning rate small enough not to explode on income is far too small for age, so training crawls or diverges. Scaling makes it round, so one learning rate suits everything.</p>
+    <p>Distance-based methods (kNN, k-means, SVM) need it even more urgently: without scaling, income <em>is</em> the distance and every other feature is noise. Tree models don't care, because they split on thresholds rather than distances — worth saying, since it shows you know <em>why</em> rather than "always scale."</p>
+  </div>
+
+  <div class="box trap">
+    <div class="label">🚨 First-Principles Trap</div>
+    <p><strong>Data leakage via the scaler.</strong> Fit the scaler on the <em>whole</em> dataset before splitting and the training set now contains information about the test set's mean and standard deviation. Your test score comes out optimistic, and you find out in production.</p>
+    <p><strong>Correct order: split first, fit the scaler on train only, then transform train and test with that same fitted scaler.</strong> Same rule for imputation values and feature selection. And for time-series data, split by <em>time</em>, never randomly — a random split lets the model train on the future and predict the past, which is a leak so total the model can look near-perfect.</p>
+  </div>
+
+  <h3>The training loop</h3>
+  <div class="ascii">   ┌──────────────────────────────────────────────────┐
+   │  forward pass   : input → prediction             │
+   │  loss           : how wrong? (a single number)   │
+   │  backward pass  : gradient of loss w.r.t. weights│  ← chain rule
+   │  update         : weights -= lr * gradient       │
+   └──────────────────────────────────────────────────┘
+                     repeat for each batch, each epoch</div>
+
+  <h3>Loss functions</h3>
+  <div class="tw"><table>
+    <thead><tr><th>Loss</th><th>Task</th><th>Behaviour</th></tr></thead>
+    <tbody>
+      <tr><td>MSE (L2)</td><td>Regression</td><td>Squares the error — outliers dominate</td></tr>
+      <tr><td>MAE (L1)</td><td>Regression</td><td>Absolute error — robust to outliers</td></tr>
+      <tr><td>Huber</td><td>Regression</td><td>MSE near zero, MAE far out — best of both</td></tr>
+      <tr><td>Binary cross-entropy</td><td>Yes/no</td><td>Punishes confident wrong answers heavily</td></tr>
+      <tr><td>Categorical cross-entropy</td><td>One of N</td><td>Same, over a softmax</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="box mlde">
+    <div class="label">📊 ML Track — MSE vs MAE, said well</div>
+    <p>An error of 10 costs MSE <em>100</em> but costs MAE <em>10</em>. So MSE will happily make ten predictions slightly worse to fix one large error, which is right when big misses are genuinely disproportionately bad — and wrong when your data has noisy outliers you'd rather ignore. Statistically, minimizing MSE fits the <strong>mean</strong>; minimizing MAE fits the <strong>median</strong>. That's the crisp version of "MAE is robust."</p>
+    <p>And for classification, cross-entropy beats MSE because its gradient through softmax simplifies to <code>(prediction − target)</code> — proportional to the error, no saturation. MSE with a sigmoid gives near-zero gradients exactly when the model is confidently wrong, which is the worst possible time to stop learning.</p>
+  </div>
+
+  <h3>Gradient descent</h3>
+  <div class="tw"><table>
+    <thead><tr><th>Variant</th><th>Update after</th><th>Trade-off</th></tr></thead>
+    <tbody>
+      <tr><td>Batch</td><td>Whole dataset</td><td>Stable direction, impossibly slow</td></tr>
+      <tr><td>SGD</td><td>One sample</td><td>Fast and noisy; noise helps escape shallow minima</td></tr>
+      <tr><td>Mini-batch</td><td>32–256 samples</td><td>The real default — GPU-friendly, good estimate</td></tr>
+    </tbody>
+  </table></div>
+  <ul>
+    <li><strong>Learning rate</strong> — too high overshoots and diverges; too low crawls or gets stuck. Schedules (decay, warmup, cosine) start fast and finish carefully.</li>
+    <li><strong>Momentum</strong> — a running average of past gradients, so you roll through small bumps instead of zig-zagging.</li>
+    <li><strong>Vanishing gradients</strong> — in deep networks, gradients multiply through layers and shrink toward zero, so early layers stop learning. Fixed by ReLU, normalization, and residual connections.</li>
+    <li><strong>Exploding gradients</strong> — the opposite; fixed by gradient clipping.</li>
+  </ul>
+
+  <h3>Bias, variance and regularization</h3>
+  <span class="fml">Total Error = Bias² + Variance + Irreducible Error</span>
+  <div class="tw"><table>
+    <thead><tr><th>Train error</th><th>Val error</th><th>Diagnosis</th><th>Fix</th></tr></thead>
+    <tbody>
+      <tr><td>High</td><td>High</td><td>Underfitting (high bias)</td><td>Bigger model, better features, train longer</td></tr>
+      <tr><td>Low</td><td>High</td><td>Overfitting (high variance)</td><td>More data, augmentation, dropout, L2, early stop</td></tr>
+      <tr><td>Low</td><td>Low</td><td>Good</td><td>Ship it</td></tr>
+    </tbody>
+  </table></div>
+  <p><strong>Irreducible error</strong> is noise in the data itself — no model removes it, and chasing it is how you overfit. Worth naming, because it's the reason 100% accuracy is a red flag rather than a triumph.</p>
+  <ul>
+    <li><strong>L1 (Lasso)</strong> — constant gradient pushes weights to exactly <em>zero</em> → sparsity, automatic feature selection.</li>
+    <li><strong>L2 (Ridge)</strong> — gradient shrinks with the weight, so weights get small but never zero → spreads influence across correlated features.</li>
+    <li><strong>Dropout</strong> — randomly zero some activations each training step, so the network can't depend on any single neuron.</li>
+    <li><strong>Early stopping</strong> — stop when validation loss turns up. Free, and often the strongest regularizer available.</li>
+  </ul>
+
+  <h3>Splits and cross-validation</h3>
+  <p><strong>Train</strong> fits the weights. <strong>Validation</strong> tunes hyperparameters and decides when to stop. <strong>Test</strong> is touched <em>once</em>, at the end. If you tune against the test set, it has quietly become a validation set and you no longer have an honest estimate.</p>
+  <p><strong>k-fold cross-validation</strong> splits into k parts, trains k times using each part as validation once, and averages. Better use of limited data and a more reliable estimate — at k× the training cost.</p>
+
+  <h3>Evaluation metrics</h3>
+  <div class="ascii">                  PREDICTED
+                 positive   negative
+   A  positive  │   TP    │   FN    │  ← missed it
+   C            ├─────────┼─────────┤
+   T  negative  │   FP    │   TN    │
+   U                false alarm
+
+   Accuracy  = (TP + TN) / everything
+   Precision = TP / (TP + FP)   "when I said yes, was I right?"
+   Recall    = TP / (TP + FN)   "of all the real ones, how many did I catch?"
+   F1        = 2PR / (P + R)    harmonic mean</div>
+
+  <div class="box trap">
+    <div class="label">🚨 First-Principles Trap</div>
+    <p><strong>The 99% accuracy trap.</strong> If 1 in 100 transactions is fraud, a model that predicts "not fraud" every single time scores 99% accuracy — and catches zero fraud. Accuracy is dominated by the majority class, so under imbalance it measures the class distribution rather than the model.</p>
+    <p>Precision and recall fix it by ignoring true negatives entirely. Both are computed only from the things you predicted positive and the things that actually were positive — so the vast harmless majority stops inflating the number. <strong>Whenever classes are imbalanced, quote precision, recall and F1, and say why accuracy would mislead.</strong></p>
+  </div>
+
+  <div class="box mlde">
+    <div class="label">📊 ML Track — which one do you optimize?</div>
+    <p>There's no universal answer; it depends on <strong>which mistake costs more.</strong></p>
+    <ul>
+      <li><strong>Recall matters most</strong> when missing a positive is dangerous — cancer screening, fraud detection, safety alerts. A false alarm costs a second test; a miss costs a life.</li>
+      <li><strong>Precision matters most</strong> when a false alarm is expensive — a spam filter that bins a real job offer is worse than one that lets some spam through.</li>
+      <li><strong>F1</strong> when both matter and you want one number. It's the <em>harmonic</em> mean specifically because it refuses to reward a lopsided model: predict everything positive and recall hits 1.0 while F1 stays low.</li>
+    </ul>
+    <p><strong>ROC-AUC</strong> plots true-positive rate against false-positive rate across every threshold, so it measures ranking quality independent of where you set the cutoff. AUC 0.5 is random, 1.0 is perfect. Caveat worth adding: under extreme imbalance, <strong>precision-recall AUC is more informative than ROC-AUC</strong>, because ROC's false-positive rate is diluted by a huge true-negative count.</p>
+  </div>
+
+  <h3>NLP and vision first principles</h3>
+  <p><strong>NLP — turning text into numbers:</strong></p>
+  <ul>
+    <li><strong>Bag of Words</strong> — count each word. Order is lost.</li>
+    <li><strong>TF-IDF</strong> — count × rarity, so common words stop dominating. Order still lost.</li>
+    <li><strong>Embeddings</strong> — dense learned vectors where similar meanings sit close together. This is the leap: BoW and TF-IDF treat "car" and "automobile" as unrelated columns; embeddings place them nearby.</li>
+  </ul>
+  <p><strong>Vision — an image is a matrix of pixel values</strong> (height × width × 3 colour channels). A <strong>convolution</strong> slides a small learned filter across it, so the same feature detector works anywhere in the image — that's <em>weight sharing</em>, and it's why CNNs need far fewer parameters than a fully-connected network. The <strong>receptive field</strong> is how much of the original image one deep neuron can "see": stack layers and it grows, so early layers detect edges while deep layers recognise objects.</p>
+</section>
+
+
+<!-- ============== C5 ============== -->
+<section class="cluster" id="c5">
+  <h2><span class="idx">05</span> Spoken answer templates</h2>
+  <p style="color:var(--text-dim); font-size:12px; margin-bottom:14px;">Open with the 20–30 second version. Pause. Let them steer you deeper — that's better than reciting for four minutes and missing what they cared about.</p>
+
+  <div class="qa">
+    <span class="track-tag track-a">Q1</span>
+    <div class="q">What happens when you type a URL and press Enter?</div>
+
+    <div class="spoken">
+      <span class="lbl">💡 30-second opener</span>
+      <p><em>"Four stages: find the server, connect to it securely, ask for the page, then draw it. Resolve the domain to an IP through DNS, open a TCP connection and negotiate TLS, send an HTTP GET and get HTML back, then the browser parses that into a DOM, combines it with CSS, lays it out and paints. Want me to go deeper on any stage?"</em></p>
+    </div>
+
+    <div class="ascii">1. URL PARSE      scheme, host, path, query
+2. DNS            browser cache → OS cache → router → resolver
+                  → root → TLD (.com) → authoritative → IP
+3. TCP            SYN → SYN-ACK → ACK              (1 round trip)
+4. TLS            certificate check, key exchange  (1–2 round trips)
+                  asymmetric to agree a key, symmetric thereafter
+5. HTTP           GET /path  + Host, Cookie, Accept headers
+6. SERVER         load balancer → app → DB/cache → response
+7. RESPONSE       status, headers (Content-Type, Cache-Control), body
+8. RENDER         HTML→DOM, CSS→CSSOM, render tree,
+                  layout → paint → composite
+9. SUBRESOURCES   images, JS, CSS fetched in parallel;
+                  JS may block parsing unless async/defer</div>
+
+    <p style="font-size:12.5px"><strong>Details that impress if you get to them:</strong> the browser checks its own cache before DNS at all; TCP's handshake is one round trip <em>before</em> any data moves, which is why connection reuse matters so much; and HTTP/3 collapses the TCP and TLS handshakes into one via QUIC.</p>
+  </div>
+
+  <div class="qa">
+    <span class="track-tag track-a">Q2</span>
+    <div class="q">TCP vs UDP — how do you choose?</div>
+    <div class="spoken">
+      <span class="lbl">💡 30-second opener</span>
+      <p><em>"TCP guarantees your data arrives complete and in order, and pays for that with a handshake, acknowledgements and retransmissions. UDP just fires packets and hopes. The question I'd ask is: is a late packet still useful? For a file download, absolutely — every byte matters, so TCP. For a video call, a frame that's 400 milliseconds late is worthless, and waiting for it makes the whole call lag, so UDP."</em></p>
+    </div>
+    <p><strong>If they push:</strong> TCP's 3-way handshake is <code>SYN → SYN-ACK → ACK</code>, plus congestion control that slows down when the network is busy — good for fairness, bad for latency-sensitive traffic. UDP has none of that, so applications built on it implement whatever reliability they actually need, which is exactly what QUIC does: reliability and ordering <em>per stream</em>, over UDP, so one lost packet doesn't stall unrelated streams.</p>
+    <p><strong>The line that lands:</strong> "reliability isn't free and it isn't always desirable — you're trading latency for it."</p>
+  </div>
+
+  <div class="qa">
+    <span class="track-tag track-a">Q3</span>
+    <div class="q">Authentication vs authorization, and sessions vs JWTs?</div>
+    <div class="spoken">
+      <span class="lbl">💡 30-second opener</span>
+      <p><em>"Authentication is 'who are you' — proving identity. Authorization is 'what are you allowed to do' — checking permissions. You always authenticate first. In HTTP terms that's the difference between 401 and 403: 401 means I don't know who you are, 403 means I know exactly who you are and you still can't do this."</em></p>
+    </div>
+    <p><strong>On sessions vs JWTs:</strong> "A session stores state on the server and hands the client an ID; a JWT puts the claims in the token itself and signs them. The trade is revocation versus lookup. Sessions let you log someone out instantly by deleting the record, but every request needs a shared store. JWTs need no lookup so they scale freely — but a signed token stays valid until it expires, so you can't truly log someone out."</p>
+    <p><strong>The resolution:</strong> "Short access tokens, around 15 minutes, plus a long refresh token stored server-side. The short life bounds the damage from theft, and the refresh token is tracked so it <em>can</em> be revoked. You've reintroduced state, but only on one endpoint instead of all of them."</p>
+    <p><strong>Add if there's room:</strong> a JWT is signed, not encrypted — anyone can decode the payload, so never put secrets in it.</p>
+  </div>
+
+  <div class="qa">
+    <span class="track-tag track-a">Q4</span>
+    <div class="q">What are ACID properties, and what enforces them?</div>
+    <div class="spoken">
+      <span class="lbl">💡 30-second opener</span>
+      <p><em>"Four guarantees a transaction gives you. Atomicity — all of it happens or none of it does, enforced by a write-ahead log the database can replay or roll back. Consistency — constraints and invariants are never violated. Isolation — concurrent transactions don't corrupt each other, enforced by locking or MVCC. Durability — once I say committed, it survives a power cut, because the log was flushed to disk before I answered."</em></p>
+    </div>
+    <p><strong>The example that makes it concrete:</strong> "A bank transfer is two updates — debit one account, credit another. Atomicity is what stops a crash between them from destroying money."</p>
+    <p><strong>If they go deeper on isolation:</strong> name the anomalies rather than the levels. Dirty read = seeing uncommitted data. Non-repeatable read = the same row's value changes mid-transaction. Phantom read = the same query returns extra rows. Then: "each isolation level removes one more of these, and costs more concurrency to do it. Serializable can abort your transaction, so the application has to retry — that's why most systems run Read Committed and handle specific races explicitly."</p>
+  </div>
+
+  <div class="qa">
+    <span class="track-tag track-b">Q5</span>
+    <div class="q">How is machine learning different from traditional programming?</div>
+    <div class="spoken">
+      <span class="lbl">💡 30-second opener</span>
+      <p><em>"It's the same three pieces rearranged. Traditional programming: I write the rules, feed in data, and get answers out. Machine learning: I feed in data and the answers, and it produces the rules. So the rules become the output rather than the input."</em></p>
+    </div>
+    <div class="ascii">TRADITIONAL         data  +  rules   ──►  answers
+MACHINE LEARNING    data  +  answers ──►  rules (a model)</div>
+    <p><strong>Then the "so what":</strong> "That's why ML is for problems where the rules exist but nobody can write them down. I can't write rules that identify a photo of biryani, but I can supply ten thousand labelled photos. Conversely, if the rules <em>are</em> writable — parsing '150g', validating an email — writing them is faster, exact, debuggable and free. A model that's 97% right on something a regex gets 100% right is a worse product."</p>
+    <p><strong>The trade-off to name:</strong> "You give up determinism and explainability. Traditional code fails loudly with a stack trace pointing at the line. A model fails <em>quietly</em> with a confident wrong answer, and there's no line to point at."</p>
+  </div>
+
+  <div class="qa">
+    <span class="track-tag track-b">Q6</span>
+    <div class="q">Why is accuracy misleading, and how do precision and recall fix it?</div>
+    <div class="spoken">
+      <span class="lbl">💡 30-second opener</span>
+      <p><em>"Because accuracy is dominated by whichever class is bigger. If 1 in 100 transactions is fraud, a model that always says 'not fraud' scores 99% accuracy and catches nothing. It's measuring the class distribution, not the model. Precision and recall fix that by ignoring true negatives entirely — so the harmless majority stops inflating the score."</em></p>
+    </div>
+    <p><strong>Define them in plain words:</strong> "Precision is: when I said yes, how often was I right? Recall is: of all the real cases, how many did I catch?"</p>
+    <p><strong>Then the two scenarios, which is what they're waiting for:</strong></p>
+    <ul>
+      <li><em>"Cancer screening is recall-first. A false alarm costs a follow-up test. A miss costs a life. I'd accept far more false positives to miss fewer real cases."</em></li>
+      <li><em>"Spam filtering is precision-first. Some spam reaching the inbox is annoying. A real job offer sent to the spam folder is a disaster. I'd let spam through rather than risk that."</em></li>
+    </ul>
+    <p><strong>Close with the tension:</strong> "They trade off against each other — you move a threshold and gain one at the other's expense. F1 is the harmonic mean when you need one number, and it's harmonic specifically so a lopsided model can't game it. Under heavy imbalance I'd also look at precision-recall AUC rather than ROC-AUC, because ROC's false-positive rate gets diluted by the enormous true-negative count."</p>
+  </div>
+</section>
+</main>
+<footer>
+  First-Principles Engineering · Universal Frontend, Backend, Database &amp; AI/ML Fundamentals<br>Framework-agnostic interview notes.
+</footer>
+<script>
+  document.getElementById('jump').addEventListener('change', function(e) {
+    const id = e.target.value; if (!id) return;
+    const el = document.getElementById(id);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    e.target.value = '';
+  });
+  const prog = document.getElementById('scrollProg');
+  window.addEventListener('scroll', function() {
+    const st = document.documentElement.scrollTop;
+    const sh = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+    prog.style.width = (sh > 0 ? (st / sh) * 100 : 0) + '%';
+  }, { passive: true });
+  const sections = document.querySelectorAll('section.cluster');
+  const observer = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) { entry.target.style.animationPlayState = 'running'; observer.unobserve(entry.target); }
+    });
+  }, { threshold: 0.08 });
+  sections.forEach(function(s) { s.style.animationPlayState = 'paused'; observer.observe(s); });
+
+  // Track Filtering (ALL / SDE / ML)
+  const trackBtns = document.querySelectorAll('.tb');
+  trackBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      trackBtns.forEach(b => b.setAttribute('aria-pressed', 'false'));
+      btn.setAttribute('aria-pressed', 'true');
+      const filter = btn.dataset.filter;
+      if (filter === 'all') {
+        document.body.removeAttribute('data-track');
+      } else {
+        document.body.setAttribute('data-track', filter);
+      }
+    });
+  });
+
+</script>
+</body>
+</html>

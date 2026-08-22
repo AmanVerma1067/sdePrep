@@ -1,0 +1,1675 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5">
+<title>Backend Engineering, LLD &amp; Machine Coding — Interview Notes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0e17; --surface: #111827; --surface2: #1a2234;
+    --border: #1e293b; --border-glow: #334155;
+    --text: #cbd5e1; --text-dim: #64748b; --white: #f1f5f9;
+    --accent: #38bdf8; --accent2: #818cf8; --green: #34d399;
+    --orange: #fbbf24; --red: #fb7185; --purple: #a78bfa; --cyan: #22d3ee;
+    --radius: 14px; --maxw: 760px;
+    --font: 'Inter', system-ui, -apple-system, sans-serif;
+    --mono: 'JetBrains Mono', 'SF Mono', Consolas, monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--bg); color: var(--text); font-family: var(--font);
+    font-size: 14.5px; line-height: 1.65; overflow-x: hidden; }
+
+  .scroll-progress { position: fixed; top: 0; left: 0; z-index: 200; height: 3px; width: 0%;
+    background: linear-gradient(90deg, var(--accent), var(--accent2), var(--purple));
+    transition: width 80ms linear; border-radius: 0 2px 2px 0; }
+
+  .topbar { position: sticky; top: 0; z-index: 100;
+    background: rgba(10, 14, 23, 0.82);
+    backdrop-filter: blur(16px) saturate(1.6); -webkit-backdrop-filter: blur(16px) saturate(1.6);
+    border-bottom: 1px solid var(--border); padding: 10px 16px;
+    display: flex; align-items: center; gap: 10px; }
+  .topbar .logo { display: flex; align-items: center; gap: 8px; font-weight: 800;
+    font-size: 13.5px; color: var(--white); white-space: nowrap; letter-spacing: -0.02em; }
+  .topbar .dot { width: 8px; height: 8px; border-radius: 50%; background: #fb7185;
+    box-shadow: 0 0 10px #fb7185; animation: pulse 2s ease-in-out infinite; }
+  @keyframes pulse { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: .6; transform: scale(.85); } }
+  .topbar select { flex: 1; max-width: 380px; background: var(--surface); color: var(--accent);
+    border: 1px solid var(--border); border-radius: 10px; padding: 8px 12px;
+    font-family: var(--font); font-size: 12.5px; font-weight: 500; outline: none;
+    cursor: pointer; transition: border-color .2s; }
+  .topbar select:focus { border-color: var(--accent); }
+
+  main { max-width: var(--maxw); margin: 0 auto; padding: 24px 16px 80px; }
+
+  .hero { margin-bottom: 28px; padding: 24px 20px;
+    background: linear-gradient(135deg, rgba(56,189,248,0.06), rgba(129,140,248,0.06), rgba(167,139,250,0.04));
+    border: 1px solid var(--border); border-radius: var(--radius); position: relative; overflow: hidden; }
+  .hero::before { content: ''; position: absolute; top: -40%; right: -20%; width: 260px; height: 260px;
+    background: radial-gradient(circle, rgba(56,189,248,0.08) 0%, transparent 70%);
+    border-radius: 50%; pointer-events: none; }
+  .hero h1 { font-size: 22px; font-weight: 800; color: var(--white);
+    letter-spacing: -0.03em; line-height: 1.3; margin-bottom: 6px; }
+  .hero .sub { color: var(--text-dim); font-size: 12.5px; line-height: 1.5; }
+  .badge-row { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 14px; }
+  .badge { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em;
+    padding: 4px 10px; border-radius: 20px; border: 1px solid var(--border);
+    background: rgba(56,189,248,0.06); color: var(--accent); white-space: nowrap; }
+
+  .projects { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 8px; margin-bottom: 20px; }
+  .chip { background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+    padding: 10px 12px; font-size: 11.5px; color: var(--text-dim);
+    transition: border-color .2s, transform .15s; line-height: 1.4; }
+  .chip:hover { border-color: var(--border-glow); transform: translateY(-1px); }
+  .chip a { color: var(--accent); text-decoration: none; font-weight: 600; }
+  .chip a:hover { text-decoration: underline; }
+  .chip .emoji { margin-right: 4px; }
+
+  .calib { background: rgba(251,191,36,0.05); border: 1px solid rgba(251,191,36,0.22);
+    border-radius: 10px; padding: 12px 14px; margin-bottom: 26px; font-size: 12px; line-height: 1.55; }
+  .calib b { color: var(--orange); }
+
+  section.cluster { background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 20px 18px; margin-bottom: 16px;
+    scroll-margin-top: 60px; transition: border-color .25s; animation: fadeUp .4s ease both; }
+  section.cluster:hover { border-color: var(--border-glow); }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+  section.cluster > h2 { font-size: 16.5px; font-weight: 700; color: var(--white);
+    padding-bottom: 10px; margin-bottom: 14px; border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 10px; letter-spacing: -0.01em; }
+  section.cluster > h2 .idx { font-size: 10px; font-weight: 700; color: var(--accent);
+    background: rgba(56,189,248,0.1); border: 1px solid rgba(56,189,248,0.2);
+    border-radius: 6px; padding: 3px 8px; letter-spacing: .04em; }
+
+  h3 { font-size: 14px; font-weight: 700; color: var(--cyan); margin: 18px 0 8px; }
+  h4 { font-size: 12.5px; font-weight: 600; color: var(--orange); margin: 14px 0 6px; }
+  p { margin: 7px 0; font-size: 13px; }
+  ul, ol { padding-left: 18px; margin: 6px 0; }
+  li { margin: 3px 0; font-size: 13px; }
+  code { background: rgba(30,41,59,.8); color: var(--green); padding: 2px 6px;
+    border-radius: 5px; font-family: var(--mono); font-size: 11.5px; }
+  .fml { display: block; text-align: center; background: rgba(30,41,59,.5);
+    border: 1px solid var(--border); border-radius: 8px; padding: 9px 10px; margin: 9px 0;
+    font-family: var(--mono); font-size: 12px; color: var(--cyan); overflow-x: auto; white-space: nowrap; }
+
+  .tw { overflow-x: auto; margin: 10px 0; border: 1px solid var(--border);
+    border-radius: 10px; -webkit-overflow-scrolling: touch; }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; min-width: 420px; }
+  thead th { background: var(--surface2); color: var(--accent); font-size: 10.5px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: .05em; padding: 9px 10px; text-align: left;
+    white-space: nowrap; border-bottom: 1px solid var(--border); position: sticky; top: 0; }
+  tbody td { padding: 8px 10px; border-bottom: 1px solid rgba(30,41,59,.5);
+    vertical-align: top; color: var(--text); }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover { background: rgba(56,189,248,.03); }
+  tbody td:first-child { color: var(--white); font-weight: 600; white-space: nowrap; }
+
+  .box { border-radius: 10px; padding: 12px 14px; margin: 10px 0; font-size: 12.5px;
+    line-height: 1.55; border-left: 3px solid; }
+  .box .label { font-weight: 700; font-size: 10.5px; text-transform: uppercase;
+    letter-spacing: .05em; margin-bottom: 5px; display: flex; align-items: center; gap: 5px; }
+  .box p { margin: 3px 0; font-size: 12.5px; }
+  .box ul { margin: 4px 0; } .box li { font-size: 12.5px; }
+  .box.trap { background: rgba(251,113,133,.06); border-color: var(--red); }
+  .box.trap .label { color: var(--red); }
+  .box.insight { background: rgba(52,211,153,.06); border-color: var(--green); }
+  .box.insight .label { color: var(--green); }
+  .box.sde { background: rgba(56,189,248,.06); border-color: var(--accent); }
+  .box.sde .label { color: var(--accent); }
+  .box.mlde { background: rgba(167,139,250,.06); border-color: var(--purple); }
+  .box.mlde .label { color: var(--purple); }
+
+  details.snippet { background: #0c1018; border: 1px solid var(--border);
+    border-radius: 10px; margin: 10px 0; overflow: hidden; }
+  details.snippet summary { cursor: pointer; padding: 9px 14px; color: var(--text-dim);
+    font-size: 12px; font-weight: 600; font-family: var(--font); list-style: none;
+    display: flex; align-items: center; gap: 7px; user-select: none; transition: color .2s; }
+  details.snippet summary:hover { color: var(--accent); }
+  details.snippet summary::-webkit-details-marker { display: none; }
+  details.snippet summary::before { content: "▸"; color: var(--accent);
+    display: inline-block; transition: transform .15s ease; }
+  details.snippet[open] summary::before { transform: rotate(90deg); }
+  details.snippet pre { margin: 0; padding: 12px 14px; overflow-x: auto;
+    font-family: var(--mono); font-size: 12px; line-height: 1.55; color: var(--text); }
+
+  .qa { background: rgba(17,24,39,.6); border: 1px solid var(--border); border-radius: 10px;
+    padding: 14px; margin: 10px 0; transition: border-color .2s; }
+  .qa:hover { border-color: var(--border-glow); }
+  .qa .q { color: var(--white); font-weight: 600; font-size: 13px; margin-bottom: 7px; line-height: 1.45; }
+  .qa .q .qnum { color: var(--accent); margin-right: 6px; }
+  .track-tag { display: inline-block; font-size: 9.5px; font-weight: 700; letter-spacing: .06em;
+    text-transform: uppercase; padding: 3px 8px; border-radius: 6px; margin-bottom: 8px; }
+  .track-a { background: rgba(56,189,248,.1); color: var(--accent); border: 1px solid rgba(56,189,248,.25); }
+  .track-b { background: rgba(167,139,250,.1); color: var(--purple); border: 1px solid rgba(167,139,250,.25); }
+
+  hr.divider { border: none; border-top: 1px dashed var(--border); margin: 20px 0; }
+  footer { max-width: var(--maxw); margin: 0 auto; padding: 20px 16px 40px;
+    color: var(--text-dim); font-size: 11px; text-align: center; border-top: 1px solid var(--border); }
+
+  @media (max-width: 640px) {
+    body { font-size: 14px; }
+    main { padding: 16px 12px 60px; }
+    .hero { padding: 18px 16px; } .hero h1 { font-size: 19px; }
+    section.cluster { padding: 16px 14px; }
+    section.cluster > h2 { font-size: 15px; }
+    .projects { grid-template-columns: 1fr 1fr; gap: 6px; }
+    .chip { padding: 8px 10px; font-size: 10.5px; }
+    .topbar .logo span.full { display: none; }
+    table { font-size: 11px; min-width: 360px; }
+    thead th { font-size: 9.5px; padding: 7px 8px; }
+    tbody td { padding: 7px 8px; }
+    h3 { font-size: 13.5px; } p, li { font-size: 12.5px; }
+    .box { padding: 10px 12px; font-size: 12px; }
+    .box p, .box li { font-size: 12px; }
+    .qa .q { font-size: 12.5px; } .fml { font-size: 11px; }
+  }
+  @media (max-width: 380px) {
+    .projects { grid-template-columns: 1fr; }
+    .hero h1 { font-size: 17px; }
+    .topbar select { font-size: 11.5px; padding: 7px 10px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    section.cluster { animation: none; }
+    .topbar .dot { animation: none; }
+  }
+
+  /* Track filters */
+  .topbar-left { display: flex; align-items: center; gap: 10px; flex: 1 1 auto; min-width: 220px; }
+  .track-btns { display: flex; gap: 5px; align-items: center; }
+  .tb { background: var(--surface); color: var(--text-dim); border: 1px solid var(--border);
+    border-radius: 8px; padding: 6px 10px; font-size: 11.5px; font-family: var(--mono);
+    font-weight: 600; cursor: pointer; transition: all .2s ease; white-space: nowrap; }
+  .tb:hover { color: var(--white); border-color: var(--border-glow); }
+  .tb[aria-pressed="true"] { color: var(--white); background: rgba(56, 189, 248, 0.14); border-color: var(--accent); }
+
+  body[data-track="sde"] .box.mlde,
+  body[data-track="sde"] .qa.track-b,
+  body[data-track="sde"] .qa-track-b,
+  body[data-track="sde"] .callout.mlde { display: none !important; }
+
+  body[data-track="ml"] .box.sde,
+  body[data-track="ml"] .qa.track-a,
+  body[data-track="ml"] .qa-track-a,
+  body[data-track="ml"] .callout.sde { display: none !important; }
+
+</style>
+</head>
+<body>
+<div class="scroll-progress" id="scrollProg"></div>
+<style>
+  .ascii { background:#0c1018; border:1px solid var(--border); border-radius:10px;
+    padding:12px 14px; margin:10px 0; overflow-x:auto; font-family:var(--mono);
+    font-size:11.5px; line-height:1.5; color:var(--text); white-space:pre; }
+  @media (max-width:640px){ .ascii{ font-size:10px; } }
+
+  /* Track filters */
+  .topbar-left { display: flex; align-items: center; gap: 10px; flex: 1 1 auto; min-width: 220px; }
+  .track-btns { display: flex; gap: 5px; align-items: center; }
+  .tb { background: var(--surface); color: var(--text-dim); border: 1px solid var(--border);
+    border-radius: 8px; padding: 6px 10px; font-size: 11.5px; font-family: var(--mono);
+    font-weight: 600; cursor: pointer; transition: all .2s ease; white-space: nowrap; }
+  .tb:hover { color: var(--white); border-color: var(--border-glow); }
+  .tb[aria-pressed="true"] { color: var(--white); background: rgba(56, 189, 248, 0.14); border-color: var(--accent); }
+
+  body[data-track="sde"] .box.mlde,
+  body[data-track="sde"] .qa.track-b,
+  body[data-track="sde"] .qa-track-b,
+  body[data-track="sde"] .callout.mlde { display: none !important; }
+
+  body[data-track="ml"] .box.sde,
+  body[data-track="ml"] .qa.track-a,
+  body[data-track="ml"] .qa-track-a,
+  body[data-track="ml"] .callout.sde { display: none !important; }
+
+</style>
+
+<div class="topbar">
+  <div class="topbar-left">
+    <div class="logo">
+      <span class="dot"></span>
+      <span class="full">Backend LLD & Systems</span>
+    </div>
+    <select id="jump" aria-label="Jump to section">
+    <option value="">Jump to…</option>
+    <option value="c1">1 · Indexing &amp; database locking</option>
+    <option value="c2">2 · Idempotency, queues &amp; state machines</option>
+    <option value="c3">3 · Machine coding implementations</option>
+    <option value="c4">4 · Schema blueprints &amp; SQL bank</option>
+    <option value="c5">5 · Bottlenecks &amp; capacity sizing</option>
+    <option value="c6">6 · Problem bank</option>
+  </select>
+  </div>
+  <div class="track-btns" role="group" aria-label="Filter by track">
+    <button class="tb" data-filter="all" aria-pressed="true">ALL</button>
+    <button class="tb" data-filter="sde" aria-pressed="false">SDE</button>
+    <button class="tb" data-filter="ml" aria-pressed="false">ML/AI</button>
+  </div>
+</div>
+<main>
+
+<div class="hero">
+  <h1>Backend Engineering, LLD &amp; Machine Coding Blueprint</h1>
+  <p class="sub">Runnable code, exact DDL, and the locking queries that stop two people buying the same seat. Built for design rounds and 90-minute machine coding tests.</p>
+  <div class="badge-row">
+    <span class="badge">6 Clusters</span>
+    <span class="badge">C++ / TypeScript / SQL</span>
+    <span class="badge">Project-Grounded</span>
+  </div>
+</div>
+
+<div class="projects">
+  <div class="chip"><span class="emoji">📦</span> Packspec — multi-tenant RBAC, versioning</div>
+  <div class="chip"><span class="emoji">🚦</span> <a href="https://github.com/AmanVerma1067/SahYatri" target="_blank" rel="noopener">SahYatri</a> — partitioned telemetry ingest</div>
+  <div class="chip"><span class="emoji">♟️</span> <a href="https://github.com/AmanVerma1067/Chessify-WebApp" target="_blank" rel="noopener">Chessify</a> — server-authoritative state machine</div>
+  <div class="chip"><span class="emoji">🧑‍💼</span> <a href="https://github.com/AmanVerma1067/RecrutAI" target="_blank" rel="noopener">RecrutAI</a> — timeouts, backoff, fallbacks</div>
+  <div class="chip"><span class="emoji">📚</span> <a href="https://github.com/AmanVerma1067/StudySync" target="_blank" rel="noopener">StudySync</a> — offline-first sync</div>
+</div>
+
+<div class="calib">
+  <b>The one question behind every problem in this doc:</b> <em>what happens if two people do this at the exact same moment?</em> Booking the same seat, hitting the same button twice, two workers grabbing the same job. If you can answer that with a specific mechanism — a lock, a unique constraint, a conditional update — you've passed most design rounds.
+</div>
+
+
+<!-- ================ C1 ================ -->
+<section class="cluster" id="c1">
+  <h2><span class="idx">01</span> Indexing &amp; database locking</h2>
+
+  <h3>How a B-Tree index actually helps</h3>
+  <p>An index is a sorted structure. Sorted means you can binary-search it, so finding a row costs about <code>log(N)</code> steps instead of reading every row. For a million rows that's roughly 20 steps instead of a million.</p>
+  <p>A <strong>composite index</strong> on two columns is sorted by the first column, and <em>within each value of the first</em>, sorted by the second. Like a phone book sorted by surname, then first name. That one sentence explains every composite-index rule.</p>
+
+  <h3>The ESR rule — Equality, Sort, Range</h3>
+  <p>Order your index columns as: columns you match <strong>exactly</strong>, then columns you <strong>sort</strong> by, then columns you filter with a <strong>range</strong>.</p>
+
+  <div class="tw"><table>
+    <thead><tr><th>Index</th><th>Query</th><th>What the DB does</th></tr></thead>
+    <tbody>
+      <tr><td><code>(status, scheduled_at)</code></td><td><code>status='PENDING' AND scheduled_at &lt; now()</code></td><td>Jumps straight to the PENDING block, then scans <em>only</em> pending rows in time order. ✅</td></tr>
+      <tr><td><code>(scheduled_at, status)</code></td><td>Same query</td><td>Scans every row before now — done, failed, cancelled — checking status on each. ❌</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="ascii">Index (status, scheduled_at)          Index (scheduled_at, status)
+
+ CANCELLED | 09:00                    08:00 | DONE       ← read
+ CANCELLED | 11:00                    08:30 | CANCELLED  ← read
+ DONE      | 08:00                    09:00 | CANCELLED  ← read
+ DONE      | 10:00                    09:15 | PENDING    ← keep
+ PENDING   | 09:15   ← seek here      10:00 | DONE       ← read
+ PENDING   | 09:40   ← scan           10:30 | PENDING    ← keep
+ PENDING   | 10:30   ← scan           11:00 | CANCELLED  ← read
+ PENDING   | 11:20   ← stop           11:20 | PENDING    ← keep
+
+ Reads only PENDING rows.             Reads EVERYTHING before now,
+ Already in scheduled_at order.       throws most of it away.</div>
+
+  <div class="box trap">
+    <div class="label">🚨 Concurrency / Index Trap</div>
+    <p><strong>The leftmost prefix rule.</strong> An index on <code>(status, scheduled_at)</code> can serve a query on <code>status</code> alone, or on both — but <strong>not</strong> on <code>scheduled_at</code> alone. You can't skip the first column, because the index is sorted by it first. The phone book is useless if you only know the first name.</p>
+    <p>Two more that cost real marks: putting a <strong>function on the column</strong> (<code>WHERE DATE(created_at) = '2026-08-21'</code>) makes the index unusable — rewrite it as a range. And <strong>indexing everything</strong> is a real cost: every index must be updated on every insert, so on a write-heavy table each extra index directly slows ingestion.</p>
+  </div>
+
+  <h3>Partial indexes — index only what you query</h3>
+  <details class="snippet">
+    <summary>Partial index for a job queue</summary>
+    <pre>-- Full index: every job ever created, forever. Gigabytes.
+CREATE INDEX idx_jobs_all ON jobs (status, scheduled_at);
+
+-- Partial index: only rows a worker could ever claim.
+-- Done/failed jobs are 99% of the table and are never polled.
+CREATE INDEX idx_jobs_pending
+  ON jobs (scheduled_at)
+  WHERE status = 'PENDING';
+
+-- Tiny index, stays in RAM, and rows LEAVE the index when status changes.
+-- The index size tracks the QUEUE DEPTH, not the table size.</pre>
+  </details>
+
+  <div class="box insight">
+    <div class="label">💡 Implementation Pattern</div>
+    <p>Partial indexes are the most under-used tool in queue design. The insight: a queue table grows forever, but the <em>queue</em> is only the pending rows. A partial index means the structure the database keeps hot in memory is proportional to work-in-progress, not to history. A table with 50 million completed jobs and 200 pending ones has an index with 200 entries.</p>
+  </div>
+
+  <h3>Pessimistic locking — <code>SELECT ... FOR UPDATE</code></h3>
+  <p>"I'm going to change this row, so nobody else touch it until I commit." The lock is held until the transaction ends.</p>
+
+  <details class="snippet">
+    <summary>FOR UPDATE vs FOR UPDATE SKIP LOCKED</summary>
+    <pre>-- PLAIN FOR UPDATE: others WAIT in line for this row.
+BEGIN;
+SELECT * FROM seats WHERE id = 42 FOR UPDATE;   -- locks row 42
+UPDATE seats SET status = 'HELD', held_by = $1 WHERE id = 42;
+COMMIT;                                          -- lock released
+-- Correct for "I need THIS specific row" (seat 42, account 7).
+
+
+-- SKIP LOCKED: others silently SKIP locked rows and take the next free one.
+BEGIN;
+SELECT id FROM jobs
+WHERE status = 'PENDING' AND scheduled_at &lt;= now()
+ORDER BY scheduled_at
+LIMIT 1
+FOR UPDATE SKIP LOCKED;        -- ← the magic
+UPDATE jobs SET status = 'RUNNING', worker_id = $1 WHERE id = $2;
+COMMIT;
+-- Correct for "I need ANY row" — a worker pool. 10 workers poll
+-- simultaneously and each gets a DIFFERENT job. Zero contention,
+-- zero waiting, no job handed to two workers.</pre>
+  </details>
+
+  <div class="box sde">
+    <div class="label">🛡️ LLD Blueprint</div>
+    <p><strong>The distinction to state out loud in an interview:</strong> use plain <code>FOR UPDATE</code> when you need a <em>specific</em> row and it's correct for others to wait — booking seat 14A, debiting account 7. Use <code>SKIP LOCKED</code> when you need <em>any</em> row from a pool and waiting is pointless — a job queue, a task dispatcher.</p>
+    <p>Getting this backwards is a classic failure: plain <code>FOR UPDATE</code> on a job queue means all 10 workers queue behind the same oldest job, and you've built a single-threaded system with 10 processes.</p>
+  </div>
+
+  <h3>Optimistic locking — version columns</h3>
+  <p>No locks at all. Read the row with its version, and when you write, require the version to still be what you read. If someone changed it first, your update matches zero rows and you know you lost.</p>
+
+  <details class="snippet">
+    <summary>Version-column update</summary>
+    <pre>-- 1. read
+SELECT balance, version FROM accounts WHERE id = 1;   -- balance=500, version=5
+
+-- 2. write, conditional on nothing having changed
+UPDATE accounts
+SET balance = balance - 100,
+    version = version + 1
+WHERE id = 1 AND version = 5;
+
+-- rowsAffected = 1  → success
+-- rowsAffected = 0  → someone else updated it first. Re-read and retry,
+--                     or tell the user "this record changed, please review."</pre>
+  </details>
+
+  <div class="tw"><table>
+    <thead><tr><th>&nbsp;</th><th>Pessimistic</th><th>Optimistic</th></tr></thead>
+    <tbody>
+      <tr><td>Holds a lock</td><td>Yes, until commit</td><td>No</td></tr>
+      <tr><td>Conflict cost</td><td>Others wait</td><td>Loser retries</td></tr>
+      <tr><td>Good when</td><td>Conflicts are common, waits are short</td><td>Conflicts are rare</td></tr>
+      <tr><td>Bad when</td><td>Long transactions — everything jams</td><td>Conflicts are common — retry storms</td></tr>
+      <tr><td>Example</td><td>Seat booking, inventory</td><td>Editing a Packspec document</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="box insight">
+    <div class="label">💡 Implementation Pattern</div>
+    <p>Optimistic locking is the right answer for <strong>human-edited records</strong>, and Packspec's spec editing is the example. Two people rarely edit the same spec in the same second, so paying lock cost on every edit to protect against a rare collision is backwards. And when it does collide, the correct product behaviour isn't "wait" — it's "this changed while you were editing, here's what's different." Optimistic locking gives you that error naturally; pessimistic locking hides it by making one person wait.</p>
+  </div>
+
+  <h3>Deadlocks</h3>
+  <p>Two transactions each hold something the other wants, and both wait forever. The database detects the cycle and kills one.</p>
+
+  <div class="ascii">Transaction A            Transaction B
+ ─────────────           ─────────────
+ lock row 1        →     lock row 2
+      ↓                       ↓
+ wants row 2  ←── waits ──┐   wants row 1
+      ↑                   │        ↓
+      └──────── waits ────┴────────┘
+
+              DEADLOCK
+ Postgres kills one with:
+ "deadlock detected"</div>
+
+  <div class="box trap">
+    <div class="label">🚨 Deadlock Trap</div>
+    <p><strong>The fix is boringly simple: always lock rows in the same order.</strong> If every transaction locks by ascending ID, a cycle is impossible — A holds 1 and wants 2 while B waits for 1, so B never holds 2. The cycle can't close.</p>
+    <p>In a transfer function that means sorting the two account IDs before locking, <em>not</em> locking "from" then "to". This is the single most common deadlock question, and the sort is the whole answer.</p>
+    <p>Also: <strong>keep transactions short.</strong> Never do a network call, an API request or a file upload inside one — you're holding locks for the duration of something you don't control.</p>
+  </div>
+
+  <details class="snippet">
+    <summary>Deadlock-free transfer</summary>
+    <pre>async function transfer(fromId, toId, amount) {
+  // ALWAYS lock in a deterministic order — smallest id first
+  const [first, second] = [fromId, toId].sort((a, b) =&gt; a - b);
+
+  await db.tx(async t =&gt; {
+    await t.query('SELECT 1 FROM accounts WHERE id = $1 FOR UPDATE', [first]);
+    await t.query('SELECT 1 FROM accounts WHERE id = $1 FOR UPDATE', [second]);
+
+    const { rows } = await t.query('SELECT balance FROM accounts WHERE id = $1', [fromId]);
+    if (rows[0].balance &lt; amount) throw new Error('Insufficient funds');
+
+    await t.query('UPDATE accounts SET balance = balance - $1 WHERE id = $2', [amount, fromId]);
+    await t.query('UPDATE accounts SET balance = balance + $1 WHERE id = $2', [amount, toId]);
+  });
+}</pre>
+  </details>
+</section>
+
+
+<!-- ================ C2 ================ -->
+<section class="cluster" id="c2">
+  <h2><span class="idx">02</span> Idempotency, queues &amp; state machines</h2>
+
+  <h3>Idempotency: doing it twice must equal doing it once</h3>
+  <p>Networks are unreliable. A client sends "charge ₹500", the response is lost, the client retries. Without protection you charged twice. The client cannot tell the difference between "request never arrived" and "response never came back" — so it <em>must</em> retry, and the server must make that safe.</p>
+
+  <details class="snippet">
+    <summary>Idempotency key — the database version</summary>
+    <pre>CREATE TABLE idempotency_keys (
+  key            text PRIMARY KEY,        -- client-supplied UUID
+  request_hash   text        NOT NULL,    -- guards against key reuse w/ different body
+  response_body  jsonb,
+  status         text        NOT NULL DEFAULT 'IN_PROGRESS',
+  created_at     timestamptz NOT NULL DEFAULT now()
+);
+
+-- The unique PRIMARY KEY does the work. Two concurrent requests race;
+-- exactly one INSERT succeeds and the other gets a conflict.
+BEGIN;
+  INSERT INTO idempotency_keys (key, request_hash)
+  VALUES ($1, $2)
+  ON CONFLICT (key) DO NOTHING;
+  -- 0 rows inserted → this key was seen before:
+  --   status = 'DONE'        → return the stored response_body
+  --   status = 'IN_PROGRESS' → return 409, client retries shortly
+
+  -- ...do the real work, in the SAME transaction...
+
+  UPDATE idempotency_keys SET status = 'DONE', response_body = $3 WHERE key = $1;
+COMMIT;</pre>
+  </details>
+
+  <details class="snippet">
+    <summary>Idempotency key — the Redis version</summary>
+    <pre># SET with NX = "set only if it does not exist". Atomic — no race.
+# EX 120 = auto-expire after 120 seconds.
+SET idem:a1b2c3 "in-progress" NX EX 120
+
+# Returns OK   → you are the first. Do the work.
+# Returns nil  → someone already has this key. Reject or wait.</pre>
+  </details>
+
+  <div class="box insight">
+    <div class="label">💡 Implementation Pattern</div>
+    <p><strong>The cheapest idempotency of all is a conditional update</strong> — no extra table needed:</p>
+    <p><code>UPDATE orders SET status='PROCESSING', worker_id='w1' WHERE id=101 AND status='PENDING'</code></p>
+    <p>The <code>AND status='PENDING'</code> is the guard. If two workers run this simultaneously, the database serializes them: the first flips the row and gets <code>rowsAffected = 1</code>; the second finds no row still PENDING and gets <code>0</code>. The loser simply stops. <strong>One atomic statement, no lock, no extra table.</strong> Reach for this before anything more complicated.</p>
+  </div>
+
+  <h3>Queues: polling a table vs Redis</h3>
+  <div class="tw"><table>
+    <thead><tr><th>&nbsp;</th><th>SQL table + SKIP LOCKED</th><th>Redis sorted set</th></tr></thead>
+    <tbody>
+      <tr><td>Durability</td><td>Survives a crash</td><td>Only if persistence is on</td></tr>
+      <tr><td>Transactional with your data</td><td>Yes — same commit</td><td>No — separate system</td></tr>
+      <tr><td>Speed</td><td>Thousands/sec</td><td>Far higher</td></tr>
+      <tr><td>Delayed jobs</td><td><code>WHERE scheduled_at &lt;= now()</code></td><td>Score = timestamp</td></tr>
+      <tr><td>Extra infra</td><td>None</td><td>A Redis to run</td></tr>
+    </tbody>
+  </table></div>
+  <p><strong>Start with the table.</strong> "We already have Postgres" is a real advantage, and <code>SKIP LOCKED</code> makes it genuinely good. Move to Redis or a broker when polling latency or throughput actually hurts.</p>
+
+  <details class="snippet">
+    <summary>Redis sorted set as a delayed queue</summary>
+    <pre># schedule: score = the unix time it should run
+ZADD jobs:scheduled 1755792000 "job:8817"
+
+# worker: pull everything now due
+ZRANGEBYSCORE jobs:scheduled -inf 1755792000 LIMIT 0 10
+
+# claim atomically so two workers can't take the same job
+ZREM jobs:scheduled "job:8817"     # returns 1 = you got it, 0 = someone else did
+
+# ZADD/ZRANGEBYSCORE are O(log N) — a sorted set is a skip list,
+# so "what's due now" is a range query, not a scan.</pre>
+  </details>
+
+  <h3>The outbox pattern</h3>
+  <p><strong>The problem it solves:</strong> you save an order to the database <em>and</em> publish "order created" to a queue. Two systems, no shared transaction. If the DB commit succeeds and the publish fails, the rest of the world never hears about the order. That's the dual-write problem.</p>
+
+  <div class="ascii">❌ DUAL WRITE — can lose events
+   ┌──────────────┐   commit ✓   ┌──────────┐
+   │ INSERT order │ ───────────► │    DB    │
+   └──────────────┘              └──────────┘
+   ┌──────────────┐   publish ✗
+   │ publish evt  │ ───────────► 💥 broker down
+   └──────────────┘              event lost forever
+
+
+✅ OUTBOX — one transaction, no loss
+   ┌────────────────────────────────┐
+   │ BEGIN                          │
+   │   INSERT INTO orders  ...      │  ← both rows
+   │   INSERT INTO outbox  ...      │  ← same commit
+   │ COMMIT                         │
+   └────────────────────────────────┘
+                 │
+                 ▼
+   ┌────────────────────────────────┐
+   │ relay process (polls outbox)   │ ──► broker
+   │  marks published_at on success │     retries until it works
+   └────────────────────────────────┘</div>
+
+  <details class="snippet">
+    <summary>Outbox table + relay</summary>
+    <pre>CREATE TABLE outbox (
+  id            bigserial PRIMARY KEY,
+  aggregate_id  text        NOT NULL,
+  event_type    text        NOT NULL,
+  payload       jsonb       NOT NULL,
+  created_at    timestamptz NOT NULL DEFAULT now(),
+  published_at  timestamptz
+);
+CREATE INDEX ON outbox (id) WHERE published_at IS NULL;   -- partial: only unsent
+
+-- relay loop
+BEGIN;
+SELECT * FROM outbox WHERE published_at IS NULL
+ORDER BY id LIMIT 100 FOR UPDATE SKIP LOCKED;
+-- publish each to the broker...
+UPDATE outbox SET published_at = now() WHERE id = ANY($1);
+COMMIT;</pre>
+  </details>
+
+  <div class="box sde">
+    <div class="label">🛡️ LLD Blueprint</div>
+    <p>Say the guarantee precisely: the outbox gives you <strong>at-least-once</strong> delivery, not exactly-once. If the relay publishes and then crashes before marking <code>published_at</code>, the event is sent twice. That is not a flaw to apologise for — it's the standard guarantee, and the answer is that <strong>consumers must be idempotent</strong>. Every event carries an ID, and consumers skip IDs they've already processed. "Exactly-once delivery" doesn't really exist in distributed systems; "at-least-once delivery plus idempotent consumers" is how you get exactly-once <em>effect</em>.</p>
+  </div>
+
+  <h3>Retries, backoff and circuit breakers</h3>
+  <details class="snippet">
+    <summary>Exponential backoff with jitter (the RecrutAI shape)</summary>
+    <pre>async function withRetry(fn, { retries = 2, base = 1000, timeoutMs = 6000 } = {}) {
+  for (let attempt = 0; attempt &lt;= retries; attempt++) {
+    try {
+      return await withTimeout(fn(), timeoutMs);      // hard 6s ceiling
+    } catch (err) {
+      if (!isRetryable(err) || attempt === retries) throw err;
+
+      const backoff = base * 2 ** attempt;            // 1000ms, 2000ms
+      const jitter  = Math.random() * backoff * 0.3;  // ±30% spread
+      await sleep(backoff + jitter);
+    }
+  }
+}
+// isRetryable: timeouts, 429, 502/503/504 → yes.
+// 400, 401, 422 → NO. Retrying a bad request just wastes time.</pre>
+  </details>
+
+  <div class="box trap">
+    <div class="label">🚨 Thundering Herd Trap</div>
+    <p><strong>Why jitter is not optional.</strong> A service goes down. A thousand clients all fail at the same moment, all wait exactly 1000 ms, and all retry at the same moment. You've built a synchronised hammer. The service comes back up, gets hit by a thousand simultaneous requests, and dies again.</p>
+    <p>Random jitter spreads those retries over a window so the recovering service sees a ramp instead of a wall. <strong>And retries alone make an overload worse</strong> — if the upstream is slow because it's drowning, retrying triples the load. That's what a <strong>circuit breaker</strong> fixes: after N consecutive failures it opens and fails instantly without touching the network, giving the upstream room to recover. Retries handle blips; breakers handle outages.</p>
+  </div>
+
+  <h3>State machines</h3>
+  <p>A state machine is a list of allowed states plus a table of legal transitions. Everything not in the table is rejected. It turns "did we handle that case?" into a data question.</p>
+
+  <div class="ascii">Chessify game lifecycle
+
+  WAITING ──join──► READY ──start──► IN_PROGRESS ──mate/resign──► FINISHED
+     │                                    │  ▲
+     │                            disconnect  │ reconnect (within 30s)
+     │                                    ▼  │
+     └──────────timeout─────────────► ABANDONED
+
+  Any event not on an arrow is REJECTED.
+  e.g. 'move' while WAITING → ignored, no crash, no special-case code.</div>
+
+  <details class="snippet">
+    <summary>Table-driven state machine (TypeScript)</summary>
+    <pre>type State = 'WAITING' | 'READY' | 'IN_PROGRESS' | 'FINISHED' | 'ABANDONED';
+type Event = 'JOIN' | 'START' | 'MOVE' | 'DISCONNECT' | 'RECONNECT' | 'END' | 'TIMEOUT';
+
+// The whole design lives in this one object. Reviewable at a glance.
+const TRANSITIONS: Record&lt;State, Partial&lt;Record&lt;Event, State&gt;&gt;&gt; = {
+  WAITING:     { JOIN: 'READY', TIMEOUT: 'ABANDONED' },
+  READY:       { START: 'IN_PROGRESS', DISCONNECT: 'WAITING' },
+  IN_PROGRESS: { MOVE: 'IN_PROGRESS', END: 'FINISHED', DISCONNECT: 'IN_PROGRESS' },
+  FINISHED:    {},                      // terminal
+  ABANDONED:   {},                      // terminal
+};
+
+class GameMachine {
+  constructor(private state: State = 'WAITING') {}
+
+  can(e: Event) { return TRANSITIONS[this.state][e] !== undefined; }
+
+  apply(e: Event): boolean {
+    const next = TRANSITIONS[this.state][e];
+    if (next === undefined) return false;    // illegal → reject, don't throw
+    this.state = next;
+    return true;
+  }
+}</pre>
+  </details>
+
+  <div class="box insight">
+    <div class="label">💡 Implementation Pattern</div>
+    <p>Both Chessify and RecrutAI use this shape and it's worth naming the shared benefit: <strong>illegal transitions become impossible rather than unhandled.</strong> In RecrutAI the LLM returns one of four branch tokens — <code>PROBE_DEEPER</code>, <code>SIMPLIFY</code>, <code>PIVOT_TOPIC</code>, <code>PROCEED</code> — and anything else fails the transition table and triggers the fallback. A hallucinated value can't become a state. Constraining an unpredictable component with a state machine is how you make it safe to depend on.</p>
+  </div>
+</section>
+
+
+<!-- ================ C3 ================ -->
+<section class="cluster" id="c3">
+  <h2><span class="idx">03</span> Machine coding implementations</h2>
+  <p style="color:var(--text-dim); font-size:12px;">Machine coding rounds mark structure over cleverness. Separate models from services, use interfaces where a strategy could change, keep it runnable, and say your assumptions out loud.</p>
+
+  <h3>1 · Rate limiter</h3>
+  <div class="tw"><table>
+    <thead><tr><th>Algorithm</th><th>How</th><th>Memory</th><th>Weakness</th></tr></thead>
+    <tbody>
+      <tr><td>Fixed window</td><td>Count per clock minute</td><td>O(1)</td><td>2× burst at the boundary</td></tr>
+      <tr><td>Token bucket</td><td>Tokens refill at a steady rate</td><td>O(1)</td><td>Allows a burst up to capacity (often desirable)</td></tr>
+      <tr><td>Sliding window log</td><td>Store every request timestamp</td><td>O(N) per user</td><td>Memory heavy</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="box mlde">
+    <div class="label">💻 Machine Coding — Token Bucket (C++)</div>
+    <p>The trick that makes it O(1): <strong>don't run a refill timer.</strong> Compute tokens lazily from elapsed time on each request.</p>
+  </div>
+
+  <details class="snippet">
+    <summary>Token bucket + sliding window log — C++</summary>
+    <pre>#include &lt;chrono&gt;
+#include &lt;mutex&gt;
+#include &lt;deque&gt;
+#include &lt;unordered_map&gt;
+
+using Clock = std::chrono::steady_clock;
+
+class IRateLimiter {                       // interface → strategies are swappable
+public:
+    virtual bool allow(const std::string&amp; key) = 0;
+    virtual ~IRateLimiter() = default;
+};
+
+// ---------- Token Bucket ----------
+class TokenBucketLimiter : public IRateLimiter {
+    struct Bucket { double tokens; Clock::time_point last; };
+
+    double capacity_;      // max burst
+    double refillPerSec_;  // steady rate
+    std::unordered_map&lt;std::string, Bucket&gt; buckets_;
+    std::mutex mu_;
+
+public:
+    TokenBucketLimiter(double capacity, double refillPerSec)
+        : capacity_(capacity), refillPerSec_(refillPerSec) {}
+
+    bool allow(const std::string&amp; key) override {
+        std::lock_guard&lt;std::mutex&gt; lock(mu_);
+        auto now = Clock::now();
+
+        auto it = buckets_.find(key);
+        if (it == buckets_.end()) {
+            buckets_[key] = { capacity_ - 1, now };
+            return true;
+        }
+        Bucket&amp; b = it-&gt;second;
+
+        // LAZY REFILL — no background timer, no per-user thread
+        double elapsed = std::chrono::duration&lt;double&gt;(now - b.last).count();
+        b.tokens = std::min(capacity_, b.tokens + elapsed * refillPerSec_);
+        b.last   = now;
+
+        if (b.tokens &gt;= 1.0) { b.tokens -= 1.0; return true; }
+        return false;
+    }
+};
+
+// ---------- Sliding Window Log ----------
+class SlidingWindowLimiter : public IRateLimiter {
+    int limit_;
+    std::chrono::seconds window_;
+    std::unordered_map&lt;std::string, std::deque&lt;Clock::time_point&gt;&gt; log_;
+    std::mutex mu_;
+
+public:
+    SlidingWindowLimiter(int limit, int windowSec)
+        : limit_(limit), window_(windowSec) {}
+
+    bool allow(const std::string&amp; key) override {
+        std::lock_guard&lt;std::mutex&gt; lock(mu_);
+        auto now = Clock::now();
+        auto&amp; q  = log_[key];
+
+        while (!q.empty() &amp;&amp; now - q.front() &gt; window_) q.pop_front();  // evict old
+
+        if ((int)q.size() &lt; limit_) { q.push_back(now); return true; }
+        return false;
+    }
+};</pre>
+  </details>
+
+  <div class="box trap">
+    <div class="label">🚨 Concurrency Trap</div>
+    <p><strong>Read-modify-write is not atomic.</strong> Checking <code>tokens &gt;= 1</code> and then doing <code>tokens -= 1</code> is two operations. Two threads can both read 1 token and both decrement, letting through two requests when only one was allowed. The mutex must cover the check <em>and</em> the update together, not each separately.</p>
+    <p>Mention the distributed version unprompted: across many servers, an in-memory map means each server allows the full limit independently, so 5 servers = 5× the intended rate. The fix is Redis with an atomic Lua script, or the <code>INCR</code>-with-expiry pattern — one shared counter.</p>
+  </div>
+
+  <h3>2 · Job scheduler with retries</h3>
+  <details class="snippet">
+    <summary>Priority-queue scheduler with worker threads — C++</summary>
+    <pre>#include &lt;queue&gt;
+#include &lt;thread&gt;
+#include &lt;condition_variable&gt;
+#include &lt;unordered_set&gt;
+#include &lt;functional&gt;
+
+struct Task {
+    long long           id;
+    Clock::time_point   runAt;
+    int                 attempts = 0;
+    int                 maxAttempts = 3;
+    std::function&lt;void()&gt; fn;
+
+    // priority_queue is a MAX-heap, so invert: earliest time = highest priority
+    bool operator&lt;(const Task&amp; o) const { return runAt &gt; o.runAt; }
+};
+
+class Scheduler {
+    std::priority_queue&lt;Task&gt;        pq_;
+    std::unordered_set&lt;long long&gt;    cancelled_;
+    std::mutex                       mu_;
+    std::condition_variable          cv_;
+    bool                             stop_ = false;
+    std::vector&lt;std::thread&gt;         workers_;
+
+public:
+    explicit Scheduler(int nWorkers) {
+        for (int i = 0; i &lt; nWorkers; ++i)
+            workers_.emplace_back([this]{ loop(); });
+    }
+
+    void schedule(Task t) {
+        { std::lock_guard&lt;std::mutex&gt; l(mu_); pq_.push(std::move(t)); }
+        cv_.notify_one();
+    }
+
+    void cancel(long long id) {
+        std::lock_guard&lt;std::mutex&gt; l(mu_);
+        cancelled_.insert(id);      // lazy cancel: skipped when popped
+    }
+
+    void shutdown() {
+        { std::lock_guard&lt;std::mutex&gt; l(mu_); stop_ = true; }
+        cv_.notify_all();
+        for (auto&amp; w : workers_) w.join();
+    }
+
+private:
+    void loop() {
+        while (true) {
+            std::unique_lock&lt;std::mutex&gt; lock(mu_);
+
+            // wait until: shutdown, OR a task exists
+            cv_.wait(lock, [this]{ return stop_ || !pq_.empty(); });
+            if (stop_) return;
+
+            auto now = Clock::now();
+            if (pq_.top().runAt &gt; now) {
+                // earliest task is in the future → sleep until then,
+                // but wake early if something sooner is scheduled
+                cv_.wait_until(lock, pq_.top().runAt);
+                continue;
+            }
+
+            Task t = pq_.top(); pq_.pop();
+            if (cancelled_.count(t.id)) { cancelled_.erase(t.id); continue; }
+            lock.unlock();                       // ← run OUTSIDE the lock
+
+            try {
+                t.fn();
+            } catch (...) {
+                if (++t.attempts &lt; t.maxAttempts) {
+                    t.runAt = Clock::now() +
+                        std::chrono::seconds(1 &lt;&lt; t.attempts);  // 2s, 4s, 8s
+                    schedule(std::move(t));
+                }
+            }
+        }
+    }
+};</pre>
+  </details>
+
+  <div class="box sde">
+    <div class="label">🛡️ LLD Blueprint</div>
+    <p>Three decisions worth defending, because interviewers probe all three:</p>
+    <ul>
+      <li><strong>Run the task outside the lock.</strong> If you hold the mutex while executing, a slow task blocks every other worker and the scheduler becomes single-threaded. This is the most common bug in this problem.</li>
+      <li><strong><code>wait_until</code>, not <code>sleep_for</code>.</strong> Sleeping blindly means a newly-scheduled sooner task waits for your sleep to end. A condition variable wakes early when something changes.</li>
+      <li><strong>Lazy cancellation.</strong> Removing from the middle of a heap is O(n). Marking the ID and skipping it on pop is O(1), and the only cost is a cancelled task briefly occupying heap space.</li>
+    </ul>
+  </div>
+
+  <h3>3 · Parking lot — resource allocation</h3>
+  <details class="snippet">
+    <summary>Parking lot with strategy pattern — TypeScript</summary>
+    <pre>// ---------- models ----------
+enum VehicleType { MOTORCYCLE, CAR, TRUCK }
+
+abstract class Vehicle {
+  constructor(public plate: string, public type: VehicleType) {}
+}
+class Car        extends Vehicle { constructor(p: string){ super(p, VehicleType.CAR); } }
+class Motorcycle extends Vehicle { constructor(p: string){ super(p, VehicleType.MOTORCYCLE); } }
+
+class Slot {
+  occupiedBy: string | null = null;
+  constructor(public id: string, public size: VehicleType) {}
+  get isFree() { return this.occupiedBy === null; }
+  fits(v: Vehicle) { return this.size &gt;= v.type; }   // bigger slot fits smaller vehicle
+}
+
+// ---------- strategy: pricing can change without touching the lot ----------
+interface PricingStrategy { price(v: Vehicle, hours: number): number; }
+
+class HourlyPricing implements PricingStrategy {
+  private rates = { [VehicleType.MOTORCYCLE]: 10, [VehicleType.CAR]: 20, [VehicleType.TRUCK]: 40 };
+  price(v: Vehicle, hours: number) { return this.rates[v.type] * Math.ceil(hours); }
+}
+
+class FlatThenHourly implements PricingStrategy {
+  price(v: Vehicle, hours: number) {
+    return hours &lt;= 1 ? 30 : 30 + (Math.ceil(hours) - 1) * 20;
+  }
+}
+
+// ---------- service ----------
+class ParkingLot {
+  private slots = new Map&lt;string, Slot&gt;();
+  private tickets = new Map&lt;string, { slotId: string; in: number }&gt;();
+  private freeBySize = new Map&lt;VehicleType, Slot[]&gt;();   // O(1) allocation
+
+  constructor(private pricing: PricingStrategy) {}
+
+  park(v: Vehicle): string {
+    // find the SMALLEST slot that fits — don't waste a truck bay on a bike
+    for (let size = v.type; size &lt;= VehicleType.TRUCK; size++) {
+      const pool = this.freeBySize.get(size);
+      if (pool?.length) {
+        const slot = pool.pop()!;             // O(1)
+        slot.occupiedBy = v.plate;
+        const ticket = `T-${Date.now()}-${v.plate}`;
+        this.tickets.set(ticket, { slotId: slot.id, in: Date.now() });
+        return ticket;
+      }
+    }
+    throw new Error('Lot full');
+  }
+
+  unpark(ticket: string): number {
+    const t = this.tickets.get(ticket);
+    if (!t) throw new Error('Invalid ticket');
+    this.tickets.delete(ticket);              // delete FIRST → ticket can't be reused
+
+    const slot = this.slots.get(t.slotId)!;
+    const vehicleType = slot.size;
+    slot.occupiedBy = null;
+    this.freeBySize.get(slot.size)!.push(slot);
+
+    const hours = (Date.now() - t.in) / 3_600_000;
+    return this.pricing.price({ plate: '', type: vehicleType } as Vehicle, hours);
+  }
+}</pre>
+  </details>
+
+  <div class="box insight">
+    <div class="label">💡 Implementation Pattern</div>
+    <p>Two things that earn marks here beyond "it works." <strong>Free-list per size</strong> makes allocation O(1) instead of scanning every slot — and it's the difference between a toy and something that handles 10,000 slots. <strong>Strategy interface for pricing</strong> means weekend rates, EV surcharges or a flat-fee model are a new class, not an edit to <code>ParkingLot</code>. When the interviewer says "now add dynamic pricing" — and they will — you add a class instead of rewriting.</p>
+  </div>
+
+  <h3>4 · Chess engine — command pattern with undo</h3>
+  <details class="snippet">
+    <summary>Command pattern + server-authoritative validation — TypeScript</summary>
+    <pre>interface Command {
+  execute(board: Board): void;
+  undo(board: Board): void;
+}
+
+class MoveCommand implements Command {
+  private captured: Piece | null = null;      // remembered so undo can restore it
+
+  constructor(private from: Square, private to: Square) {}
+
+  execute(board: Board) {
+    this.captured = board.at(this.to);         // save BEFORE overwriting
+    board.set(this.to, board.at(this.from));
+    board.set(this.from, null);
+  }
+
+  undo(board: Board) {
+    board.set(this.from, board.at(this.to));
+    board.set(this.to, this.captured);         // restore, including null
+  }
+}
+
+class Game {
+  private history: Command[] = [];
+  private redoStack: Command[] = [];
+
+  constructor(private board: Board, private state = 'IN_PROGRESS') {}
+
+  // SERVER-SIDE gate. The client's board is a rendering, never the truth.
+  tryMove(playerId: string, from: Square, to: Square): boolean {
+    if (this.state !== 'IN_PROGRESS')            return false;  // 1. right phase?
+    if (this.colourOf(playerId) === null)        return false;  // 2. player, not spectator?
+    if (this.board.turn !== this.colourOf(playerId)) return false; // 3. their turn?
+    if (!this.board.isLegal(from, to))           return false;  // 4. legal in OUR board?
+
+    const cmd = new MoveCommand(from, to);
+    cmd.execute(this.board);
+    this.history.push(cmd);
+    this.redoStack.length = 0;      // a new move invalidates redo
+    return true;
+  }
+
+  undo() {
+    const cmd = this.history.pop();
+    if (!cmd) return;
+    cmd.undo(this.board);
+    this.redoStack.push(cmd);
+  }
+
+  redo() {
+    const cmd = this.redoStack.pop();
+    if (!cmd) return;
+    cmd.execute(this.board);
+    this.history.push(cmd);
+  }
+}</pre>
+  </details>
+
+  <div class="box sde">
+    <div class="label">🛡️ LLD Blueprint</div>
+    <p><strong>Why the command pattern rather than just storing board snapshots:</strong> a snapshot per move is 64 squares copied every time; a command is two squares plus a captured piece. For a 100-move game that's a meaningful difference, and undo/redo falls out for free instead of being bolted on.</p>
+    <p><strong>And the ordering of the four checks matters</strong> — cheapest first. Phase and role are field comparisons; legality is the expensive one, so it runs last, after the cheap rejections have already filtered out most bad input. Same principle as short-circuit evaluation.</p>
+  </div>
+</section>
+
+
+<!-- ================ C4 ================ -->
+<section class="cluster" id="c4">
+  <h2><span class="idx">04</span> Schema blueprints &amp; SQL bank</h2>
+
+  <h3>Flash sale / inventory reservation</h3>
+  <details class="snippet">
+    <summary>DDL + the one query that prevents negative stock</summary>
+    <pre>CREATE TABLE products (
+  id     bigserial PRIMARY KEY,
+  sku    text UNIQUE NOT NULL,
+  name   text NOT NULL
+);
+
+CREATE TABLE inventory_pools (
+  product_id bigint PRIMARY KEY REFERENCES products(id),
+  total      int NOT NULL CHECK (total &gt;= 0),
+  reserved   int NOT NULL DEFAULT 0 CHECK (reserved &gt;= 0),
+  version    int NOT NULL DEFAULT 0,
+  CHECK (reserved &lt;= total)          -- the invariant, enforced by the DB itself
+);
+
+CREATE TABLE reservations (
+  id              bigserial PRIMARY KEY,
+  product_id      bigint NOT NULL REFERENCES products(id),
+  user_id         bigint NOT NULL,
+  qty             int NOT NULL CHECK (qty &gt; 0),
+  status          text NOT NULL DEFAULT 'HELD',   -- HELD | CONFIRMED | EXPIRED
+  idempotency_key text UNIQUE NOT NULL,           -- ← stops double-submit
+  expires_at      timestamptz NOT NULL,
+  created_at      timestamptz NOT NULL DEFAULT now()
+);
+CREATE INDEX ON reservations (expires_at) WHERE status = 'HELD';   -- for the sweeper
+
+CREATE TABLE audit_ledger (
+  id         bigserial PRIMARY KEY,
+  product_id bigint NOT NULL,
+  delta      int    NOT NULL,     -- +ve released, -ve reserved
+  reason     text   NOT NULL,
+  at         timestamptz NOT NULL DEFAULT now()
+);
+
+-- ============ THE ATOMIC RESERVATION ============
+-- One statement. No SELECT-then-UPDATE. No lock held by the app.
+UPDATE inventory_pools
+SET reserved = reserved + $2,
+    version  = version + 1
+WHERE product_id = $1
+  AND total - reserved &gt;= $2      -- ← the guard: only if stock actually remains
+RETURNING total - reserved AS remaining;
+
+-- 1 row returned → reserved successfully
+-- 0 rows         → sold out. Not an error, just a fact. Return 409.</pre>
+  </details>
+
+  <div class="box insight">
+    <div class="label">💡 Implementation Pattern</div>
+    <p><strong>The whole trick is putting the business rule in the <code>WHERE</code> clause.</strong> The naive version — <code>SELECT stock</code>, check it in application code, then <code>UPDATE</code> — has a gap between the read and the write where a thousand other requests can slip through. All of them read "10 left", all decide it's fine, all decrement, and you've oversold.</p>
+    <p><code>UPDATE ... WHERE total - reserved &gt;= qty</code> is a single atomic statement. The database serializes concurrent updates to the same row, so each one re-evaluates the condition against the <em>current</em> value. Overselling is not merely unlikely — it's impossible. And the <code>CHECK (reserved &lt;= total)</code> constraint is a second net: even a buggy future query cannot violate the invariant.</p>
+  </div>
+
+  <h3>Time-series telemetry (SahYatri pattern)</h3>
+  <details class="snippet">
+    <summary>Partitioned table + BRIN + rollup</summary>
+    <pre>CREATE TABLE telemetry (
+  bus_id       int         NOT NULL,
+  recorded_at  timestamptz NOT NULL,     -- when it HAPPENED (on the device)
+  ingested_at  timestamptz NOT NULL DEFAULT now(),  -- when we RECEIVED it
+  occupancy    int         NOT NULL,
+  lat          double precision,
+  lng          double precision,
+  PRIMARY KEY (bus_id, recorded_at)      -- doubles as the idempotency key
+) PARTITION BY RANGE (recorded_at);
+
+CREATE TABLE telemetry_2026_08 PARTITION OF telemetry
+  FOR VALUES FROM ('2026-08-01') TO ('2026-09-01');
+
+-- BRIN: kilobytes, not gigabytes. Works because inserts arrive in time order,
+-- so the table is ALREADY physically sorted by recorded_at.
+CREATE INDEX ON telemetry_2026_08 USING BRIN (recorded_at);
+
+-- Idempotent batch insert — a retried burst cannot double-count
+INSERT INTO telemetry (bus_id, recorded_at, occupancy, lat, lng)
+SELECT * FROM unnest($1::int[], $2::timestamptz[], $3::int[], $4::float[], $5::float[])
+ON CONFLICT (bus_id, recorded_at) DO NOTHING;
+
+-- Hourly rollup, safe to re-run (late data recomputes the bucket)
+INSERT INTO telemetry_hourly (bus_id, hour, avg_occupancy, max_occupancy, samples)
+SELECT bus_id, date_trunc('hour', recorded_at), avg(occupancy), max(occupancy), count(*)
+FROM telemetry
+WHERE recorded_at &gt;= $1 AND recorded_at &lt; $2
+GROUP BY 1, 2
+ON CONFLICT (bus_id, hour) DO UPDATE
+  SET avg_occupancy = EXCLUDED.avg_occupancy,
+      max_occupancy = EXCLUDED.max_occupancy,
+      samples       = EXCLUDED.samples;</pre>
+  </details>
+
+  <div class="box mlde">
+    <div class="label">💻 Why partitioning pays three times</div>
+    <p><strong>Query pruning</strong> — a last-7-days query skips every other partition without reading it. <strong>Small hot index</strong> — writes only touch the current partition, so the index that must stay in RAM is one month's worth, not five years'. <strong>Instant retention</strong> — deleting old data becomes <code>DROP TABLE</code>, which is metadata-only, instead of a <code>DELETE</code> that writes dead tuples and then makes VACUUM clean them up for hours.</p>
+  </div>
+
+  <h3>Multi-tenant spec engine (Packspec pattern)</h3>
+  <details class="snippet">
+    <summary>Tenant-scoped schema with revision snapshots and soft delete</summary>
+    <pre>CREATE TABLE companies (
+  id   bigserial PRIMARY KEY,
+  name text NOT NULL
+);
+
+CREATE TABLE users (
+  id         bigserial PRIMARY KEY,
+  company_id bigint NOT NULL REFERENCES companies(id),
+  email      text   NOT NULL,
+  role       text   NOT NULL,  -- OWNER | ADMIN | EDITOR | VIEWER | GUEST
+  UNIQUE (company_id, email)   -- same email may exist in different companies
+);
+
+CREATE TABLE specs (
+  id          bigserial PRIMARY KEY,
+  company_id  bigint NOT NULL REFERENCES companies(id),   -- ← tenant key
+  title       text   NOT NULL,
+  body        jsonb  NOT NULL,        -- flexible per-tenant fields
+  status      text   NOT NULL DEFAULT 'DRAFT',
+  version     int    NOT NULL DEFAULT 1,   -- optimistic locking
+  deleted_at  timestamptz,                 -- soft delete
+  updated_at  timestamptz NOT NULL DEFAULT now()
+);
+
+-- company_id FIRST: every query filters on it, so it must lead the index
+CREATE INDEX ON specs (company_id, status, updated_at DESC)
+  WHERE deleted_at IS NULL;          -- partial: deleted rows leave the index entirely
+
+CREATE INDEX ON specs USING GIN (body);   -- query inside the JSONB
+
+-- append-only snapshots, NOT an embedded array (unbounded growth)
+CREATE TABLE spec_revisions (
+  id          bigserial PRIMARY KEY,
+  spec_id     bigint NOT NULL REFERENCES specs(id),
+  company_id  bigint NOT NULL,        -- denormalized so revisions are tenant-filterable alone
+  version     int    NOT NULL,
+  body        jsonb  NOT NULL,
+  changed_by  bigint NOT NULL REFERENCES users(id),
+  changed_at  timestamptz NOT NULL DEFAULT now(),
+  UNIQUE (spec_id, version)
+);
+
+-- ---- optimistic update + snapshot, atomically ----
+BEGIN;
+  UPDATE specs
+  SET body = $3, version = version + 1, updated_at = now()
+  WHERE id = $1 AND company_id = $2 AND version = $4 AND deleted_at IS NULL;
+  -- 0 rows → either someone else edited it, or it isn't yours. Both → reject.
+
+  INSERT INTO spec_revisions (spec_id, company_id, version, body, changed_by)
+  VALUES ($1, $2, $4 + 1, $3, $5);
+COMMIT;</pre>
+  </details>
+
+  <div class="box trap">
+    <div class="label">🚨 Multi-tenancy Trap</div>
+    <p><strong>Soft delete silently breaks every query you forget it in.</strong> Once <code>deleted_at</code> exists, every single read must include <code>AND deleted_at IS NULL</code> — and the one that forgets shows deleted specs to users, or worse, counts them in a billing query. Same class of bug as a missing <code>company_id</code> filter.</p>
+    <p><strong>The structural fixes:</strong> a database <em>view</em> (<code>active_specs</code>) that bakes both filters in and is what application code actually queries; or a repository layer that injects them. And note the <code>UNIQUE</code> problem — a unique constraint on <code>(company_id, title)</code> will block re-creating a spec with a deleted one's title. Use a partial unique index: <code>UNIQUE (company_id, title) WHERE deleted_at IS NULL</code>.</p>
+  </div>
+
+  <h3>Advanced SQL bank</h3>
+  <details class="snippet">
+    <summary>Window functions, LAG, and recursive CTEs</summary>
+    <pre>-- 1. LATEST ROW PER GROUP — the single most-asked SQL interview query.
+--    "Most recent reading for every bus."
+SELECT bus_id, recorded_at, occupancy
+FROM (
+  SELECT *,
+         ROW_NUMBER() OVER (PARTITION BY bus_id ORDER BY recorded_at DESC) AS rn
+  FROM telemetry
+  WHERE recorded_at &gt;= now() - interval '1 day'
+) t
+WHERE rn = 1;
+-- PARTITION BY = restart the numbering per group. ORDER BY = which one is #1.
+
+
+-- 2. GAP DETECTION with LAG — "when did a bus stop reporting?"
+SELECT bus_id, recorded_at,
+       recorded_at - LAG(recorded_at) OVER (PARTITION BY bus_id ORDER BY recorded_at) AS gap
+FROM telemetry
+WHERE recorded_at &gt;= now() - interval '7 days'
+QUALIFY gap &gt; interval '5 minutes';        -- Postgres: wrap in a subquery instead
+
+
+-- 3. RUNNING TOTAL — cumulative passengers today
+SELECT bus_id, recorded_at, occupancy,
+       SUM(occupancy) OVER (PARTITION BY bus_id ORDER BY recorded_at
+                            ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS running
+FROM telemetry;
+
+
+-- 4. RANK vs DENSE_RANK vs ROW_NUMBER — know the difference cold
+--    scores 90,90,80  →  ROW_NUMBER: 1,2,3
+--                        RANK:       1,1,3   (gap after the tie)
+--                        DENSE_RANK: 1,1,2   (no gap)
+
+
+-- 5. RECURSIVE CTE — walk a hierarchy (org chart, nested categories, threads)
+WITH RECURSIVE tree AS (
+  SELECT id, parent_id, name, 1 AS depth
+  FROM categories
+  WHERE parent_id IS NULL                 -- anchor: the roots
+
+  UNION ALL
+
+  SELECT c.id, c.parent_id, c.name, t.depth + 1
+  FROM categories c
+  JOIN tree t ON c.parent_id = t.id       -- recursive: children of what we found
+)
+SELECT * FROM tree ORDER BY depth, name;
+-- Terminates when the recursive part returns no rows.
+-- Add a depth guard (WHERE depth &lt; 20) if cycles are possible.</pre>
+  </details>
+
+  <div class="box insight">
+    <div class="label">💡 Implementation Pattern</div>
+    <p>The mental model for window functions: <strong>they add a column computed across a group of rows, without collapsing those rows.</strong> That's exactly what separates them from <code>GROUP BY</code>, which collapses. If a question sounds like "for each X, the top N" or "compare each row to the previous one", it's a window function — and the <code>ROW_NUMBER() OVER (PARTITION BY ... ORDER BY ...)</code> pattern in query 1 solves an enormous share of them.</p>
+  </div>
+</section>
+
+
+<!-- ================ C5 ================ -->
+<section class="cluster" id="c5">
+  <h2><span class="idx">05</span> Bottlenecks &amp; capacity sizing</h2>
+
+  <h3>Connection pool exhaustion</h3>
+  <p>PostgreSQL forks a <strong>process</strong> per connection — several MB each plus scheduling cost. So connections are scarce, and more is not better.</p>
+  <div class="tw"><table>
+    <thead><tr><th>Symptom</th><th>Real cause</th><th>Fix</th></tr></thead>
+    <tbody>
+      <tr><td>Timeouts, but DB looks idle</td><td>Everyone queued at the pool</td><td>Find the slow query holding connections</td></tr>
+      <tr><td>Throughput drops as pool grows</td><td>Too many processes thrashing</td><td><strong>Shrink</strong> the pool</td></tr>
+      <tr><td>Serverless kills the DB</td><td>Each invocation opens its own connection</td><td>PgBouncer transaction mode</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="box insight">
+    <div class="label">💡 Implementation Pattern</div>
+    <p>The counter-intuitive result worth stating: <strong>a smaller pool is often faster.</strong> A 4-core machine can genuinely execute about 4 queries at once; 100 connections just means 100 processes fighting over 4 cores with context-switch overhead. A common starting point is <code>(cores × 2) + effective_spindles</code> — so single digits, not hundreds.</p>
+    <p><strong>PgBouncer in transaction mode</strong> is what breaks the linkage: thousands of application connections multiplex onto a few real ones, because a connection is only borrowed for the duration of a transaction rather than the lifetime of a client. This is mandatory for serverless.</p>
+  </div>
+
+  <h3>Hot row contention</h3>
+  <p>Every request updates the same row — a global counter, a popular product's stock. Even with correct locking, they serialize: 1,000 requests become 1,000 sequential updates on one row.</p>
+
+  <div class="ascii">❌ HOT ROW                       ✅ SHARDED COUNTER
+                                    (write to a random shard)
+  1000 req/s                        1000 req/s
+      │                              ├──► counter_shard_0  (100/s)
+      ▼                              ├──► counter_shard_1  (100/s)
+ ┌─────────┐  all queue              ├──► ...
+ │ row id=1│  behind each other      └──► counter_shard_9  (100/s)
+ └─────────┘
+  ~500/s ceiling                     read = SUM(all shards)
+                                     10x the write throughput</div>
+
+  <details class="snippet">
+    <summary>Sharded counter</summary>
+    <pre>CREATE TABLE counter_shards (
+  name     text NOT NULL,
+  shard_id int  NOT NULL,
+  value    bigint NOT NULL DEFAULT 0,
+  PRIMARY KEY (name, shard_id)
+);
+
+-- write: pick a random shard → contention drops by the shard count
+UPDATE counter_shards SET value = value + 1
+WHERE name = 'page_views' AND shard_id = floor(random() * 10);
+
+-- read: sum them (slightly more expensive, and that's the trade)
+SELECT sum(value) FROM counter_shards WHERE name = 'page_views';</pre>
+  </details>
+  <p>The trade in one line: <strong>writes get N× cheaper, reads get N× more expensive.</strong> Correct when writes dominate — view counts, likes, metrics. Wrong when you read constantly and write rarely.</p>
+
+  <h3>Cache stampede (thundering herd)</h3>
+  <p>A popular cache key expires. In the same millisecond, 5,000 requests all miss, and all 5,000 hit the database with the same expensive query. The database falls over — <em>because</em> the cache was working well.</p>
+
+  <div class="tw"><table>
+    <thead><tr><th>Fix</th><th>How</th><th>Trade-off</th></tr></thead>
+    <tbody>
+      <tr><td>Mutex / single-flight</td><td>First miss takes a lock and recomputes; others wait or serve stale</td><td>Simple, but the waiters block briefly</td></tr>
+      <tr><td>Probabilistic early expiry (XFetch)</td><td>As TTL approaches, each request has a rising chance of refreshing early</td><td>No lock, no stampede; slightly more recomputes</td></tr>
+      <tr><td>Stale-while-revalidate</td><td>Serve the stale value instantly, refresh in the background</td><td>Best latency; users briefly see old data</td></tr>
+    </tbody>
+  </table></div>
+
+  <details class="snippet">
+    <summary>Single-flight cache in TypeScript</summary>
+    <pre>const inFlight = new Map&lt;string, Promise&lt;any&gt;&gt;();
+
+async function getCached&lt;T&gt;(key: string, ttl: number, compute: () =&gt; Promise&lt;T&gt;): Promise&lt;T&gt; {
+  const hit = await redis.get(key);
+  if (hit) return JSON.parse(hit);
+
+  // If another request is ALREADY computing this key, wait for it
+  // instead of starting a second identical query.
+  if (inFlight.has(key)) return inFlight.get(key)!;
+
+  const p = (async () =&gt; {
+    try {
+      const value = await compute();
+      await redis.set(key, JSON.stringify(value), 'EX', ttl);
+      return value;
+    } finally {
+      inFlight.delete(key);
+    }
+  })();
+
+  inFlight.set(key, p);
+  return p;
+}
+// Note: this dedupes per PROCESS. Across many servers you need a
+// distributed lock (SET NX) to get the same guarantee cluster-wide.</pre>
+  </details>
+
+  <div class="box trap">
+    <div class="label">🚨 Thundering Herd Trap</div>
+    <p><strong>Never give many keys the same TTL.</strong> Warming a cache at deploy time with <code>EX 3600</code> on everything means they all expire in the same second an hour later — a self-inflicted stampede, on a timer, in production. Add random jitter: <code>EX 3600 + random(0..300)</code>. Same principle as retry jitter, and the same failure if you skip it.</p>
+  </div>
+
+  <h3>Capacity estimation — do the arithmetic out loud</h3>
+  <details class="snippet">
+    <summary>Worked example: SahYatri at 10,000 buses</summary>
+    <pre>ASSUMPTIONS (state them; interviewers care about the method, not the number)
+  buses            = 10,000
+  reading interval = 3 s
+  row size         ≈ 60 bytes (ids, timestamp, int, 2 floats + overhead)
+
+WRITE THROUGHPUT
+  10,000 / 3 s              ≈ 3,333 writes/s
+  peak (2x)                 ≈ 6,700 writes/s
+  → single-row inserts: too many round trips.
+  → batch 100 rows/statement → ~67 statements/s. Comfortable.
+
+STORAGE
+  3,333 rows/s x 86,400 s   ≈ 288M rows/day
+  288M x 60 bytes           ≈ 17 GB/day raw
+  x 30 days                 ≈ 520 GB/month
+  → raw retention 7 days (~120 GB hot) + hourly rollups forever.
+  → rollup: 10,000 buses x 24 h = 240k rows/day ≈ 15 MB/day. Negligible.
+
+READ / RAM
+  dashboard: ~50 concurrent users, ~2 queries/s each ≈ 100 QPS
+  working set = last 24h of the current partition ≈ 17 GB
+  → won't fit in typical RAM. Serve dashboards from ROLLUPS, not raw.
+  → this is WHY downsampling exists — it's a memory decision, not tidiness.
+
+BANDWIDTH
+  6,700 writes/s x 200 bytes JSON ≈ 1.3 MB/s ≈ 11 Mbps. Trivial.
+
+CONCLUSION
+  Bottleneck is DISK GROWTH and the read working set, not CPU or network.
+  Levers, in order: batch inserts → partition → rollups → tiered retention.</pre>
+  </details>
+
+  <div class="box sde">
+    <div class="label">🛡️ LLD Blueprint</div>
+    <p>The point of capacity estimation is never the number — it's <strong>identifying which resource runs out first</strong>. Say the assumptions out loud, use round numbers, and finish with a named bottleneck. "Writes are easy, disk growth is the problem, so retention policy is the real design decision" is a complete answer. Numbers to keep handy: a day is ~86,400 s (call it 100k), a month is ~2.6M s, and 1M rows × 100 bytes = 100 MB.</p>
+  </div>
+</section>
+
+
+<!-- ================ C6 ================ -->
+<section class="cluster" id="c6">
+  <h2><span class="idx">06</span> Problem bank</h2>
+
+  <h3>1 · High-concurrency seat booking</h3>
+  <div class="ascii">  client                  API                     DB
+    │  POST /hold          │                        │
+    │  Idempotency-Key ────►│                        │
+    │                       │ INSERT idem key ──────►│ unique → dedupe
+    │                       │ SELECT seat FOR UPDATE │
+    │                       │   SKIP LOCKED ────────►│ lock or skip
+    │                       │ UPDATE seat = HELD ───►│
+    │◄── 201 hold, 10 min ──│                        │
+    │                       │                        │
+    │  POST /confirm ──────►│ UPDATE ... WHERE       │
+    │                       │  status='HELD' ───────►│ conditional
+    │◄── 200 booked ────────│                        │
+                            │                        │
+   [sweeper every 30s] ─────► UPDATE seats SET FREE WHERE
+                              status='HELD' AND held_until &lt; now()</div>
+
+  <details class="snippet">
+    <summary>Schema + hold + confirm + expiry sweeper</summary>
+    <pre>CREATE TABLE seats (
+  id          bigserial PRIMARY KEY,
+  show_id     bigint NOT NULL,
+  seat_label  text   NOT NULL,
+  status      text   NOT NULL DEFAULT 'FREE',   -- FREE | HELD | BOOKED
+  held_by     bigint,
+  held_until  timestamptz,
+  version     int    NOT NULL DEFAULT 0,
+  UNIQUE (show_id, seat_label)
+);
+CREATE INDEX ON seats (show_id) WHERE status = 'FREE';        -- pick-any queries
+CREATE INDEX ON seats (held_until) WHERE status = 'HELD';     -- the sweeper
+
+-- ---------- HOLD a specific seat ----------
+BEGIN;
+  INSERT INTO idempotency_keys (key, request_hash) VALUES ($1, $2)
+  ON CONFLICT (key) DO NOTHING;          -- 0 rows → replay, return stored result
+
+  UPDATE seats
+  SET status = 'HELD', held_by = $3,
+      held_until = now() + interval '10 minutes',
+      version = version + 1
+  WHERE id = $4 AND status = 'FREE';     -- ← the guard. No SELECT-then-UPDATE.
+  -- 0 rows → someone got it first. 409 Conflict.
+COMMIT;
+
+-- ---------- HOLD any N seats (pick-any) ----------
+BEGIN;
+  SELECT id FROM seats
+  WHERE show_id = $1 AND status = 'FREE'
+  ORDER BY id
+  LIMIT $2
+  FOR UPDATE SKIP LOCKED;                -- concurrent users get DIFFERENT seats
+  UPDATE seats SET status='HELD', held_by=$3, held_until=now()+interval '10 min'
+  WHERE id = ANY($4);
+COMMIT;
+
+-- ---------- CONFIRM ----------
+UPDATE seats SET status = 'BOOKED', held_until = NULL
+WHERE id = ANY($1) AND status = 'HELD' AND held_by = $2 AND held_until &gt; now();
+-- row count must equal the number of seats, else the hold expired → 410 Gone
+
+-- ---------- SWEEPER (cron, every 30s) ----------
+UPDATE seats SET status='FREE', held_by=NULL, held_until=NULL
+WHERE status = 'HELD' AND held_until &lt; now();</pre>
+  </details>
+
+  <div class="box sde">
+    <div class="label">🛡️ LLD Blueprint — what to say</div>
+    <p><strong>"Two-phase booking with a TTL hold."</strong> Holding is separate from paying, because payment takes minutes and you cannot keep a database lock open across a payment gateway call.</p>
+    <ul>
+      <li><strong>Specific seat</strong> → conditional <code>UPDATE ... WHERE status='FREE'</code>. Atomic, no lock held by the app, loser gets 409.</li>
+      <li><strong>Any N seats</strong> → <code>FOR UPDATE SKIP LOCKED</code>, so concurrent users are handed different seats instead of queueing for the same one.</li>
+      <li><strong>Idempotency key</strong> → a double-tapped "Book" button doesn't create two holds.</li>
+      <li><strong>Expiry</strong> → a sweeper frees abandoned holds. Also check <code>held_until &gt; now()</code> at confirm time, so a hold that expired one second ago can't sneak through between sweeps.</li>
+    </ul>
+    <p><strong>The failure mode to name unprompted:</strong> if the sweeper dies, seats stay held forever and the show looks sold out. So confirm-time validation is the real guarantee and the sweeper is just cleanup — never let correctness depend on a cron job running.</p>
+  </div>
+
+  <h3>2 · In-memory key-value store with TTL + LRU</h3>
+  <details class="snippet">
+    <summary>O(1) get/put with LRU eviction and TTL — TypeScript</summary>
+    <pre>// JS Map preserves insertion order, so it doubles as the recency list.
+// (In C++ or Java: HashMap&lt;K, ListNode&gt; + a doubly linked list.)
+
+interface Entry&lt;V&gt; { value: V; expiresAt: number | null; }
+
+class LRUCacheTTL&lt;K, V&gt; {
+  private map = new Map&lt;K, Entry&lt;V&gt;&gt;();
+
+  constructor(private capacity: number) {}
+
+  get(key: K): V | undefined {
+    const e = this.map.get(key);
+    if (!e) return undefined;
+
+    // LAZY EXPIRY — check on read, not with a timer
+    if (e.expiresAt !== null &amp;&amp; Date.now() &gt; e.expiresAt) {
+      this.map.delete(key);
+      return undefined;
+    }
+
+    // touch: delete + re-insert moves it to the most-recent end
+    this.map.delete(key);
+    this.map.set(key, e);
+    return e.value;
+  }
+
+  put(key: K, value: V, ttlMs?: number): void {
+    if (this.map.has(key)) this.map.delete(key);
+    else if (this.map.size &gt;= this.capacity) {
+      const oldest = this.map.keys().next().value;   // first = least recent
+      this.map.delete(oldest);
+    }
+    this.map.set(key, {
+      value,
+      expiresAt: ttlMs ? Date.now() + ttlMs : null,
+    });
+  }
+
+  // ACTIVE expiry — sample a few keys periodically so memory is reclaimed
+  // even for keys nobody reads again. This is roughly what Redis does.
+  sweep(sampleSize = 20): void {
+    let checked = 0;
+    for (const [k, e] of this.map) {
+      if (checked++ &gt;= sampleSize) break;
+      if (e.expiresAt !== null &amp;&amp; Date.now() &gt; e.expiresAt) this.map.delete(k);
+    }
+  }
+}</pre>
+  </details>
+
+  <div class="box mlde">
+    <div class="label">💻 Machine Coding — the two things they're checking</div>
+    <p><strong>Is everything O(1)?</strong> Hash map for lookup, ordered structure for recency. Scanning to find the least-recently-used is the mistake — insertion-ordered Map (or hashmap + doubly linked list) makes eviction O(1).</p>
+    <p><strong>Lazy vs active expiry, and why you need both.</strong> Lazy alone (check on read) is O(1) and free, but a key nobody ever reads again occupies memory forever — a leak. Active alone (scan everything) is O(n) and expensive. Redis samples ~20 random keys periodically, which is the pragmatic middle: bounded cost, memory still gets reclaimed. Saying "both, because lazy alone leaks" is the answer.</p>
+  </div>
+
+  <h3>3 · Real-time leaderboard</h3>
+  <details class="snippet">
+    <summary>Redis sorted set + Postgres write-back</summary>
+    <pre># Redis holds the live leaderboard. A sorted set is a skip list:
+# insert, update and rank are all O(log N).
+
+ZADD leaderboard:global 2094 "user:1067"      # set score
+ZINCRBY leaderboard:global 15 "user:1067"     # or increment atomically
+
+ZREVRANGE leaderboard:global 0 9 WITHSCORES   # top 10        → O(log N + 10)
+ZREVRANK  leaderboard:global "user:1067"      # my rank       → O(log N)
+ZSCORE    leaderboard:global "user:1067"      # my score      → O(1)
+
+# "players near me" — the query nobody remembers, and it's the good one
+ZREVRANGE leaderboard:global (myRank-2) (myRank+2) WITHSCORES
+
+# time-boxed boards: separate keys, expire automatically
+ZADD leaderboard:2026-08 2094 "user:1067"
+EXPIRE leaderboard:2026-08 5184000</pre>
+  </details>
+
+  <details class="snippet">
+    <summary>Durable write-back (Postgres is the source of truth)</summary>
+    <pre>CREATE TABLE scores (
+  user_id    bigint PRIMARY KEY,
+  score      bigint NOT NULL DEFAULT 0,
+  updated_at timestamptz NOT NULL DEFAULT now()
+);
+CREATE INDEX ON scores (score DESC);
+
+-- every score event writes here (durable), and also updates Redis (fast).
+INSERT INTO scores (user_id, score) VALUES ($1, $2)
+ON CONFLICT (user_id) DO UPDATE
+  SET score = scores.score + EXCLUDED.score, updated_at = now();
+
+-- rebuild Redis from Postgres after a cache loss
+SELECT user_id, score FROM scores ORDER BY score DESC LIMIT 100000;</pre>
+  </details>
+
+  <div class="box sde">
+    <div class="label">🛡️ LLD Blueprint — what to say</div>
+    <p><strong>"Redis for ranking, Postgres for truth."</strong> Ranking a million players in SQL means <code>ORDER BY score DESC</code> over the whole table — fine for the top 10 with an index, but "what's <em>my</em> rank?" requires counting everyone above me, which is a full scan. A sorted set answers it in O(log N) because rank is maintained as part of the structure.</p>
+    <p><strong>Redis is a cache, never the record.</strong> If Redis is lost you must be able to rebuild, so every score change is also written durably. Write to Postgres first, then update Redis — if the Redis write fails you have stale ranks (recoverable) rather than lost scores (not).</p>
+    <p><strong>Ties</strong> need a deterministic rule or ranks flicker between equal scores. The standard trick is encoding the timestamp into the score's fractional part so earlier achievers rank higher.</p>
+  </div>
+
+  <h3>4 · Offline-first sync engine</h3>
+  <div class="ascii">   CLIENT (StudySync)                    SERVER
+   ┌──────────────────┐                ┌──────────────────┐
+   │ local cache      │                │ authoritative DB │
+   │ lastSyncedAt: T  │                │ each row has     │
+   │ pending queue[]  │                │  updated_at,     │
+   └──────────────────┘                │  version, deleted│
+            │                          └──────────────────┘
+            │  1. PULL  GET /sync?since=T
+            ├─────────────────────────────────►
+            │◄──── changed rows + tombstones + newT
+            │
+            │  2. PUSH  POST /sync  { changes: [...] }
+            ├─────────────────────────────────►
+            │◄──── accepted[] + conflicts[]
+            │
+            │  3. resolve conflicts, set lastSyncedAt = newT
+
+   Tombstones matter: a DELETE must be SENT, not just absent.
+   Absence is indistinguishable from "not changed."</div>
+
+  <details class="snippet">
+    <summary>Sync endpoints + conflict resolution</summary>
+    <pre>// ---------- server: PULL ----------
+app.get('/sync', async (req, res) =&gt; {
+  const since = new Date(req.query.since ?? 0);
+
+  const rows = await db.query(
+    `SELECT id, body, version, updated_at, deleted_at
+     FROM timetables
+     WHERE user_id = $1 AND updated_at &gt; $2
+     ORDER BY updated_at`, [req.user.id, since]);
+
+  res.json({
+    changes: rows.filter(r =&gt; !r.deleted_at),
+    tombstones: rows.filter(r =&gt; r.deleted_at).map(r =&gt; r.id),
+    // server time, NOT client time — client clocks drift and lie
+    syncedAt: new Date().toISOString(),
+  });
+});
+
+// ---------- server: PUSH with conflict detection ----------
+app.post('/sync', async (req, res) =&gt; {
+  const accepted = [], conflicts = [];
+
+  for (const change of req.body.changes) {
+    const { rowCount } = await db.query(
+      `UPDATE timetables
+       SET body = $1, version = version + 1, updated_at = now()
+       WHERE id = $2 AND user_id = $3 AND version = $4`,   // ← optimistic check
+      [change.body, change.id, req.user.id, change.baseVersion]);
+
+    if (rowCount === 1) accepted.push(change.id);
+    else {
+      const current = await getRow(change.id, req.user.id);
+      conflicts.push({ id: change.id, yours: change.body, theirs: current.body,
+                       theirVersion: current.version });
+    }
+  }
+  res.json({ accepted, conflicts, syncedAt: new Date().toISOString() });
+});</pre>
+  </details>
+
+  <div class="tw"><table>
+    <thead><tr><th>Strategy</th><th>Rule</th><th>Good</th><th>Bad</th></tr></thead>
+    <tbody>
+      <tr><td>Last-write-wins</td><td>Highest timestamp wins</td><td>Trivial to implement</td><td>Silently destroys the other edit</td></tr>
+      <tr><td>Server-wins</td><td>Server always authoritative</td><td>Simple, predictable</td><td>Offline work can vanish</td></tr>
+      <tr><td>3-way merge</td><td>Compare base → yours → theirs, merge non-overlapping fields</td><td>Keeps both edits</td><td>Needs the base version stored</td></tr>
+      <tr><td>Ask the user</td><td>Surface the conflict in the UI</td><td>Never loses data</td><td>Interrupts the user</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="box trap">
+    <div class="label">🚨 Sync Trap</div>
+    <p><strong>Never use client timestamps for last-write-wins.</strong> Device clocks are wrong, sometimes by hours, and a user can change theirs. A phone set five minutes fast wins every conflict forever. Use server-assigned timestamps or version counters.</p>
+    <p><strong>And deletes must be explicit.</strong> If a deleted row simply disappears from the server's response, the client cannot distinguish "deleted" from "unchanged" and will keep it forever. You need <em>tombstones</em> — soft-deleted rows that still get synced — and a retention policy so tombstones don't accumulate indefinitely.</p>
+  </div>
+
+  <div class="box insight">
+    <div class="label">💡 Implementation Pattern</div>
+    <p><strong>The honest simplification for StudySync</strong>, and it's a good thing to volunteer: the app is <em>read-only offline</em>. Students view a timetable that only admins edit, so there are no client-side writes and therefore no conflicts to resolve at all. Pull-only sync with a cached last-good response is the entire design.</p>
+    <p>That's the strongest version of this answer — <em>"I recognised the write path didn't exist, so I didn't build a conflict engine nobody needed. Here's what I'd add if students could edit."</em> Knowing which half of a hard problem you're allowed to skip is worth more than implementing all of it.</p>
+  </div>
+</section>
+</main>
+<footer>
+  Backend Engineering, Low-Level Design &amp; Machine Coding Blueprint · Interview Notes<br>Grounded against Packspec, SahYatri, Chessify AI, RecrutAI and StudySync.
+</footer>
+<script>
+  document.getElementById('jump').addEventListener('change', function(e) {
+    const id = e.target.value; if (!id) return;
+    const el = document.getElementById(id);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    e.target.value = '';
+  });
+  const prog = document.getElementById('scrollProg');
+  window.addEventListener('scroll', function() {
+    const st = document.documentElement.scrollTop;
+    const sh = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+    prog.style.width = (sh > 0 ? (st / sh) * 100 : 0) + '%';
+  }, { passive: true });
+  const sections = document.querySelectorAll('section.cluster');
+  const observer = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) { entry.target.style.animationPlayState = 'running'; observer.unobserve(entry.target); }
+    });
+  }, { threshold: 0.08 });
+  sections.forEach(function(s) { s.style.animationPlayState = 'paused'; observer.observe(s); });
+
+  // Track Filtering (ALL / SDE / ML)
+  const trackBtns = document.querySelectorAll('.tb');
+  trackBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      trackBtns.forEach(b => b.setAttribute('aria-pressed', 'false'));
+      btn.setAttribute('aria-pressed', 'true');
+      const filter = btn.dataset.filter;
+      if (filter === 'all') {
+        document.body.removeAttribute('data-track');
+      } else {
+        document.body.setAttribute('data-track', filter);
+      }
+    });
+  });
+
+</script>
+</body>
+</html>
