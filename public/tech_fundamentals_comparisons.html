@@ -9,493 +9,219 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #0a0e17;
-    --surface: #111827;
-    --surface2: #1a2234;
-    --border: #1e293b;
-    --border-glow: #334155;
-    --text: #cbd5e1;
-    --text-dim: #64748b;
-    --white: #f1f5f9;
-    --accent: #38bdf8;
-    --accent2: #818cf8;
-    --green: #34d399;
-    --orange: #fbbf24;
-    --red: #fb7185;
-    --purple: #a78bfa;
-    --cyan: #22d3ee;
-    --radius: 14px;
-    --maxw: 780px;
+    --bg: #0a0e17; --surface: #111827; --surface2: #1a2234;
+    --border: #1e293b; --border-glow: #334155;
+    --text: #cbd5e1; --text-dim: #64748b; --white: #f1f5f9;
+    --accent: #38bdf8; --accent2: #818cf8; --green: #34d399;
+    --orange: #fbbf24; --red: #fb7185; --purple: #a78bfa; --cyan: #22d3ee;
+    --radius: 14px; --maxw: 760px;
     --font: 'Inter', system-ui, -apple-system, sans-serif;
     --mono: 'JetBrains Mono', 'SF Mono', Consolas, monospace;
   }
-
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
   html { scroll-behavior: smooth; }
+  body { background: var(--bg); color: var(--text); font-family: var(--font);
+    font-size: 14.5px; line-height: 1.65; overflow-x: hidden; }
 
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: var(--font);
-    font-size: 14.5px;
-    line-height: 1.65;
-    overflow-x: hidden;
-  }
-
-  /* --- Scroll progress bar --- */
-  .scroll-progress {
-    position: fixed; top: 0; left: 0; z-index: 200;
-    height: 3px; width: 0%;
+  .scroll-progress { position: fixed; top: 0; left: 0; z-index: 200; height: 3px; width: 0%;
     background: linear-gradient(90deg, var(--accent), var(--accent2), var(--purple));
-    transition: width 80ms linear;
-    border-radius: 0 2px 2px 0;
-  }
+    transition: width 80ms linear; border-radius: 0 2px 2px 0; }
 
-  /* --- Sticky topbar --- */
-  .topbar {
-    position: sticky; top: 0; z-index: 100;
-    background: rgba(10, 14, 23, 0.88);
-    backdrop-filter: blur(16px) saturate(1.6);
-    -webkit-backdrop-filter: blur(16px) saturate(1.6);
-    border-bottom: 1px solid var(--border);
-    padding: 10px 16px;
-    display: flex; align-items: center; justify-content: space-between;
-    gap: 10px; flex-wrap: wrap;
-  }
-  .topbar-left {
-    display: flex; align-items: center; gap: 10px; flex: 1 1 auto;
-    min-width: 220px;
-  }
-  .topbar .logo {
-    display: flex; align-items: center; gap: 8px;
-    font-weight: 800; font-size: 13.5px; color: var(--white);
-    white-space: nowrap; letter-spacing: -0.02em;
-  }
-  .topbar .dot {
-    width: 8px; height: 8px; border-radius: 50%;
-    background: var(--green);
-    box-shadow: 0 0 10px var(--green), 0 0 20px rgba(52, 211, 153, 0.3);
-    animation: pulse 2s ease-in-out infinite;
-  }
-  @keyframes pulse {
-    0%, 100% { opacity: 1; transform: scale(1); }
-    50% { opacity: 0.6; transform: scale(0.85); }
-  }
-  .topbar select {
-    flex: 1 1 180px; max-width: 320px;
-    background: var(--surface);
-    color: var(--accent);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 7px 10px;
-    font-family: var(--font);
-    font-size: 12.5px;
-    font-weight: 500;
-    outline: none;
-    cursor: pointer;
-    transition: border-color .2s;
-  }
+  .topbar { position: sticky; top: 0; z-index: 100;
+    background: rgba(10, 14, 23, 0.82);
+    backdrop-filter: blur(16px) saturate(1.6); -webkit-backdrop-filter: blur(16px) saturate(1.6);
+    border-bottom: 1px solid var(--border); padding: 10px 16px;
+    display: flex; align-items: center; gap: 10px; }
+  .topbar .logo { display: flex; align-items: center; gap: 8px; font-weight: 800;
+    font-size: 13.5px; color: var(--white); white-space: nowrap; letter-spacing: -0.02em; }
+  .topbar .dot { width: 8px; height: 8px; border-radius: 50%; background: #818cf8;
+    box-shadow: 0 0 10px #818cf8; animation: pulse 2s ease-in-out infinite; }
+  @keyframes pulse { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: .6; transform: scale(.85); } }
+  .topbar select { flex: 1; max-width: 380px; background: var(--surface); color: var(--accent);
+    border: 1px solid var(--border); border-radius: 10px; padding: 8px 12px;
+    font-family: var(--font); font-size: 12.5px; font-weight: 500; outline: none;
+    cursor: pointer; transition: border-color .2s; }
   .topbar select:focus { border-color: var(--accent); }
 
-  /* Track filters */
-  .track-btns {
-    display: flex; gap: 5px; align-items: center;
-  }
-  .tb {
-    background: var(--surface);
-    color: var(--text-dim);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 6px 10px;
-    font-size: 11.5px;
-    font-family: var(--mono);
-    font-weight: 600;
-    cursor: pointer;
-    transition: all .2s ease;
-    white-space: nowrap;
-  }
-  .tb:hover { color: var(--white); border-color: var(--border-glow); }
-  .tb[aria-pressed="true"] {
-    color: var(--white);
-    background: rgba(56, 189, 248, 0.14);
-    border-color: var(--accent);
-  }
+  main { max-width: var(--maxw); margin: 0 auto; padding: 24px 16px 80px; }
 
-  /* Track filtering rules */
-  body[data-track="sde"] .box.mlde,
-  body[data-track="sde"] .qa-track-b,
-  body[data-track="sde"] .callout.mlde { display: none !important; }
-
-  body[data-track="ml"] .box.sde,
-  body[data-track="ml"] .qa-track-a,
-  body[data-track="ml"] .callout.sde { display: none !important; }
-
-  /* --- Main --- */
-  main {
-    max-width: var(--maxw);
-    margin: 0 auto;
-    padding: 24px 16px 80px;
-  }
-
-  /* --- Hero header --- */
-  .hero {
-    margin-bottom: 24px;
-    padding: 24px 20px;
+  .hero { margin-bottom: 28px; padding: 24px 20px;
     background: linear-gradient(135deg, rgba(56,189,248,0.06), rgba(129,140,248,0.06), rgba(167,139,250,0.04));
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    position: relative;
-    overflow: hidden;
-  }
-  .hero::before {
-    content: '';
-    position: absolute; top: -40%; right: -20%;
-    width: 260px; height: 260px;
+    border: 1px solid var(--border); border-radius: var(--radius); position: relative; overflow: hidden; }
+  .hero::before { content: ''; position: absolute; top: -40%; right: -20%; width: 260px; height: 260px;
     background: radial-gradient(circle, rgba(56,189,248,0.08) 0%, transparent 70%);
-    border-radius: 50%;
-    pointer-events: none;
-  }
-  .hero h1 {
-    font-size: 22px; font-weight: 800; color: var(--white);
-    letter-spacing: -0.03em; line-height: 1.3;
-    margin-bottom: 6px;
-  }
-  .hero .sub {
-    color: var(--text-dim); font-size: 12.5px; line-height: 1.5;
-  }
-  .badge-row {
-    display: flex; gap: 6px; flex-wrap: wrap;
-    margin-top: 14px;
-  }
-  .badge {
-    font-size: 10px; font-weight: 700; text-transform: uppercase;
-    letter-spacing: 0.06em;
-    padding: 4px 10px;
-    border-radius: 20px;
-    border: 1px solid var(--border);
-    background: rgba(56, 189, 248, 0.06);
-    color: var(--accent);
-    white-space: nowrap;
-  }
+    border-radius: 50%; pointer-events: none; }
+  .hero h1 { font-size: 22px; font-weight: 800; color: var(--white);
+    letter-spacing: -0.03em; line-height: 1.3; margin-bottom: 6px; }
+  .hero .sub { color: var(--text-dim); font-size: 12.5px; line-height: 1.5; }
+  .badge-row { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 14px; }
+  .badge { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em;
+    padding: 4px 10px; border-radius: 20px; border: 1px solid var(--border);
+    background: rgba(56,189,248,0.06); color: var(--accent); white-space: nowrap; }
 
-  /* --- Reality check box --- */
-  .calib {
-    background: rgba(251, 191, 36, 0.05);
-    border: 1px solid rgba(251, 191, 36, 0.22);
-    border-radius: 12px;
-    padding: 14px 16px;
-    margin-bottom: 22px;
-    font-size: 12.5px;
-    line-height: 1.55;
-  }
-  .calib h4 {
-    margin: 0 0 6px; color: var(--orange); font-size: 13px;
-    display: flex; align-items: center; gap: 6px;
-  }
-  .calib p { margin: 4px 0; color: var(--text); }
-  .calib b { color: var(--white); }
-
-  /* --- Project chips --- */
-  .projects {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
-    gap: 8px;
-    margin-bottom: 26px;
-  }
-  .chip {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 10px 12px;
-    font-size: 11.5px;
-    color: var(--text-dim);
-    transition: border-color .2s, transform .15s;
-    line-height: 1.4;
-  }
+  .projects { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 8px; margin-bottom: 20px; }
+  .chip { background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+    padding: 10px 12px; font-size: 11.5px; color: var(--text-dim);
+    transition: border-color .2s, transform .15s; line-height: 1.4; }
   .chip:hover { border-color: var(--border-glow); transform: translateY(-1px); }
-  .chip a {
-    color: var(--accent); text-decoration: none; font-weight: 600;
-  }
+  .chip a { color: var(--accent); text-decoration: none; font-weight: 600; }
   .chip a:hover { text-decoration: underline; }
   .chip .emoji { margin-right: 4px; }
 
-  /* --- Section cluster cards --- */
-  section.cluster {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 20px 18px;
-    margin-bottom: 18px;
-    scroll-margin-top: 65px;
-    transition: border-color .25s;
-  }
-  section.cluster:hover { border-color: var(--border-glow); }
-  
-  section.cluster > h2 {
-    font-size: 16.5px; font-weight: 700; color: var(--white);
-    padding-bottom: 10px; margin-bottom: 14px;
-    border-bottom: 1px solid var(--border);
-    display: flex; align-items: center; gap: 10px;
-    letter-spacing: -0.01em;
-  }
-  section.cluster > h2 .idx {
-    font-size: 10px; font-weight: 700;
-    color: var(--accent);
-    background: rgba(56,189,248,0.1);
-    border: 1px solid rgba(56,189,248,0.2);
-    border-radius: 6px;
-    padding: 3px 8px;
-    letter-spacing: 0.04em;
-  }
+  .calib { background: rgba(251,191,36,0.05); border: 1px solid rgba(251,191,36,0.22);
+    border-radius: 10px; padding: 12px 14px; margin-bottom: 26px; font-size: 12px; line-height: 1.55; }
+  .calib b { color: var(--orange); }
 
-  h3 {
-    font-size: 14px; font-weight: 700; color: var(--cyan);
-    margin: 18px 0 8px;
-  }
-  h4 {
-    font-size: 12.5px; font-weight: 600; color: var(--orange);
-    margin: 14px 0 6px;
-  }
+  section.cluster { background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 20px 18px; margin-bottom: 16px;
+    scroll-margin-top: 60px; transition: border-color .25s; animation: fadeUp .4s ease both; }
+  section.cluster:hover { border-color: var(--border-glow); }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+  section.cluster > h2 { font-size: 16.5px; font-weight: 700; color: var(--white);
+    padding-bottom: 10px; margin-bottom: 14px; border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 10px; letter-spacing: -0.01em; }
+  section.cluster > h2 .idx { font-size: 10px; font-weight: 700; color: var(--accent);
+    background: rgba(56,189,248,0.1); border: 1px solid rgba(56,189,248,0.2);
+    border-radius: 6px; padding: 3px 8px; letter-spacing: .04em; }
+
+  h3 { font-size: 14px; font-weight: 700; color: var(--cyan); margin: 18px 0 8px; }
+  h4 { font-size: 12.5px; font-weight: 600; color: var(--orange); margin: 14px 0 6px; }
   p { margin: 7px 0; font-size: 13px; }
   ul, ol { padding-left: 18px; margin: 6px 0; }
-  li { margin: 4px 0; font-size: 13px; }
+  li { margin: 3px 0; font-size: 13px; }
+  code { background: rgba(30,41,59,.8); color: var(--green); padding: 2px 6px;
+    border-radius: 5px; font-family: var(--mono); font-size: 11.5px; }
+  .fml { display: block; text-align: center; background: rgba(30,41,59,.5);
+    border: 1px solid var(--border); border-radius: 8px; padding: 9px 10px; margin: 9px 0;
+    font-family: var(--mono); font-size: 12px; color: var(--cyan); overflow-x: auto; white-space: nowrap; }
 
-  code {
-    background: rgba(30, 41, 59, 0.8);
-    color: var(--green);
-    padding: 2px 6px;
-    border-radius: 5px;
-    font-family: var(--mono);
-    font-size: 11.5px;
-  }
-
-  /* --- Tables --- */
-  .tw {
-    overflow-x: auto; margin: 12px 0;
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    -webkit-overflow-scrolling: touch;
-  }
-  table {
-    width: 100%; border-collapse: collapse;
-    font-size: 12px; min-width: 440px;
-  }
-  thead th {
-    background: var(--surface2);
-    color: var(--accent);
-    font-size: 10.5px; font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    padding: 9px 10px;
-    text-align: left;
-    white-space: nowrap;
-    border-bottom: 1px solid var(--border);
-    position: sticky; top: 0;
-  }
-  tbody td {
-    padding: 8px 10px;
-    border-bottom: 1px solid rgba(30, 41, 59, 0.5);
-    vertical-align: top;
-    color: var(--text);
-  }
+  .tw { overflow-x: auto; margin: 10px 0; border: 1px solid var(--border);
+    border-radius: 10px; -webkit-overflow-scrolling: touch; }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; min-width: 420px; }
+  thead th { background: var(--surface2); color: var(--accent); font-size: 10.5px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: .05em; padding: 9px 10px; text-align: left;
+    white-space: nowrap; border-bottom: 1px solid var(--border); position: sticky; top: 0; }
+  tbody td { padding: 8px 10px; border-bottom: 1px solid rgba(30,41,59,.5);
+    vertical-align: top; color: var(--text); }
   tbody tr:last-child td { border-bottom: none; }
-  tbody tr:hover { background: rgba(56, 189, 248, 0.03); }
-  tbody td:first-child {
-    color: var(--white); font-weight: 600;
-    white-space: nowrap;
-  }
+  tbody tr:hover { background: rgba(56,189,248,.03); }
+  tbody td:first-child { color: var(--white); font-weight: 600; white-space: nowrap; }
 
-  /* --- Callout boxes --- */
-  .box {
-    border-radius: 10px;
-    padding: 12px 14px;
-    margin: 12px 0;
-    font-size: 12.5px;
-    line-height: 1.55;
-    border-left: 3px solid;
-    position: relative;
-  }
-  .box .label {
-    font-weight: 700; font-size: 10.5px;
-    text-transform: uppercase; letter-spacing: 0.05em;
-    margin-bottom: 5px;
-    display: flex; align-items: center; gap: 5px;
-  }
+  .box { border-radius: 10px; padding: 12px 14px; margin: 10px 0; font-size: 12.5px;
+    line-height: 1.55; border-left: 3px solid; }
+  .box .label { font-weight: 700; font-size: 10.5px; text-transform: uppercase;
+    letter-spacing: .05em; margin-bottom: 5px; display: flex; align-items: center; gap: 5px; }
   .box p { margin: 3px 0; font-size: 12.5px; }
-
-  .box.trap {
-    background: rgba(251,113,133,0.06);
-    border-color: var(--red);
-  }
+  .box ul { margin: 4px 0; } .box li { font-size: 12.5px; }
+  .box.trap { background: rgba(251,113,133,.06); border-color: var(--red); }
   .box.trap .label { color: var(--red); }
-
-  .box.insight {
-    background: rgba(52,211,153,0.06);
-    border-color: var(--green);
-  }
+  .box.insight { background: rgba(52,211,153,.06); border-color: var(--green); }
   .box.insight .label { color: var(--green); }
-
-  .box.sde {
-    background: rgba(56,189,248,0.06);
-    border-color: var(--accent);
-  }
+  .box.sde { background: rgba(56,189,248,.06); border-color: var(--accent); }
   .box.sde .label { color: var(--accent); }
-
-  .box.mlde {
-    background: rgba(167,139,250,0.06);
-    border-color: var(--purple);
-  }
+  .box.mlde { background: rgba(167,139,250,.06); border-color: var(--purple); }
   .box.mlde .label { color: var(--purple); }
 
-  /* --- Code snippets --- */
-  details.snippet {
-    background: #0c1018;
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    margin: 12px 0;
-    overflow: hidden;
-  }
-  details.snippet summary {
-    cursor: pointer;
-    padding: 9px 14px;
-    color: var(--text-dim);
-    font-size: 12px; font-weight: 600;
-    font-family: var(--font);
-    list-style: none;
-    display: flex; align-items: center; gap: 7px;
-    user-select: none;
-    transition: color .2s;
-  }
+  details.snippet { background: #0c1018; border: 1px solid var(--border);
+    border-radius: 10px; margin: 10px 0; overflow: hidden; }
+  details.snippet summary { cursor: pointer; padding: 9px 14px; color: var(--text-dim);
+    font-size: 12px; font-weight: 600; font-family: var(--font); list-style: none;
+    display: flex; align-items: center; gap: 7px; user-select: none; transition: color .2s; }
   details.snippet summary:hover { color: var(--accent); }
   details.snippet summary::-webkit-details-marker { display: none; }
-  details.snippet summary::before {
-    content: "▸"; color: var(--accent);
-    display: inline-block;
-    transition: transform .15s ease;
-  }
+  details.snippet summary::before { content: "▸"; color: var(--accent);
+    display: inline-block; transition: transform .15s ease; }
   details.snippet[open] summary::before { transform: rotate(90deg); }
-  details.snippet pre {
-    margin: 0; padding: 12px 14px;
-    overflow-x: auto;
-    font-family: var(--mono);
-    font-size: 12px; line-height: 1.55;
-    color: var(--text);
-  }
+  details.snippet pre { margin: 0; padding: 12px 14px; overflow-x: auto;
+    font-family: var(--mono); font-size: 12px; line-height: 1.55; color: var(--text); }
 
-  /* --- Q&A cards --- */
-  .qa {
-    background: rgba(17, 24, 39, 0.6);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 14px;
-    margin: 12px 0;
-    transition: border-color .2s;
-  }
+  .qa { background: rgba(17,24,39,.6); border: 1px solid var(--border); border-radius: 10px;
+    padding: 14px; margin: 10px 0; transition: border-color .2s; }
   .qa:hover { border-color: var(--border-glow); }
-  .qa .q {
-    color: var(--white);
-    font-weight: 600;
-    font-size: 13px;
-    margin-bottom: 7px;
-    line-height: 1.45;
-  }
+  .qa .q { color: var(--white); font-weight: 600; font-size: 13px; margin-bottom: 7px; line-height: 1.45; }
   .qa .q .qnum { color: var(--accent); margin-right: 6px; }
-  .track-tag {
-    display: inline-block;
-    font-size: 9.5px; font-weight: 700;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    padding: 3px 8px;
-    border-radius: 6px;
-    margin-bottom: 8px;
-  }
-  .track-a {
-    background: rgba(56,189,248,0.1);
-    color: var(--accent);
-    border: 1px solid rgba(56,189,248,0.25);
-  }
-  .track-b {
-    background: rgba(167,139,250,0.1);
-    color: var(--purple);
-    border: 1px solid rgba(167,139,250,0.25);
-  }
+  .track-tag { display: inline-block; font-size: 9.5px; font-weight: 700; letter-spacing: .06em;
+    text-transform: uppercase; padding: 3px 8px; border-radius: 6px; margin-bottom: 8px; }
+  .track-a { background: rgba(56,189,248,.1); color: var(--accent); border: 1px solid rgba(56,189,248,.25); }
+  .track-b { background: rgba(167,139,250,.1); color: var(--purple); border: 1px solid rgba(167,139,250,.25); }
 
-  /* --- Divider --- */
-  hr.divider {
-    border: none;
-    border-top: 1px dashed var(--border);
-    margin: 24px 0;
-  }
+  hr.divider { border: none; border-top: 1px dashed var(--border); margin: 20px 0; }
+  footer { max-width: var(--maxw); margin: 0 auto; padding: 20px 16px 40px;
+    color: var(--text-dim); font-size: 11px; text-align: center; border-top: 1px solid var(--border); }
 
-  /* --- Footer --- */
-  footer {
-    max-width: var(--maxw);
-    margin: 0 auto;
-    padding: 24px 16px 40px;
-    color: var(--text-dim);
-    font-size: 11.5px;
-    text-align: center;
-    border-top: 1px solid var(--border);
-    line-height: 1.6;
-  }
-
-  /* --- Mobile media queries --- */
   @media (max-width: 640px) {
     body { font-size: 14px; }
     main { padding: 16px 12px 60px; }
-    .hero { padding: 18px 16px; }
-    .hero h1 { font-size: 19px; }
+    .hero { padding: 18px 16px; } .hero h1 { font-size: 19px; }
     section.cluster { padding: 16px 14px; }
     section.cluster > h2 { font-size: 15px; }
     .projects { grid-template-columns: 1fr 1fr; gap: 6px; }
     .chip { padding: 8px 10px; font-size: 10.5px; }
-    .topbar { padding: 8px 12px; gap: 8px; }
-    .topbar-left { min-width: 0; width: 100%; }
     .topbar .logo span.full { display: none; }
-    .topbar select { max-width: none; font-size: 12px; }
-    .track-btns { width: 100%; justify-content: flex-end; }
-    table { font-size: 11px; min-width: 380px; }
+    table { font-size: 11px; min-width: 360px; }
     thead th { font-size: 9.5px; padding: 7px 8px; }
     tbody td { padding: 7px 8px; }
-    h3 { font-size: 13.5px; }
-    p, li { font-size: 12.5px; }
+    h3 { font-size: 13.5px; } p, li { font-size: 12.5px; }
     .box { padding: 10px 12px; font-size: 12px; }
-    .box p { font-size: 12px; }
-    .qa .q { font-size: 12.5px; }
+    .box p, .box li { font-size: 12px; }
+    .qa .q { font-size: 12.5px; } .fml { font-size: 11px; }
   }
-
   @media (max-width: 380px) {
     .projects { grid-template-columns: 1fr; }
     .hero h1 { font-size: 17px; }
-    .topbar select { font-size: 11.5px; padding: 6px 8px; }
-    .tb { padding: 5px 8px; font-size: 10.5px; }
+    .topbar select { font-size: 11.5px; padding: 7px 10px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    section.cluster { animation: none; }
+    .topbar .dot { animation: none; }
   }
 </style>
 </head>
-<body>
-
+<body data-track="all">
 <div class="scroll-progress" id="scrollProg"></div>
+<style>
+  .ascii { background:#0c1018; border:1px solid var(--border); border-radius:10px;
+    padding:12px 14px; margin:10px 0; overflow-x:auto; font-family:var(--mono);
+    font-size:11.5px; line-height:1.5; color:var(--text); white-space:pre; }
+  @media (max-width:640px){ .ascii{ font-size:10px; } }
+  .track-btns { display:flex; gap:6px; }
+  .tb { background:var(--surface); color:var(--text-dim); border:1px solid var(--border);
+    border-radius:9px; padding:8px 10px; font-size:11.5px; font-family:var(--mono);
+    cursor:pointer; white-space:nowrap; transition:.2s; }
+  .tb[aria-pressed="true"]{ color:var(--white); border-color:var(--accent); background:rgba(56,189,248,.12); }
+  body[data-track="sde"] .box.mlde { display:none; }
+  body[data-track="sde"] .qa.b-only { display:none; }
+  body[data-track="ml"]  .box.sde  { display:none; }
+  body[data-track="ml"]  .qa.a-only { display:none; }
+  .fix { background:rgba(251,191,36,0.055); border-left:3px solid var(--orange);
+    border-radius:0 10px 10px 0; padding:12px 14px; margin:11px 0; font-size:12.6px; line-height:1.6; }
+  .fix .lbl { display:block; font-family:var(--mono); font-size:10.5px; letter-spacing:.06em;
+    text-transform:uppercase; color:var(--orange); font-weight:700; margin-bottom:6px; }
+  .fix p { font-size:12.6px; margin:4px 0; }
+  .say { background:rgba(52,211,153,.07); border:1px solid rgba(52,211,153,.22);
+    border-radius:8px; padding:9px 11px; margin:7px 0; font-size:12.4px; }
+  .say b { color:var(--green); }
+  .pill { display:inline-block; font-family:var(--mono); font-size:10.5px; color:var(--text-dim);
+    background:rgba(30,41,59,.7); border:1px solid var(--border); border-radius:20px;
+    padding:3px 9px; margin:0 5px 5px 0; }
+</style>
 
 <div class="topbar">
-  <div class="topbar-left">
-    <div class="logo">
-      <span class="dot"></span>
-      <span class="full">Tech Fundamentals</span>
-      <span style="display:none" class="short">Tech</span>
-    </div>
-    <select id="jump" aria-label="Jump to section">
-      <option value="">Jump to section…</option>
-      <option value="verify">00 · Repo Reality Check</option>
-      <option value="c1">01 · Languages &amp; Runtimes</option>
-      <option value="c2">02 · Backend &amp; Concurrency</option>
-      <option value="c3">03 · Databases &amp; Storage</option>
-      <option value="c4">04 · AI, ML &amp; LLMs</option>
-      <option value="c5">05 · API Protocols</option>
-      <option value="c6">06 · Frontend &amp; Rendering</option>
-      <option value="c7">07 · DevOps, Cloud &amp; Linux</option>
-      <option value="c8">08 · Why-X-Over-Y Q&amp;A Bank</option>
-    </select>
-  </div>
+  <div class="logo"><span class="dot"></span><span class="full">Compare</span></div>
+  <select id="jump" aria-label="Jump to section">
+    <option value="">Jump to…</option>
+    <option value="verify">00 · Repo reality check (read first)</option>
+    <option value="c1">01 · Languages &amp; runtimes</option>
+    <option value="c2">02 · Backend &amp; concurrency</option>
+    <option value="c3">03 · Databases &amp; data engineering</option>
+    <option value="c4">04 · AI, ML, CV &amp; LLMs</option>
+    <option value="c5">05 · API protocols</option>
+    <option value="c6">06 · Frontend &amp; rendering</option>
+    <option value="c7">07 · DevOps, cloud &amp; Linux</option>
+    <option value="c8">08 · "Why X over Y" Q&amp;A bank</option>
+  </select>
   <div class="track-btns" role="group" aria-label="Filter by track">
     <button class="tb" data-filter="all" aria-pressed="true">ALL</button>
     <button class="tb" data-filter="sde" aria-pressed="false">SDE</button>
@@ -505,490 +231,827 @@
 
 <main>
 
-  <!-- Hero -->
-  <div class="hero">
-    <h1>Tech Fundamentals &amp; Cross-Technology Comparisons</h1>
-    <p class="sub">Dense, defensible trade-off notes grounded in real shipped codebases. Every claim survives a senior follow-up: <em>"why, specifically, over the obvious alternative?"</em></p>
-    <div class="badge-row">
-      <span class="badge">8 Core Clusters</span>
-      <span class="badge">SDE + ML Tracks</span>
-      <span class="badge">Project-Grounded</span>
-    </div>
+<div class="hero">
+  <h1>Tech Fundamentals &amp; Cross-Technology Comparisons</h1>
+  <p class="sub">Every comparison tied back to code you actually shipped. Simple language, straight answers, and the follow-up question that usually comes next.</p>
+  <div class="badge-row">
+    <span class="badge">8 Clusters</span>
+    <span class="badge">SDE + ML Tracks</span>
+    <span class="badge">Repo-Verified</span>
+  </div>
+</div>
+
+<div class="projects">
+  <div class="chip"><span class="emoji">🥗</span> <a href="https://github.com/Nutri-Vision" target="_blank" rel="noopener">Nutri-Vision</a> — ResNet-50, spaCy NER, FastAPI</div>
+  <div class="chip"><span class="emoji">🧑‍💼</span> <a href="https://github.com/AmanVerma1067/RecrutAI" target="_blank" rel="noopener">RecrutAI</a> — Gemini 2.5 Flash, Next.js 15</div>
+  <div class="chip"><span class="emoji">🚦</span> <a href="https://github.com/AmanVerma1067/SahYatri" target="_blank" rel="noopener">SahYatri</a> — Edge YOLOv5n, PostgreSQL</div>
+  <div class="chip"><span class="emoji">♟️</span> <a href="https://github.com/AmanVerma1067/Chessify-WebApp" target="_blank" rel="noopener">Chessify</a> — Socket.IO, Flask/Stockfish</div>
+  <div class="chip"><span class="emoji">📚</span> <a href="https://github.com/AmanVerma1067/StudySync" target="_blank" rel="noopener">StudySync</a> — Flutter, Express/Mongo</div>
+  <div class="chip"><span class="emoji">📦</span> Packspec — PHP, MongoDB Atlas, RBAC</div>
+</div>
+
+<div class="calib">
+  <b>How to use the ALL / SDE / ML-AI buttons:</b> they hide the other track's defence boxes and Q&amp;A cards, so the night before an interview you only read what applies. Everything else — tables, traps, insights — stays visible in all modes.
+</div>
+
+
+<!-- ================= 00 VERIFY ================= -->
+<section class="cluster" id="verify">
+  <h2><span class="idx">00</span> Repo reality check — read first</h2>
+  <p>I opened all five repositories and compared them against your resume. <strong>Most of it holds up.</strong> Four points don't quite match. Fix your story on these before an interviewer finds them — every one of these is discoverable in under two minutes by someone with your GitHub open.</p>
+
+  <div class="fix">
+    <span class="lbl">⚠️ Fix 1 — Nutri-Vision's image path is not your ResNet-50</span>
+    <p><strong>Your resume says:</strong> both models (spaCy NER and ResNet-50) are served behind one FastAPI inference API.</p>
+    <p><strong>The repos say:</strong> Nutri-Vision is split across several repositories. The FastAPI service (<code>Food_Logging</code>) handles text end-to-end with your own NER model plus a USDA lookup — that part is exactly as described. But for <em>images</em>, that service calls <strong>LogMeal</strong>, a third-party vision API. Your own trained ResNet-50 lives in a <strong>separate repo</strong> (<code>Model_Image</code>) behind a small <strong>Flask</strong> app, with the checkpoint tracked by Git LFS.</p>
+    <p><strong>Why this matters:</strong> "I served both models behind one FastAPI API" is checkable and currently wrong. If an interviewer opens the repo mid-call, you lose credibility on everything else you said.</p>
+    <div class="say"><b>Say this instead:</b> "The FastAPI service handles text end-to-end — my custom NER model extracts food entities, a rule parser handles quantities, and both resolve against USDA FoodData Central. For images I trained a ResNet-50 classifier separately, and I also wired in LogMeal as a managed alternative, so the image path has two options behind the same response schema."</div>
+    <p>That version is <em>more</em> impressive, not less — it shows you built a pluggable schema rather than one hardcoded path.</p>
   </div>
 
-  <!-- Reality Check Card -->
-  <div class="calib" id="verify">
-    <h4>⚡ Section 00 · Repo Reality Check (Read First)</h4>
-    <p>Every conceptual claim below is directly tied to an actual architectural decision made across your 6 portfolio codebases. Match the theory to the repo:</p>
+  <div class="fix">
+    <span class="lbl">⚠️ Fix 2 — RecrutAI has no database</span>
+    <p><strong>What's actually there:</strong> interview sessions, transcripts and proctoring data live in an <strong>in-memory Map</strong> (<code>interview-memory-store.ts</code>). User accounts sit in a <code>.data/users.json</code> file with passwords hashed via <code>scryptSync</code>. Restart the server and every interview in progress is gone.</p>
+    <p><strong>Why this matters:</strong> "in-memory session management" sounds like a deliberate performance choice until someone asks "and where does it persist?" Being caught out on this looks like you didn't know; volunteering it looks like you designed it.</p>
+    <div class="say"><b>Say it before they ask:</b> "State is in-memory by design for the demo — I kept the store behind a single module interface, so persisting it means swapping that implementation for Postgres. Sessions and transcripts become rows keyed by session ID. It's a one-file change precisely because I didn't scatter storage calls through the codebase."</div>
+    <p>Now the missing database is evidence of clean architecture instead of a gap.</p>
   </div>
 
-  <!-- Project chips -->
-  <div class="projects">
-    <div class="chip"><span class="emoji">🥗</span> <a href="https://github.com/Nutri-Vision" target="_blank" rel="noopener">Nutri-Vision</a> — ResNet-50, spaCy NER, FastAPI</div>
-    <div class="chip"><span class="emoji">🧑‍💼</span> <a href="https://github.com/AmanVerma1067/RecrutAI" target="_blank" rel="noopener">RecrutAI</a> — Gemini 2.5 Flash, Next.js 15</div>
-    <div class="chip"><span class="emoji">🚦</span> <a href="https://github.com/AmanVerma1067/SahYatri" target="_blank" rel="noopener">SahYatri</a> — Edge YOLOv5n, Postgres</div>
-    <div class="chip"><span class="emoji">♟️</span> <a href="https://github.com/AmanVerma1067/Chessify-WebApp" target="_blank" rel="noopener">Chessify</a> — Socket.IO, Flask/Stockfish</div>
-    <div class="chip"><span class="emoji">📚</span> <a href="https://github.com/AmanVerma1067/StudySync" target="_blank" rel="noopener">StudySync</a> — Flutter, Express/Mongo</div>
-    <div class="chip"><span class="emoji">📦</span> Packspec — PHP, MongoDB Atlas RBAC</div>
+  <div class="fix">
+    <span class="lbl">⚠️ Fix 3 — two small numbers that are wrong</span>
+    <p><strong>Chessify runs Next.js 13</strong>, not 15. <strong>RecrutAI</strong> is the Next.js 15 / React 19 / TypeScript 5.6 one, built as a Turborepo + pnpm monorepo. If you say "15" about the wrong project you'll be corrected on a detail that didn't need to be in the answer at all.</p>
+    <p><strong>The rubric count:</strong> RecrutAI's README names <strong>four</strong> scoring dimensions — Technical Depth, System Design, Problem Solving, Communication — plus an integrity/code-quality penalty. Your resume claims "5 rubric dimensions."</p>
+    <div class="say"><b>Pick one and be consistent:</b> either count integrity as the fifth dimension and say so explicitly ("four capability dimensions plus an integrity score, so five columns in the matrix"), or change the resume to four. Don't leave a number nobody can reconstruct.</div>
   </div>
 
+  <div class="fix">
+    <span class="lbl">⚠️ Fix 4 — StudySync's "offline-first" is read-only</span>
+    <p><strong>What's there:</strong> caching uses <code>shared_preferences</code> and the <code>http</code> package — a simple key-value store, not a local database like Hive, Drift or SQLite. The claim that it renders the full week offline is <strong>true</strong>. What isn't true is any implication of a sync engine, local writes, or conflict resolution.</p>
+    <div class="say"><b>Say this:</b> "It's read-only offline. The last successful response is cached as JSON in shared_preferences and rendered instantly on launch, while a background fetch refreshes it. There are no local writes, so there's no conflict resolution to do — and I'd rather say that than pretend to a sync engine the product didn't need."</div>
+    <p>Then, if pushed on what you <em>would</em> build: version counters per row, tombstones for deletes so a client can tell "deleted" from "unchanged", and server-assigned timestamps because device clocks lie.</p>
+  </div>
 
-<!-- ============ CLUSTER 1 ============ -->
-<section class="cluster" id="c1">
-  <h2><span class="idx">01</span> Languages, Runtimes &amp; Scripting Comparisons</h2>
-
-  <div class="tw"><table>
-    <thead><tr>
-      <th>Language</th><th>Typing</th><th>Memory Model</th><th>Concurrency Primitive</th><th>Raw Speed</th><th>Primary Domain Fit</th>
-    </tr></thead>
-    <tbody>
-      <tr><td>C++</td><td>Static, strong</td><td>Manual (RAII, smart ptrs)</td><td>OS threads, std::async, no scheduler</td><td>Fastest (zero-cost abstractions)</td><td>CP/DSA, game/render engines, embedded</td></tr>
-      <tr><td>Python</td><td>Dynamic, strong</td><td>Garbage collected (refcount + cyclic)</td><td>GIL serializes threads; multiprocessing for CPU</td><td>Slow baseline, fast via C extensions (NumPy)</td><td>ML/AI, data science, scripting, glue code</td></tr>
-      <tr><td>JavaScript</td><td>Dynamic, weak</td><td>V8 generational GC</td><td>Single-threaded event loop (libuv)</td><td>JIT-compiled, fast for I/O workloads</td><td>Web frontend, real-time Node backends</td></tr>
-      <tr><td>TypeScript</td><td>Static (compile-time), structural</td><td>Same as JS at runtime (erased types)</td><td>Same as JS</td><td>Identical post-compile — zero runtime cost</td><td>Large-team JS codebases needing safety</td></tr>
-      <tr><td>PHP</td><td>Dynamic, weak (gradual hints)</td><td>Request-scoped GC (Zend engine)</td><td>Process-per-request (PHP-FPM workers)</td><td>Moderate; opcache narrows the gap</td><td>Server-rendered CRUD, SaaS backends</td></tr>
-      <tr><td>Bash</td><td>Untyped (string-based)</td><td>N/A — delegates to OS processes</td><td>Process forking/piping, no in-process</td><td>Fast orchestration, slow computation</td><td>OS automation, CI glue, cron, log pipelines</td></tr>
-    </tbody>
-  </table></div>
-
-  <h3>The Python GIL, explained without jargon</h3>
-  <p>C++ gives deterministic control over memory layout: no GC pauses in hot loops, and STL primitives (<code>vector</code>, <code>unordered_map</code>, <code>priority_queue</code>) run with zero dispatch overhead. Python trades determinism for iteration speed and a massive ML ecosystem — but CPython's GIL means only one thread executes bytecode at a time.</p>
-  <p>PyTorch and NumPy sidestep this by dropping into C/CUDA for tensor math, releasing the GIL during execution. That is why Nutri-Vision's ResNet-50 inference is fast despite being invoked in Python.</p>
-
-  <div class="box trap">
-    <div class="label">🚨 Interview Trap</div>
-    <p>Candidates often claim "Python can't do concurrency." The GIL blocks <strong>CPU-bound</strong> multi-core parallelism, NOT I/O-bound concurrency. Async/await and threads waiting on network sockets release the GIL during I/O waits and run concurrently with zero penalty.</p>
+  <h3>What the repos <em>do</em> confirm — use these freely</h3>
+  <p>Every item below was verified against the actual code. These are safe to say with confidence:</p>
+  <div>
+    <span class="pill">Chessify: Node + Socket.IO PvP server</span>
+    <span class="pill">chess.js server-side move validation</span>
+    <span class="pill">Flask <code>POST /get_bot_move</code></span>
+    <span class="pill">Stockfish, ELO limited to 1800</span>
+    <span class="pill">Minimax + α-β, depth 3</span>
+    <span class="pill">Polyglot opening book</span>
+    <span class="pill">Deployed: Render + Vercel</span>
+    <span class="pill">RecrutAI: Gemini 2.5 Flash</span>
+    <span class="pill">6000 ms timeout</span>
+    <span class="pill">2 retries, 1s → 2s backoff</span>
+    <span class="pill">PROBE_DEEPER / SIMPLIFY / PIVOT_TOPIC / PROCEED</span>
+    <span class="pill">Turborepo + pnpm monorepo</span>
+    <span class="pill">Monaco editor, proctoring service</span>
+    <span class="pill">SahYatri: YOLOv5n @ 15 FPS on Pi 4</span>
+    <span class="pill">Adaptive thresholding</span>
+    <span class="pill">MPU6050 + GPS + I2C LCD</span>
+    <span class="pill">Node/Express + PostgreSQL</span>
+    <span class="pill">React dashboard, 4-person team</span>
+    <span class="pill">Nutri-Vision: custom spaCy NER</span>
+    <span class="pill">USDA FoodData Central</span>
+    <span class="pill">ResNet-50 + Git LFS <code>.pth</code></span>
+    <span class="pill">StudySync: Flutter, 3 tagged releases</span>
+    <span class="pill">Android + iOS + web from one codebase</span>
+    <span class="pill">Express + MongoDB admin panel</span>
   </div>
 
   <div class="box insight">
-    <div class="label">💡 Senior Intuition</div>
-    <p>Think of the GIL as a <strong>single microphone</strong> in a room: only the thread holding the mic can speak (execute bytecode), but any thread can step outside (make a syscall / execute C extension) without needing the mic. <code>requests.get()</code> doesn't block other threads; a tight Python <code>for</code> loop does.</p>
-  </div>
-
-  <h3>TypeScript vs plain JavaScript</h3>
-  <p>TypeScript adds structural typing that is <strong>erased entirely at compile time</strong> — producing zero runtime overhead and zero runtime safety. Its value is compile-time: catching interface mismatches, refactor errors, and undocumented shapes before code ships. RecrutAI's Next.js 15 layer relies on typed props and API route responses across a multi-stage prompt chain.</p>
-
-  <h3>Bash — and when to stop using it</h3>
-  <p>Bash is the native language of OS process pipelines: pipes (<code>|</code>), redirection (<code>&gt;</code>, <code>&gt;&gt;</code>, <code>2&gt;&amp;1</code>), and utilities (<code>grep</code>, <code>awk</code>, <code>sed</code>, <code>xargs</code>) compose with zero interpreter startup cost. It is ideal for CI glue, log rotation, and cron triggers. <strong>Switch to Python or Go</strong> the moment you need structured data objects, complex error recovery, or mathematical computation.</p>
-
-  <details class="snippet">
-    <summary>Bash: Log stream-processing pipeline (xargs + grep)</summary>
-    <pre>find /var/log -name "*.log" -mtime -1 \
-  | xargs grep -l "ERROR" \
-  | while read -r f; do
-      echo "Flagged: $f"
-    done</pre>
-  </details>
-
-  <div class="box sde">
-    <div class="label">🛡️ SDE Track Defense</div>
-    <p>"Why not write everything in one language for consistency?" — Language choice is a latency/ecosystem trade-off applied <em>per-service</em>. Chessify's Node.js real-time layer and Python/Flask engine layer illustrate this: each service picked the language suited to its concurrency profile.</p>
-  </div>
-
-  <div class="box mlde">
-    <div class="label">📊 ML / AI / DE Track Defense</div>
-    <p>Python's ML dominance isn't because Python is fast — it's an <strong>ergonomic coordination plane</strong>. The actual compute executes in compiled C++/CUDA kernels (PyTorch ATen, cuDNN) that Python orchestrates via bindings.</p>
+    <div class="label">💡 The principle behind all four fixes</div>
+    <p><strong>An accurate claim you can defend beats an impressive claim you can't.</strong> Every one of these corrections makes the story <em>smaller</em> and <em>stronger</em>. Interviewers rarely open your repo — but when they do, one caught overclaim makes them re-examine everything else you said. Volunteering a limitation before you're asked has the opposite effect: it reads as someone who knows their own system's edges.</p>
   </div>
 </section>
 
 
-<!-- ============ CLUSTER 2 ============ -->
-<section class="cluster" id="c2">
-  <h2><span class="idx">02</span> Backend Frameworks &amp; Server Concurrency</h2>
+<!-- ================= C1 ================= -->
+<section class="cluster" id="c1">
+  <h2><span class="idx">01</span> Languages &amp; runtimes</h2>
+  <p>You list six languages. Expect "why this one, here?" for each.</p>
 
   <div class="tw"><table>
-    <thead><tr><th>Framework</th><th>Concurrency Model</th><th>Validation</th><th>Best Fit</th></tr></thead>
+    <thead><tr><th>&nbsp;</th><th>C++</th><th>Python</th><th>JavaScript</th><th>TypeScript</th><th>PHP</th><th>Bash</th></tr></thead>
     <tbody>
-      <tr><td>Node.js / Express</td><td>Single-threaded event loop (libuv thread pool for I/O)</td><td>Manual / middleware (Zod, Joi)</td><td>High-concurrency I/O-bound APIs, real-time layers</td></tr>
-      <tr><td>FastAPI (ASGI)</td><td>Async event loop (Starlette/uvicorn), coroutines</td><td>Pydantic — automatic, typed, at the edge</td><td>ML inference endpoints, high-throughput APIs</td></tr>
-      <tr><td>Flask (WSGI)</td><td>Synchronous — one worker handles one request at a time</td><td>Manual (Marshmallow, custom checks)</td><td>CPU-bound compute services, simple sync APIs</td></tr>
-      <tr><td>PHP-FPM</td><td>Process-per-request; fully isolated, no shared memory</td><td>Framework-level (Laravel validators)</td><td>Server-rendered multi-tenant CRUD apps</td></tr>
+      <tr><td>Typing</td><td>Static, strong</td><td>Dynamic, strong</td><td>Dynamic, weak</td><td>Static at compile time only</td><td>Dynamic, weak</td><td>Everything is a string</td></tr>
+      <tr><td>Memory</td><td>Manual / RAII / smart pointers</td><td>Refcount + cycle GC</td><td>Generational GC (V8)</td><td>Same as JS</td><td>Refcount, freed per request</td><td>Not your problem</td></tr>
+      <tr><td>Concurrency</td><td>Real threads, shared memory</td><td>GIL — one thread runs bytecode at a time</td><td>One thread + libuv event loop</td><td>Same as JS</td><td>One process per request (FPM)</td><td>Pipes, background jobs</td></tr>
+      <tr><td>Speed</td><td>Fastest</td><td>Slow, but calls fast C/CUDA kernels</td><td>Fast for I/O</td><td>Identical to JS at runtime</td><td>Moderate</td><td>Fine for glue</td></tr>
+      <tr><td>Where you used it</td><td>DSA / competitive</td><td>ML, spaCy, Flask, YOLO</td><td>Express, Socket.IO</td><td>RecrutAI, Chessify frontend</td><td>Packspec at DigiFlute</td><td>Pi scripts, deploy, cron</td></tr>
     </tbody>
   </table></div>
 
-  <h3>Why Chessify is split into two backends</h3>
-  <p>Chessify's multiplayer synchronization is <strong>I/O-bound</strong>: thousands of open sockets, mostly idle, occasionally emitting small move payloads. Node's event loop handles this with negligible memory overhead because it never blocks a thread waiting on socket I/O.</p>
-  <p>Minimax with alpha-beta pruning against Stockfish is <strong>CPU-bound</strong> and pins a core for hundreds of milliseconds. Running that in the Node event loop would freeze every other player's connection. Isolating the engine in a Flask microservice keeps the WebSocket layer perfectly responsive.</p>
+  <h3>The Python GIL, without jargon</h3>
+  <p>Python lets only one thread run Python code at a time. Threads still help when you're <strong>waiting</strong> — on a network call, a disk read — because a waiting thread releases the lock. Threads do <strong>not</strong> help when you're <strong>computing</strong>, because only one gets the lock anyway.</p>
+
+  <div class="box insight">
+    <div class="label">💡 Intuition</div>
+    <p>Python is a great <em>steering wheel</em> and a poor <em>engine</em>. PyTorch and YOLO are fast because the heavy loops run in C++/CUDA with the GIL released. Your slow part is almost never Python itself — it's the tensor math underneath, which isn't Python. So "Python is slow" is only an argument against Python doing the math <em>directly</em>.</p>
+    <p>The practical rule that follows: <strong>threads for waiting, processes for computing.</strong> That single sentence answers most Python concurrency questions.</p>
+  </div>
 
   <div class="box trap">
     <div class="label">🚨 Interview Trap</div>
-    <p>"Node.js is single-threaded so it can't handle concurrency" is <strong>false</strong>. Node executes JavaScript on a single thread, but delegates I/O (disk, network, DNS) to libuv's thread pool and OS kernel primitives (epoll/kqueue). The single thread only bottlenecks CPU-heavy synchronous computation.</p>
+    <p><strong>"You used Python for a chess engine — isn't that slow?"</strong> Don't defend Python. Say <em>the engine isn't Python.</em> Stockfish is a compiled C++ binary; Flask spawns it as a subprocess, sends a position, and reads back a move. The pure-Python minimax at depth 3 exists only as a fallback for when that binary won't start, and depth 3 is chosen precisely because it's the depth Python can search without a visible delay.</p>
+    <p>Supporting detail worth knowing: GitHub reports the Chessify repo as roughly 79% C++ — that's the vendored Stockfish source sitting inside it.</p>
   </div>
 
+  <h3>TypeScript vs plain JavaScript</h3>
+  <p>TypeScript is JavaScript plus a type checker that runs before you ship. It compiles away entirely — <strong>at runtime there is zero TypeScript left.</strong> What you get: mistakes caught at build time, autocomplete that knows your data shapes, and refactors that fail loudly instead of silently.</p>
+
+  <div class="box sde">
+    <div class="label">🛡️ SDE Track Defense</div>
+    <p>RecrutAI is the concrete argument. It's a Turborepo monorepo where a shared package holds the TypeScript contracts. The web app, the AI service and the proctoring service all import the same types. Change the shape of the score object in one place and every consumer that no longer matches <strong>fails to compile</strong>. In plain JavaScript that same change ships silently and breaks the recruiter dashboard in production, where you find out from a user.</p>
+    <p>The general principle: TypeScript's value scales with the number of boundaries in your codebase. In a 200-line script it's overhead; across three packages sharing contracts, it's the thing holding them together.</p>
+  </div>
+
+  <div class="box trap">
+    <div class="label">🚨 Interview Trap</div>
+    <p><strong>"Does TypeScript make your API safe?"</strong> No — and this catches a lot of people. Types are <em>erased</em> at build time. A malformed JSON body arriving from a client is still <code>any</code> at runtime, and TypeScript has already left the building.</p>
+    <p>That's exactly why RecrutAI uses <strong>Zod</strong>: Zod validates the actual payload at runtime and returns a properly typed object. <strong>TypeScript guards your code; Zod guards your boundary.</strong> Same pattern as Pydantic in FastAPI — validation has to happen where untrusted data enters.</p>
+  </div>
+
+  <h3>Bash — and when to stop using it</h3>
+  <p>Bash wins where the job <em>is</em> the operating system: chain existing tools, move files, schedule things. Chessify's build step is literally <code>chmod +x</code> on the Stockfish binary — that's the right amount of Bash.</p>
+
+  <details class="snippet">
+    <summary>Bash you should be able to write on a whiteboard</summary>
+    <pre># five biggest files under a directory
+du -ah /var/log | sort -rh | head -5
+
+# is the Pi's inference process alive? ([y] stops grep matching itself)
+ps aux | grep '[y]olo_detect.py'
+
+# log stdout, keep stderr on screen, run detached
+python detect.py &gt; run.log 2&gt;&amp;1 &amp;
+
+# retry a flaky upload up to 3 times
+for i in 1 2 3; do
+  curl -sf -X POST "$API/telemetry" -d @batch.json &amp;&amp; break
+  sleep 5
+done
+
+# every 5 minutes, push occupancy (crontab -e)
+*/5 * * * * /home/pi/venv/bin/python /home/pi/push.py &gt;&gt; /home/pi/cron.log 2&gt;&amp;1</pre>
+  </details>
+
+  <p><strong>Switch to Python when</strong> you need JSON parsing, retries with real error handling, or anything past about 50 lines. Bash has no types, no exceptions, and quoting bugs that fail silently — a variable containing a space will destroy a script that looked fine in testing.</p>
+</section>
+
+
+<!-- ================= C2 ================= -->
+<section class="cluster" id="c2">
+  <h2><span class="idx">02</span> Backend frameworks &amp; concurrency</h2>
+  <p>You've shipped on all four concurrency models. That's genuinely rare for a student — lead with it.</p>
+
+  <div class="tw"><table>
+    <thead><tr><th>&nbsp;</th><th>Node + Express</th><th>FastAPI (ASGI)</th><th>Flask (WSGI)</th><th>PHP-FPM</th></tr></thead>
+    <tbody>
+      <tr><td>Model</td><td>1 thread, event loop</td><td>Async event loop</td><td>1 request per worker, blocking</td><td>1 process per request</td></tr>
+      <tr><td>Holds a connection open?</td><td>Yes — built for it</td><td>Yes (WebSocket / SSE)</td><td>Not really</td><td>No</td></tr>
+      <tr><td>A slow CPU task…</td><td>Blocks <em>everyone</em></td><td>Blocks the loop unless offloaded</td><td>Blocks that one worker only</td><td>Blocks that one process only</td></tr>
+      <tr><td>Validation</td><td>Manual / Zod</td><td>Pydantic, automatic</td><td>Manual</td><td>Manual</td></tr>
+      <tr><td>Free API docs</td><td>No</td><td>Yes — OpenAPI + Swagger</td><td>No</td><td>No</td></tr>
+      <tr><td>Your usage</td><td>Chessify PvP, SahYatri API, StudySync server</td><td>Nutri-Vision food logging</td><td>Chess-AI, ResNet-50 service</td><td>Packspec</td></tr>
+    </tbody>
+  </table></div>
+
   <div class="box insight">
-    <div class="label">💡 Senior Intuition</div>
-    <p><strong>Shared-nothing vs. shared-loop:</strong> PHP-FPM provides total request isolation (a crash or leak in one request cannot affect another), at the cost of per-request process overhead. Node/FastAPI share a loop across thousands of requests (low RAM footprint), but a single unhandled CPU-blocking call degrades everyone.</p>
+    <div class="label">💡 Intuition</div>
+    <p>One question decides the framework: <strong>is this request waiting, or working?</strong></p>
+    <p><em>Waiting</em> (network, database, another API) → event loop. One thread serves thousands, because each one is idle most of the time. <em>Working</em> (CPU: minimax, a CNN forward pass) → the event loop is the <strong>worst possible place</strong> for it, because one long computation freezes every other user on that process.</p>
+  </div>
+
+  <h3>Why Chessify is split into two backends</h3>
+  <p>Two servers, because the two jobs are opposites:</p>
+  <ul>
+    <li><strong>Chess-PvP (Node + Socket.IO)</strong> — hundreds of open sockets doing almost nothing. Pure waiting. Ideal for an event loop.</li>
+    <li><strong>Chess-AI (Flask + Stockfish)</strong> — one request that burns CPU for a second or more. Pure working.</li>
+  </ul>
+
+  <div class="ascii">  ❌ ONE PROCESS                        ✅ SPLIT
+
+  ┌────────────────────────┐          ┌──────────────┐   HTTP    ┌───────────────┐
+  │  Node (single JS thread)│          │  Node + IO   │ ────────► │ Flask + engine│
+  │  ┌──────────────────┐  │          │  sockets     │ ◄──────── │  Stockfish    │
+  │  │ 200 live sockets │  │          └──────────────┘  best move└───────────────┘
+  │  └──────────────────┘  │
+  │  ┌──────────────────┐  │           CPU work is somewhere else.
+  │  │ Stockfish 800ms  │  │◄── ALL    An engine slowdown makes bot moves
+  │  └──────────────────┘  │   FROZEN  slower. Multiplayer keeps flowing.
+  └────────────────────────┘</div>
+
+  <p>They're also deployed separately on Render, so you can restart or scale one without touching the other.</p>
+
+  <details class="snippet">
+    <summary>The boundary in code</summary>
+    <pre>// Node — validate first, then broadcast. Never trust the client.
+socket.on('move', ({ roomId, from, to, promotion }) =&gt; {
+  const room = rooms[roomId];
+  if (!room) return;
+  if (socket.data.color === null) return;             // spectator → reject
+  if (room.chess.turn() !== socket.data.color) return; // not your turn → reject
+
+  const legal = room.chess.move({ from, to, promotion });  // chess.js is the referee
+  if (!legal) return;                                  // illegal → reject silently
+
+  io.to(roomId).emit('state', { fen: room.chess.fen(), last: legal });
+});</pre>
+    <pre># Flask — stateless. Board in, move out. No session to keep.
+@app.post("/get_bot_move")
+def get_bot_move():
+    fen = request.json["fen"]
+    move = opening_book(fen) or stockfish(fen) or minimax(fen, depth=3)
+    return {"move": move.uci(), "new_fen": push(fen, move)}</pre>
+  </details>
+
+  <div class="box trap">
+    <div class="label">🚨 Interview Trap</div>
+    <p><strong>"Isn't two backends over-engineering for a student project?"</strong> Have the counterfactual ready, with a number in it:</p>
+    <p><em>"Single Node process. One user requests a bot move. Stockfish takes 800 ms of CPU. Every other game's moves queue behind it, because there's one thread executing JavaScript. The split isn't about scale — it's about not putting a CPU task on an I/O event loop."</em></p>
+    <p>That's a real engineering reason, not a resume flourish, and it's the same reasoning that appears in Nutri-Vision.</p>
+  </div>
+
+  <div class="box mlde">
+    <div class="label">📊 ML / AI / DE Track Defense</div>
+    <p><strong>Why FastAPI over Flask for Nutri-Vision.</strong> Three concrete wins:</p>
+    <ul>
+      <li>The food-logging endpoint mostly <em>waits</em> — on USDA, on the vision provider. Async lets one worker handle many concurrent requests instead of one.</li>
+      <li>Pydantic validates and coerces the request body, so bad input returns a clean 422 with a field path instead of exploding somewhere inside the NLP pipeline.</li>
+      <li>Auto-generated OpenAPI docs meant the frontend could integrate without me hand-writing a spec that then drifts from reality.</li>
+    </ul>
+    <p><strong>And know the catch, because they'll probe it:</strong> if you ever load the ResNet-50 into that same FastAPI process, a synchronous forward pass blocks the whole loop. The fix is to declare the route as plain <code>def</code> (FastAPI then runs it in a threadpool automatically) or keep inference in a separate service — which is what you actually did.</p>
   </div>
 
   <h3>Monolith vs microservices vs serverless</h3>
   <div class="tw"><table>
-    <thead><tr><th>Pattern</th><th>Deploy Unit</th><th>Scaling Granularity</th><th>Operational Cost</th></tr></thead>
+    <thead><tr><th>Shape</th><th>Good</th><th>Bad</th><th>Your example</th></tr></thead>
     <tbody>
-      <tr><td>Monolith</td><td>Single codebase / process</td><td>Whole app scales together</td><td>Lowest — one deployment, unified logging</td></tr>
-      <tr><td>Microservices</td><td>Independently deployable services</td><td>Per-service, matched to load profile</td><td>Higher — service discovery, network latency, tracing</td></tr>
-      <tr><td>Serverless</td><td>Individual functions on demand</td><td>Per-invocation, auto-scaling</td><td>Zero idle cost, but cold-start latency &amp; lock-in</td></tr>
+      <tr><td>Monolith</td><td>One deploy, easy local dev, no network between parts</td><td>One bad module takes everything down</td><td>Packspec, StudySync server</td></tr>
+      <tr><td>Microservices</td><td>Scale and fail independently, different language per job</td><td>Network hops, more deploys, harder debugging</td><td>Chessify, Nutri-Vision</td></tr>
+      <tr><td>Serverless</td><td>Zero cost when idle, auto scale</td><td>Cold starts, package size limits</td><td>Not used — and you can say why</td></tr>
     </tbody>
   </table></div>
 
-  <div class="box sde">
-    <div class="label">🛡️ SDE Track Defense</div>
-    <p>"I split monoliths only when a subsystem has a genuinely differentiated scaling or failure profile — like Chessify's compute-bound engine vs I/O socket layer. Splitting without differentiated profiles adds network hops and debugging complexity for zero benefit."</p>
+  <div class="box insight">
+    <div class="label">💡 Senior Insight</div>
+    <p>Ask "why <em>not</em> serverless for ML inference?" and answer it yourself before they do: a ResNet-50 checkpoint plus PyTorch blows past typical Lambda package limits, and a cold start reloading weights costs seconds of latency on the first request. <strong>Model serving wants a warm container.</strong> Serverless fits short, spiky, small-dependency work — which describes almost nothing in an ML serving path.</p>
   </div>
 </section>
 
 
-<!-- ============ CLUSTER 3 ============ -->
+<!-- ================= C3 ================= -->
 <section class="cluster" id="c3">
-  <h2><span class="idx">03</span> Databases, Storage &amp; Data Engineering</h2>
+  <h2><span class="idx">03</span> Databases &amp; data engineering</h2>
+  <p>You have Postgres, MongoDB and MySQL on your resume, and you picked different ones for different projects. Make that reasoning explicit — it's the whole point of having both.</p>
 
   <div class="tw"><table>
-    <thead><tr><th>Engine</th><th>Model</th><th>Transactions</th><th>Best Fit</th></tr></thead>
+    <thead><tr><th>&nbsp;</th><th>PostgreSQL</th><th>MySQL</th><th>MongoDB Atlas</th></tr></thead>
     <tbody>
-      <tr><td>PostgreSQL</td><td>Relational (row store), rich indexing (B-Tree, GIN, BRIN)</td><td>Full ACID, MVCC</td><td>OLTP, time-series telemetry, complex relational joins</td></tr>
-      <tr><td>MySQL</td><td>Relational (row store), InnoDB engine</td><td>Full ACID (InnoDB), MVCC</td><td>Read-heavy web CRUD, mature replication clusters</td></tr>
-      <tr><td>MongoDB Atlas</td><td>Document store, flexible/dynamic schema</td><td>Multi-document ACID (4.0+), single-doc atomic</td><td>Multi-tenant SaaS with heterogeneous schemas, nested data</td></tr>
+      <tr><td>Shape</td><td>Rows + strict schema (+ JSONB)</td><td>Rows + strict schema</td><td>Flexible JSON documents</td></tr>
+      <tr><td>Joins</td><td>Excellent, any depth</td><td>Good</td><td><code>$lookup</code> — works, not the strength</td></tr>
+      <tr><td>Transactions</td><td>ACID, mature MVCC</td><td>ACID (InnoDB)</td><td>Single-doc always; multi-doc since 4.0</td></tr>
+      <tr><td>Standout</td><td>Window functions, CTEs, BRIN, partitioning</td><td>Simple, everywhere</td><td>Schema evolves with no migration</td></tr>
+      <tr><td>Best at</td><td>Anything you'll aggregate over time</td><td>Plain CRUD</td><td>Documents read as one whole unit</td></tr>
+      <tr><td>Your usage</td><td>SahYatri telemetry</td><td>Coursework</td><td>Packspec, StudySync</td></tr>
     </tbody>
   </table></div>
 
-  <h3>Normalization, in one pass</h3>
-  <p><strong>Normalization (3NF)</strong> eliminates update anomalies by ensuring each fact is stored in exactly one place — the right default for relational OLTP with frequent updates. <strong>Denormalization</strong> duplicates data to eliminate joins on hot read paths once read latency outweighs write consistency cost.</p>
-  <p><strong>MongoDB Embed vs Reference:</strong> Embed sub-documents when they are always read together and bounded in cardinality (e.g., product dimensions); reference by ID when entities grow indefinitely, are queried independently, or shared across parents.</p>
+  <div class="box insight">
+    <div class="label">💡 Intuition</div>
+    <p>The real dividing line isn't SQL vs NoSQL — it's <strong>uniform vs heterogeneous data.</strong></p>
+    <p>Telemetry is perfectly uniform: bus ID, timestamp, count, lat, lng, forever. Schema flexibility buys nothing, and schema <em>enforcement</em> stops a malformed reading entering the table. A product specification is the opposite: every customer has different fields, so a rigid schema means either a wide sparse table or a migration per customer. <strong>Same engineer, opposite choices, one principle.</strong></p>
+  </div>
+
+  <h3>Normalization in one pass</h3>
+  <ul>
+    <li><strong>1NF</strong> — one value per cell, no lists stuffed into a column.</li>
+    <li><strong>2NF</strong> — no column depends on only <em>part</em> of a composite key.</li>
+    <li><strong>3NF</strong> — no column depends on another non-key column. (Don't store <code>city</code> next to <code>pincode</code> in the same row.)</li>
+  </ul>
+  <p><strong>Denormalize on purpose</strong> when reads dominate and the copied value rarely changes. Caching <code>route_name</code> on a telemetry row saves a join on every dashboard query; the price you accept is updating it in two places. That's a decision, not an accident — and saying so is the difference.</p>
+
+  <h4>MongoDB: embed or reference?</h4>
+  <div class="tw"><table>
+    <thead><tr><th>Embed when</th><th>Reference when</th></tr></thead>
+    <tbody>
+      <tr><td>Always read with the parent</td><td>Queried independently</td></tr>
+      <tr><td>Belongs to exactly one parent</td><td>Shared across parents</td></tr>
+      <tr><td>Bounded — 1-to-few</td><td>Unbounded — 1-to-many</td></tr>
+      <tr><td><em>Spec field groups inside a spec</em></td><td><em>Users, revision history</em></td></tr>
+    </tbody>
+  </table></div>
 
   <div class="box trap">
     <div class="label">🚨 Interview Trap</div>
-    <p>"MongoDB has no transactions" is <strong>outdated since 2018 (v4.0)</strong>. The actual trade-off: Mongo's document model minimizes the <em>need</em> for transactions by embedding related state atomically in single documents, whereas relational databases rely on multi-row transactions as their baseline.</p>
+    <p><strong>The 16 MB document limit.</strong> Embedding a revision history inside a Packspec spec feels natural — until a heavily-edited spec accumulates hundreds of revisions and the write <em>fails</em>, in production, on your most active customer.</p>
+    <p>It's also slow long before it fails: MongoDB rewrites the whole document on update, so a 5 MB document costs 5 MB of I/O to append one revision. <strong>Unbounded growth always means a separate collection</strong> — or the bucket pattern, grouping N entries per document, as a middle ground.</p>
   </div>
 
   <h3>OLTP vs OLAP / time-series</h3>
-  <p><strong>OLTP:</strong> small, low-latency point reads and writes on current-state rows &rarr; row-oriented storage is optimal. <strong>OLAP &amp; Time-Series:</strong> high-volume append-only writes with wide aggregate scans over historical timestamps &rarr; column-oriented or time-partitioned storage is optimal (reads 1–2 columns across millions of rows).</p>
+  <div class="tw"><table>
+    <thead><tr><th>&nbsp;</th><th>OLTP</th><th>OLAP / time-series</th></tr></thead>
+    <tbody>
+      <tr><td>Query</td><td>"Give me this one row"</td><td>"Average occupancy per hour, last 30 days"</td></tr>
+      <tr><td>Writes</td><td>Insert, update, delete</td><td>Append only — data never changes</td></tr>
+      <tr><td>Layout</td><td>Row-oriented</td><td>Column-oriented / partitioned by time</td></tr>
+      <tr><td>Your case</td><td>Packspec spec edits</td><td>SahYatri GPS + occupancy stream</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="box mlde">
+    <div class="label">📊 ML / AI / DE Track Defense</div>
+    <p>SahYatri telemetry is the textbook time-series shape: <strong>append-only, always queried by time range, never updated.</strong> Three things follow, and interviewers want all three:</p>
+    <ul>
+      <li><strong>Partition by time</strong> — one table per day or month. A last-week query skips every other partition entirely, writes only touch the current partition so the hot index stays small, and deleting old data becomes <code>DROP TABLE</code> (instant) instead of <code>DELETE</code> (slow, leaves dead rows for VACUUM).</li>
+      <li><strong>Roll up</strong> — nobody needs per-second readings from six months ago. Downsample to hourly averages; keep raw data hot for a week. This is a <em>memory</em> decision: dashboards must read from a table small enough to sit in cache.</li>
+      <li><strong>Batch the inserts</strong> — every commit is an fsync. One row per second per bus means thousands of fsyncs; buffer for a couple of seconds and use a multi-row insert or <code>COPY</code>, and you routinely get an order of magnitude for free.</li>
+    </ul>
+  </div>
 
   <h3>Indexes — pick the right one</h3>
   <div class="tw"><table>
-    <thead><tr><th>Index Type</th><th>Best For</th><th>Weak Point</th></tr></thead>
+    <thead><tr><th>Type</th><th>Good for</th><th>Weak at</th><th>Use it on</th></tr></thead>
     <tbody>
-      <tr><td>B-Tree</td><td>Equality, range queries (<code>&gt;</code>, <code>&lt;</code>), sorted scans (default)</td><td>Larger on-disk footprint than BRIN for sequential data</td></tr>
-      <tr><td>Hash Index</td><td>O(1) exact equality lookups</td><td>No range support, historically unlogged pre-PG10</td></tr>
-      <tr><td>BRIN</td><td>Massive, naturally ordered append-only timestamp tables</td><td>Ineffective on unordered or randomly updated columns</td></tr>
-      <tr><td>Multikey (Mongo)</td><td>Indexing elements inside an array field</td><td>Index size grows with array cardinality; no compound multikey</td></tr>
+      <tr><td>B-Tree</td><td><code>=</code>, <code>&lt;</code>, <code>&gt;</code>, <code>BETWEEN</code>, <code>ORDER BY</code></td><td>Bigger; slows writes</td><td><code>(bus_id, recorded_at)</code></td></tr>
+      <tr><td>Hash</td><td>Exact match only</td><td>No ranges, no sorting</td><td>Rarely worth it in Postgres</td></tr>
+      <tr><td>BRIN</td><td>Huge tables already physically sorted</td><td>Randomly ordered data</td><td><code>recorded_at</code> on telemetry</td></tr>
+      <tr><td>GIN</td><td>Searching inside JSONB</td><td>Expensive to update</td><td>Flexible spec bodies</td></tr>
+      <tr><td>Multikey (Mongo)</td><td>Array fields</td><td>Explodes on large arrays</td><td>Tags on a Packspec doc</td></tr>
     </tbody>
   </table></div>
 
   <div class="box insight">
-    <div class="label">💡 Senior Intuition</div>
-    <p><strong>BRIN (Block Range Index)</strong> works because it stores only min/max values per disk block. It bets that "physically nearby disk blocks contain temporally nearby values" — true by construction for append-only time-series data. It consumes &lt;1% of the disk space of a B-Tree.</p>
+    <div class="label">💡 Senior Insight</div>
+    <p><strong>BRIN is the answer that separates you in a data-engineering interview.</strong> A B-tree over 50 million timestamps can run to gigabytes, because it stores an entry per row. BRIN stores only min/max per block range — kilobytes — and it works because telemetry arrives in time order, so the table is <em>already physically sorted</em> by the indexed column. A range scan simply skips every block whose min/max can't contain the range.</p>
+    <p>The rule, plus the condition that breaks it: <strong>BRIN when insert order matches sort order.</strong> Backfill old data out of order and that correlation breaks, blocks stop being selective, and BRIN quietly degrades toward a sequential scan.</p>
+  </div>
+
+  <div class="box trap">
+    <div class="label">🚨 Interview Trap</div>
+    <p><strong>"Should you index everything?"</strong> No — every index must be updated on every write, so on an ingest-heavy table each extra index is a direct throughput tax.</p>
+    <p>And the <strong>leftmost prefix rule</strong>: an index on <code>(bus_id, recorded_at)</code> serves queries on <code>bus_id</code>, and on both together — but <strong>not</strong> on <code>recorded_at</code> alone. You can't skip the first column, because the index is sorted by it first. Think of a phone book sorted by surname then first name: useless if you only know the first name.</p>
   </div>
 
   <h3>ETL vs ELT</h3>
-  <p><strong>ETL:</strong> Transforms data before loading &rarr; necessary when destination systems cannot run heavy transformations. <strong>ELT:</strong> Ingests raw data first, transforming it inside modern data warehouses using elastic compute. SahYatri uses a streaming ELT approach: raw sensor telemetry is ingested continuously into PostgreSQL, while downsampling rollups run as scheduled jobs on landed data.</p>
-
-  <div class="box mlde">
-    <div class="label">📊 ML / AI / DE Track Defense</div>
-    <p>"Why PostgreSQL for time-series over MongoDB?" — Telemetry is inherently structured <code>(device_id, timestamp, payload)</code>. PostgreSQL provides ACID ingestion durability, BRIN indexing on sequential timestamps, and mature SQL window functions for rollups without adding operational database sprawl.</p>
-  </div>
+  <p><strong>ETL</strong> = clean it, then store it. <strong>ELT</strong> = store the raw thing, clean it later inside the warehouse.</p>
+  <ul>
+    <li>SahYatri is <strong>ETL by necessity</strong>: YOLOv5n turns a frame into a single count <em>on the Pi</em>, and the frame is discarded. You could not do ELT here without transmitting video, which breaks the entire privacy guarantee.</li>
+    <li>Nutri-Vision is ETL too — free text becomes structured items and macros before storage.</li>
+    <li><strong>ELT</strong> suits a warehouse where storage is cheap and you don't yet know the questions.</li>
+  </ul>
+  <p>The trade in one line: <strong>ETL is cheaper to store and impossible to reinterpret; ELT keeps every option open and costs more.</strong></p>
 </section>
 
 
-<!-- ============ CLUSTER 4 ============ -->
+<!-- ================= C4 ================= -->
 <section class="cluster" id="c4">
-  <h2><span class="idx">04</span> AI, ML, Computer Vision &amp; LLM Systems</h2>
+  <h2><span class="idx">04</span> AI, ML, computer vision &amp; LLM systems</h2>
+  <p>Four different AI approaches across your projects, chosen for four different reasons. Being able to explain <em>why the same person chose differently</em> is what's actually being tested.</p>
 
-  <h3>Minimax + alpha-beta pruning vs Deep Neural Networks</h3>
-  <p><strong>Minimax + &alpha;-&beta;</strong> (Chessify) is a deterministic search over an explicit state space with known transition rules — perfect information, zero training required. <strong>ResNet-50</strong> (Nutri-Vision) is necessary when input-output mappings cannot be formulated mathematically ("what visual features make up biryani?"). Reach for search algorithms when rules are computable; reach for neural networks when you only have examples.</p>
+  <div class="tw"><table>
+    <thead><tr><th>Approach</th><th>How it decides</th><th>Needs training data?</th><th>Explainable?</th><th>Yours</th></tr></thead>
+    <tbody>
+      <tr><td>Search heuristic</td><td>Enumerates futures, scores them</td><td>No</td><td>Fully</td><td>Minimax α-β, Chessify</td></tr>
+      <tr><td>Rules / regex</td><td>Patterns you wrote</td><td>No</td><td>Fully</td><td>Quantity parser, Nutri-Vision</td></tr>
+      <tr><td>Trained model</td><td>Learned weights</td><td>Yes, labelled</td><td>Partly</td><td>spaCy NER, ResNet-50, YOLOv5n</td></tr>
+      <tr><td>LLM prompting</td><td>Next-token prediction</td><td>No</td><td>Only via logs</td><td>Gemini 2.5 Flash, RecrutAI</td></tr>
+    </tbody>
+  </table></div>
 
-  <h3>The Nutri-Vision hybrid extractor</h3>
-  <p>Nutri-Vision uses a dual-engine architecture: <strong>regex grammar parsing</strong> for quantities (<code>"200g"</code>, <code>"2 cups"</code> &rarr; finite, closed grammar, 100% deterministic) + <strong>custom spaCy NER</strong> for food-entity names (open vocabulary, fuzzy phrasing). A statistical model on quantities is unreliable and slow; regex on food names is unmaintainable.</p>
+  <div class="box insight">
+    <div class="label">💡 The unifying principle</div>
+    <p><strong>Use search when you have a computable model of the world. Use learned models when you only have examples.</strong></p>
+    <p>Chess rules are fully known and enumerable, so search gives correctness that learning would only approximate. "What does biryani look like?" has no closed-form description — only examples — so it must be learned. That one sentence explains every choice in this cluster.</p>
+  </div>
+
+  <h3>Minimax + alpha-beta pruning</h3>
+  <p>Minimax assumes both sides play their best move: you maximise, the opponent minimises, down to a fixed depth. Alpha-beta skips branches that <em>can't</em> change the answer — once one reply already refutes a move, you don't need to examine the opponent's other replies.</p>
+  <span class="fml">Perfect move ordering: O(b^d) → roughly O(b^(d/2))</span>
 
   <div class="box trap">
     <div class="label">🚨 Interview Trap</div>
-    <p>"Just invoke an LLM for the entire extraction pipeline" is poor engineering. LLM calls for deterministic sub-tasks like quantity parsing introduce network latency, monetary cost, and stochastic hallucinations to a problem solved instantly by five lines of regex.</p>
+    <p><strong>"Does pruning change the move it picks?"</strong> <strong>No.</strong> Alpha-beta is provably identical to plain minimax at the same depth — it only skips work that could not affect the result. What <em>does</em> vary, enormously, is speed: best-move-first ordering approaches the b^(d/2) bound, worst-first prunes essentially nothing. That's why move ordering (captures first, then checks) is where the real engineering goes.</p>
+    <p><strong>Follow-up: "why depth 3?"</strong> It's a <em>latency budget</em>, not a quality target — depth 3 is where a pure-Python search still answers fast enough to feel instant. Strong play comes from Stockfish; the Python search exists as a fallback.</p>
+  </div>
+
+  <h3>The Nutri-Vision hybrid extractor</h3>
+  <p>Free text like "2 medium apples, 150g grilled chicken breast" contains two very different problems in one sentence:</p>
+  <div class="tw"><table>
+    <thead><tr><th>Sub-problem</th><th>Vocabulary</th><th>Tool</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td>Food name</td><td>Open, endless spellings</td><td>spaCy NER</td><td>Must generalize to unseen words</td></tr>
+      <tr><td>Quantity + unit</td><td>Closed, tiny grammar</td><td>Regex rules</td><td>Must be exact — "150g" can never become 15g</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="box mlde">
+    <div class="label">📊 ML / AI / DE Track Defense</div>
+    <p>State the principle: <strong>learn the fuzzy part, hard-code the exact part.</strong></p>
+    <p>An ML model that's 97% accurate on quantities is a <em>worse product</em> than regex that's 100% right on the formats you support and honestly fails on the rest — because a silently wrong calorie count is worse than a "couldn't parse that" message. The regex returns nothing when it doesn't recognise a format; that's a visible failure the UI can handle.</p>
+    <p>Then USDA lookup with confidence scoring is the third layer: it grounds the model's output against a real government database, so <strong>the number a user sees never comes from a model's imagination.</strong></p>
   </div>
 
   <h3>Edge inference vs cloud GPU</h3>
-  <p>SahYatri runs YOLOv5n (nano variant, INT8 quantized) directly on a Raspberry Pi 4 ARM CPU. Streaming video frames to a cloud GPU incurs round-trip latency, continuous bandwidth costs, and failure on intermittent mobile network connectivity — unacceptable for a vehicle safety detection loop.</p>
-
   <div class="tw"><table>
-    <thead><tr><th>Dimension</th><th>Edge (YOLOv5n on RPi4)</th><th>Cloud GPU</th></tr></thead>
+    <thead><tr><th>&nbsp;</th><th>Edge (Pi 4, YOLOv5n)</th><th>Cloud GPU</th></tr></thead>
     <tbody>
-      <tr><td>Latency</td><td>Bounded, deterministic (local)</td><td>Variable, network-dependent</td></tr>
-      <tr><td>Network Dependence</td><td>None (fully offline)</td><td>Hard connection requirement</td></tr>
-      <tr><td>Model Capacity</td><td>Constrained (nano / INT8)</td><td>Unconstrained (full FP32 models)</td></tr>
-      <tr><td>Cost Model</td><td>One-time hardware purchase</td><td>Ongoing compute + bandwidth fees</td></tr>
+      <tr><td>What leaves the device</td><td>A number</td><td>Video of passengers</td></tr>
+      <tr><td>Bandwidth</td><td>Bytes per reading</td><td>Continuous upload, per bus</td></tr>
+      <tr><td>Works offline</td><td>Yes</td><td>No</td></tr>
+      <tr><td>Accuracy</td><td>Lower — nano model</td><td>Higher — full-size model</td></tr>
+      <tr><td>Updating the model</td><td>Push to every device</td><td>One deploy</td></tr>
     </tbody>
   </table></div>
+
+  <div class="box insight">
+    <div class="label">💡 Senior Insight</div>
+    <p>Know why the "n" in YOLOv5n matters: it's the <strong>nano</strong> variant, roughly 1.9M parameters against YOLOv5x's ~87M. On an ARM CPU with no GPU that's the difference between 15 FPS and a slideshow.</p>
+    <p>You bought speed with accuracy — and for <em>counting people</em>, "roughly how full is this bus" tolerates that trade completely. <strong>A model-size choice is a product decision, not a technical one</strong>, and framing it that way is what makes the answer senior.</p>
+  </div>
 
   <h3>LLM strategies</h3>
   <div class="tw"><table>
-    <thead><tr><th>Paradigm</th><th>Mechanism</th><th>Best Fit</th></tr></thead>
+    <thead><tr><th>&nbsp;</th><th>Prompt chaining</th><th>RAG</th><th>Multi-agent</th><th>Fine-tuning</th></tr></thead>
     <tbody>
-      <tr><td>Prompt-Chaining SM</td><td>Sequential prompts, explicit fallback branches</td><td>Deterministic multi-step flows (RecrutAI screening)</td></tr>
-      <tr><td>Agentic RAG</td><td>Multi-agent loop, dynamic tool use &amp; retrieval</td><td>Open-ended exploratory reasoning over knowledge bases</td></tr>
-      <tr><td>Full Fine-Tuning</td><td>Backpropagate across all base model weights</td><td>High-volume specialized tasks with fixed prompt schemas</td></tr>
-      <tr><td>LoRA / PEFT</td><td>Freeze base weights, train low-rank adapter matrices</td><td>Domain adaptation with limited compute / swappable tasks</td></tr>
+      <tr><td>Changes weights?</td><td>No</td><td>No</td><td>No</td><td>Yes</td></tr>
+      <tr><td>Fixes</td><td>Complex multi-step flows</td><td>Model doesn't know your data</td><td>Task needs different roles</td><td>Style/format it won't hold</td></tr>
+      <tr><td>Cost</td><td>Per call</td><td>Per call + vector store</td><td>Highest — many calls</td><td>GPU up front, cheap after</td></tr>
+      <tr><td>Update knowledge</td><td>Edit the prompt</td><td>Re-index a document</td><td>Edit agent prompts</td><td>Retrain</td></tr>
     </tbody>
   </table></div>
 
-  <p>RecrutAI's prompt-chaining state machine over Gemini 2.5 Flash guarantees auditable stage transitions (parse &rarr; score &rarr; question generation &rarr; fallback) required in compliance-sensitive hiring workflows, avoiding non-deterministic agent loop failures.</p>
-
-  <div class="box insight">
-    <div class="label">💡 Senior Intuition</div>
-    <p><strong>Prompt-chaining = fixed DAG pipeline.</strong> Agentic RAG = autonomous graph traversal. Fixed pipelines are unit-testable and cost-predictable. Choose agentic architectures only when step sequences cannot be known in advance.</p>
+  <div class="box trap">
+    <div class="label">🚨 Interview Trap</div>
+    <p><strong>"Fine-tune it so it stops hallucinating."</strong> Fine-tuning teaches <strong>behaviour and format</strong>, not <strong>facts</strong>. Training on your documents makes the model <em>sound</em> like them — it does not make it recall them reliably, and it will still invent confidently.</p>
+    <p><strong>Facts belong in the context window. That's RAG.</strong> Say this cleanly and you're ahead of most candidates in the room.</p>
   </div>
 
-  <div class="box mlde">
-    <div class="label">📊 ML Track Defense</div>
-    <p>"End-to-end LLMs for food parsing introduce latency and cost on solved grammar tasks. spaCy NER extracts open-vocabulary food items, regex handles quantities, and LLMs are reserved strictly for ambiguous conversational understanding."</p>
-  </div>
+  <h4>Fighting hallucination in practice — the four layers</h4>
+  <ul>
+    <li><strong>Ground it</strong> — Nutri-Vision never lets the model produce a calorie number; USDA does.</li>
+    <li><strong>Constrain the output</strong> — RecrutAI's branch decision must be one of four tokens (<code>PROBE_DEEPER</code>, <code>SIMPLIFY</code>, <code>PIVOT_TOPIC</code>, <code>PROCEED</code>). Anything else is rejected, so <strong>a hallucination cannot become a state transition.</strong></li>
+    <li><strong>Validate the shape</strong> — Zod parses every response; a malformed one triggers the fallback instead of propagating a bad object.</li>
+    <li><strong>Show your work</strong> — the recruiter audit dashboard exposes the branching log, so a human can see <em>why</em> the model went where it went.</li>
+  </ul>
 </section>
 
 
-<!-- ============ CLUSTER 5 ============ -->
+<!-- ================= C5 ================= -->
 <section class="cluster" id="c5">
-  <h2><span class="idx">05</span> API Protocols &amp; Communication Patterns</h2>
+  <h2><span class="idx">05</span> API protocols</h2>
 
   <div class="tw"><table>
-    <thead><tr><th>Protocol</th><th>Connection Lifecycle</th><th>Serialization</th><th>Typical Use Case</th></tr></thead>
+    <thead><tr><th>&nbsp;</th><th>REST</th><th>WebSocket / Socket.IO</th><th>SSE</th><th>GraphQL</th><th>gRPC</th></tr></thead>
     <tbody>
-      <tr><td>REST</td><td>Stateless req/response over HTTP/1.1 or HTTP/2</td><td>JSON (text)</td><td>Public APIs, CRUD resources, edge-cacheable reads</td></tr>
-      <tr><td>WebSockets / Socket.IO</td><td>Persistent, bidirectional, full-duplex TCP</td><td>JSON or binary frames</td><td>Real-time multiplayer gaming, live chat (Chessify)</td></tr>
-      <tr><td>GraphQL</td><td>Stateless req/response (HTTP POST endpoint)</td><td>JSON, client-shaped query</td><td>Complex nested graphs with heterogeneous clients</td></tr>
-      <tr><td>gRPC</td><td>Persistent HTTP/2, multiplexed streams</td><td>Protocol Buffers (binary)</td><td>Low-latency internal microservice communication</td></tr>
-      <tr><td>Server-Sent Events (SSE)</td><td>Persistent, unidirectional (server &rarr; client)</td><td>Text stream (event-stream)</td><td>Real-time notifications, LLM token streaming</td></tr>
+      <tr><td>Direction</td><td>Client asks, server answers</td><td>Both ways, anytime</td><td>Server → client only</td><td>Client asks</td><td>Both ways</td></tr>
+      <tr><td>Connection</td><td>Short-lived</td><td>Stays open</td><td>Stays open</td><td>Short-lived</td><td>Stays open (HTTP/2)</td></tr>
+      <tr><td>Format</td><td>JSON, human readable</td><td>Usually JSON</td><td>Plain text</td><td>JSON</td><td>Protobuf, binary</td></tr>
+      <tr><td>HTTP caching</td><td>Yes — free</td><td>No</td><td>No</td><td>Hard (POST to one URL)</td><td>No</td></tr>
+      <tr><td>Browser support</td><td>Native</td><td>Native</td><td>Native</td><td>Native</td><td>Needs a proxy</td></tr>
+      <tr><td>Yours</td><td>All backends</td><td>Chessify PvP</td><td>—</td><td>—</td><td>—</td></tr>
     </tbody>
   </table></div>
-
-  <h3>REST vs GraphQL: The Caching Boundary</h3>
-  <p>REST endpoints have fixed URL identifiers cacheable natively at the HTTP layer by CDNs, reverse proxies, and browsers with zero custom code. GraphQL routes all queries through a single POST endpoint with arbitrary client-defined shapes, breaking URL caching and requiring complex normalized client caches (Apollo) or persisted server queries.</p>
-
-  <div class="box trap">
-    <div class="label">🚨 Interview Trap</div>
-    <p>"WebSockets are always superior for real-time applications." WebSockets add significant operational overhead (sticky sessions, connection memory limits). For one-way server pushes (live scores, notifications, LLM token streams), <strong>Server-Sent Events (SSE)</strong> or short polling over HTTP/2 are simpler to scale behind standard load balancers.</p>
-  </div>
 
   <div class="box insight">
-    <div class="label">💡 Senior Intuition</div>
-    <p>gRPC's Protocol Buffers eliminate text parsing and schema transmission on every request, providing high throughput for internal microservices. The trade-off is losing human-readable curl inspection — a call-volume vs. developer-observability decision.</p>
+    <div class="label">💡 Intuition</div>
+    <p><strong>Ask who starts the conversation.</strong> Client always starts → REST. Server needs to push → SSE if it's one-way (live scores, progress, LLM token streaming), WebSocket if it's genuinely two-way.</p>
+    <p>Chess qualifies for WebSocket <em>genuinely</em>: both players send moves, both receive them, and the server also pushes join, disconnect and spectator events unprompted. A telemetry dashboard that only <em>receives</em> does not qualify — and choosing SSE there is the senior call.</p>
   </div>
 
   <div class="box sde">
     <div class="label">🛡️ SDE Track Defense</div>
-    <p>"Why not GraphQL for internal backend microservices?" — Internal service communication consists of fixed, well-defined contracts between known services. gRPC's compiled <code>.proto</code> contracts and binary HTTP/2 multiplexing provide type safety and performance without GraphQL's dynamic query overhead.</p>
+    <p>Know what Socket.IO adds on top of raw WebSocket, because they will ask "why not just <code>ws</code>?":</p>
+    <ul>
+      <li><strong>Automatic reconnection</strong> with backoff — essential on mobile networks.</li>
+      <li><strong>Fallback to HTTP long-polling</strong> when a proxy blocks WebSocket. On free hosting behind unknown proxies, this alone justifies the dependency.</li>
+      <li><strong>Rooms</strong> — exactly how one game = one room holding two players plus N spectators, without managing socket lists yourself.</li>
+      <li><strong>Named events</strong> instead of parsing a raw message string.</li>
+      <li><strong>Heartbeats</strong> (<code>pingInterval</code>/<code>pingTimeout</code>) to detect a dead connection that never sent a TCP FIN — a phone entering a tunnel.</li>
+    </ul>
+  </div>
+
+  <div class="box trap">
+    <div class="label">🚨 Interview Trap</div>
+    <p><strong>"Why not GraphQL?"</strong> Weak answer: "REST is simpler." Strong answer: <strong>my payloads are fixed and my reads are cacheable, so GraphQL solves a problem I don't have.</strong></p>
+    <p>A timetable, a bus's load history, a spec document — every client wants the same shape every time, so there's no over-fetching to eliminate. Meanwhile REST gets HTTP and CDN caching for <em>free</em>, and StudySync's entire offline story is "cache the last good response." GraphQL POSTs everything to a single URL, so that free caching disappears and you rebuild it yourself.</p>
+    <p><strong>When you'd switch:</strong> many different clients needing many different slices of a deeply nested graph — a mobile app wanting three fields where the web wants thirty. That isn't your situation, and saying so is a stronger signal than adopting it.</p>
+  </div>
+
+  <h3>REST hygiene they check for</h3>
+  <ul>
+    <li><strong>Verbs</strong> — GET reads, POST creates, PUT replaces, PATCH edits, DELETE removes.</li>
+    <li><strong>Codes</strong> — 200 ok, 201 created, 204 no content, 400 malformed, <strong>401 not authenticated</strong>, <strong>403 authenticated but not allowed</strong>, 404 missing, 409 conflict, 422 valid syntax but failed validation, 500 my fault.</li>
+    <li><strong>Idempotent</strong> — GET, PUT and DELETE give the same end state if repeated; POST doesn't. This is <em>why</em> a client can safely retry a GET on a flaky connection but needs an idempotency key to retry a POST.</li>
+    <li><strong>Stateless</strong> — the token travels with each request, so any server instance can serve it. That's what makes horizontal scaling possible.</li>
+  </ul>
+
+  <div class="box trap">
+    <div class="label">🚨 Interview Trap</div>
+    <p><strong>"You use JWT — how do you log someone out?"</strong> You can't, not really: a signed JWT is valid until it expires. Real answers: short expiry plus refresh tokens, or a server-side denylist of revoked token IDs — which quietly reintroduces the state JWT was supposed to remove.</p>
+    <p>Be honest that it's a trade-off, and add the Packspec-specific consequence: with 5 role tiers, <strong>permissions live inside the token</strong>, so demoting a user doesn't take effect until their token refreshes. That's a real operational detail most candidates never think about.</p>
+    <p>One more: <strong>a JWT is signed, not encrypted.</strong> Anyone can decode the payload. Never put anything sensitive in the claims.</p>
   </div>
 </section>
 
 
-<!-- ============ CLUSTER 6 ============ -->
+<!-- ================= C6 ================= -->
 <section class="cluster" id="c6">
-  <h2><span class="idx">06</span> Frontend Paradigms &amp; Rendering Lifecycles</h2>
+  <h2><span class="idx">06</span> Frontend &amp; rendering</h2>
 
   <div class="tw"><table>
-    <thead><tr><th>Strategy</th><th>When HTML Is Generated</th><th>Best Fit</th></tr></thead>
+    <thead><tr><th>&nbsp;</th><th>CSR</th><th>SSR</th><th>SSG</th><th>ISR</th></tr></thead>
     <tbody>
-      <tr><td>CSR (Client-Side Rendering)</td><td>In the browser, after JavaScript bundle loads</td><td>Authenticated enterprise dashboards, SPAs</td></tr>
-      <tr><td>SSR (Server-Side Rendering)</td><td>On the server, dynamically per request</td><td>Personalized dynamic pages with SEO requirements</td></tr>
-      <tr><td>SSG (Static Site Generation)</td><td>At build time, once</td><td>Marketing landing pages, documentation</td></tr>
-      <tr><td>ISR (Incremental Static Regen)</td><td>At build time + background revalidation on demand</td><td>E-commerce product catalogs with periodic updates</td></tr>
+      <tr><td>HTML built</td><td>In the browser</td><td>Per request</td><td>At build time</td><td>At build, refreshed on a timer</td></tr>
+      <tr><td>First paint</td><td>Slowest</td><td>Fast</td><td>Fastest</td><td>Fastest</td></tr>
+      <tr><td>SEO</td><td>Weak</td><td>Strong</td><td>Strong</td><td>Strong</td></tr>
+      <tr><td>Data freshness</td><td>Live</td><td>Live</td><td>Frozen at build</td><td>Stale up to N seconds</td></tr>
+      <tr><td>Fits</td><td>Dashboards behind login</td><td>Per-user pages</td><td>Docs, marketing</td><td>Content changing hourly</td></tr>
+      <tr><td>Yours</td><td>Chessify board, StudySync web</td><td>RecrutAI shell</td><td>Landing pages</td><td>—</td></tr>
     </tbody>
   </table></div>
 
-  <h3>Next.js App Router vs Pages Router vs Vite SPA</h3>
-  <p><strong>App Router (React Server Components):</strong> Components fetch data and render to HTML on the server by default, shipping zero JavaScript to the client for non-interactive nodes. Suspense enables per-component streaming so pages paint instantly.</p>
-  <p><strong>Pages Router:</strong> Coarse-grained page-level data fetching (<code>getServerSideProps</code>). <strong>Vite SPA:</strong> Fast development, but client must download and parse the entire bundle before rendering, leading to layout waterfalls and slower initial paint.</p>
+  <div class="box insight">
+    <div class="label">💡 Intuition</div>
+    <p>These stopped being app-wide settings — in the App Router they're <strong>per-route, even per-component</strong>. RecrutAI can server-render the recruiter dashboard shell for a fast first paint while the Monaco editor and live interview panel stay client-side, because those need browser APIs and constant interaction.</p>
+    <p><em>"It depends on the route"</em> is the answer that shows you've actually shipped App Router rather than read about it.</p>
+  </div>
 
-  <h3>Flutter vs React Native vs Native Web</h3>
+  <h4>React Server Components, plainly</h4>
+  <p>A Server Component runs on the server only and ships <strong>no JavaScript</strong> to the browser. It can read a database or a file directly, with no API layer in between. Anything interactive — state, effects, event handlers — needs <code>"use client"</code>.</p>
+  <p><strong>Net effect:</strong> less JS downloaded, faster load. <strong>Cost:</strong> a mental model where you must always know which side a component runs on.</p>
+
+  <div class="box trap">
+    <div class="label">🚨 Interview Trap</div>
+    <p><strong>Two misconceptions here, and both are common.</strong></p>
+    <p>First: <em>"should everything be a Server Component?"</em> No. A chessboard with drag-and-drop, a live socket connection, a code editor — all inherently client. The pattern is server components as the outer shell fetching data, client components as interactive leaves.</p>
+    <p>Second, the subtler one: <code>"use client"</code> does <strong>not</strong> mean "renders only on the client." Client Components are still <em>server-rendered for the initial HTML</em>, then hydrated. It marks a <em>bundling</em> boundary — this and everything it imports ships to the browser — not a rendering location.</p>
+    <p>And remember: Chessify is Next.js <strong>13</strong>, RecrutAI is <strong>15</strong>. Name the right one.</p>
+  </div>
+
+  <h3>Flutter vs React Native vs web</h3>
   <div class="tw"><table>
-    <thead><tr><th>Approach</th><th>Rendering Pipeline</th><th>Key Trade-Off</th></tr></thead>
+    <thead><tr><th>&nbsp;</th><th>Flutter</th><th>React Native</th><th>Web app</th></tr></thead>
     <tbody>
-      <tr><td>Flutter</td><td>Compiles to native ARM; paints pixels directly via Skia/Impeller</td><td>Pixel-perfect cross-platform consistency, zero JS bridge, larger initial binary</td></tr>
-      <tr><td>React Native</td><td>JS thread communicates with native platform widgets via JSI/bridge</td><td>Native platform look-and-feel, potential bridge bottlenecks on high-frequency events</td></tr>
-      <tr><td>PWA (Web)</td><td>Standard browser DOM rendering</td><td>Instant zero-install distribution, constrained access to native hardware APIs</td></tr>
+      <tr><td>Draws UI</td><td>Its own engine (Skia/Impeller) paints every pixel</td><td>Maps to real native widgets</td><td>Browser DOM</td></tr>
+      <tr><td>Language</td><td>Dart, compiled to native ARM</td><td>JavaScript over a bridge/JSI</td><td>JS/TS</td></tr>
+      <tr><td>Identical everywhere?</td><td>Yes — by design</td><td>No — follows each OS</td><td>Yes</td></tr>
+      <tr><td>Install needed</td><td>Yes (web build too)</td><td>Yes</td><td>No</td></tr>
     </tbody>
   </table></div>
 
   <div class="box trap">
     <div class="label">🚨 Interview Trap</div>
-    <p>"Flutter apps look native because they use native platform widgets." <strong>False.</strong> Flutter intentionally bypasses native platform UI widgets and renders its own widget tree directly to a graphics canvas via Skia/Impeller — ensuring identical rendering across iOS and Android.</p>
+    <p><strong>"Flutter uses native components"</strong> — backwards, and it's a common slip. Flutter deliberately <em>bypasses</em> native widgets and renders its own widget tree via Skia/Impeller. That's precisely <em>why</em> it looks pixel-identical across platforms, and it's also why the binary is larger.</p>
   </div>
 
   <div class="box sde">
     <div class="label">🛡️ SDE Track Defense</div>
-    <p>"RSC lets me colocate data fetching with database queries on the server and stream only rendered HTML to the client, eliminating client bundle bloat and nested network waterfalls."</p>
+    <p>Flutter for StudySync, with a reason specific to the product: <strong>a timetable is a dense custom grid.</strong> Flutter paints it directly, so it's pixel-identical on Android, iOS and web from one codebase — and the repo shows this in practice: <code>android/</code>, <code>ios/</code> and <code>web/</code> all built from one <code>lib/</code>, across three tagged releases.</p>
+    <p>React Native would map that grid onto different native primitives per platform, meaning layout divergence to chase on the exact UI whose entire value is being consistent and glanceable. And Flutter's usual downside — larger binary — doesn't matter for a college utility app installed once.</p>
   </div>
 </section>
 
 
-<!-- ============ CLUSTER 7 ============ -->
+<!-- ================= C7 ================= -->
 <section class="cluster" id="c7">
-  <h2><span class="idx">07</span> DevOps, Cloud, Tooling &amp; Linux Systems</h2>
+  <h2><span class="idx">07</span> DevOps, cloud &amp; Linux</h2>
 
-  <h3>Virtual Machines vs Containers</h3>
-  <p><strong>Virtual Machines:</strong> Hypervisor virtualizes physical hardware and runs a complete guest OS kernel per instance, offering hard isolation at the cost of high RAM and boot overhead. <strong>Docker Containers:</strong> Share the host Linux kernel, using namespaces (PID, net, mount) for process isolation and cgroups for resource quotas &rarr; sub-second startup with zero kernel duplication.</p>
+  <h3>VM vs container</h3>
+  <p>A <strong>VM</strong> virtualises <em>hardware</em> and boots a whole guest OS — heavy, slow to start, strongly isolated. A <strong>container</strong> is just a normal Linux process given a restricted view of the system — starts in milliseconds, shares the host kernel, weaker isolation.</p>
+  <ul>
+    <li><strong>Namespaces</strong> = what the process can <em>see</em> (its own PIDs, network, filesystem).</li>
+    <li><strong>cgroups</strong> = what it can <em>use</em> (CPU, memory ceilings).</li>
+    <li><strong>Layers</strong> = each Dockerfile line is a cached layer. Change your code and only the last layers rebuild.</li>
+  </ul>
 
-  <h3>Git vs Git LFS</h3>
-  <p>Standard Git stores entire copies of modified binary files in its object database on every commit, permanently bloating repository clone size with PyTorch <code>.pth</code> checkpoints. Git LFS replaces large binaries in the Git tree with lightweight text pointers, storing model weights in dedicated blob storage while maintaining atomic commit pairing.</p>
+  <div class="box insight">
+    <div class="label">💡 Senior Insight</div>
+    <p><strong>Layer order is the whole optimisation.</strong> Copy <code>requirements.txt</code> and install <em>before</em> copying your source — then a code change doesn't reinstall PyTorch. Get this backwards and every single build downloads the world, which is the most common Docker mistake in ML projects.</p>
+  </div>
+
+  <details class="snippet">
+    <summary>Dockerfile for a FastAPI ML service</summary>
+    <pre>FROM python:3.11-slim
+WORKDIR /app
+
+# deps first — this layer is cached until requirements.txt changes
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# source last — a code change rebuilds only from this point
+COPY . .
+
+RUN useradd -m -u 10001 appuser        # don't run as root
+USER appuser
+
+EXPOSE 8000
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]</pre>
+  </details>
+
+  <div class="box trap">
+    <div class="label">🚨 Interview Trap</div>
+    <p><strong>"Is a container a security boundary?"</strong> Weaker than a VM — containers share the host kernel, so a kernel exploit escapes. For untrusted code (say, running a candidate's submitted solution) you want a VM, gVisor, or Firecracker.</p>
+    <p>Worth flagging honestly for RecrutAI: the Monaco integration is an <em>editor</em>, not a sandboxed executor. Knowing that distinction — and naming it before they ask — is the point.</p>
+    <p>Second trap: <strong>Docker layers are immutable</strong>, so <code>RUN rm .env</code> in a later layer hides a secret from the filesystem but <em>not</em> from the image. Anyone can extract it with <code>docker history</code>. Use multi-stage builds or BuildKit secrets.</p>
+  </div>
+
+  <h3>Git LFS</h3>
+  <p>Git stores a full copy of every version of every file, forever, and binary files don't delta-compress. A 100 MB <code>.pth</code> checkpoint committed ten times is a gigabyte of history that <em>every clone downloads forever</em>. LFS replaces the file with a small text pointer and stores the real bytes separately — <code>Model_Image</code> uses this, and <code>.gitattributes</code> holds the tracking rules.</p>
 
   <div class="box mlde">
     <div class="label">📊 ML / AI / DE Track Defense</div>
-    <p>"Why Git LFS over cloud object storage alone?" — Git LFS maintains an immutable, atomic link between model weights and the exact Git commit that produced them. <code>git checkout</code> restores matching code and weights together without custom manifest synchronization.</p>
+    <p>The nuance interviewers want: <strong>LFS gives you versioning tied to code; object storage gives you scale.</strong></p>
+    <p>LFS means checking out the commit that produced a result also checks out the exact weights that produced it — reproducibility for free, no manual bookkeeping. With a bare S3 bucket, matching <code>model_v3_final_FINAL.pth</code> to the commit that trained it is something a human tracks and eventually gets wrong.</p>
+    <p><strong>In CI</strong> it pays off concretely: <code>GIT_LFS_SKIP_SMUDGE=1</code> lets lint and unit jobs clone in seconds without pulling weights; only the inference test fetches them.</p>
+    <p><strong>When you'd outgrow it:</strong> LFS has bandwidth quotas and stores no model metadata — no metrics, no training config, no lineage. Past a few GB or a real team, S3 or a model registry (MLflow, Hugging Face Hub) with just a version pointer in Git. <em>Naming when you'd step off the ladder is the senior half of the answer.</em></p>
   </div>
 
-  <h3>Cloud Infrastructure: AWS vs Azure Service Mapping</h3>
+  <h3>AWS vs Azure — the mapping</h3>
   <div class="tw"><table>
-    <thead><tr><th>Layer</th><th>AWS</th><th>Azure</th></tr></thead>
+    <thead><tr><th>Need</th><th>AWS</th><th>Azure</th></tr></thead>
     <tbody>
-      <tr><td>Virtual Compute</td><td>EC2</td><td>Virtual Machines</td></tr>
-      <tr><td>Serverless Compute</td><td>AWS Lambda</td><td>Azure Functions</td></tr>
-      <tr><td>Object Storage</td><td>S3</td><td>Azure Blob Storage</td></tr>
-      <tr><td>Document Database</td><td>DocumentDB / MongoDB Atlas</td><td>Cosmos DB / MongoDB Atlas</td></tr>
-      <tr><td>Relational Database</td><td>RDS (PostgreSQL / MySQL)</td><td>Azure Database for PostgreSQL</td></tr>
+      <tr><td>VM</td><td>EC2</td><td>Virtual Machines</td></tr>
+      <tr><td>Serverless function</td><td>Lambda</td><td>Functions</td></tr>
+      <tr><td>Object storage</td><td>S3</td><td>Blob Storage</td></tr>
+      <tr><td>Block storage</td><td>EBS</td><td>Managed Disks</td></tr>
+      <tr><td>Managed SQL</td><td>RDS / Aurora</td><td>Azure SQL / DB for PostgreSQL</td></tr>
+      <tr><td>Containers</td><td>ECS / EKS</td><td>Container Apps / AKS</td></tr>
+      <tr><td>Secrets</td><td>Secrets Manager</td><td>Key Vault</td></tr>
     </tbody>
   </table></div>
+  <p><strong>Object vs block, since it comes up:</strong> S3 is HTTP, effectively infinite, no filesystem — right for model weights, uploads, backups. EBS is a disk attached to one instance — right for a database's data directory.</p>
+  <p><strong>Don't oversell cloud depth.</strong> Your deployments are Render (Flask + Node) and Vercel (Next.js, Flutter web), with MongoDB Atlas as managed data. Say that plainly — PaaS is a legitimate choice at this scale, and pretending otherwise is a fast way to get caught on a follow-up.</p>
 
-  <h3>CI/CD Pipelines &amp; Testing Tiers</h3>
-  <p><strong>Unit Tests (PHPUnit, PyTest):</strong> Verify isolated business logic fast with mocked external dependencies — run on every commit. <strong>Integration Tests (Newman / Postman):</strong> Verify end-to-end API contracts across services in ephemeral CI containers — run pre-merge to catch network and schema breakages.</p>
+  <h3>Testing &amp; CI</h3>
+  <ul>
+    <li><strong>Unit (PHPUnit)</strong> — one function, no database, milliseconds. Catches logic bugs.</li>
+    <li><strong>Integration (Postman/Newman)</strong> — real HTTP against a running app. Catches wiring bugs: wrong route, broken auth, bad serialisation.</li>
+    <li><strong>In CI</strong> — Newman runs Postman collections headlessly, so the collection you click through locally becomes a merge gate. Cheap checks first: lint → unit → build → integration.</li>
+  </ul>
 
-  <details class="snippet">
-    <summary>Linux: Process monitoring &amp; redirection reference</summary>
-    <pre># Live process monitoring sorted by CPU
-top / htop
-
-# Snapshot process tree matching pattern
-ps aux | grep node
-
-# Redirect stdout and stderr to single log file
-./server.sh > out.log 2>&1
-
-# Live log stream filtered for error lines
-tail -f app.log | grep --line-buffered "ERROR"</pre>
-  </details>
-
-  <div class="box insight">
-    <div class="label">💡 Senior Intuition</div>
-    <p><strong>Namespaces</strong> dictate what a process can <em>see</em> (isolated PID tree, network stack, mount table). <strong>Cgroups</strong> dictate what a process can <em>consume</em> (CPU cores, RAM limits, I/O bandwidth). A container is simply the combination of both kernel features.</p>
+  <div class="box sde">
+    <div class="label">🛡️ SDE Track Defense</div>
+    <p>Packspec's multi-tenant isolation is exactly the property unit tests <strong>cannot</strong> verify. "Can tenant A read tenant B's spec?" is only answerable by a real request carrying A's real token against B's real resource ID, expecting a 403.</p>
+    <p>That's a Postman test, and it's the highest-value one in the suite — because data leakage between tenants is the failure mode with actual consequences. So the useful cases aren't happy paths; they're the negative ones: <strong>wrong tenant, insufficient role, expired token, tampered ID.</strong></p>
   </div>
+
+  <h3>Linux you'll be asked to type</h3>
+  <div class="tw"><table>
+    <thead><tr><th>Task</th><th>Command</th></tr></thead>
+    <tbody>
+      <tr><td>Live process view</td><td><code>htop</code> · <code>top</code></td></tr>
+      <tr><td>Find a process</td><td><code>ps aux | grep [d]etect.py</code></td></tr>
+      <tr><td>Stop it</td><td><code>kill -15 PID</code> (graceful) → <code>kill -9</code> (forced)</td></tr>
+      <tr><td>Disk / memory</td><td><code>df -h</code> · <code>free -h</code></td></tr>
+      <tr><td>What's on the port</td><td><code>lsof -i :8000</code> · <code>ss -tulpn</code></td></tr>
+      <tr><td>Follow a log</td><td><code>tail -f app.log</code> · <code>journalctl -u api -f</code></td></tr>
+      <tr><td>Permissions</td><td><code>chmod 755 file</code> — owner rwx, others r-x</td></tr>
+    </tbody>
+  </table></div>
+  <p><code>0</code> is stdin, <code>1</code> is stdout, <code>2</code> is stderr. So <code>2&gt;&amp;1</code> means "send errors wherever output is going," and <code>&gt; file 2&gt;&amp;1</code> captures both. Pipes connect one program's stdout to the next one's stdin.</p>
 </section>
 
 
-<!-- ============ CLUSTER 8 ============ -->
+<!-- ================= C8 ================= -->
 <section class="cluster" id="c8">
-  <h2><span class="idx">08</span> "Why X Over Y" Interview Defense Bank</h2>
-  <p style="color:var(--text-dim); font-size:12.5px; margin-bottom:14px;">Two specialized tracks. Each response delivers a concrete, senior-level trade-off analysis.</p>
+  <h2><span class="idx">08</span> "Why X over Y" — Q&amp;A bank</h2>
+  <p style="color:var(--text-dim); font-size:12px; margin-bottom:14px;">Say the one-line reason first, then one supporting detail, then the trade-off you accepted. <strong>Interviewers trust candidates who name the downside</strong> — it's the fastest way to sound like you've actually run the thing.</p>
 
-  <h3>Track A — SDE Track Q&amp;A Bank</h3>
+  <h3>Track A — SDE</h3>
 
-  <div class="qa qa-track-a">
-    <span class="track-tag track-a">Track A · Q1</span>
-    <div class="q"><span class="qnum">1.</span> Why choose Node.js + Socket.IO for real-time multiplayer over a multi-threaded Python/Java server?</div>
-    <p>Real-time multiplayer is I/O-bound: thousands of idle concurrent connections exchanging small, sporadic messages. Node's single-threaded event loop manages these sockets with minimal memory overhead because it never allocates an OS thread per connection. Socket.IO provides automatic heartbeat reconnection and fallback transports across flaky mobile connections. The CPU-heavy chess engine is completely decoupled into a separate compute service.</p>
+  <div class="qa a-only">
+    <span class="track-tag track-a">A · Q1</span>
+    <div class="q"><span class="qnum">1.</span> Why Node + Socket.IO for real-time multiplayer instead of a threaded Python or Java server?</div>
+    <p><strong>Because chess connections are idle almost all the time.</strong> A game sends a few small messages per minute and waits in between. A thread-per-connection server pays memory for every idle player; an event loop costs one thread total and only wakes when a message actually arrives.</p>
+    <p>Socket.IO added rooms — one room per game holding two players plus any number of spectators — plus long-polling fallback for proxies that block WebSocket, and automatic reconnection for mobile clients. Server-side chess.js validation means a tampered client can't push an illegal move.</p>
+    <p><strong>Trade-off:</strong> one CPU-heavy task would freeze every game on the process. That's precisely why the Stockfish engine lives in a separate Flask service instead of in this one.</p>
   </div>
 
-  <div class="qa qa-track-a">
-    <span class="track-tag track-a">Track A · Q2</span>
-    <div class="q"><span class="qnum">2.</span> Why implement multi-tenant ACID transactions in MongoDB Atlas rather than PostgreSQL for Packspec?</div>
-    <p>Packspec requires per-tenant schema customization (heterogeneous workflow attributes) paired with atomic guarantees during critical inventory state transitions. MongoDB's document model embeds tenant data naturally for single-document atomicity, while multi-document ACID transactions handle cross-collection operations. The relational alternative requires complex EAV patterns or per-tenant table schemas.</p>
+  <div class="qa a-only">
+    <span class="track-tag track-a">A · Q2</span>
+    <div class="q"><span class="qnum">2.</span> Why multi-tenant ACID transactions in MongoDB Atlas rather than PostgreSQL for Packspec?</div>
+    <p><strong>Because a spec is a document, and every customer's spec has different fields.</strong> Specs vary by tenant, so a relational schema means either a wide sparse table or a migration per customer. Mongo stores the whole nested spec as one document, and reading it is a single lookup with no joins.</p>
+    <p>Mongo has supported multi-document ACID transactions since 4.0, so the operations that must be atomic — creating a revision while flipping workflow state, cascading soft-deletes — are still safe. And most writes stay <em>single-document</em> atomic for free, because things that change together live in one document.</p>
+    <p><strong>Trade-off:</strong> cross-collection reporting is harder than SQL joins, and multi-document transactions cost more than single-document writes.</p>
+    <div class="say"><b>Honest add-on if pushed:</b> "Postgres with JSONB would also have worked — strict relational columns for tenancy and roles, JSONB for the flexible spec body, GIN index for field queries. Mongo Atlas was already the team's stack, and that's a legitimate engineering reason too." <em>Claiming a deliberate bake-off on an inherited codebase is the kind of overclaim that collapses under one follow-up.</em></div>
   </div>
 
-  <div class="qa qa-track-a">
-    <span class="track-tag track-a">Track A · Q3</span>
-    <div class="q"><span class="qnum">3.</span> Why choose Flutter over React Native for StudySync's cross-platform deployment?</div>
-    <p>Flutter compiles directly to native ARM machine code and draws all UI via Skia/Impeller, bypassing JS-bridge serialization overhead on high-frequency state updates. This guarantees pixel-identical UI across Android and iOS while simplifying offline-first local cache synchronization.</p>
+  <div class="qa a-only">
+    <span class="track-tag track-a">A · Q3</span>
+    <div class="q"><span class="qnum">3.</span> Why Flutter over React Native for StudySync?</div>
+    <p><strong>Because a timetable is a dense custom grid, and Flutter paints it identically everywhere.</strong> Flutter draws every pixel with its own engine, so Android, iOS and web render the same from one codebase — which the repo shows in practice: <code>android/</code>, <code>ios/</code>, <code>web/</code> from one <code>lib/</code>, shipped across three tagged releases.</p>
+    <p>React Native maps components onto each platform's native widgets, so a custom grid needs per-platform tuning — divergence on the exact UI whose value <em>is</em> consistency.</p>
+    <p><strong>Trade-off:</strong> bigger binary, and Dart instead of the JavaScript the team already knew. For an app installed once by students, size doesn't matter and one codebase does.</p>
   </div>
 
-  <div class="qa qa-track-a">
-    <span class="track-tag track-a">Track A · Q4</span>
-    <div class="q"><span class="qnum">4.</span> Why build REST APIs with HTTP caching rather than adopting GraphQL across microservices?</div>
-    <p>REST endpoint URLs are natively cacheable by CDNs, reverse proxies, and browsers with zero custom client logic. GraphQL queries route through a single endpoint with dynamic shapes, breaking simple URL caching. For microservices with stable consumer contracts, REST's cache efficiency and operational simplicity outweigh GraphQL's dynamic query flexibility.</p>
+  <div class="qa a-only">
+    <span class="track-tag track-a">A · Q4</span>
+    <div class="q"><span class="qnum">4.</span> Why REST with HTTP caching instead of GraphQL?</div>
+    <p><strong>Because my payloads are fixed and my reads are cacheable, so GraphQL solves a problem I don't have.</strong> Every client wants the whole timetable, the whole spec, the whole load history — there's no over-fetching to eliminate.</p>
+    <p>Meanwhile REST gives HTTP and CDN caching for free, and StudySync's offline mode <em>is</em> a cached response. GraphQL POSTs to a single endpoint, which throws that away and makes you rebuild caching yourself.</p>
+    <p><strong>When I'd switch:</strong> many different clients needing many different slices of a deeply nested graph — a mobile app that wants three fields where the web wants thirty.</p>
   </div>
 
-  <div class="qa qa-track-a">
-    <span class="track-tag track-a">Track A · Q5</span>
-    <div class="q"><span class="qnum">5.</span> Why use Next.js App Router (RSC) instead of a pure client-side SPA?</div>
-    <p>React Server Components fetch data close to the database and render to HTML on the server, shipping zero JavaScript for static components. Suspense streaming eliminates client-side network request waterfalls, while interactive Client Components are preserved where user engagement is required.</p>
+  <div class="qa a-only">
+    <span class="track-tag track-a">A · Q5</span>
+    <div class="q"><span class="qnum">5.</span> Why Next.js App Router (RSC) instead of a pure client-side SPA?</div>
+    <p><strong>Because it lets me choose the rendering mode per route instead of once for the whole app.</strong> A recruiter dashboard should server-render for a fast first paint; a live coding editor must be client-side. An SPA forces one answer for both.</p>
+    <p>Server Components also ship zero JavaScript, so data-fetching parts add nothing to the bundle. And it removes request waterfalls — an SPA loads JS, renders, discovers it needs data, then fetches, and nested components repeat that.</p>
+    <p><strong>Trade-off:</strong> you must always know which side a component runs on — a real source of bugs (serialization errors, hydration mismatches). And an SPA is still right for something like the Chessify board, where the entire app is interactive.</p>
   </div>
 
   <hr class="divider">
 
-  <h3>Track B — ML / AI / Data Engineering Track Q&amp;A Bank</h3>
+  <h3>Track B — ML / AI / Data Engineering</h3>
 
-  <div class="qa qa-track-b">
-    <span class="track-tag track-b">Track B · Q1</span>
-    <div class="q"><span class="qnum">1.</span> Why use a hybrid parser (spaCy NER + rule-based parsing) in Nutri-Vision instead of an end-to-end LLM?</div>
-    <p>Extraction splits into a closed grammar sub-problem (quantities like <code>"200g"</code>) and an open vocabulary sub-problem (food items). Regex parses quantities with 100% determinism and microsecond latency. Custom spaCy NER generalizes across ambiguous food entities. Reserving LLM calls for open-ended tasks avoids latency and cost on solved deterministic grammar problems.</p>
+  <div class="qa b-only">
+    <span class="track-tag track-b">B · Q1</span>
+    <div class="q"><span class="qnum">1.</span> Why a hybrid spaCy NER + rule-based parser instead of an end-to-end LLM or pure regex?</div>
+    <p><strong>Because the sentence contains two problems with opposite requirements.</strong> Food names are open-vocabulary and endlessly varied — that needs a model that generalises. Quantities are a tiny exact grammar — that needs rules that are never <em>approximately</em> right. "150g" becoming 15g is a wrong calorie count shown to a user.</p>
+    <p><strong>Not pure regex:</strong> you'd need a dictionary of every food and every spelling, and it fails silently on anything new.<br>
+    <strong>Not an end-to-end LLM:</strong> network latency and cost on every meal log, non-deterministic output, and it will happily invent a plausible calorie number. My pipeline is local, fast, and grounded — every number comes from USDA FoodData Central with confidence scoring, never from a model.</p>
+    <p><strong>Trade-off:</strong> the rule parser only handles formats I anticipated. It fails <em>loudly</em> rather than guessing, which for a nutrition app is the correct failure mode.</p>
   </div>
 
-  <div class="qa qa-track-b">
-    <span class="track-tag track-b">Track B · Q2</span>
-    <div class="q"><span class="qnum">2.</span> Why choose a prompt-chaining state machine over fine-tuning a local LLM in RecrutAI?</div>
-    <p>Prompt chaining over Gemini 2.5 Flash eliminates training dataset curation and GPU hosting infrastructure, allowing prompt updates as screening logic evolves. Explicit state machine transitions (extract &rarr; score &rarr; question &rarr; fallback) provide auditable deterministic workflows required for HR compliance.</p>
+  <div class="qa b-only">
+    <span class="track-tag track-b">B · Q2</span>
+    <div class="q"><span class="qnum">2.</span> Why prompt-chaining with Gemini 2.5 Flash over fine-tuning a smaller local model?</div>
+    <p><strong>Because the hard part was control flow, not the model's writing ability.</strong> The system decides at each turn whether to probe deeper, simplify, pivot topic, or proceed. That's a state machine I wrote — fine-tuning doesn't give you a state machine.</p>
+    <p>Fine-tuning also needs labelled interview transcripts I didn't have, a GPU budget, and a retrain every time a rubric changes. A prompt change ships in seconds.</p>
+    <p><strong>How I made a hosted API safe to depend on:</strong> a hard 6-second timeout, 2 retries with exponential backoff (1s then 2s), and if it still fails the system degrades to a local regex resume parser and pre-written interview scripts. The user never sees a hang. The branch decision is constrained to four valid tokens, so a hallucination can't corrupt state.</p>
+    <p><strong>Trade-off:</strong> per-call cost and vendor dependency. Fine-tuning wins once volume is high and the task is narrow and stable — none of which was true here.</p>
   </div>
 
-  <div class="qa qa-track-b">
-    <span class="track-tag track-b">Track B · Q3</span>
-    <div class="q"><span class="qnum">3.</span> Why deploy YOLOv5n on edge hardware (Raspberry Pi 4) instead of streaming video to a cloud GPU server in SahYatri?</div>
-    <p>Video streaming to the cloud introduces variable network latency and fails under unstable mobile connectivity on moving vehicles. Running quantized YOLOv5n on the local ARM CPU guarantees deterministic latency and autonomous operation with zero ongoing network bandwidth cost.</p>
+  <div class="qa b-only">
+    <span class="track-tag track-b">B · Q3</span>
+    <div class="q"><span class="qnum">3.</span> Why YOLOv5n on a Raspberry Pi instead of streaming video to a cloud GPU?</div>
+    <p><strong>Because sending passenger video off the bus is a privacy problem I'd rather not create.</strong> On-device, the frame becomes a count and is discarded — the only thing that leaves is a number. That's <em>privacy by architecture</em>, not by policy: there is no video to leak, subpoena, or misconfigure a bucket for.</p>
+    <p>It's also the only thing that works operationally: buses move through patchy connectivity, and continuous video upload per vehicle is a bandwidth bill that grows linearly with the fleet — so cloud gets worse exactly as the product succeeds. Edge inference keeps counting through a dead zone and syncs later.</p>
+    <p><strong>Trade-off:</strong> YOLOv5n is the nano model — ~1.9M parameters against YOLOv5x's ~87M — so accuracy is lower, and updating the model means pushing to every device rather than deploying once. For "how full is this bus," approximate is fine. Adaptive thresholding handles the lighting swings between a tunnel and noon sunlight.</p>
   </div>
 
-  <div class="qa qa-track-b">
-    <span class="track-tag track-b">Track B · Q4</span>
-    <div class="q"><span class="qnum">4.</span> Why choose PostgreSQL for time-series telemetry ingestion over NoSQL document stores?</div>
-    <p>Sensor telemetry is relational <code>(device_id, timestamp, value)</code>. PostgreSQL provides ACID ingestion durability, lightweight BRIN indexing on sequential timestamps, and mature SQL window functions for analytical rollups without introducing database sprawl.</p>
+  <div class="qa b-only">
+    <span class="track-tag track-b">B · Q4</span>
+    <div class="q"><span class="qnum">4.</span> Why PostgreSQL for time-series telemetry over a NoSQL document store?</div>
+    <p><strong>Because every question I ask this data is an aggregate over a time range, and that's what SQL is for.</strong> "Average occupancy per hour on route 12 last week" is one query with a window function. Telemetry is also perfectly uniform, so schema flexibility buys nothing while schema enforcement stops a malformed reading entering the table.</p>
+    <p>Postgres then gives me the whole time-series toolkit natively: partition by time so a week's query skips every other partition, BRIN indexes on the timestamp (tiny, because time-ordered inserts leave the table physically sorted), <code>ON CONFLICT</code> for idempotent retries, and <code>DROP TABLE</code> retention instead of a slow <code>DELETE</code>.</p>
+    <p><strong>Trade-off:</strong> raw write throughput is lower than an append-optimised store, which I address by batching inserts rather than writing per reading. At much larger scale I'd move to TimescaleDB — same SQL, purpose-built storage, no rewrite.</p>
   </div>
 
-  <div class="qa qa-track-b">
-    <span class="track-tag track-b">Track B · Q5</span>
-    <div class="q"><span class="qnum">5.</span> Why use Git LFS for PyTorch model checkpoints rather than standard Git commits or cloud object storage alone?</div>
-    <p>Standard Git blobs bloat repository clone history with multi-hundred-megabyte binary checkpoint updates. Git LFS tracks lightweight pointer files while storing binary weights externally, preserving atomic <code>git checkout</code> reproducibility between code and weights.</p>
+  <div class="qa b-only">
+    <span class="track-tag track-b">B · Q5</span>
+    <div class="q"><span class="qnum">5.</span> Why Git LFS for model checkpoints instead of plain Git or object storage?</div>
+    <p><strong>Plain Git is out immediately:</strong> it keeps every version of every file forever and binaries don't delta-compress, so a 100 MB checkpoint committed ten times is a gigabyte every clone must download — and removing it later means rewriting history for everyone.</p>
+    <p><strong>LFS over object storage</strong> because it ties weights to code. Checking out the commit that produced a result also checks out the exact weights that produced it — reproducibility with no manual bookkeeping, versus an S3 bucket where matching <code>model_v3_final_FINAL.pth</code> to a commit is something you do by hand and eventually get wrong.</p>
+    <p><strong>When I'd outgrow it:</strong> LFS has bandwidth quotas and stores no metadata. Past a few gigabytes or a real team, S3 or a model registry (MLflow, Hugging Face Hub) with just a version pointer in Git.</p>
   </div>
 
-  <div class="qa qa-track-b">
-    <span class="track-tag track-b">Track B · Q6</span>
-    <div class="q"><span class="qnum">6.</span> When would you choose an Agentic Multi-Agent architecture (CrewAI) over single-pass RAG?</div>
-    <p>Single-pass RAG is optimal for bounded queries where answers exist in identifiable text chunks. Multi-agent architectures earn their latency when tasks require sub-role decomposition (e.g., extract &rarr; cross-reference &rarr; synthesize) and iterative tool execution where subsequent actions depend on prior step results.</p>
+  <div class="qa b-only">
+    <span class="track-tag track-b">B · Q6</span>
+    <div class="q"><span class="qnum">6.</span> When would you choose a multi-agent setup (CrewAI) over single-pass RAG?</div>
+    <p><strong>Single-pass RAG when one retrieval answers the question.</strong> "What's the notice period in this contract?" — retrieve, answer, done. Adding agents here just multiplies cost and latency for the same result.</p>
+    <p><strong>Multi-agent when the task genuinely has stages needing different behaviour</strong> — a researcher that gathers across sections, a validator that checks claims against sources, a writer that assembles. Agents help when the output of step one determines what step two should even look for. Cross-document comparison and multi-hop questions are the real cases.</p>
+    <p>There's a second benefit worth naming: each agent gets a <strong>small, focused context window</strong> instead of one prompt trying to hold the whole document, the question and the instructions at once.</p>
+    <p><strong>Honest caveat:</strong> agents fail in ways single calls don't — loops, drift, compounding errors from step one, and cost that's hard to predict. <em>My default is single-pass RAG, and I add an agent only when I can name the specific step single-pass cannot do.</em></p>
   </div>
 </section>
 
-</main>
-
-<footer>
-  Tech Fundamentals &amp; Cross-Technology Comparisons · Interview Defense Notes<br>
-  Grounded against Nutri-Vision AI, RecrutAI, SahYatri, Chessify AI, StudySync &amp; Packspec architectures.
-</footer>
-
 <script>
-  // Section Navigation Jump Dropdown
-  document.getElementById('jump').addEventListener('change', function(e) {
-    const id = e.target.value;
-    if (!id) return;
-    const el = document.getElementById(id);
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-    e.target.value = '';
-  });
-
-  // Dynamic Scroll Progress Bar
-  const prog = document.getElementById('scrollProg');
-  window.addEventListener('scroll', function() {
-    const scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
-    const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-    const pct = scrollHeight > 0 ? (scrollTop / scrollHeight) * 100 : 0;
-    prog.style.width = pct + '%';
-  }, { passive: true });
-
-  // Track Filtering (ALL / SDE / ML)
-  const trackBtns = document.querySelectorAll('.tb');
-  trackBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-      trackBtns.forEach(b => b.setAttribute('aria-pressed', 'false'));
+  document.querySelectorAll('.tb').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      document.querySelectorAll('.tb').forEach(function (b) { b.setAttribute('aria-pressed', 'false'); });
       btn.setAttribute('aria-pressed', 'true');
-      const filter = btn.dataset.filter;
-      if (filter === 'all') {
-        document.body.removeAttribute('data-track');
-      } else {
-        document.body.setAttribute('data-track', filter);
-      }
+      document.body.dataset.track = btn.dataset.filter;
     });
   });
 </script>
-
+</main>
+<footer>
+  Tech Fundamentals &amp; Cross-Technology Comparisons · Interview Notes<br>All architecture claims verified against the live repositories. Where resume and code disagreed, the code won — see Section 00.
+</footer>
+<script>
+  document.getElementById('jump').addEventListener('change', function(e) {
+    const id = e.target.value; if (!id) return;
+    const el = document.getElementById(id);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    e.target.value = '';
+  });
+  const prog = document.getElementById('scrollProg');
+  window.addEventListener('scroll', function() {
+    const st = document.documentElement.scrollTop;
+    const sh = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+    prog.style.width = (sh > 0 ? (st / sh) * 100 : 0) + '%';
+  }, { passive: true });
+  const sections = document.querySelectorAll('section.cluster');
+  const observer = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) { entry.target.style.animationPlayState = 'running'; observer.unobserve(entry.target); }
+    });
+  }, { threshold: 0.08 });
+  sections.forEach(function(s) { s.style.animationPlayState = 'paused'; observer.observe(s); });
+</script>
 </body>
 </html>

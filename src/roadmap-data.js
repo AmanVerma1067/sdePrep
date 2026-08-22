@@ -7,13 +7,15 @@ export const roadmaps = [
     "url": "/tech-fundamentals-comparisons.html",
     "phases": [
       {
-        "title": "00 Repo reality check",
+        "title": "00 Repo reality check \u2014 read first",
         "topics": [
           {
-            "name": "00 Repo reality check",
+            "name": "What the repos do confirm \u2014 use these freely",
             "hash": "#verify",
-            "desc": "I opened all five repos. Most of your resume holds up. These four points don't quite match \u2014 fix your story before an interviewer finds them.",
-            "links": []
+            "desc": "Every item below was verified against the actual code. These are safe to say with confidence:",
+            "links": [],
+            "tip": "\ud83d\udca1 The principle behind all four fixes An accurate claim you can defend beats an impressive claim you can't. Every one of these corrections makes the story smaller and stronger . Interviewers rarely open your repo \u2014 but when they do, one caught overclaim makes them re-examine everything else you said. Volunteering a limitation before you're asked ha",
+            "isTrap": false
           }
         ]
       },
@@ -21,46 +23,46 @@ export const roadmaps = [
         "title": "01 Languages & runtimes",
         "topics": [
           {
-            "name": "The Python GIL, explained without jargon",
+            "name": "The Python GIL, without jargon",
             "hash": "#c1",
-            "desc": "Python allows only one thread to run Python code at a time. Threads still help when you're waiting \u2014 on a network call, a disk read \u2014 because a waiting thread releases the lock. Threads do not help when you're computing , because only one gets the lock anyway.",
+            "desc": "Python lets only one thread run Python code at a time. Threads still help when you're waiting \u2014 on a network call, a disk read \u2014 because a waiting thread releases the lock. Threads do not help when you're computing , because only one gets the lock anyway.",
             "links": [],
-            "tip": "\ud83d\udea8 Interview trap \"You used Python for a chess engine \u2014 isn't that slow?\" Don't defend Python. Say: the engine isn't Python. Stockfish is a compiled C++ binary; Flask only shells out to it and returns the move. The pure-Python minimax at depth 3 exists as a fallback for when the binary won't start, and depth 3 is exactly the depth Python can search ",
+            "tip": "\ud83d\udea8 Interview Trap \"You used Python for a chess engine \u2014 isn't that slow?\" Don't defend Python. Say the engine isn't Python. Stockfish is a compiled C++ binary; Flask spawns it as a subprocess, sends a position, and reads back a move. The pure-Python minimax at depth 3 exists only as a fallback for when that binary won't start, and depth 3 is chosen ",
             "isTrap": true
           },
           {
             "name": "TypeScript vs plain JavaScript",
             "hash": "#c1",
-            "desc": "TypeScript is JavaScript plus a type checker that runs before you ship. It compiles away \u2014 at runtime there is zero TypeScript left. You get: mistakes caught at build time, autocomplete that knows your data shapes, and safer refactors.",
+            "desc": "TypeScript is JavaScript plus a type checker that runs before you ship. It compiles away entirely \u2014 at runtime there is zero TypeScript left. What you get: mistakes caught at build time, autocomplete that knows your data shapes, and refactors that fail loudly instead of silently.",
             "links": [],
-            "tip": "\ud83d\udea8 Interview trap \"Does TypeScript make your API safe?\" No. Types are erased at build. A malformed JSON body from a client is still any at runtime. That's exactly why RecrutAI uses Zod \u2014 Zod validates the actual payload at runtime and hands back a properly typed object. TypeScript guards your code; Zod guards your boundary.",
+            "tip": "\ud83d\udea8 Interview Trap \"Does TypeScript make your API safe?\" No \u2014 and this catches a lot of people. Types are erased at build time. A malformed JSON body arriving from a client is still any at runtime, and TypeScript has already left the building. That's exactly why RecrutAI uses Zod : Zod validates the actual payload at runtime and returns a properly ty",
             "isTrap": true
           },
           {
             "name": "Bash \u2014 and when to stop using it",
             "hash": "#c1",
-            "desc": "Bash wins where the job is the OS: chain existing tools, move files, schedule things. Chessify's build command is literally chmod +x on the Stockfish binary.",
+            "desc": "Bash wins where the job is the operating system: chain existing tools, move files, schedule things. Chessify's build step is literally chmod +x on the Stockfish binary \u2014 that's the right amount of Bash.",
             "links": []
           }
         ]
       },
       {
-        "title": "02 Backend frameworks & server concurrency",
+        "title": "02 Backend frameworks & concurrency",
         "topics": [
           {
             "name": "Why Chessify is split into two backends",
             "hash": "#c2",
-            "desc": "Two servers because the two jobs are opposites:",
+            "desc": "Two servers, because the two jobs are opposites:",
             "links": [],
-            "tip": "\ud83d\udea8 Interview trap \"Isn't two backends over-engineering for a student project?\" Have the counterfactual ready: \"Single Node process, one user requests a bot move, Stockfish takes 800 ms of CPU \u2014 every other game's moves queue behind it. The split isn't about scale, it's about not letting a CPU task sit on an I/O event loop.\" That's a real reason, not",
+            "tip": "\ud83d\udea8 Interview Trap \"Isn't two backends over-engineering for a student project?\" Have the counterfactual ready, with a number in it: \"Single Node process. One user requests a bot move. Stockfish takes 800 ms of CPU. Every other game's moves queue behind it, because there's one thread executing JavaScript. The split isn't about scale \u2014 it's about not p",
             "isTrap": true
           },
           {
             "name": "Monolith vs microservices vs serverless",
             "hash": "#c2",
-            "desc": "Master Monolith vs microservices vs serverless core concepts and defense.",
+            "desc": "Master Monolith vs microservices vs serverless core concepts and interview defense.",
             "links": [],
-            "tip": "\ud83d\udca1 Senior insight Ask \"why not serverless for the ML inference?\" and answer it yourself: a ResNet-50 checkpoint plus PyTorch blows past typical Lambda package limits, and a cold start reloading weights costs seconds. Model serving wants a warm container. Serverless suits short, spiky, small-dependency work.",
+            "tip": "\ud83d\udca1 Senior Insight Ask \"why not serverless for ML inference?\" and answer it yourself before they do: a ResNet-50 checkpoint plus PyTorch blows past typical Lambda package limits, and a cold start reloading weights costs seconds of latency on the first request. Model serving wants a warm container. Serverless fits short, spiky, small-dependency work \u2014",
             "isTrap": false
           }
         ]
@@ -69,25 +71,27 @@ export const roadmaps = [
         "title": "03 Databases & data engineering",
         "topics": [
           {
-            "name": "Normalization, in one pass",
+            "name": "Normalization in one pass",
             "hash": "#c3",
-            "desc": "Denormalize on purpose when reads dominate and the copied value rarely changes \u2014 a cached bus_route_name on a telemetry row saves a join on every dashboard query. The cost you accept: you must update it in two places.",
+            "desc": "Denormalize on purpose when reads dominate and the copied value rarely changes. Caching route_name on a telemetry row saves a join on every dashboard query; the price you accept is updating it in two places. That's a decision, not an accident \u2014 and saying so is the difference.",
             "links": [],
-            "tip": "\ud83d\udea8 Interview trap The 16 MB document limit . Any unbounded embedded array \u2014 an append-only audit log, an infinite comment thread \u2014 will hit it eventually, and the failure arrives in production at the worst moment. Correct instinct: unbounded growth means a separate collection, or the bucket pattern (group N entries per document).",
+            "tip": "\ud83d\udea8 Interview Trap The 16 MB document limit. Embedding a revision history inside a Packspec spec feels natural \u2014 until a heavily-edited spec accumulates hundreds of revisions and the write fails , in production, on your most active customer. It's also slow long before it fails: MongoDB rewrites the whole document on update, so a 5 MB document costs 5",
             "isTrap": true
           },
           {
             "name": "OLTP vs OLAP / time-series",
             "hash": "#c3",
-            "desc": "Master OLTP vs OLAP / time-series core concepts and defense.",
-            "links": []
+            "desc": "Master OLTP vs OLAP / time-series core concepts and interview defense.",
+            "links": [],
+            "tip": "\ud83d\udcca ML / AI / DE Track Defense SahYatri telemetry is the textbook time-series shape: append-only, always queried by time range, never updated. Three things follow, and interviewers want all three: Partition by time \u2014 one table per day or month. A last-week query skips every other partition entirely, writes only touch the current partition so the hot ",
+            "isTrap": false
           },
           {
             "name": "Indexes \u2014 pick the right one",
             "hash": "#c3",
-            "desc": "Master Indexes \u2014 pick the right one core concepts and defense.",
+            "desc": "Master Indexes \u2014 pick the right one core concepts and interview defense.",
             "links": [],
-            "tip": "\ud83d\udea8 Interview trap \"Index everything?\" No. Every index has to be updated on every write. On an ingest-heavy table that's a direct throughput tax. Also, a composite index on (bus_id, recorded_at) can serve queries on bus_id alone, but not on recorded_at alone \u2014 leftmost prefix rule.",
+            "tip": "\ud83d\udea8 Interview Trap \"Should you index everything?\" No \u2014 every index must be updated on every write, so on an ingest-heavy table each extra index is a direct throughput tax. And the leftmost prefix rule : an index on (bus_id, recorded_at) serves queries on bus_id , and on both together \u2014 but not on recorded_at alone. You can't skip the first column, be",
             "isTrap": true
           },
           {
@@ -104,31 +108,33 @@ export const roadmaps = [
           {
             "name": "Minimax + alpha-beta pruning",
             "hash": "#c4",
-            "desc": "Minimax assumes both sides play their best move: you maximise, the opponent minimises, down to a fixed depth. Alpha-beta skips branches that can't change the answer \u2014 once one reply already refutes a move, you don't need the other replies.",
+            "desc": "Minimax assumes both sides play their best move: you maximise, the opponent minimises, down to a fixed depth. Alpha-beta skips branches that can't change the answer \u2014 once one reply already refutes a move, you don't need to examine the opponent's other replies.",
             "links": [],
-            "tip": "\ud83d\udea8 Interview trap \"Does pruning change the move it picks?\" No. Alpha-beta is provably identical to plain minimax at the same depth \u2014 it only skips work that couldn't affect the result. The one thing that does vary is speed, which depends heavily on move ordering: best-first ordering prunes hard, worst-first prunes nothing. Follow-up: \"why depth 3?\" ",
+            "tip": "\ud83d\udea8 Interview Trap \"Does pruning change the move it picks?\" No. Alpha-beta is provably identical to plain minimax at the same depth \u2014 it only skips work that could not affect the result. What does vary, enormously, is speed: best-move-first ordering approaches the b^(d/2) bound, worst-first prunes essentially nothing. That's why move ordering (captur",
             "isTrap": true
           },
           {
             "name": "The Nutri-Vision hybrid extractor",
             "hash": "#c4",
-            "desc": "Free text like \"2 medium apples, 150g grilled chicken breast\" has two very different problems in one sentence:",
-            "links": []
+            "desc": "Free text like \"2 medium apples, 150g grilled chicken breast\" contains two very different problems in one sentence:",
+            "links": [],
+            "tip": "\ud83d\udcca ML / AI / DE Track Defense State the principle: learn the fuzzy part, hard-code the exact part. An ML model that's 97% accurate on quantities is a worse product than regex that's 100% right on the formats you support and honestly fails on the rest \u2014 because a silently wrong calorie count is worse than a \"couldn't parse that\" message. The regex re",
+            "isTrap": false
           },
           {
             "name": "Edge inference vs cloud GPU",
             "hash": "#c4",
-            "desc": "Master Edge inference vs cloud GPU core concepts and defense.",
+            "desc": "Master Edge inference vs cloud GPU core concepts and interview defense.",
             "links": [],
-            "tip": "\ud83d\udca1 Senior insight Know why the \"n\" in YOLOv5n matters: it's the nano variant, ~1.9M parameters against YOLOv5x's ~87M. On an ARM CPU with no GPU that's the difference between 15 FPS and a slideshow. You bought speed with accuracy \u2014 and for counting people , \"roughly how full is the bus\" tolerates that trade completely. A model choice is a product de",
+            "tip": "\ud83d\udca1 Senior Insight Know why the \"n\" in YOLOv5n matters: it's the nano variant, roughly 1.9M parameters against YOLOv5x's ~87M. On an ARM CPU with no GPU that's the difference between 15 FPS and a slideshow. You bought speed with accuracy \u2014 and for counting people , \"roughly how full is this bus\" tolerates that trade completely. A model-size choice is",
             "isTrap": false
           },
           {
             "name": "LLM strategies",
             "hash": "#c4",
-            "desc": "Master LLM strategies core concepts and defense.",
+            "desc": "Master LLM strategies core concepts and interview defense.",
             "links": [],
-            "tip": "\ud83d\udea8 Interview trap \"Fine-tune it to stop hallucinating.\" Fine-tuning teaches behaviour and format , not facts . Training on your documents makes the model sound like them \u2014 it does not make it recall them reliably, and it will still invent confidently. Facts belong in the context window: that's RAG. Say this and you're ahead of most candidates.",
+            "tip": "\ud83d\udea8 Interview Trap \"Fine-tune it so it stops hallucinating.\" Fine-tuning teaches behaviour and format , not facts . Training on your documents makes the model sound like them \u2014 it does not make it recall them reliably, and it will still invent confidently. Facts belong in the context window. That's RAG. Say this cleanly and you're ahead of most candi",
             "isTrap": true
           }
         ]
@@ -137,10 +143,12 @@ export const roadmaps = [
         "title": "05 API protocols",
         "topics": [
           {
-            "name": "05 API protocols",
+            "name": "REST hygiene they check for",
             "hash": "#c5",
-            "desc": "\u2190 swipe the table sideways",
-            "links": []
+            "desc": "Master REST hygiene they check for core concepts and interview defense.",
+            "links": [],
+            "tip": "\ud83d\udea8 Interview Trap \"You use JWT \u2014 how do you log someone out?\" You can't, not really: a signed JWT is valid until it expires. Real answers: short expiry plus refresh tokens, or a server-side denylist of revoked token IDs \u2014 which quietly reintroduces the state JWT was supposed to remove. Be honest that it's a trade-off, and add the Packspec-specific c",
+            "isTrap": true
           }
         ]
       },
@@ -150,10 +158,10 @@ export const roadmaps = [
           {
             "name": "Flutter vs React Native vs web",
             "hash": "#c6",
-            "desc": "Master Flutter vs React Native vs web core concepts and defense.",
+            "desc": "Master Flutter vs React Native vs web core concepts and interview defense.",
             "links": [],
-            "tip": "\ud83d\udee1\ufe0f SDE track defense Flutter for StudySync, with a reason specific to the product: a timetable is a dense custom grid . Flutter paints it directly, so it's pixel-identical on Android, iOS and web from one codebase \u2014 and StudySync genuinely ships to all three from one repo ( android/ ios/ web/ lib/ ), across three tagged releases. React Native would",
-            "isTrap": false
+            "tip": "\ud83d\udea8 Interview Trap \"Flutter uses native components\" \u2014 backwards, and it's a common slip. Flutter deliberately bypasses native widgets and renders its own widget tree via Skia/Impeller. That's precisely why it looks pixel-identical across platforms, and it's also why the binary is larger.",
+            "isTrap": true
           }
         ]
       },
@@ -163,35 +171,37 @@ export const roadmaps = [
           {
             "name": "VM vs container",
             "hash": "#c7",
-            "desc": "A VM virtualises hardware and boots a whole guest OS \u2014 heavy, slow to start, strongly isolated. A container is just a normal Linux process that's been given a restricted view of the system \u2014 starts in milliseconds, shares the host kernel, weaker isolation.",
+            "desc": "A VM virtualises hardware and boots a whole guest OS \u2014 heavy, slow to start, strongly isolated. A container is just a normal Linux process given a restricted view of the system \u2014 starts in milliseconds, shares the host kernel, weaker isolation.",
             "links": [],
-            "tip": "\ud83d\udea8 Interview trap \"Is a container a security boundary?\" Weaker than a VM \u2014 containers share the host kernel, so a kernel exploit escapes. For untrusted code (say, running a candidate's submitted solution) you want a VM, gVisor, or Firecracker. Worth flagging for RecrutAI's Monaco editor: it's an editor, not a sandboxed executor, and knowing that dis",
+            "tip": "\ud83d\udea8 Interview Trap \"Is a container a security boundary?\" Weaker than a VM \u2014 containers share the host kernel, so a kernel exploit escapes. For untrusted code (say, running a candidate's submitted solution) you want a VM, gVisor, or Firecracker. Worth flagging honestly for RecrutAI: the Monaco integration is an editor , not a sandboxed executor. Knowi",
             "isTrap": true
           },
           {
             "name": "Git LFS",
             "hash": "#c7",
-            "desc": "Git stores a full copy of every version of every file forever. A 100 MB .pth checkpoint committed ten times is a gigabyte of history that every clone downloads. LFS replaces the file with a small text pointer and stores the real bytes separately \u2014 Model_Image uses this, and .gitattributes is where t",
-            "links": []
+            "desc": "Git stores a full copy of every version of every file, forever, and binary files don't delta-compress. A 100 MB .pth checkpoint committed ten times is a gigabyte of history that every clone downloads forever . LFS replaces the file with a small text pointer and stores the real bytes separately \u2014 Mod",
+            "links": [],
+            "tip": "\ud83d\udcca ML / AI / DE Track Defense The nuance interviewers want: LFS gives you versioning tied to code; object storage gives you scale. LFS means checking out the commit that produced a result also checks out the exact weights that produced it \u2014 reproducibility for free, no manual bookkeeping. With a bare S3 bucket, matching model_v3_final_FINAL.pth to t",
+            "isTrap": false
           },
           {
             "name": "AWS vs Azure \u2014 the mapping",
             "hash": "#c7",
-            "desc": "Don't oversell cloud depth. Your deployments are Render (Flask + Node) and Vercel (Next.js, Flutter web) \u2014 say that plainly; PaaS is a legitimate choice and pretending otherwise is a fast way to get caught.",
+            "desc": "Object vs block, since it comes up: S3 is HTTP, effectively infinite, no filesystem \u2014 right for model weights, uploads, backups. EBS is a disk attached to one instance \u2014 right for a database's data directory.",
             "links": []
           },
           {
             "name": "Testing & CI",
             "hash": "#c7",
-            "desc": "Master Testing & CI core concepts and defense.",
+            "desc": "Master Testing & CI core concepts and interview defense.",
             "links": [],
-            "tip": "\ud83d\udee1\ufe0f SDE track defense Packspec's multi-tenant isolation is exactly the thing unit tests miss and integration tests catch. The question \"can tenant A read tenant B's spec?\" can only be answered by a real request with A's real token hitting B's real ID and getting a 403. That's a Postman test, and it's the one that matters most \u2014 data leakage between ",
+            "tip": "\ud83d\udee1\ufe0f SDE Track Defense Packspec's multi-tenant isolation is exactly the property unit tests cannot verify. \"Can tenant A read tenant B's spec?\" is only answerable by a real request carrying A's real token against B's real resource ID, expecting a 403. That's a Postman test, and it's the highest-value one in the suite \u2014 because data leakage between te",
             "isTrap": false
           },
           {
             "name": "Linux you'll be asked to type",
             "hash": "#c7",
-            "desc": "0 > stdin, 1 > stdout, 2 > stderr. So 2>&1 means \"send errors wherever output is going,\" and > file 2>&1 captures both. Pipes connect one program's stdout to the next one's stdin.",
+            "desc": "0 is stdin, 1 is stdout, 2 is stderr. So 2>&1 means \"send errors wherever output is going,\" and > file 2>&1 captures both. Pipes connect one program's stdout to the next one's stdin.",
             "links": []
           }
         ]
@@ -200,15 +210,15 @@ export const roadmaps = [
         "title": "08 \"Why X over Y\" \u2014 Q&A bank",
         "topics": [
           {
-            "name": "SDE Track A",
+            "name": "Track A \u2014 SDE",
             "hash": "#c8",
-            "desc": "Master SDE Track A core concepts and defense.",
+            "desc": "Master Track A \u2014 SDE core concepts and interview defense.",
             "links": []
           },
           {
-            "name": "ML/DE Track B",
+            "name": "Track B \u2014 ML / AI / Data Engineering",
             "hash": "#c8",
-            "desc": "Master ML/DE Track B core concepts and defense.",
+            "desc": "Master Track B \u2014 ML / AI / Data Engineering core concepts and interview defense.",
             "links": []
           }
         ]
