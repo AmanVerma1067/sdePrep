@@ -2,6 +2,7 @@ import { roadmaps } from './roadmap-data.js';
 import { resumeData } from './resume-data.js';
 import * as store from './store.js';
 import { syncProgress, setFirebaseConfig, hasFirebaseConfig, pullProgress } from './sync.js';
+import * as ix from './interactive.js';
 import './style.css';
 
 let currentView = 'dashboard';
@@ -11,6 +12,9 @@ let previousRoadmap = null;
 let targetHashOnLoad = null;
 let isFullscreenReading = false;
 let activeResumeRole = 'all'; // 'all' | 'sde' | 'mldataeng'
+let drillRevealed = false;
+let activeTechTag = '';
+let openRehearsal = null;   // { projId, tab }
 
 function topicId(rmId, phase, topicName) {
   return `${rmId}::${phase}::${topicName}`;
@@ -69,6 +73,7 @@ function toggleFullscreenReading() {
 }
 
 function renderApp() {
+  ix.stopStarTimer();   // the DOM is about to be replaced — don't orphan the interval
   const app = document.getElementById('app');
   app.innerHTML = `
     ${renderSidebar()}
@@ -152,9 +157,19 @@ function renderBackButton() {
 }
 
 function renderDashboard() {
-  const total = getTotalTopics();
-  const done = store.getCompletedCount();
+  const track = store.getActiveTrack();
+  const visibleRoadmaps = ix.filterRoadmapsByTrack(roadmaps, track);
+
+  // Track-aware totals: count only the roadmaps visible in this track.
+  let total = 0, done = 0;
+  visibleRoadmaps.forEach(r => {
+    const st = getRoadmapStats(r);
+    total += st.total; done += st.done;
+  });
+
   const pct = total ? Math.round(done / total * 100) : 0;
+  const nextTopic = ix.findNextTopic(roadmaps, track, topicId);
+  const drill = ix.pickDrill(track, store.getDrillIndex());
   const todayDone = store.getTodayCompleted();
   const dailyGoal = store.getDailyGoal();
   const streak = store.getStreak();
@@ -167,11 +182,15 @@ function renderDashboard() {
       <p class="page-sub">Summer SDE Interview Prep — your command center.</p>
     </div>
 
+    ${ix.renderTrackToggle(track)}
+    ${ix.renderNextTopic(nextTopic)}
+    ${ix.renderDrill(drill, drillRevealed)}
+
     <div class="stats-grid">
       <div class="stat-card">
         <div class="stat-meta"><span class="stat-label">Overall Progress</span><span class="stat-value">${pct}%</span></div>
         <div class="stat-bar-wrap"><div class="stat-bar" style="width:${pct}%;background:var(--accent)"></div></div>
-        <div class="stat-sub">${done} of ${total} topics completed</div>
+        <div class="stat-sub">${done} of ${total} topics · ${track === 'all' ? 'all roadmaps' : track === 'sde' ? 'SDE track' : 'ML &amp; DE track'}</div>
       </div>
       <div class="stat-card">
         <div class="stat-meta"><span class="stat-label">Today's Goal</span><span class="stat-value">${todayDone}/${dailyGoal}</span></div>
@@ -189,9 +208,9 @@ function renderDashboard() {
     </div>
 
     <div class="dash-section">
-      <h2 class="section-title">Learning Paths</h2>
+      <h2 class="section-title">Learning Paths <span class="section-count">${visibleRoadmaps.length}</span></h2>
       <div class="roadmap-cards">
-        ${roadmaps.map(r => {
+        ${visibleRoadmaps.map(r => {
           const s = getRoadmapStats(r);
           return `
           <div class="rm-card" data-view="roadmap" data-roadmap="${r.id}" style="--rm-accent:${r.accent}">
@@ -360,6 +379,19 @@ function renderTodoItem(t) {
 
 function renderTipsView() {
   return `
+    <div class="tips-interactive">
+      ${ix.renderStarTimer()}
+    </div>
+
+    <div class="tips-interactive">
+      <h2 class="section-title">🧮 OA &amp; System Design Calculators</h2>
+      ${ix.renderCalculators()}
+    </div>
+
+    <div class="tips-interactive">
+      ${ix.renderMilestones()}
+    </div>
+
   <div class="fade-in">
     ${renderBackButton()}
     <div class="page-header"><h1>Strategy & Interview Tips</h1><p class="page-sub">The meta-game for cracking SDE interviews — and how to use this prep tool effectively.</p></div>
@@ -606,6 +638,8 @@ function renderResumeView() {
     ? resumeData.projects.filter(p => p.id === 'nutrivision' || p.id === 'recrutai' || p.id === 'sahyatri-ml')
     : resumeData.projects;
 
+  const shownProjects = ix.filterProjectsByTech(displayedProjects, activeTechTag);
+
   return `
   <div class="fade-in resume-container">
     ${renderBackButton()}
@@ -641,6 +675,11 @@ function renderResumeView() {
             <span>ML & Data Engineering</span>
           </button>
         </div>
+      </div>
+
+      <div class="ats-copy-row">
+        <button class="ats-copy-btn" data-ats="sde">📋 Copy SDE bullets for job app</button>
+        <button class="ats-copy-btn" data-ats="mldataeng">📋 Copy ML/DE bullets for job app</button>
       </div>
 
       <!-- Quick Launch Defense Action Banners -->
@@ -899,6 +938,89 @@ function renderResumeView() {
 }
 
 function attachEvents() {
+  // ---------------------------------------------------------------- Task A1
+  document.querySelectorAll('.track-pill').forEach(btn => {
+    btn.addEventListener('click', () => {
+      store.setActiveTrack(btn.dataset.track);
+      drillRevealed = false;
+      renderApp();
+    });
+  });
+
+  // ------------------------------------------------------- Task A2 / A3 jump
+  document.querySelectorAll('[data-next-roadmap]').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      navigateToWithHash('roadmap', btn.dataset.nextRoadmap, btn.dataset.nextHash || '');
+    });
+  });
+
+  // ---------------------------------------------------------------- Task A3
+  document.getElementById('drillReveal')?.addEventListener('click', () => {
+    drillRevealed = !drillRevealed;
+    renderApp();
+  });
+  document.getElementById('drillNext')?.addEventListener('click', () => {
+    store.setDrillIndex(store.getDrillIndex() + 1);
+    drillRevealed = false;
+    renderApp();
+  });
+
+  // ---------------------------------------------------------------- Task B1
+  document.querySelectorAll('[data-rehearse]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const id = btn.dataset.rehearse;
+      openRehearsal = openRehearsal?.projId === id ? null : { projId: id, tab: 'opener' };
+      renderApp();
+    });
+  });
+  document.querySelectorAll('[data-rehearse-tab]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      openRehearsal = { projId: btn.dataset.proj, tab: btn.dataset.rehearseTab };
+      renderApp();
+    });
+  });
+  document.querySelectorAll('[data-copy-text]').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(btn.dataset.copyText);
+        ix.toast('Opener copied to clipboard');
+      } catch { ix.toast('Copy failed — select and copy manually'); }
+    });
+  });
+
+  // ---------------------------------------------------------------- Task B2
+  document.querySelectorAll('[data-tech]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      activeTechTag = btn.dataset.tech || '';
+      renderApp();
+    });
+  });
+
+  // ---------------------------------------------------------------- Task B3
+  document.querySelectorAll('[data-ats]').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const text = ix.buildAtsBullets(btn.dataset.ats === 'sde' ? 'sde' : 'ml', resumeData);
+      try {
+        await navigator.clipboard.writeText(text);
+        ix.toast('ATS bullets copied — paste straight into the application');
+      } catch { ix.toast('Copy failed — clipboard blocked by the browser'); }
+    });
+  });
+
+  // ------------------------------------------------------------ Task C1 / C2
+  ix.attachStarTimer();
+  ix.attachCalculators();
+
+  // ---------------------------------------------------------------- Task C3
+  document.querySelectorAll('.milestone-cb').forEach(cb => {
+    cb.addEventListener('change', () => {
+      store.toggleStrategyMilestone(cb.dataset.mid);
+      if (hasFirebaseConfig()) syncProgress(store.getState());
+      renderApp();
+    });
+  });
+
   document.querySelectorAll('[data-view]').forEach(el => {
     el.addEventListener('click', () => {
       const view = el.dataset.view;

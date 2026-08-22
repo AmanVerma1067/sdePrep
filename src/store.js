@@ -7,7 +7,7 @@ export function getState() {
 }
 
 function createDefault() {
-  return { completed: {}, notes: {}, todos: [], streakDates: [], dailyGoal: 5 };
+  return { completed: {}, notes: {}, todos: [], streakDates: [], dailyGoal: 5, milestones: {}, activeTrack: 'all', drillIndex: 0 };
 }
 
 export function save(state) {
@@ -121,4 +121,39 @@ export function importData(json) {
     save(d);
     return true;
   } catch { return false; }
+}
+// ---------------------------------------------------------------------------
+// Interactive prep additions (dashboard track, drills, strategy milestones)
+// ---------------------------------------------------------------------------
+
+export function getActiveTrack() {
+  return getState().activeTrack || 'all';
+}
+
+export function setActiveTrack(track) {
+  const s = getState();
+  s.activeTrack = track;
+  save(s);
+}
+
+export function getDrillIndex() {
+  return getState().drillIndex || 0;
+}
+
+export function setDrillIndex(i) {
+  const s = getState();
+  s.drillIndex = i;
+  save(s);
+}
+
+export function getStrategyMilestones() {
+  return { ...(getState().milestones || {}) };
+}
+
+export function toggleStrategyMilestone(id) {
+  const s = getState();
+  s.milestones = s.milestones || {};
+  if (s.milestones[id]) delete s.milestones[id];
+  else s.milestones[id] = Date.now();
+  save(s);
 }
